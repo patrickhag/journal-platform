@@ -15,6 +15,13 @@
       "when": 1731186929948,
       "tag": "0001_dear_exodus",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1731223622835,
+      "tag": "0002_slimy_wendigo",
+      "breakpoints": true
     }
   ]
 }

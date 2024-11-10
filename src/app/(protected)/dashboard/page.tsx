@@ -12,7 +12,7 @@ export default function Dashboard() {
         //   await signIn();
         }}
       >
-        {session.data?.user?.name} : Sign Out
+        {session.data?.user.email} : Sign Out
       </Button>
     ) : (
       <Button onClick={async () => await signIn()}>Sign In</Button>
