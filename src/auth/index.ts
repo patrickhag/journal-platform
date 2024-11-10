@@ -53,7 +53,7 @@ export const authOptions: NextAuthConfig = {
     },
     jwt: ({ token, user }) => {
       if (user) {
-        const u = user as (User | AdapterUser) & {randomKey: string}
+        const u = user as (User | AdapterUser) & { randomKey: string }
         return {
           ...token,
           id: u.id,
