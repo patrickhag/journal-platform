@@ -196,3 +196,4 @@ export const COUNTRIES = [
     "Zimbabwe"
   ];
   
+export const RESET_PASSWORD_EXPIRATION_TIME = 1000 * 60 * 5

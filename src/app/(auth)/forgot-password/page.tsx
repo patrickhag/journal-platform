@@ -4,11 +4,11 @@ import {
     ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { useActionState } from 'react';
-import { authenticate } from '@/lib/actions';
+import { resetPassword } from '@/lib/actions';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,12 +16,12 @@ import { Label } from '@/components/ui/label';
 
 export default function Login() {
     const [errorMessage, formAction, isPending] = useActionState(
-        authenticate,
+        resetPassword,
         undefined,
     );
 
     const router = useRouter();
-
+    const params = useSearchParams()
     const handleSuccess = () => {
         // router.push('/dashboard');
     };
@@ -33,13 +33,13 @@ export default function Login() {
             </div>
             <h2 className="text-2xl font-semibold">Request password reset</h2>
             <p className="text-sm text-muted-foreground">!</p>
-            {errorMessage && <div
+            {(params.get('msg') || errorMessage) && <div
                 className="flex p-4 items-end space-x-1 justify-center bg-red-100 rounded-md"
                 aria-live="polite"
                 aria-atomic="true"
             >
                 <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-                <p className="text-sm text-red-500">{errorMessage}</p>
+                <p className="text-sm text-red-500">{params.get('msg') || errorMessage}</p>
             </div>
             }
         </CardHeader>
@@ -56,14 +56,24 @@ export default function Login() {
                             required
                         />
                     </div>
-                 
+                    <div className="space-y-2">
+                        <Label htmlFor="password">New password</Label>
+                        <Input
+                            id="password"
+                            placeholder="enter new password..."
+                            type="password"
+                            name="password"
+                            required
+                        />
+                    </div>
+
                     <Button className="w-full" type="submit" onClick={handleSuccess} aria-disabled={isPending}>
                         Reset password
                     </Button>
                 </div>
             </form>
         </CardContent>
-       
+
         <div className="text-center mt-4 text-sm">
             Don&apos;t have an account yet?{" "}
             <Link href="/register" className="text-blue-600 hover:underline">
