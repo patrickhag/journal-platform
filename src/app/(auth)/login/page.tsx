@@ -29,7 +29,7 @@ export default function Login() {
         router.push('/dashboard');
     };
 
-    return <Card className="w-full max-w-lg mx-auto p-4 mt-4">
+    return<><Card className="w-full max-w-lg mx-auto p-4 mt-4">
         <CardHeader className="space-y-1 text-center">
             <div className="flex justify-center mb-4">
                 <Image src={'/logo.png'} alt='logo' width={40} height={40} className='mx-auto' />
@@ -101,13 +101,14 @@ export default function Login() {
                 Continue with Google
             </Button>
         </CardFooter>
+
+
+    </Card>
         <div className="text-center mt-4 text-sm">
             Don&apos;t have an account yet?{" "}
             <Link href="/register" className="text-blue-600 hover:underline">
                 Register
             </Link>
         </div>
-
-
-    </Card>
+        </> 
 }

@@ -2,7 +2,7 @@ import { db, passwordResets, users } from "@/db/schema";
 import { RESET_PASSWORD_EXPIRATION_TIME } from "@/lib/consts";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 export const GET = async (request: NextRequest) => {
   const url = new URL(request.url);

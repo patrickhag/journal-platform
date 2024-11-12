@@ -8,8 +8,8 @@ import { resetPassword } from '@/lib/actions';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { useSearchParams } from 'next/navigation';
+import { Card, CardContent,  CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -20,7 +20,7 @@ export default function Login() {
         undefined,
     );
 
-    const router = useRouter();
+    // const router = useRouter();
     const params = useSearchParams()
     const handleSuccess = () => {
         // router.push('/dashboard');

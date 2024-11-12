@@ -1,4 +1,3 @@
-import { COUNTRIES } from '@/lib/consts';
 import * as z from 'zod';
 
 export const loginSchema = z.object({

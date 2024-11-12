@@ -1,7 +1,7 @@
 'use server';
 
 import { signIn } from '@/auth';
-import { db, passwordResets, users, verificationTokens } from '@/db/schema';
+import { db, passwordResets, users } from '@/db/schema';
 import { AuthError } from 'next-auth';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
