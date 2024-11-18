@@ -1,7 +1,7 @@
 'use server';
 
 import { signIn } from '@/auth';
-import { db, files, passwordResets, users } from '@/db/schema';
+import { contributors, db, files, passwordResets, users } from '@/db/schema';
 import { AuthError } from 'next-auth';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
@@ -18,7 +18,6 @@ export async function authenticate(
   formData: FormData
 ) {
   try {
-
     const login = loginSchema.safeParse(Object.fromEntries(formData.entries()))
     if (login.error) return login.error.errors[0].message
 
@@ -122,7 +121,6 @@ export async function register(
   }
 }
 
-
 export async function deteteresource(prevState: any,
   formData: FormData) {
   cloudinary.config({
@@ -141,7 +139,7 @@ export async function deteteresource(prevState: any,
       })
     res.publicId = publicId
     return res
-    
+
   } catch (error: any) {
     return error.message
   }
@@ -164,4 +162,26 @@ export async function addFileType(
     return "Update failed"
   }
   return "success"
+}
+
+const contributorSchema = z.object({
+  prefix: z.string().min(2),
+  title: z.string().min(2),
+  subtitle: z.string().min(2),
+  abstract: z.string().min(2)
+})
+
+export async function createContributor(
+  prevState: { message: string, data?: Partial<z.infer<typeof contributorSchema>> } | undefined,
+  formData: FormData) {
+  const data = Object.fromEntries(formData.entries())
+  const contributor = contributorSchema.safeParse(data)
+  if (contributor.error) return { message: contributor.error.errors[0].message, data }
+
+  try {
+    await db.insert(contributors).values(contributor.data)
+    return { message: "success", data }
+  } catch (error: any) {
+    return { message: error.message, data }
+  }
 }
