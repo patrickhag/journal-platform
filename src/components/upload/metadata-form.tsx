@@ -1,14 +1,22 @@
 import { Card } from "@/components/ui/card"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Sidebar } from "../Sidebar"
 import { ProgressLine } from "./Progress"
 import { ContributorsForm } from "./ContributorsForm"
 import { Paginator } from "./Paginator"
-import { useQueryString } from "@/lib/hooks/useQueryString"
+import { useCallback } from "react"
 
 export default function MetadataForm() {
-  const createQueryString = useQueryString()
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const createQueryString = useCallback(
+      (name: string, value: string) => {
+          const prs = new URLSearchParams(searchParams.toString());
+          prs.set(name, value);
+          return prs.toString();
+      },
+      [searchParams])
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -22,7 +30,9 @@ export default function MetadataForm() {
         <Card className="mb-6 p-6">
           <ContributorsForm />
         </Card>
-        <Paginator onNext={() => {
+        <Paginator onBack={() => {
+          router.push(`?${createQueryString("page", 'uploads')}`)
+        }} onNext={() => {
           router.push(`?${createQueryString("page", 'uploads')}`)
         }} />
       </main>

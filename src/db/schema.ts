@@ -123,8 +123,8 @@ export const files = pgTable(
   }
 )
 
-export const contributors = pgTable(
-  "contributors",
+export const metadata = pgTable(
+  "metadata",
   {
     id: text('id')
       .primaryKey()
@@ -133,5 +133,21 @@ export const contributors = pgTable(
     prefix: text("prefix").notNull(),
     subtitle: text("subtitle").notNull(),
     abstract: text("abstract").notNull(),
+  }
+)
+export const contributors = pgTable(
+  "contributor",
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    name: text("name").notNull(),
+    salutation: text("salutation").notNull(),
+    country: text("country").notNull(),
+    homepage: text("homepage"),
+    orcid: text("orcid"),
+    affiliation: text("affiliation").notNull(),
+    bio: text("bio").notNull(),
+    role: text("role").notNull(),
   }
 )
