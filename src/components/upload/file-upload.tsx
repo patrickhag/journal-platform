@@ -9,15 +9,22 @@ import { FileList } from "./FileList"
 import { ProgressLine } from "./Progress"
 import { Uploadbanner } from "./Uploadbanner"
 import { useSearchParams, useRouter } from "next/navigation"
-import { useQueryString } from "@/lib/hooks/useQueryString";
 
 const fileFormats = ["DOCX", "DOC", "PDF"];
 
 export default function FileUpload() {
     const [files, setFiles] = useState<CloudinaryUploadWidgetInfo[]>([]);
     const router = useRouter()
-    const createQueryString = useQueryString()
-    
+    const searchParams = useSearchParams()
+
+    const createQueryString = useCallback(
+        (name: string, value: string) => {
+            const prs = new URLSearchParams(searchParams.toString());
+            prs.set(name, value);
+            return prs.toString();
+        },
+        [searchParams])
+
     return (
         <div className="flex h-screen bg-gray-100">
             <Sidebar />
