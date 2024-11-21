@@ -1,7 +1,7 @@
 'use server';
 
 import { signIn } from '@/auth';
-import { db, passwordResets, users } from '@/db/schema';
+import { db, files, passwordResets, users } from '@/db/schema';
 import { AuthError } from 'next-auth';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
@@ -131,13 +131,37 @@ export async function deteteresource(prevState: any,
     api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
   })
   const publicId = formData.get('publicId')?.toString()
-  console.log("publicId", publicId)
   if (!publicId) return {}
-  const res = await cloudinary.uploader
-    .destroy(publicId, {
-      type: 'upload',
-      resource_type: 'raw',
-    })
-  res.publicId = publicId
-  return res
+  try {
+    await db.delete(files).where(eq(files.publicId, publicId));
+    const res = await cloudinary.uploader
+      .destroy(publicId, {
+        type: 'upload',
+        resource_type: 'raw',
+      })
+    res.publicId = publicId
+    return res
+    
+  } catch (error: any) {
+    return error.message
+  }
+}
+
+export async function addFileType(
+  prevState: any,
+  formData: FormData) {
+  const fileTypeSchema = z.object({
+    publicId: z.string(),
+    resourceType: z.string(),
+    fileType: z.string(),
+    originalName: z.string()
+  })
+  const fileType = fileTypeSchema.safeParse(Object.fromEntries(formData.entries()))
+  if (fileType.error) return fileType.error.errors[0].message
+  try {
+    await db.insert(files).values(fileType.data)
+  } catch (error) {
+    return "Update failed"
+  }
+  return "success"
 }
