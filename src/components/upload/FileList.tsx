@@ -3,6 +3,7 @@ import { Dispatch, FC, SetStateAction, useActionState, useEffect } from "react"
 import { Button } from "../ui/button"
 import { Pencil, Trash2 } from "lucide-react"
 import { deteteresource } from "@/lib/actions"
+import FileTypesModal from "./FileTypeModel"
 
 export const FileList: FC<{ files: CloudinaryUploadWidgetInfo[], setFiles: Dispatch<SetStateAction<CloudinaryUploadWidgetInfo[]>> }> = ({ files, setFiles }) => {
     const [response, formAction, isPending] = useActionState(
@@ -39,10 +40,12 @@ export const FileList: FC<{ files: CloudinaryUploadWidgetInfo[], setFiles: Dispa
                         </div>
                     </div>
                     <div className="flex space-x-2">
-                        <Button variant="outline" size="icon">
-                            <Pencil className="h-4 w-4" />
-                            <span className="sr-only">Edit</span>
-                        </Button>
+                        <FileTypesModal originalName={file.original_filename} publicId={file.public_id} resourceType={file.resource_type} >
+                            <Button variant="outline" size="icon">
+                                <Pencil className="h-4 w-4" />
+                                <span className="sr-only">Edit</span>
+                            </Button>
+                        </FileTypesModal>
                         <form action={formAction}>
                             <input type="hidden" name="publicId" value={file.public_id} />
                             <Button
