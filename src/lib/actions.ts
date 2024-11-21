@@ -21,12 +21,7 @@ export async function authenticate(
     const login = loginSchema.safeParse(Object.fromEntries(formData.entries()))
     if (login.error) return login.error.errors[0].message
 
-    const result = await signIn('credentials', login.data);
-
-    if (result?.error) {
-      throw new AuthError('CredentialsSignin', result.error);
-    }
-
+    await signIn('credentials', login.data);
     return 'Success';
   } catch (error) {
     if (error instanceof AuthError) {
@@ -62,7 +57,7 @@ export async function resetPassword(
       token,
       password: hashedPassword
     })
-    await sendPasswordResetEmail({ subject: 'reset your email', toEmail:login.data.email, url: process.env.NEXT_PUBLIC_FRONTEND_URL! + '/api/auth/reset-password?id=' + token })
+    await sendPasswordResetEmail({ subject: 'reset your email', toEmail: login.data.email, url: process.env.NEXT_PUBLIC_FRONTEND_URL! + '/api/auth/reset-password?id=' + token })
 
     return 'Success';
   } catch (error) {
