@@ -18,15 +18,15 @@ export const roleEnum = pgEnum("role", ['NORMAL_USER', 'EDITOR', 'REVIEWER'])
 export const users = pgTable("user", {
   id: text('id')
     .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()), 
-  firstName: text('firstName'), 
-  lastName: text('lastName'), 
-  affiliation: text('affiliation'), 
-  country: text('country'), 
-  role: roleEnum().$default(() => 'NORMAL_USER'), 
-  email: text('email').unique(), 
-  emailVerified: timestamp('emailVerified', { mode: 'date' }), 
-  password: text('password'), 
+    .$defaultFn(() => crypto.randomUUID()),
+  firstName: text('firstName'),
+  lastName: text('lastName'),
+  affiliation: text('affiliation'),
+  country: text('country'),
+  role: roleEnum().$default(() => 'NORMAL_USER'),
+  email: text('email').unique(),
+  emailVerified: timestamp('emailVerified', { mode: 'date' }),
+  password: text('password'),
 })
 
 export const accounts = pgTable(
@@ -114,11 +114,24 @@ export const files = pgTable(
   "files",
   {
     id: text('id')
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()), 
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
     publicId: text("publicId").notNull().unique(),
     resourceType: text("resourceType").notNull(),
     originalName: text("originalName").notNull(),
     fileType: text("fileType").notNull(),
+  }
+)
+
+export const contributors = pgTable(
+  "contributors",
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    title: text("title").notNull().unique(),
+    prefix: text("prefix").notNull(),
+    subtitle: text("subtitle").notNull(),
+    abstract: text("abstract").notNull(),
   }
 )
