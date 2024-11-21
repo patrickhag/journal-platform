@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { addFileType } from "@/lib/actions"
 import { Button } from "../ui/button"
 import { DialogTitle } from "@radix-ui/react-dialog"
+import { Alert, AlertTitle } from "../ui/alert"
 
 const fileTypes = [
     { value: "article", label: "Article Text" },
@@ -50,6 +51,10 @@ const FileTypesModal: FC<{
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogTitle>
+                        <Alert variant={"destructive"}>
+                            <AlertTitle>{response}</AlertTitle>
+                        </Alert>
+
                         <p>{response}</p>
                     </DialogTitle>
 

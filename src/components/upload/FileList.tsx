@@ -12,6 +12,7 @@ export const FileList: FC<{ files: CloudinaryUploadWidgetInfo[], setFiles: Dispa
     );
 
     useEffect(() => {
+        if (response?.publicId)
         setFiles(files.filter(f => f.public_id !== response.publicId))
     }, [response?.publicId])
 

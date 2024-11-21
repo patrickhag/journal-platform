@@ -1,7 +1,7 @@
 'use server';
 
 import { signIn } from '@/auth';
-import { db, files, passwordResets, users } from '@/db/schema';
+import { metadata, db, files, passwordResets, users, contributors } from '@/db/schema';
 import { AuthError } from 'next-auth';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
@@ -12,13 +12,14 @@ import { sendPasswordResetEmail } from './emailTransporter';
 import crypto from 'node:crypto'
 import { RESET_PASSWORD_EXPIRATION_TIME } from './consts';
 import { v2 as cloudinary } from "cloudinary";
+import { contributorFormSchema } from '@/schemas/upload';
+import { Contributors } from '@/components/Contributors';
 
 export async function authenticate(
   prevState: string | undefined,
   formData: FormData
 ) {
   try {
-
     const login = loginSchema.safeParse(Object.fromEntries(formData.entries()))
     if (login.error) return login.error.errors[0].message
 
@@ -122,7 +123,6 @@ export async function register(
   }
 }
 
-
 export async function deteteresource(prevState: any,
   formData: FormData) {
   cloudinary.config({
@@ -141,7 +141,7 @@ export async function deteteresource(prevState: any,
       })
     res.publicId = publicId
     return res
-    
+
   } catch (error: any) {
     return error.message
   }
@@ -165,3 +165,42 @@ export async function addFileType(
   }
   return "success"
 }
+
+
+const metadataSchema = z.object({
+  prefix: z.string().min(2),
+  title: z.string().min(2),
+  subtitle: z.string().min(2),
+  abstract: z.string().min(2)
+})
+export async function createMetadata(
+  prevState: { message: string, data?: Partial<z.infer<typeof metadataSchema>> } | undefined,
+  formData: FormData) {
+  const data = Object.fromEntries(formData.entries())
+  const contributor = metadataSchema.safeParse(data)
+  if (contributor.error) return { message: contributor.error.errors[0].message, data }
+
+  try {
+    await db.insert(metadata).values(contributor.data)
+    return { message: "success", data }
+  } catch (error: any) {
+    return { message: error.message, data }
+  }
+}
+
+
+export async function addContributor(prevState: any, formData: any) {
+  const validatedFields = contributorFormSchema.safeParse(formData)
+  if (!validatedFields.success) {
+    return { 
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Failed to add contributor."
+    }
+  }
+  await db.insert(contributors).values(validatedFields.data)
+
+  return { 
+    message: "Contributor added successfully!" 
+  }
+}
+

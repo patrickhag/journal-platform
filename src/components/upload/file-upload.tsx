@@ -1,20 +1,29 @@
 "use client"
 import { Card } from "@/components/ui/card"
 import { Upload } from 'lucide-react'
-import { useSearchParams } from "next/navigation"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
 import { Sidebar } from "../Sidebar"
 import { Paginator } from "./Paginator"
 import { FileList } from "./FileList"
 import { ProgressLine } from "./Progress"
 import { Uploadbanner } from "./Uploadbanner"
+import { useSearchParams, useRouter } from "next/navigation"
 
 const fileFormats = ["DOCX", "DOC", "PDF"];
 
 export default function FileUpload() {
     const [files, setFiles] = useState<CloudinaryUploadWidgetInfo[]>([]);
+    const router = useRouter()
     const searchParams = useSearchParams()
+
+    const createQueryString = useCallback(
+        (name: string, value: string) => {
+            const prs = new URLSearchParams(searchParams.toString());
+            prs.set(name, value);
+            return prs.toString();
+        },
+        [searchParams])
 
     return (
         <div className="flex h-screen bg-gray-100">
@@ -40,13 +49,16 @@ export default function FileUpload() {
                             multiple: true
                         }}
                     >
-                        {({ open }) => <Uploadbanner fileFormats={fileFormats} open={open}/>}
+                        {({ open }) => <Uploadbanner fileFormats={fileFormats} open={open} />}
                     </CldUploadWidget>
                     <div className="space-y-4">
                         <FileList files={files} setFiles={setFiles} />
                     </div>
                 </Card>
-                <Paginator />
+                <Paginator onNext={() => {
+                    router.push(`?${createQueryString("files", JSON.stringify(files.map(f => f.public_id)))}`)
+                    router.push(`?${createQueryString("page", 'meta-data')}`)
+                }} />
             </main>
         </div>
     )
