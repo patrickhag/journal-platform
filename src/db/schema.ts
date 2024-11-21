@@ -6,6 +6,7 @@ import {
   primaryKey,
   integer,
   pgEnum,
+  varchar,
 } from "drizzle-orm/pg-core"
 import postgres from "postgres"
 import { drizzle } from "drizzle-orm/postgres-js"
@@ -151,3 +152,12 @@ export const contributors = pgTable(
     role: text("role").notNull(),
   }
 )
+
+export const reviewers = pgTable("reviewers", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  names: varchar("names", { length: 255 }).notNull(),
+  affiliation: varchar("affiliation", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 20 }),
+  expertise: text("expertise").notNull(),
+});
