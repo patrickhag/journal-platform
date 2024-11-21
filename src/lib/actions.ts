@@ -1,7 +1,7 @@
 'use server';
 
 import { signIn } from '@/auth';
-import { db, passwordResets, users } from '@/db/schema';
+import { contributors, db, files, passwordResets, users } from '@/db/schema';
 import { AuthError } from 'next-auth';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
@@ -11,22 +11,17 @@ import z from 'zod'
 import { sendPasswordResetEmail } from './emailTransporter';
 import crypto from 'node:crypto'
 import { RESET_PASSWORD_EXPIRATION_TIME } from './consts';
+import { v2 as cloudinary } from "cloudinary";
 
 export async function authenticate(
   prevState: string | undefined,
   formData: FormData
 ) {
   try {
-
     const login = loginSchema.safeParse(Object.fromEntries(formData.entries()))
     if (login.error) return login.error.errors[0].message
 
-    const result = await signIn('credentials', login.data);
-
-    if (result?.error) {
-      throw new AuthError('CredentialsSignin', result.error);
-    }
-
+    await signIn('credentials', login.data);
     return 'Success';
   } catch (error) {
     if (error instanceof AuthError) {
@@ -62,7 +57,7 @@ export async function resetPassword(
       token,
       password: hashedPassword
     })
-    await sendPasswordResetEmail({ subject: 'reset your email', toEmail:login.data.email, url: process.env.NEXT_PUBLIC_FRONTEND_URL! + '/api/auth/reset-password?id=' + token })
+    await sendPasswordResetEmail({ subject: 'reset your email', toEmail: login.data.email, url: process.env.NEXT_PUBLIC_FRONTEND_URL! + '/api/auth/reset-password?id=' + token })
 
     return 'Success';
   } catch (error) {
@@ -123,5 +118,70 @@ export async function register(
       }
     }
     return { message: 'An unexpected error occurred during registration.' }
+  }
+}
+
+export async function deteteresource(prevState: any,
+  formData: FormData) {
+  cloudinary.config({
+    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+    api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
+  })
+  const publicId = formData.get('publicId')?.toString()
+  if (!publicId) return {}
+  try {
+    await db.delete(files).where(eq(files.publicId, publicId));
+    const res = await cloudinary.uploader
+      .destroy(publicId, {
+        type: 'upload',
+        resource_type: 'raw',
+      })
+    res.publicId = publicId
+    return res
+
+  } catch (error: any) {
+    return error.message
+  }
+}
+
+export async function addFileType(
+  prevState: any,
+  formData: FormData) {
+  const fileTypeSchema = z.object({
+    publicId: z.string(),
+    resourceType: z.string(),
+    fileType: z.string(),
+    originalName: z.string()
+  })
+  const fileType = fileTypeSchema.safeParse(Object.fromEntries(formData.entries()))
+  if (fileType.error) return fileType.error.errors[0].message
+  try {
+    await db.insert(files).values(fileType.data)
+  } catch (error) {
+    return "Update failed"
+  }
+  return "success"
+}
+
+const contributorSchema = z.object({
+  prefix: z.string().min(2),
+  title: z.string().min(2),
+  subtitle: z.string().min(2),
+  abstract: z.string().min(2)
+})
+
+export async function createContributor(
+  prevState: { message: string, data?: Partial<z.infer<typeof contributorSchema>> } | undefined,
+  formData: FormData) {
+  const data = Object.fromEntries(formData.entries())
+  const contributor = contributorSchema.safeParse(data)
+  if (contributor.error) return { message: contributor.error.errors[0].message, data }
+
+  try {
+    await db.insert(contributors).values(contributor.data)
+    return { message: "success", data }
+  } catch (error: any) {
+    return { message: error.message, data }
   }
 }
