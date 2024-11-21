@@ -5,6 +5,7 @@ import {
   text,
   primaryKey,
   integer,
+  pgEnum,
 } from "drizzle-orm/pg-core"
 import postgres from "postgres"
 import { drizzle } from "drizzle-orm/postgres-js"
@@ -13,7 +14,7 @@ import type { AdapterAccountType } from "next-auth/adapters"
 const pool = postgres(process.env.DATABASE_URL!, { max: 1 })
 
 export const db = drizzle(pool)
-
+export const roleEnum = pgEnum("role", ['NORMAL_USER', 'EDITOR', 'REVIEWER'])
 export const users = pgTable("user", {
   id: text('id')
     .primaryKey()
@@ -22,6 +23,7 @@ export const users = pgTable("user", {
   lastName: text('lastName'), 
   affiliation: text('affiliation'), 
   country: text('country'), 
+  role: roleEnum().$default(() => 'NORMAL_USER'), 
   email: text('email').unique(), 
   emailVerified: timestamp('emailVerified', { mode: 'date' }), 
   password: text('password'), 
@@ -106,4 +108,17 @@ export const authenticators = pgTable(
       columns: [authenticator.userId, authenticator.credentialID],
     }),
   })
+)
+
+export const files = pgTable(
+  "files",
+  {
+    id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()), 
+    publicId: text("publicId").notNull().unique(),
+    resourceType: text("resourceType").notNull(),
+    originalName: text("originalName").notNull(),
+    fileType: text("fileType").notNull(),
+  }
 )
