@@ -5,13 +5,14 @@ import { ProgressLine } from "./Progress"
 import { ContributorsForm } from "./ContributorsForm"
 import { Paginator } from "./Paginator"
 import { useCallback } from "react"
+import { TNewJournal } from "@/lib/pages"
 
 export default function MetadataForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
   const createQueryString = useCallback(
-      (name: string, value: string) => {
+      (name: string, value: TNewJournal) => {
           const prs = new URLSearchParams(searchParams.toString());
           prs.set(name, value);
           return prs.toString();
@@ -31,9 +32,9 @@ export default function MetadataForm() {
           <ContributorsForm />
         </Card>
         <Paginator onBack={() => {
-          router.push(`?${createQueryString("page", 'uploads')}`)
+          router.push(`?${createQueryString("page", 'Attach files')}`)
         }} onNext={() => {
-          router.push(`?${createQueryString("page", 'uploads')}`)
+          router.push(`?${createQueryString("page", 'Reviewers')}`)
         }} />
       </main>
     </div>

@@ -1,16 +1,12 @@
 "use client"
-import FileUpload from "@/components/upload/file-upload"
-import MetadataForm from "@/components/upload/metadata-form"
+import { newJournal, TNewJournal } from "@/lib/pages"
 import { useSearchParams } from "next/navigation"
 
 export default function Upload() {
   const searchParams = useSearchParams()
-  const page = searchParams.get('page') || 'uploads'
-  const Component = (page: string) => {
-    return ({
-      uploads: <FileUpload />,
-      'meta-data': <MetadataForm />,
-    })[page]
+  const page = searchParams.get('page') as TNewJournal | null
+  const Component = (page: TNewJournal) => {
+    return newJournal[page]
   }
-  return Component(page) ?? <FileUpload />
+  return Component(page || 'start')
 }

@@ -1,7 +1,7 @@
 'use server';
 
 import { signIn } from '@/auth';
-import { metadata, db, files, passwordResets, users, contributors } from '@/db/schema';
+import { metadata, db, files, passwordResets, users, contributors, reviewers } from '@/db/schema';
 import { AuthError } from 'next-auth';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
@@ -13,7 +13,15 @@ import crypto from 'node:crypto'
 import { RESET_PASSWORD_EXPIRATION_TIME } from './consts';
 import { v2 as cloudinary } from "cloudinary";
 import { contributorFormSchema } from '@/schemas/upload';
-import { Contributors } from '@/components/Contributors';
+import { NextResponse } from 'next/server';
+import { CloudinaryUploadWidgetInfo } from 'next-cloudinary';
+import { reviewerSchema } from '@/schemas/reviewer';
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+  api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
+})
 
 export async function authenticate(
   prevState: string | undefined,
@@ -125,11 +133,7 @@ export async function register(
 
 export async function deteteresource(prevState: any,
   formData: FormData) {
-  cloudinary.config({
-    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-    api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
-  })
+
   const publicId = formData.get('publicId')?.toString()
   if (!publicId) return {}
   try {
@@ -192,15 +196,80 @@ export async function createMetadata(
 export async function addContributor(prevState: any, formData: any) {
   const validatedFields = contributorFormSchema.safeParse(formData)
   if (!validatedFields.success) {
-    return { 
+    return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: "Failed to add contributor."
     }
   }
   await db.insert(contributors).values(validatedFields.data)
 
-  return { 
-    message: "Contributor added successfully!" 
+  return {
+    message: "Contributor added successfully!"
   }
 }
 
+export async function getSignature() {
+
+  const timestamp = Math.round(Date.now() / 1000);
+  const params = { timestamp, folder: "journal_upload" };
+  const api_secret = process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET;
+  const signature = cloudinary.utils.api_sign_request(
+    params,
+    api_secret as string
+  );
+
+  return { timestamp, signature, api_key: cloudinary.config().api_key };
+}
+
+
+export async function createUpload(prevState: { message?: string; data?: CloudinaryUploadWidgetInfo } | undefined, formData: any) {
+  const files = formData.get("files");
+  const fileBuffer = await (files instanceof Blob ? files.arrayBuffer() : null);
+
+  const mime = (files as File)?.type;
+  const encoding = "base64";
+  const base64Data = fileBuffer
+    ? Buffer.from(fileBuffer).toString("base64")
+    : "";
+  const fileUri = "data:" + mime + ";" + encoding + "," + base64Data;
+  try {
+    const uploadToCloudinary = () => {
+      return new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload(fileUri, {
+            invalidate: true,
+          })
+          .then(resolve)
+          .catch(reject);
+      });
+    };
+
+    const result = await uploadToCloudinary() as CloudinaryUploadWidgetInfo;
+    if (!result) {
+      return { message: "Upload failed" }
+    }
+
+    console.log(result);
+    return { data: result };
+  } catch (error) {
+    console.log("server err", error);
+    return { message: "Internal Server Error" }
+  }
+}
+
+
+export async function addReviewer(prevState: any, formData: any) {
+
+  const validatedFields = reviewerSchema.safeParse(formData)
+  if (!validatedFields.success) {
+    return { error: validatedFields.error.flatten().fieldErrors }
+  }
+
+  try {
+    await db.insert(reviewers).values(validatedFields.data)
+    return { message: "success" }
+  } catch (error) {
+    console.error('Failed to add reviewer:', error)
+    return { error: 'Failed to add reviewer. Please try again.' }
+  }
+}
