@@ -197,3 +197,21 @@ export const COUNTRIES = [
   ];
   
 export const RESET_PASSWORD_EXPIRATION_TIME = 1000 * 60 * 5
+
+
+export const requirementsCheckboxGroup = [{
+  id: "requirement1",
+  text: "The submission has not been previously published, nor is it before another journal for consideration (or an explanation has been provided in Comments to the Editor)."
+}, {
+  id: "requirement2",
+  text: "The submission file is in OpenOffice, Microsoft Word, or RTF document file format."
+}, {
+  id: "requirement3",
+  text: "Where available, URLs for the references have been provided."
+}, {
+  id: "requirement4",
+  text: "The text is single-spaced; uses a 12-point font; employs italics, rather than underlining (except with URL addresses); and all illustrations, figures, and tables are placed within the text at the appropriate points, rather than at the end."
+}, {
+  id: "requirement5",
+  text: "The text adheres to the stylistic and bibliographic requirements outlined in the Author Guidelines."
+}]

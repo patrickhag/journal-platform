@@ -4,12 +4,15 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Sidebar } from "../Sidebar"
 
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Paginator } from "./Paginator"
 import { useRouter, useSearchParams } from "next/navigation"
 import { TNewJournal } from "@/lib/pages"
 import { ArticleTypeSection } from "./ArticleTypeSection"
 import { SubmissionRequirementsSection } from "./SubmissionRequirementsSection"
+import { safeParse } from "zod-urlsearchparams";
+import { articleSubmitionSchema } from "@/schemas/reviewer"
+
 
 export default function ArticleSubmitionForm() {
     const router = useRouter()
@@ -22,6 +25,12 @@ export default function ArticleSubmitionForm() {
             return prs.toString();
         },
         [searchParams])
+
+  
+    const articleValidation = safeParse({
+        input: searchParams,
+        schema: articleSubmitionSchema
+    })
 
     return (
         <div className="flex h-screen bg-gray-50">
@@ -37,6 +46,7 @@ export default function ArticleSubmitionForm() {
                                     Comments for the editor
                                 </h2>
                                 <Textarea
+                                    defaultValue={searchParams.get('Comments for the editor') || undefined}
                                     className="min-h-[150px]"
                                     placeholder="Enter your comments here..."
                                     onChange={(e) => {
@@ -45,7 +55,7 @@ export default function ArticleSubmitionForm() {
                                 />
                             </div>
 
-                            <Paginator onBack={() => {
+                            <Paginator disabled={!articleValidation.success} onBack={() => {
                                 router.push(`?${createQueryString("page", 'start')}`)
                             }} onNext={() => {
                                 router.push(`?${createQueryString("page", 'Attach files')}`)

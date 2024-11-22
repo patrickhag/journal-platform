@@ -32,12 +32,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { addContributor } from "@/lib/actions"
-import { useActionState, useEffect } from "react"
 import { contributorFormSchema } from "@/schemas/upload"
-import { startTransition } from "react";
 import { COUNTRIES } from "@/lib/consts"
-import { Alert, AlertTitle } from "./ui/alert"
+import { safeParse, serialize } from "zod-urlsearchparams"
+import { useRouter, useSearchParams } from "next/navigation"
 
 export default function NewContibutorForm({
     open = false,
@@ -46,7 +44,14 @@ export default function NewContibutorForm({
     open?: boolean
     onOpenChange?: (open: boolean) => void
 }) {
-
+    const router = useRouter()
+    const searchParams = useSearchParams()
+    const validation = safeParse({
+        schema: z.object({
+            contributors: z.array(contributorFormSchema),
+        }),
+        input: new URLSearchParams(searchParams.toString()),
+    })
     const form = useForm<z.infer<typeof contributorFormSchema>>({
         resolver: zodResolver(contributorFormSchema),
         defaultValues: {
@@ -60,16 +65,26 @@ export default function NewContibutorForm({
             role: "author",
         },
     })
+    // const params = new URLSearchParams(searchParams.toString())
 
-    const [errorMessage, formAction, isPending] = useActionState(
-        addContributor,
-        undefined,
-    );
+    // params.delete('contributors')
+    // router.push(`?${params.toString()}`)
+
 
     const onSubmit = (data: z.infer<typeof contributorFormSchema>) => {
-        startTransition(() => {
-            formAction(data);
-        });
+        const contributors = validation.data?.contributors || []
+        contributors.push(data)
+        const serializedData = serialize({
+            data: { contributors },
+            schema: z.object({
+                contributors: z.array(contributorFormSchema),
+            })
+        })
+        const params = new URLSearchParams(searchParams.toString())
+     
+        params.delete('contributors')
+        console.log(serializedData.toString())
+        router.push(`?${params.toString()}&${serializedData.toString()}`)
     };
 
 
@@ -79,9 +94,6 @@ export default function NewContibutorForm({
         }}>
             <DialogContent className="sm:max-w-[600px]">
                 <DialogHeader>
-                    <Alert className="bg-green-300 my-3">
-                        <AlertTitle>{errorMessage?.message}</AlertTitle>
-                    </Alert>
                     <DialogTitle>Contributors</DialogTitle>
                 </DialogHeader>
                 <div className="text-sm text-muted-foreground mb-4">
@@ -90,7 +102,6 @@ export default function NewContibutorForm({
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
-                        action={formAction}
                         className="space-y-4">
                         <FormField
                             control={form.control}

@@ -22,7 +22,8 @@ export const ArticleTypeSection = () => {
                     <label className="block mb-2">
                         Section type <span className="text-red-500">*</span>
                     </label>
-                    <Select defaultValue="original-research" onValueChange={e => {
+                    <Select defaultValue={searchParams.get("section") || undefined} onValueChange={e => {
+
                         router.push(`?${createQueryString("section", e)}`)
                     }}>
                         <SelectTrigger className="w-full">

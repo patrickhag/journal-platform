@@ -5,11 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { addFileType } from "@/lib/actions"
 import { Button } from "../ui/button"
 import { DialogTitle } from "@radix-ui/react-dialog"
-import { Alert, AlertTitle } from "../ui/alert"
 import { useRouter, useSearchParams } from "next/navigation"
+import { filesSchema } from "@/schemas/reviewer"
+import { safeParse, serialize } from "zod-urlsearchparams"
 
 const fileTypes = [
     { value: "article", label: "Article Text" },
@@ -59,19 +59,27 @@ const FileTypesModal: FC<{
                         </CardHeader>
                         <CardContent className="px-0 pb-0">
                             <form action={formData => {
-                                const files = searchParams.get("files")
-                                if (!files) return
-                                const filesData = JSON.parse(files) as string[]
-                                const newFiles = filesData.map(f => {
-                                    if (f === publicId) return ({
-                                        publicId: f,
-                                        fileType: formData.get('fileType'),
-                                        resourceType: formData.get('resourceType'),
-                                        originalName: formData.get('originalName'),
+                                const dd = safeParse({
+                                    input: new URLSearchParams(searchParams.toString()),
+                                    schema: filesSchema
+                                })
+                                if (dd.error) return
+
+                                const files = dd.data.files.map(f => {
+                                    if (f.publicId === publicId) return ({
+                                        ...f,
+                                        fileType: formData.get('fileType')?.toString()
                                     })
                                     return f
                                 })
-                                router.push(`?${createQueryString("files", JSON.stringify(newFiles))}`)
+                                const params = new URLSearchParams(searchParams.toString())
+                                params.delete('files')
+
+                                const serializedData = serialize({
+                                    data: { files },
+                                    schema: filesSchema
+                                })
+                                router.push(`?${params.toString()}&${serializedData.toString()}`)
                                 setOpen(false)
                             }}>
                                 <input type="hidden" name="publicId" value={publicId} />

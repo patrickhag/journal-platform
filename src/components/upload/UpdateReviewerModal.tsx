@@ -22,29 +22,19 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { reviewerSchema } from "@/schemas/reviewer"
-import { startTransition, useActionState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { safeParse, serialize } from "zod-urlsearchparams"
-// import { addReviewer } from "@/lib/actions"
 
 export type ReviewerFormValues = z.infer<typeof reviewerSchema>
 
 interface AddReviewerModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  email: string
 }
 
-export default function AddReviewerModal({ open, onOpenChange }: AddReviewerModalProps) {
-  const form = useForm<ReviewerFormValues>({
-    resolver: zodResolver(reviewerSchema),
-    defaultValues: {
-      names: "",
-      affiliation: "",
-      email: "",
-      phone: "",
-      expertise: "",
-    },
-  })
+export default function UpdateReviewerModal({ open, onOpenChange, email }: AddReviewerModalProps) {
+
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -56,12 +46,18 @@ export default function AddReviewerModal({ open, onOpenChange }: AddReviewerModa
   })
 
   const reviewers = reviewersValidation.data?.reviewers || []
-
+  const form = useForm<ReviewerFormValues>({
+    resolver: zodResolver(reviewerSchema),
+    defaultValues: reviewers.find(r => r.email === email),
+  })
   function handleSubmit(data: ReviewerFormValues) {
 
-    reviewers.push(data)
+    const updatedReviewrs = reviewers.map(r => {
+        if(r.email === email) return data
+        return r
+    })
     const serializedData = serialize({
-      data: { reviewers },
+      data: { reviewers: updatedReviewrs },
       schema: z.object({
         reviewers: z.array(reviewerSchema)
       })
@@ -157,7 +153,7 @@ export default function AddReviewerModal({ open, onOpenChange }: AddReviewerModa
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
-              <Button type="submit">Add</Button>
+              <Button type="submit">Update</Button>
             </div>
           </form>
         </Form>
