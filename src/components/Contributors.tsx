@@ -1,11 +1,10 @@
-import { useRouter, useSearchParams } from "next/navigation"
+import {  useSearchParams } from "next/navigation"
 import { Checkbox } from "./ui/checkbox"
 import { safeParse } from "zod-urlsearchparams"
 import { z } from "zod"
 import { contributorFormSchema } from "@/schemas/upload"
 
 export const Contributors = () => {
-    const router = useRouter()
     const searchParams = useSearchParams()
     const validation = safeParse({
         schema: z.object({

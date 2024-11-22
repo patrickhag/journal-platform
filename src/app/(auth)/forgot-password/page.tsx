@@ -20,12 +20,8 @@ export default function Login() {
         undefined,
     );
 
-    // const router = useRouter();
     const params = useSearchParams()
-    const handleSuccess = () => {
-        // router.push('/dashboard');
-    };
-
+  
     return <Card className="w-full max-w-lg mx-auto p-4 mt-4">
         <CardHeader className="space-y-1 text-center">
             <div className="flex justify-center mb-4">
@@ -67,7 +63,7 @@ export default function Login() {
                         />
                     </div>
 
-                    <Button className="w-full" type="submit" onClick={handleSuccess} aria-disabled={isPending}>
+                    <Button className="w-full" type="submit" aria-disabled={isPending}>
                         Reset password
                     </Button>
                 </div>

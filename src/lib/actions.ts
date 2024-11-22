@@ -13,10 +13,10 @@ import crypto from 'node:crypto'
 import { RESET_PASSWORD_EXPIRATION_TIME } from './consts';
 import { v2 as cloudinary } from "cloudinary";
 import { contributorFormSchema } from '@/schemas/upload';
-import { NextResponse } from 'next/server';
 import { CloudinaryUploadWidgetInfo } from 'next-cloudinary';
 import { articleSubmitionSchema, filesSchema, reviewerSchema } from '@/schemas/reviewer';
 import { safeParse } from 'zod-urlsearchparams';
+import { metadataSchema } from '@/components/upload/ContributorsForm';
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -132,7 +132,7 @@ export async function register(
   }
 }
 
-export async function deteteresource(prevState: any,
+export async function deteteresource(_: unknown,
   formData: FormData) {
 
   const publicId = formData.get('publicId')?.toString()
@@ -147,65 +147,10 @@ export async function deteteresource(prevState: any,
     res.publicId = publicId
     return res
 
-  } catch (error: any) {
-    return error.message
-  }
-}
-
-export async function addFileType(
-  prevState: any,
-  formData: FormData) {
-  const fileTypeSchema = z.object({
-    publicId: z.string(),
-    resourceType: z.string(),
-    fileType: z.string(),
-    originalName: z.string()
-  })
-  const fileType = fileTypeSchema.safeParse(Object.fromEntries(formData.entries()))
-  if (fileType.error) return fileType.error.errors[0].message
-  try {
-    await db.insert(files).values(fileType.data)
-  } catch (error) {
-    return "Update failed"
-  }
-  return "success"
-}
-
-
-const metadataSchema = z.object({
-  prefix: z.string().min(2),
-  title: z.string().min(2),
-  subtitle: z.string().min(2),
-  abstract: z.string().min(2)
-})
-export async function createMetadata(
-  prevState: { message: string, data?: Partial<z.infer<typeof metadataSchema>> } | undefined,
-  formData: FormData) {
-  const data = Object.fromEntries(formData.entries())
-  const contributor = metadataSchema.safeParse(data)
-  if (contributor.error) return { message: contributor.error.errors[0].message, data }
-
-  try {
-    await db.insert(metadata).values(contributor.data)
-    return { message: "success", data }
-  } catch (error: any) {
-    return { message: error.message, data }
-  }
-}
-
-
-export async function addContributor(prevState: any, formData: any) {
-  const validatedFields = contributorFormSchema.safeParse(formData)
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: "Failed to add contributor."
+  } catch (error: unknown) {
+    if(error instanceof Error){
+      return error.message
     }
-  }
-  await db.insert(contributors).values(validatedFields.data)
-
-  return {
-    message: "Contributor added successfully!"
   }
 }
 
@@ -223,7 +168,7 @@ export async function getSignature() {
 }
 
 
-export async function createUpload(prevState: { message?: string; data?: CloudinaryUploadWidgetInfo } | undefined, formData: any) {
+export async function createUpload(_: { message?: string; data?: CloudinaryUploadWidgetInfo } | undefined, formData: FormData) {
   const files = formData.get("files");
   const fileBuffer = await (files instanceof Blob ? files.arrayBuffer() : null);
 
@@ -259,7 +204,7 @@ export async function createUpload(prevState: { message?: string; data?: Cloudin
 }
 
 
-export async function addReviewer(prevState: any, formData: any) {
+export async function addReviewer(_: unknown, formData: FormData) {
 
   const validatedFields = reviewerSchema.safeParse(formData)
   if (!validatedFields.success) {
@@ -292,7 +237,7 @@ const finalSubmissionSchema = z.object({
   ethicalReference: z.string().optional()
 })
 
-export async function submitAction(formData: FormData) {
+export async function submitAction(_: unknown, formData: FormData) {
   const data = Object.fromEntries(formData.entries())
   const result = finalSubmissionSchema.safeParse(data)
 

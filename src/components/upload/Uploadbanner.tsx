@@ -2,10 +2,11 @@ import { createUpload } from '@/lib/actions'
 import { Upload } from 'lucide-react'
 import { FC, useActionState, useEffect, useRef } from 'react'
 import { Alert } from '../ui/alert'
+import { CloudinaryUploadWidgetInfo } from 'next-cloudinary'
 
-export const Uploadbanner: FC<{ fileFormats: string[]; onSuccess: (file: any) => void }> = ({ fileFormats, onSuccess }) => {
+export const Uploadbanner: FC<{ fileFormats: string[]; onSuccess: (file: CloudinaryUploadWidgetInfo | undefined) => void }> = ({ fileFormats, onSuccess }) => {
     const form = useRef<HTMLFormElement>(null)
-    const [responseMessage, formAction, isPending] = useActionState(
+    const [responseMessage, formAction] = useActionState(
         createUpload,
         undefined,
     );
@@ -13,7 +14,7 @@ export const Uploadbanner: FC<{ fileFormats: string[]; onSuccess: (file: any) =>
         if (responseMessage?.data) {
             onSuccess(responseMessage.data)
         }
-    }, [responseMessage?.data])
+    }, [responseMessage?.data,  onSuccess])
     return (
         <form action={formAction} ref={form} className="mb-4 cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-8 text-center">
             {responseMessage?.message && <Alert>

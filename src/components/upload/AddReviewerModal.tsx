@@ -22,10 +22,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { reviewerSchema } from "@/schemas/reviewer"
-import { startTransition, useActionState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { safeParse, serialize } from "zod-urlsearchparams"
-// import { addReviewer } from "@/lib/actions"
 
 export type ReviewerFormValues = z.infer<typeof reviewerSchema>
 

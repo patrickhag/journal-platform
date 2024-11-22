@@ -65,11 +65,6 @@ export default function NewContibutorForm({
             role: "author",
         },
     })
-    // const params = new URLSearchParams(searchParams.toString())
-
-    // params.delete('contributors')
-    // router.push(`?${params.toString()}`)
-
 
     const onSubmit = (data: z.infer<typeof contributorFormSchema>) => {
         const contributors = validation.data?.contributors || []
@@ -81,7 +76,7 @@ export default function NewContibutorForm({
             })
         })
         const params = new URLSearchParams(searchParams.toString())
-     
+
         params.delete('contributors')
         console.log(serializedData.toString())
         router.push(`?${params.toString()}&${serializedData.toString()}`)
@@ -90,7 +85,7 @@ export default function NewContibutorForm({
 
     return (
         <Dialog open={open} onOpenChange={(open) => {
-            open && form.reset()
+            if (open) form.reset()
         }}>
             <DialogContent className="sm:max-w-[600px]">
                 <DialogHeader>

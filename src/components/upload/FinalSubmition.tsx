@@ -8,16 +8,26 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { submitAction } from "@/lib/actions"
 import { useSearchParams } from "next/navigation"
+import { useActionState } from "react"
+import { Alert } from "../ui/alert"
 
 export default function FinalSubmissionForm() {
     const searchParams = useSearchParams()
+
+    const [errorMessage, formAction, isPending] = useActionState(
+        submitAction,
+        undefined,
+    );
 
     return (
         <div className="flex min-h-screen">
             <Sidebar />
             <main className="flex-1 p-8">
                 <ProgressLine />
-                <form action={submitAction} className="p-8 bg-white rounded-lg shadow-md">
+                <form action={formAction} className="p-8 bg-white rounded-lg shadow-md">
+                    {errorMessage?.message && <Alert>
+                        {errorMessage?.message}
+                    </Alert>}
                     <input type="hidden" name="others" value={searchParams.toString()} />
                     <h2 className="mb-4 text-xl font-semibold">Final submission</h2>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -67,11 +77,11 @@ export default function FinalSubmissionForm() {
                         </div>
                     </div>
                     <p className="mt-6 text-sm text-gray-600">
-                        Your submission has been uploaded and is ready to be sent. You may go back to review and adjust any of the information you have entered before continuing. When you are ready, click "Submit".
+                        Your submission has been uploaded and is ready to be sent. You may go back to review and adjust any of the information you have entered before continuing. When you are ready, click &quot;Submit&quot;.
                     </p>
                     <div className="flex justify-between mt-4">
                         <Button variant="outline">Go back</Button>
-                        <Button>Submit</Button>
+                        <Button disabled={isPending}>Submit</Button>
                     </div>
                 </form>
             </main>

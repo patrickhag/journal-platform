@@ -1,6 +1,6 @@
 "use client"
 import { Card } from "@/components/ui/card"
-import { useCallback, useMemo } from "react"
+import { useCallback, } from "react"
 import { Sidebar } from "../Sidebar"
 import { Paginator } from "./Paginator"
 import { FileList } from "./FileList"
@@ -42,6 +42,7 @@ export default function FileUpload() {
                 <h1 className="mb-6 text-3xl font-bold">Upload files</h1>
                 <Card className="mb-6 p-6">
                     <Uploadbanner fileFormats={fileFormats} onSuccess={(file) => {
+                        if(!file) return
                         files.push({ fileType: '', originalName: file.type, publicId: file.public_id, resourceType: file.resource_type })
                         const serializedData = serialize({
                             data: { files },

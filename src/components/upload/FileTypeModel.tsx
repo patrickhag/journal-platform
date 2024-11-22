@@ -1,6 +1,6 @@
 "use client"
 
-import { FC, PropsWithChildren, useActionState, useCallback, useEffect, useState } from "react"
+import { FC, PropsWithChildren, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
@@ -36,14 +36,6 @@ const FileTypesModal: FC<{
 
         const router = useRouter()
         const searchParams = useSearchParams()
-
-        const createQueryString = useCallback<(name: string, value: string) => string>(
-            (name: string, value: string) => {
-                const prs = new URLSearchParams(searchParams.toString());
-                prs.set(name, value);
-                return prs.toString();
-            },
-            [searchParams])
 
         return (
             <Dialog open={open} onOpenChange={setOpen}>

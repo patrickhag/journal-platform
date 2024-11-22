@@ -1,11 +1,12 @@
-import { useActionState, useState } from "react"
+"use client"
+import { useState } from "react"
 import { Contributors } from "../Contributors"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { Textarea } from "../ui/textarea"
 import NewContibutorForm from "../Contibutor"
-import { object, z } from "zod"
+import {  z } from "zod"
 import { safeParse, serialize } from "zod-urlsearchparams"
 import { useRouter, useSearchParams } from "next/navigation"
 
@@ -36,7 +37,7 @@ export const ContributorsForm = () => {
                 if (meta.error) return
 
                 const serializedData = serialize({
-                    data: Object.fromEntries(formData.entries()) as any,
+                    data: Object.fromEntries(formData.entries()) as z.infer<typeof metadataSchema>,
                     schema: metadataSchema,
                 })
 

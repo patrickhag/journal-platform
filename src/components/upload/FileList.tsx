@@ -1,20 +1,15 @@
-import { FC, useActionState, useEffect } from "react"
+import { FC } from "react"
 import { Button } from "../ui/button"
 import { Pencil, Trash2 } from "lucide-react"
-import { deteteresource } from "@/lib/actions"
 import FileTypesModal from "./FileTypeModel"
-import { number, z } from "zod"
 import { filesSchema, TFile, } from "@/schemas/reviewer"
-import { safeParse, serialize } from "zod-urlsearchparams"
+import { serialize } from "zod-urlsearchparams"
 import { useRouter, useSearchParams } from "next/navigation"
 
 export const FileList: FC<{
     files: TFile[],
 }> = ({ files }) => {
-    // const [response, formAction, isPending] = useActionState(
-    //     deteteresource,
-    //     undefined,
-    // );
+
     const router = useRouter()
     const searchParams = useSearchParams()
 
@@ -40,8 +35,6 @@ export const FileList: FC<{
                         <div>
                             <p className="font-medium">{file.originalName}</p>
                             <p className="text-sm text-gray-500">{file.fileType}
-                                {/* | {file.bytes / 1000} KB */}
-
                             </p>
                         </div>
                     </div>
@@ -53,7 +46,7 @@ export const FileList: FC<{
                             </Button>
                         </FileTypesModal>
                         <form action={() => {
-                
+
                             const serializedData = serialize({
                                 data: { files: files.filter(f => f.publicId !== file.publicId) },
                                 schema: filesSchema

@@ -28,7 +28,7 @@ export const SubmissionRequirementsSection = () => {
             <div className="space-y-4">
                 {requirementsCheckboxGroup.map((c) => (
                     <div key={c.id} className="flex items-start space-x-3">
-                        <Checkbox id={c.id} value={c.id} defaultChecked={requirementsValidation.data?.requirements.includes(c.id)} onCheckedChange={e => {
+                        <Checkbox id={c.id} value={c.id} defaultChecked={requirementsValidation.data?.requirements.includes(c.id)} onCheckedChange={() => {
 
                             const reqs = requirementsValidation.data?.requirements || []
 

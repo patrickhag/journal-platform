@@ -33,7 +33,6 @@ export const registerSchema = z.object({
   country: z.string()
     .max(20, { message: 'country is invalid' })
     .min(3, { message: 'country is invalid' }),
-    // .refine((c) => COUNTRIES.includes(c), { message: 'country is invalid' }),
   password: z
     .string({ required_error: 'Password is required' })
     .min(6, { message: 'Minimum 6 characters required' })
