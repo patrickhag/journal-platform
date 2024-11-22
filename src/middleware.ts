@@ -1,4 +1,3 @@
-// import authConfig from '@/auth.config';
 import { authOptions } from './auth';
 import {
   DEFAULT_LOGIN_REDIRECT,

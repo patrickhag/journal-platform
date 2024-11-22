@@ -1,47 +1,76 @@
-import { useActionState, useState } from "react"
+"use client"
+import { useState } from "react"
 import { Contributors } from "../Contributors"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { Textarea } from "../ui/textarea"
-import { createMetadata } from "@/lib/actions"
-import { Alert, AlertTitle } from "../ui/alert"
 import NewContibutorForm from "../Contibutor"
+import {  z } from "zod"
+import { safeParse, serialize } from "zod-urlsearchparams"
+import { useRouter, useSearchParams } from "next/navigation"
+
+export const metadataSchema = z.object({
+    prefix: z.string().min(2),
+    title: z.string().min(2),
+    subtitle: z.string().min(2),
+    abstract: z.string().min(2)
+})
 
 export const ContributorsForm = () => {
-    const [message, formAction, isPending] = useActionState(
-        createMetadata,
-        undefined,
-    );
+
+    const searchParams = useSearchParams()
+    const router = useRouter()
+
+    const metaValidation = safeParse({
+        schema: metadataSchema,
+        input: new URLSearchParams(searchParams.toString()),
+    })
 
     const [modalOpen, setModalOpen] = useState(false)
+
     return (
         <>
-            <form action={formAction}>
-                {message?.message && message?.message !== 'success' && <Alert variant={"destructive"}>
-                    <AlertTitle>{message?.message}</AlertTitle>
-                </Alert>}
+            <form action={(formData) => {
+                const data = Object.fromEntries(formData.entries())
+                const meta = metadataSchema.safeParse(data)
+                if (meta.error) return
+
+                const serializedData = serialize({
+                    data: Object.fromEntries(formData.entries()) as z.infer<typeof metadataSchema>,
+                    schema: metadataSchema,
+                })
+
+                const params = new URLSearchParams(searchParams.toString())
+                Object.keys(data).forEach(key => {
+                    params.delete(key)
+                })
+
+                console.log(searchParams.toString())
+
+                router.push(`?${params.toString()}&${serializedData.toString()}`)
+            }}>
 
                 <div className="mb-4 grid grid-cols-2 gap-4">
                     <div>
                         <Label htmlFor="prefix">Prefix *</Label>
-                        <Input id="prefix" name="prefix" defaultValue={message?.data?.prefix.toString()} placeholder="A, the" />
+                        <Input id="prefix" name="prefix" defaultValue={metaValidation?.data?.prefix} placeholder="A, the" />
                     </div>
                     <div>
                         <Label htmlFor="title">Title *</Label>
-                        <Input id="title" name="title" defaultValue={message?.data?.title.toString()} placeholder="Title of the journal" />
+                        <Input id="title" name="title" defaultValue={metaValidation?.data?.title} placeholder="Title of the journal" />
                     </div>
                 </div>
                 <div className="mb-4">
                     <Label htmlFor="subtitle">Subtitle *</Label>
-                    <Input id="subtitle" name="subtitle" defaultValue={message?.data?.subtitle.toString()} placeholder="Subtitle of the journal" />
+                    <Input id="subtitle" name="subtitle" defaultValue={metaValidation?.data?.subtitle} placeholder="Subtitle of the journal" />
                 </div>
                 <div className="mb-4">
                     <Label htmlFor="abstract">Abstract *</Label>
-                    <Textarea id="abstract" name="abstract" defaultValue={message?.data?.abstract.toString()} placeholder="Abstract of the journal" rows={4} />
+                    <Textarea id="abstract" name="abstract" defaultValue={metaValidation?.data?.abstract} placeholder="Abstract of the journal" rows={4} />
                 </div>
 
-                <Button variant="secondary" className="mt-4" disabled={isPending} type="submit">
+                <Button variant="secondary" className="mt-4" type="submit">
                     Save meta
                 </Button>
             </form>

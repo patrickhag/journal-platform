@@ -9,7 +9,6 @@ export default function Dashboard() {
       <Button
         onClick={async () => {
           await signOut();
-        //   await signIn();
         }}
       >
         {session.data?.user.email} : Sign Out

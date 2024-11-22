@@ -1,10 +1,7 @@
-// import { accounts, db, sessions, users, verificationTokens } from "@/db/schema";
-// import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { db, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import NextAuth, { User, NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-// import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { AdapterUser } from "next-auth/adapters";
 
@@ -75,13 +72,6 @@ export const authOptions: NextAuthConfig = {
   },
   basePath: BASE_PATH,
   secret: process.env.NEXTAUTH_SECRET,
-  // adapter: DrizzleAdapter(db, {
-  //   usersTable: users,
-  //   accountsTable: accounts,
-  //   sessionsTable: sessions,
-  //   verificationTokensTable: verificationTokens,
-  // }),
-  // providers: [Google],
 };
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authOptions);

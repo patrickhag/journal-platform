@@ -1,25 +1,22 @@
-import { CloudinaryUploadWidgetInfo } from "next-cloudinary"
-import { Dispatch, FC, SetStateAction, useActionState, useEffect } from "react"
+import { FC } from "react"
 import { Button } from "../ui/button"
 import { Pencil, Trash2 } from "lucide-react"
-import { deteteresource } from "@/lib/actions"
 import FileTypesModal from "./FileTypeModel"
+import { filesSchema, TFile, } from "@/schemas/reviewer"
+import { serialize } from "zod-urlsearchparams"
+import { useRouter, useSearchParams } from "next/navigation"
 
-export const FileList: FC<{ files: CloudinaryUploadWidgetInfo[], setFiles: Dispatch<SetStateAction<CloudinaryUploadWidgetInfo[]>> }> = ({ files, setFiles }) => {
-    const [response, formAction, isPending] = useActionState(
-        deteteresource,
-        undefined,
-    );
+export const FileList: FC<{
+    files: TFile[],
+}> = ({ files }) => {
 
-    useEffect(() => {
-        if (response?.publicId)
-        setFiles(files.filter(f => f.public_id !== response.publicId))
-    }, [response?.publicId])
+    const router = useRouter()
+    const searchParams = useSearchParams()
 
     return (
         <>
             {files.map((file) => (
-                <div key={file.asset_id} className="flex items-center justify-between rounded-lg border p-4">
+                <div key={file.publicId} className="flex items-center justify-between rounded-lg border p-4">
                     <div className="flex items-center space-x-4">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -36,24 +33,35 @@ export const FileList: FC<{ files: CloudinaryUploadWidgetInfo[], setFiles: Dispa
                             />
                         </svg>
                         <div>
-                            <p className="font-medium">{file.original_filename}</p>
-                            <p className="text-sm text-gray-500">{file.type} | {file.bytes / 1000} KB</p>
+                            <p className="font-medium">{file.originalName}</p>
+                            <p className="text-sm text-gray-500">{file.fileType}
+                            </p>
                         </div>
                     </div>
                     <div className="flex space-x-2">
-                        <FileTypesModal originalName={file.original_filename} publicId={file.public_id} resourceType={file.resource_type} >
+                        <FileTypesModal originalName={file.originalName} publicId={file.publicId} resourceType={file.resourceType} >
                             <Button variant="outline" size="icon">
                                 <Pencil className="h-4 w-4" />
                                 <span className="sr-only">Edit</span>
                             </Button>
                         </FileTypesModal>
-                        <form action={formAction}>
-                            <input type="hidden" name="publicId" value={file.public_id} />
+                        <form action={() => {
+
+                            const serializedData = serialize({
+                                data: { files: files.filter(f => f.publicId !== file.publicId) },
+                                schema: filesSchema
+                            })
+
+                            const params = new URLSearchParams(searchParams.toString())
+                            params.delete('files')
+                            router.push(`?${params.toString()}&${serializedData.toString()}`)
+
+                        }}>
+                            <input type="hidden" name="publicId" value={file.publicId} />
                             <Button
-                                disabled={isPending}
                                 variant="outline" size="icon" type="submit">
                                 <Trash2 className="h-4 w-4" />
-                                <span className="sr-only">{isPending ? "Deleting ..." : "Delete"}</span>
+                                <span className="sr-only">Delete</span>
                             </Button>
                         </form>
                     </div>

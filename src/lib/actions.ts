@@ -1,7 +1,7 @@
 'use server';
 
 import { signIn } from '@/auth';
-import { metadata, db, files, passwordResets, users, contributors } from '@/db/schema';
+import { metadata, db, files, passwordResets, users, contributors, reviewers, articleSubmissions, finalSubmissions } from '@/db/schema';
 import { AuthError } from 'next-auth';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
@@ -13,7 +13,16 @@ import crypto from 'node:crypto'
 import { RESET_PASSWORD_EXPIRATION_TIME } from './consts';
 import { v2 as cloudinary } from "cloudinary";
 import { contributorFormSchema } from '@/schemas/upload';
-import { Contributors } from '@/components/Contributors';
+import { CloudinaryUploadWidgetInfo } from 'next-cloudinary';
+import { articleSubmitionSchema, filesSchema, reviewerSchema } from '@/schemas/reviewer';
+import { safeParse } from 'zod-urlsearchparams';
+import { metadataSchema } from '@/components/upload/ContributorsForm';
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+  api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
+})
 
 export async function authenticate(
   prevState: string | undefined,
@@ -123,13 +132,9 @@ export async function register(
   }
 }
 
-export async function deteteresource(prevState: any,
+export async function deteteresource(_: unknown,
   formData: FormData) {
-  cloudinary.config({
-    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-    api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
-  })
+
   const publicId = formData.get('publicId')?.toString()
   if (!publicId) return {}
   try {
@@ -142,65 +147,178 @@ export async function deteteresource(prevState: any,
     res.publicId = publicId
     return res
 
-  } catch (error: any) {
-    return error.message
-  }
-}
-
-export async function addFileType(
-  prevState: any,
-  formData: FormData) {
-  const fileTypeSchema = z.object({
-    publicId: z.string(),
-    resourceType: z.string(),
-    fileType: z.string(),
-    originalName: z.string()
-  })
-  const fileType = fileTypeSchema.safeParse(Object.fromEntries(formData.entries()))
-  if (fileType.error) return fileType.error.errors[0].message
-  try {
-    await db.insert(files).values(fileType.data)
-  } catch (error) {
-    return "Update failed"
-  }
-  return "success"
-}
-
-
-const metadataSchema = z.object({
-  prefix: z.string().min(2),
-  title: z.string().min(2),
-  subtitle: z.string().min(2),
-  abstract: z.string().min(2)
-})
-export async function createMetadata(
-  prevState: { message: string, data?: Partial<z.infer<typeof metadataSchema>> } | undefined,
-  formData: FormData) {
-  const data = Object.fromEntries(formData.entries())
-  const contributor = metadataSchema.safeParse(data)
-  if (contributor.error) return { message: contributor.error.errors[0].message, data }
-
-  try {
-    await db.insert(metadata).values(contributor.data)
-    return { message: "success", data }
-  } catch (error: any) {
-    return { message: error.message, data }
-  }
-}
-
-
-export async function addContributor(prevState: any, formData: any) {
-  const validatedFields = contributorFormSchema.safeParse(formData)
-  if (!validatedFields.success) {
-    return { 
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: "Failed to add contributor."
+  } catch (error: unknown) {
+    if(error instanceof Error){
+      return error.message
     }
   }
-  await db.insert(contributors).values(validatedFields.data)
+}
 
-  return { 
-    message: "Contributor added successfully!" 
+export async function getSignature() {
+
+  const timestamp = Math.round(Date.now() / 1000);
+  const params = { timestamp, folder: "journal_upload" };
+  const api_secret = process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET;
+  const signature = cloudinary.utils.api_sign_request(
+    params,
+    api_secret as string
+  );
+
+  return { timestamp, signature, api_key: cloudinary.config().api_key };
+}
+
+
+export async function createUpload(_: { message?: string; data?: CloudinaryUploadWidgetInfo } | undefined, formData: FormData) {
+  const files = formData.get("files");
+  const fileBuffer = await (files instanceof Blob ? files.arrayBuffer() : null);
+
+  const mime = (files as File)?.type;
+  const encoding = "base64";
+  const base64Data = fileBuffer
+    ? Buffer.from(fileBuffer).toString("base64")
+    : "";
+  const fileUri = "data:" + mime + ";" + encoding + "," + base64Data;
+  try {
+    const uploadToCloudinary = () => {
+      return new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload(fileUri, {
+            invalidate: true,
+          })
+          .then(resolve)
+          .catch(reject);
+      });
+    };
+
+    const result = await uploadToCloudinary() as CloudinaryUploadWidgetInfo;
+    if (!result) {
+      return { message: "Upload failed" }
+    }
+
+    console.log(result);
+    return { data: result };
+  } catch (error) {
+    console.log("server err", error);
+    return { message: "Internal Server Error" }
   }
+}
+
+
+export async function addReviewer(_: unknown, formData: FormData) {
+
+  const validatedFields = reviewerSchema.safeParse(formData)
+  if (!validatedFields.success) {
+    return { error: validatedFields.error.flatten().fieldErrors }
+  }
+
+  try {
+    await db.insert(reviewers).values(validatedFields.data)
+    return { message: "success" }
+  } catch (error) {
+    console.error('Failed to add reviewer:', error)
+    return { error: 'Failed to add reviewer. Please try again.' }
+  }
+}
+
+const finalSubmissionSchema = z.object({
+  funded: z.enum(["yes", "no"], {
+    required_error: "Funding status is required",
+  }).transform(val => val === "yes"),
+  ethical: z.enum(["yes", "no"], {
+    required_error: "Ethical clearance status is required",
+  }).transform(val => val === "yes"),
+  consent: z.enum(["yes", "no"], {
+    required_error: "Informed consent status is required",
+  }).transform(val => val === "yes"),
+  human: z.enum(["yes", "no"], {
+    required_error: "Human part inclusion status is required",
+  }).transform(val => val === "yes"),
+  founders: z.string().optional(),
+  ethicalReference: z.string().optional()
+})
+
+export async function submitAction(_: unknown, formData: FormData) {
+  const data = Object.fromEntries(formData.entries())
+  const result = finalSubmissionSchema.safeParse(data)
+
+  const others = formData.get('others')?.toString()
+  if (!others) return { message: "Failed to submit" }
+
+  const metadataValidations = safeParse({
+    input: new URLSearchParams(others),
+    schema: metadataSchema
+  })
+
+  const reviewerValidations = safeParse({
+    input: new URLSearchParams(others),
+    schema: z.object({
+      reviewers: z.array(reviewerSchema)
+    })
+  })
+  const articleSubmitionValidations = safeParse({
+    input: new URLSearchParams(others),
+    schema: articleSubmitionSchema
+  })
+  const filesValidations = safeParse({
+    input: new URLSearchParams(others),
+    schema: filesSchema
+  })
+  const contributorValidations = safeParse({
+    input: new URLSearchParams(others),
+    schema: z.object({
+      contributors: z.array(contributorFormSchema),
+    })
+  })
+
+  if (!metadataValidations.success) {
+    console.error(metadataValidations.error.errors)
+    return
+  }
+  if (!reviewerValidations.success) {
+    console.error(reviewerValidations.error.errors)
+    return
+  }
+  if (!articleSubmitionValidations.success) {
+    console.error(articleSubmitionValidations.error.errors)
+    return
+  }
+  if (!filesValidations.success) {
+    console.error(filesValidations.error.errors)
+    return
+  }
+  if (!contributorValidations.success) {
+    console.error(contributorValidations.error.errors)
+    return
+  }
+  if (!result.success) {
+    console.error(result.error.errors)
+    return
+  }
+  try {
+    await db.transaction(async (trx) => {
+      console.log(
+        metadataValidations.data,
+        reviewerValidations.data,
+        articleSubmitionValidations.data,
+        filesValidations.data.files,
+        contributorValidations.data.contributors,
+        result.data
+      )
+      await trx.insert(metadata).values(metadataValidations.data)
+      await trx.insert(reviewers).values(reviewerValidations.data.reviewers)
+      await trx.insert(articleSubmissions).values(articleSubmitionValidations.data)
+      await trx.insert(files).values(filesValidations.data.files)
+      await trx.insert(contributors).values(contributorValidations.data.contributors)
+      await trx.insert(finalSubmissions).values(result.data)
+
+      console.log({ message: "success" })
+      return { message: "success" }
+    })
+  } catch (error) {
+    console.error(error)
+    return { message: "Failed to submit" }
+
+  }
+
 }
 

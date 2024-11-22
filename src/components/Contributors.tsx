@@ -1,9 +1,17 @@
+import {  useSearchParams } from "next/navigation"
 import { Checkbox } from "./ui/checkbox"
-import { useMetadata } from "@/lib/hooks/meta"
+import { safeParse } from "zod-urlsearchparams"
+import { z } from "zod"
+import { contributorFormSchema } from "@/schemas/upload"
 
 export const Contributors = () => {
-    const contributors = useMetadata()
-
+    const searchParams = useSearchParams()
+    const validation = safeParse({
+        schema: z.object({
+            contributors: z.array(contributorFormSchema),
+        }),
+        input: new URLSearchParams(searchParams.toString()),
+    })
     return (
         <table className="w-full">
             <thead>
@@ -16,8 +24,8 @@ export const Contributors = () => {
                 </tr>
             </thead>
             <tbody>
-                {contributors.map((c) => (
-                    <tr key={c.id} className="border-b">
+                {validation.data?.contributors.map((c) => (
+                    <tr key={c.homepage + c.name} className="border-b">
                         <td className="py-2 pr-4">{c.name}</td>
                         <td className="py-2 pr-4">{c.homepage}</td>
                         <td className="py-2 pr-4">{c.role}</td>
