@@ -6,19 +6,54 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { submitAction } from "@/lib/actions"
 import { useSearchParams } from "next/navigation"
 import { useActionState } from "react"
 import { Alert } from "../ui/alert"
+import { submitAction } from "@/lib/submitionAction"
+import { z } from "zod"
+import { metadataSchema } from "./ContributorsForm"
+import { articleSubmitionSchema, filesSchema, reviewerSchema } from "@/schemas/reviewer"
+import * as zu from "zod-urlsearchparams"
+import { contributorFormSchema } from "@/schemas/upload"
 
 export default function FinalSubmissionForm() {
     const searchParams = useSearchParams()
-
+    
     const [errorMessage, formAction, isPending] = useActionState(
         submitAction,
         undefined,
     );
 
+    const others = searchParams.toString()
+    if (!others) return <div>Failed to submit</div>
+
+    const metadataValidations = zu.parse({
+        input: new URLSearchParams(others),
+        schema: metadataSchema
+    })
+
+    const reviewerValidations = zu.parse({
+        input: new URLSearchParams(others),
+        schema: z.object({
+            reviewers: z.array(reviewerSchema)
+        })
+    })
+    const articleSubmitionValidations = zu.parse({
+        input: new URLSearchParams(others),
+        schema: articleSubmitionSchema
+    })
+    const filesValidations = zu.parse({
+        input: new URLSearchParams(others),
+        schema: filesSchema
+    })
+    const contributorValidations = zu.parse({
+        input: new URLSearchParams(others),
+        schema: z.object({
+            contributors: z.array(contributorFormSchema),
+        })
+    })
+
+    if (errorMessage?.message === "success") return <div>Success</div>
     return (
         <div className="flex min-h-screen">
             <Sidebar />
@@ -29,6 +64,20 @@ export default function FinalSubmissionForm() {
                         {errorMessage?.message}
                     </Alert>}
                     <input type="hidden" name="others" value={searchParams.toString()} />
+                <form
+                    action={formData => {
+                        formData.append("metadataValidations", JSON.stringify(metadataValidations))
+                        formData.append("contributorValidations", JSON.stringify(contributorValidations))
+                        formData.append("filesValidations", JSON.stringify(filesValidations))
+                        formData.append("articleSubmitionValidations", JSON.stringify(articleSubmitionValidations))
+                        formData.append("reviewerValidations", JSON.stringify(reviewerValidations))
+                        formAction(formData)
+                    }}
+
+                    className="p-8 bg-white rounded-lg shadow-md">
+                    {errorMessage?.message && <Alert>
+                        {errorMessage?.message}
+                    </Alert>}
                     <h2 className="mb-4 text-xl font-semibold">Final submission</h2>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <div>

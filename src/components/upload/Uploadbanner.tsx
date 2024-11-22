@@ -2,19 +2,40 @@ import { createUpload } from '@/lib/actions'
 import { Upload } from 'lucide-react'
 import { FC, useActionState, useEffect, useRef } from 'react'
 import { Alert } from '../ui/alert'
-import { CloudinaryUploadWidgetInfo } from 'next-cloudinary'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { safeParse, serialize } from 'zod-urlsearchparams'
+import { filesSchema } from '@/schemas/reviewer'
 
-export const Uploadbanner: FC<{ fileFormats: string[]; onSuccess: (file: CloudinaryUploadWidgetInfo | undefined) => void }> = ({ fileFormats, onSuccess }) => {
+export const Uploadbanner: FC<{ fileFormats: string[]; }> = ({ fileFormats }) => {
     const form = useRef<HTMLFormElement>(null)
+    const [responseMessage, formAction] = useActionState(
     const [responseMessage, formAction] = useActionState(
         createUpload,
         undefined,
     );
+
+    const router = useRouter()
+    const searchParams = useSearchParams()
+
+    const filesValidation = safeParse({
+        schema: filesSchema,
+        input: new URLSearchParams(searchParams.toString()),
+    })
+    const files = filesValidation.data?.files || []
+    const file = responseMessage?.data
+
     useEffect(() => {
-        if (responseMessage?.data) {
-            onSuccess(responseMessage.data)
-        }
-    }, [responseMessage?.data,  onSuccess])
+        if (!file) return
+        files.push({ fileType: '', originalName: file.type, publicId: file.public_id, resourceType: file.resource_type })
+        const serializedData = serialize({
+            data: { files },
+            schema: filesSchema
+        })
+        const params = new URLSearchParams(searchParams.toString())
+        params.delete('files')
+        router.push(`?${params.toString()}&${serializedData.toString()}`)
+    }, [responseMessage?.data?.public_id])
+
     return (
         <form action={formAction} ref={form} className="mb-4 cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-8 text-center">
             {responseMessage?.message && <Alert>
