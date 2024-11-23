@@ -6,7 +6,6 @@ import { AuthError } from 'next-auth';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import { loginSchema, registerSchema } from '@/schemas/auth.schema';
-import { isPasswordMatch } from './helpers';
 import z from 'zod'
 import { sendPasswordResetEmail } from './emailTransporter';
 import crypto from 'node:crypto'
@@ -25,11 +24,11 @@ cloudinary.config({
 })
 
 export async function authenticate(
-  prevState: string | undefined,
-  formData: FormData
+  _prevState: string | undefined,
+  formData: z.infer<typeof loginSchema>
 ) {
   try {
-    const login = loginSchema.safeParse(Object.fromEntries(formData.entries()))
+    const login = loginSchema.safeParse(formData)
     if (login.error) return login.error.errors[0].message
 
     await signIn('credentials', login.data);
@@ -43,7 +42,7 @@ export async function authenticate(
           return 'Something went wrong during sign-in.';
       }
     }
-    return 'An unexpected error occurred during authentication.';
+    return 'Success';
   }
 }
 export async function resetPassword(
@@ -87,17 +86,13 @@ export async function resetPassword(
 
 export async function register(
   prevState: { message: string, data?: Partial<z.infer<typeof registerSchema>> } | undefined,
-  formData: FormData
+  formData: z.infer<typeof registerSchema>
 ) {
   try {
-    const confirmPassword = formData.get('ConfirmPassword')?.toString()
-    const register = registerSchema.safeParse(Object.fromEntries(formData.entries()))
-    if (register.error) return { message: register.error.errors[0].message, data: Object.fromEntries(formData.entries()) as Partial<z.infer<typeof registerSchema>> }
+    const register = registerSchema.safeParse(formData)
+    if (register.error) return { message: register.error.errors[0].message, data: formData }
 
-    if (!confirmPassword || !isPasswordMatch(register.data.password, confirmPassword)) {
-      return { message: "password and confirm password don't match", data: register.data }
-    }
-
+   
     const existingUser = await db
       .select()
       .from(users)

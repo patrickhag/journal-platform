@@ -9,8 +9,7 @@ export const loginSchema = z.object({
     .email({ message: 'Invalid email' }),
   password: z
     .string()
-    .min(1, { message: 'Password is required' })
-    .max(100, 'Too long'),
+    .refine(val => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/.test(val ?? ''), "Minimum eight and maximum 10 characters, at least one uppercase letter, one lowercase letter, one number and one special character")
 });
 
 export const registerSchema = z.object({
@@ -31,9 +30,15 @@ export const registerSchema = z.object({
     .min(5, { message: 'Email is invalid' })
     .max(50, { message: 'Email is too long' })
     .email({ message: 'Invalid email' }),
-  country: z.enum(COUNTRIES, {message: 'country is required'}),
+  country: z.enum(COUNTRIES, { message: 'country is required' }),
+  acceptTerms: z.boolean().refine(val => val === true, { message: 'You must accept terms and conditions' }),
   password: z
-    .string({ required_error: 'Password is required' })
-    .min(6, { message: 'Minimum 6 characters required' })
-    .max(100, { message: 'Password is too long' }),
+    .string()
+    .refine(val => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/.test(val ?? ''), "Minimum eight and maximum 10 characters, at least one uppercase letter, one lowercase letter, one number and one special character"),
+  confirmPassword: z
+    .string()
+    .refine(val => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/.test(val ?? ''), "Password don't match")
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
 });
