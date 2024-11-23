@@ -3,7 +3,7 @@
 import {
     ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
-import { useActionState } from 'react';
+import { startTransition, useActionState, useEffect } from 'react';
 import { authenticate } from '@/lib/actions';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -11,9 +11,13 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useForm } from 'react-hook-form';
+import { loginSchema } from '@/schemas/auth.schema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { z } from 'zod';
 
 
 export default function Login() {
@@ -24,11 +28,22 @@ export default function Login() {
 
     const router = useRouter();
 
-    const handleSuccess = () => {
-        router.push('/dashboard');
-    };
+    const form = useForm<z.infer<typeof loginSchema>>({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: '',
+            password: ''
+        },
+    })
 
-    return<><Card className="w-full max-w-lg mx-auto p-4 mt-4">
+    useEffect(() => {
+        if (errorMessage === 'Success') {
+            router.push('/dashboard');
+        }
+    }, [errorMessage]);
+
+
+    return <><Card className="w-full max-w-lg mx-auto p-4 mt-4">
         <CardHeader className="space-y-1 text-center">
             <div className="flex justify-center mb-4">
                 <Image src={'/logo.png'} alt='logo' width={40} height={40} className='mx-auto' />
@@ -46,47 +61,74 @@ export default function Login() {
             }
         </CardHeader>
         <CardContent>
-            <form action={formAction}>
-                <div className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                            id="email"
-                            placeholder="enter email..."
-                            type="email"
-                            name="email"
-                            required
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="password">Password</Label>
-                        <Input
-                            id="password"
-                            placeholder="enter password..."
-                            type="password"
-                            name="password"
-                            required
-                        />
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                            <Checkbox id="remember" />
-                            <label
-                                htmlFor="remember"
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit((data) => {
+                    startTransition(() => {
+                        formAction(data)
+                    })
+                })}>
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <FormField
+                                control={form.control}
+                                name='email'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel htmlFor="email">Email</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="enter email..."
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
                             >
-                                Keep me logged in
-                            </label>
+                            </FormField>
                         </div>
-                        <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
-                            Forgot password?
-                        </Link>
+                        <div className="space-y-2">
+                            <FormField
+                                control={form.control}
+                                name='password'
+                                render={({ field }) => (
+                                    <FormItem>
+
+                                        <FormLabel htmlFor="password">Password</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="password"
+                                                placeholder="enter password..."
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}>
+                            </FormField>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                                <Checkbox id="remember" />
+                                <label
+                                    htmlFor="remember"
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                    Keep me logged in
+                                </label>
+                            </div>
+                            <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                                Forgot password?
+                            </Link>
+                        </div>
+                        <Button className="w-full" type="submit"
+                            disabled={isPending}
+                        >
+                            Login
+                        </Button>
                     </div>
-                    <Button className="w-full" type="submit" onClick={handleSuccess} aria-disabled={isPending}>
-                        Login
-                    </Button>
-                </div>
-            </form>
+                </form>
+            </Form>
         </CardContent>
         <div className="relative my-4">
             <Separator />
@@ -109,5 +151,5 @@ export default function Login() {
                 Register
             </Link>
         </div>
-        </> 
+    </>
 }
