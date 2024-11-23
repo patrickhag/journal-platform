@@ -8,7 +8,7 @@ import { ProgressLine } from "./Progress"
 import { Uploadbanner } from "./Uploadbanner"
 import { useSearchParams, useRouter } from "next/navigation"
 import { TNewJournal } from "@/lib/pages";
-import { safeParse, serialize } from "zod-urlsearchparams";
+import { safeParse } from "zod-urlsearchparams";
 import { filesSchema } from "@/schemas/reviewer"
 
 const fileFormats = [".DOC*", ".PDF"];
@@ -21,7 +21,6 @@ export default function FileUpload() {
     const filesValidation = safeParse({
         schema: filesSchema,
         input: new URLSearchParams(searchParams.toString()),
-        defaultData: { files: [] }
     })
 
     const createQueryString = useCallback<(name: string, value: TNewJournal) => string>(
@@ -31,6 +30,7 @@ export default function FileUpload() {
             return prs.toString();
         },
         [searchParams])
+
     const files = filesValidation.data?.files || []
 
     return (
@@ -41,17 +41,7 @@ export default function FileUpload() {
                 <ProgressLine />
                 <h1 className="mb-6 text-3xl font-bold">Upload files</h1>
                 <Card className="mb-6 p-6">
-                    <Uploadbanner fileFormats={fileFormats} onSuccess={(file) => {
-                        if(!file) return
-                        files.push({ fileType: '', originalName: file.type, publicId: file.public_id, resourceType: file.resource_type })
-                        const serializedData = serialize({
-                            data: { files },
-                            schema: filesSchema
-                        })
-                        const params = new URLSearchParams(searchParams.toString())
-                        params.delete('files')
-                        router.push(`?${params.toString()}&${serializedData.toString()}`)
-                    }} />
+                    <Uploadbanner fileFormats={fileFormats} />
                     <div className="space-y-4">
                         <FileList files={files} />
                     </div>
