@@ -33,7 +33,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { contributorFormSchema } from "@/schemas/upload"
-import { COUNTRIES } from "@/lib/consts"
+import { COUNTRIES, SALUTATION } from "@/lib/consts"
 import { safeParse, serialize } from "zod-urlsearchparams"
 import { useRouter, useSearchParams } from "next/navigation"
 
@@ -56,8 +56,8 @@ export default function NewContibutorForm({
         resolver: zodResolver(contributorFormSchema),
         defaultValues: {
             name: "",
-            salutation: "",
-            country: "",
+            salutation: "Mr",
+            country: "Rwanda",
             homepage: "",
             orcid: "",
             affiliation: "",
@@ -122,10 +122,10 @@ export default function NewContibutorForm({
                                     <FormLabel>Salutation *</FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder="Mr, Mrs, Ms, Dr, Prof, Rev."
+                                            placeholder={SALUTATION.join(', ')}
                                             {...field}
                                         />
-                                    </FormControl>
+                                   </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
