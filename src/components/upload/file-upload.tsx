@@ -1,7 +1,6 @@
 "use client"
 import { Card } from "@/components/ui/card"
 import { useCallback, } from "react"
-import { useCallback, } from "react"
 import { Sidebar } from "../Sidebar"
 import { Paginator } from "./Paginator"
 import { FileList } from "./FileList"

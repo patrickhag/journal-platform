@@ -9,7 +9,6 @@ import { filesSchema } from '@/schemas/reviewer'
 export const Uploadbanner: FC<{ fileFormats: string[]; }> = ({ fileFormats }) => {
     const form = useRef<HTMLFormElement>(null)
     const [responseMessage, formAction] = useActionState(
-    const [responseMessage, formAction] = useActionState(
         createUpload,
         undefined,
     );

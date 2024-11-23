@@ -30,15 +30,27 @@ export const SubmissionRequirementsSection = () => {
                     <div key={c.id} className="flex items-start space-x-3">
                         <Checkbox id={c.id} value={c.id} defaultChecked={requirementsValidation.data?.requirements.includes(c.id)} onCheckedChange={() => {
 
-                            const reqs = requirementsValidation.data?.requirements || []
+                            let reqs = requirementsValidation.data?.requirements || []
 
                             if (!reqs) return
-                            reqs.push(c.id)
+                            if (reqs.includes(c.id)) {
+                                reqs = reqs.filter(r => r !== c.id)
+                            } else {
+                                reqs.push(c.id)
+                            }
+                            
                             const serializedData = serialize({
                                 data: { requirements: [...new Set(reqs)] },
                                 schema: requirementsSchema
                             })
-                            router.push(`?${serializedData.toString()}`)
+
+                            const newSearchParams = new URLSearchParams(searchParams)
+                            for(const param of newSearchParams.entries()) {
+                              if(param[0] === 'requirements') {
+                                newSearchParams.delete(param[0])
+                              }
+                            }
+                            router.push(`?${newSearchParams.toString()}&${serializedData.toString()}`)
 
                         }} />
                         <label

@@ -18,7 +18,7 @@ import { contributorFormSchema } from "@/schemas/upload"
 
 export default function FinalSubmissionForm() {
     const searchParams = useSearchParams()
-    
+
     const [errorMessage, formAction, isPending] = useActionState(
         submitAction,
         undefined,
@@ -59,11 +59,6 @@ export default function FinalSubmissionForm() {
             <Sidebar />
             <main className="flex-1 p-8">
                 <ProgressLine />
-                <form action={formAction} className="p-8 bg-white rounded-lg shadow-md">
-                    {errorMessage?.message && <Alert>
-                        {errorMessage?.message}
-                    </Alert>}
-                    <input type="hidden" name="others" value={searchParams.toString()} />
                 <form
                     action={formData => {
                         formData.append("metadataValidations", JSON.stringify(metadataValidations))

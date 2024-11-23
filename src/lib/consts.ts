@@ -215,3 +215,5 @@ export const requirementsCheckboxGroup = [{
   id: "requirement5",
   text: "The text adheres to the stylistic and bibliographic requirements outlined in the Author Guidelines."
 }]
+
+export const ARTICLE_TYPES = ['Articles', 'Editorial Information', 'Editorial', 'Original Research', 'Review Articles', 'Short reports', 'Commentaries', 'Letters to the editor']
