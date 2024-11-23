@@ -194,7 +194,7 @@ export const COUNTRIES = [
     "Yemen",
     "Zambia",
     "Zimbabwe"
-  ];
+  ] as const;
   
 export const RESET_PASSWORD_EXPIRATION_TIME = 1000 * 60 * 5
 
@@ -216,4 +216,7 @@ export const requirementsCheckboxGroup = [{
   text: "The text adheres to the stylistic and bibliographic requirements outlined in the Author Guidelines."
 }]
 
-export const ARTICLE_TYPES = ['Articles', 'Editorial Information', 'Editorial', 'Original Research', 'Review Articles', 'Short reports', 'Commentaries', 'Letters to the editor']
+export const ARTICLE_TYPES = ['Articles', 'Editorial Information', 'Editorial', 'Original Research', 'Review Articles', 'Short reports', 'Commentaries', 'Letters to the editor'] as const
+
+export const SALUTATION = ["Mr", "Mrs", "Ms", "Dr", "Prof", "Rev"] as const
+

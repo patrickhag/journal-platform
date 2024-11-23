@@ -1,4 +1,4 @@
-import { requirementsCheckboxGroup } from "@/lib/consts";
+import { ARTICLE_TYPES, requirementsCheckboxGroup } from "@/lib/consts";
 import { z } from "zod";
 
 export const reviewerSchema = z.object({
@@ -19,7 +19,7 @@ export const reviewerSchema = z.object({
 
 
 export const articleSubmitionSchema = z.object({
-  section: z.string(),
+  section: z.enum(ARTICLE_TYPES, {message: "Please select a section"}),
   requirements: z.array(z.string()).length(requirementsCheckboxGroup.length),
   'Comments for the editor': z.string()
 })

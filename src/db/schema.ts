@@ -11,11 +11,16 @@ import {
 import postgres from "postgres"
 import { drizzle } from "drizzle-orm/postgres-js"
 import type { AdapterAccountType } from "next-auth/adapters"
+import { ARTICLE_TYPES, COUNTRIES, SALUTATION } from "@/lib/consts"
 
 const pool = postgres(process.env.DATABASE_URL!, { max: 1 })
 
 export const db = drizzle(pool)
 export const roleEnum = pgEnum("role", ['NORMAL_USER', 'EDITOR', 'REVIEWER'])
+export const articleTypeEnum = pgEnum("artticle-type", ARTICLE_TYPES)
+export const salutationEnum = pgEnum("salutation", SALUTATION)
+export const countryEnum = pgEnum("country", COUNTRIES)
+
 export const users = pgTable("user", {
   id: text('id')
     .primaryKey()
@@ -23,7 +28,7 @@ export const users = pgTable("user", {
   firstName: text('firstName'),
   lastName: text('lastName'),
   affiliation: text('affiliation'),
-  country: text('country'),
+  country:countryEnum().$defaultFn(()=> "Rwanda"),
   role: roleEnum().$default(() => 'NORMAL_USER'),
   email: text('email').unique(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
@@ -143,8 +148,8 @@ export const contributors = pgTable(
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
     name: text("name").notNull(),
-    salutation: text("salutation").notNull(),
-    country: text("country").notNull(),
+    salutation: salutationEnum().$defaultFn(()=> "Mr"),
+    country: countryEnum().$defaultFn(()=>'Rwanda'),
     homepage: text("homepage"),
     orcid: text("orcid"),
     affiliation: text("affiliation").notNull(),
@@ -164,7 +169,7 @@ export const reviewers = pgTable("reviewers", {
 
 export const articleSubmissions = pgTable("article_submissions", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
-  section: varchar("section", { length: 255 }).notNull(),
+  section: articleTypeEnum().$default(()=> 'Articles'),
   requirements: text("requirements").array().notNull(),
   'Comments for the editor': text("comments_for_editor").notNull(),
 });

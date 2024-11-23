@@ -1,3 +1,4 @@
+import { COUNTRIES } from '@/lib/consts';
 import * as z from 'zod';
 
 export const loginSchema = z.object({
@@ -30,9 +31,7 @@ export const registerSchema = z.object({
     .min(5, { message: 'Email is invalid' })
     .max(50, { message: 'Email is too long' })
     .email({ message: 'Invalid email' }),
-  country: z.string()
-    .max(20, { message: 'country is invalid' })
-    .min(3, { message: 'country is invalid' }),
+  country: z.enum(COUNTRIES, {message: 'country is required'}),
   password: z
     .string({ required_error: 'Password is required' })
     .min(6, { message: 'Minimum 6 characters required' })

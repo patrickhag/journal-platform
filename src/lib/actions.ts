@@ -296,14 +296,7 @@ export async function submitAction(_: unknown, formData: FormData) {
   }
   try {
     await db.transaction(async (trx) => {
-      console.log(
-        metadataValidations.data,
-        reviewerValidations.data,
-        articleSubmitionValidations.data,
-        filesValidations.data.files,
-        contributorValidations.data.contributors,
-        result.data
-      )
+
       await trx.insert(metadata).values(metadataValidations.data)
       await trx.insert(reviewers).values(reviewerValidations.data.reviewers)
       await trx.insert(articleSubmissions).values(articleSubmitionValidations.data)
