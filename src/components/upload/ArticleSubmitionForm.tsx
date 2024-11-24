@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Sidebar } from "../Sidebar"
 
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Paginator } from "./Paginator"
 import { useRouter, useSearchParams } from "next/navigation"
 import { TNewJournal } from "@/lib/pages"
@@ -12,7 +12,8 @@ import { ArticleTypeSection } from "./ArticleTypeSection"
 import { SubmissionRequirementsSection } from "./SubmissionRequirementsSection"
 import { safeParse } from "zod-urlsearchparams";
 import { articleSubmitionSchema } from "@/schemas/reviewer"
-
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 
 export default function ArticleSubmitionForm() {
     const router = useRouter()
@@ -26,7 +27,8 @@ export default function ArticleSubmitionForm() {
         },
         [searchParams])
 
-  
+    const [value, setValue] = useState('');
+
     const articleValidation = safeParse({
         input: searchParams,
         schema: articleSubmitionSchema
@@ -41,18 +43,17 @@ export default function ArticleSubmitionForm() {
                         <div className="space-y-8">
                             <ArticleTypeSection />
                             <SubmissionRequirementsSection />
-                            <div>
+                            <div className="my-4 py-3">
                                 <h2 className="text-xl font-semibold mb-4">
                                     Comments for the editor
                                 </h2>
-                                <Textarea
-                                    defaultValue={searchParams.get('Comments for the editor') || undefined}
-                                    className="min-h-[150px]"
-                                    placeholder="Enter your comments here..."
-                                    onChange={(e) => {
-                                        router.push(`?${createQueryString("Comments for the editor", e.target.value as TNewJournal)}`)
+                                
+                                <ReactQuill theme="snow" value={searchParams.get('Comments for the editor') || undefined}  onChange={(e) => {
+                                        router.push(`?${createQueryString("Comments for the editor", e as TNewJournal)}`)
                                     }}
+                                className="h-32 mb-4"
                                 />
+
                             </div>
 
                             <Paginator disabled={!articleValidation.success} onBack={() => {
