@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { useSearchParams } from "next/navigation"
-import { useActionState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useActionState, useCallback } from "react"
 import { Alert } from "../ui/alert"
 import { submitAction } from "@/lib/submitionAction"
 import { z } from "zod"
@@ -15,10 +15,21 @@ import { metadataSchema } from "./ContributorsForm"
 import { articleSubmitionSchema, filesSchema, reviewerSchema } from "@/schemas/reviewer"
 import * as zu from "zod-urlsearchparams"
 import { contributorFormSchema } from "@/schemas/upload"
+import { Paginator } from "./Paginator"
+import { TNewJournal } from "@/lib/pages"
 
 export default function FinalSubmissionForm() {
     const searchParams = useSearchParams()
 
+    const router = useRouter()
+
+    const createQueryString = useCallback(
+        (name: string, value: TNewJournal) => {
+            const prs = new URLSearchParams(searchParams.toString());
+            prs.set(name, value);
+            return prs.toString();
+        },
+        [searchParams])
     const [errorMessage, formAction, isPending] = useActionState(
         submitAction,
         undefined,
@@ -62,10 +73,10 @@ export default function FinalSubmissionForm() {
                 <form
                     action={formData => {
                         formData.append("metadataValidations", JSON.stringify(metadataValidations))
-                        formData.append("contributorValidations", JSON.stringify(contributorValidations))
-                        formData.append("filesValidations", JSON.stringify(filesValidations))
+                        formData.append("contributorValidations", JSON.stringify(contributorValidations.contributors))
+                        formData.append("filesValidations", JSON.stringify(filesValidations.files))
                         formData.append("articleSubmitionValidations", JSON.stringify(articleSubmitionValidations))
-                        formData.append("reviewerValidations", JSON.stringify(reviewerValidations))
+                        formData.append("reviewerValidations", JSON.stringify(reviewerValidations.reviewers))
                         formAction(formData)
                     }}
 
@@ -123,8 +134,11 @@ export default function FinalSubmissionForm() {
                     <p className="mt-6 text-sm text-gray-600">
                         Your submission has been uploaded and is ready to be sent. You may go back to review and adjust any of the information you have entered before continuing. When you are ready, click &quot;Submit&quot;.
                     </p>
-                    <div className="flex justify-between mt-4">
-                        <Button variant="outline">Go back</Button>
+                    <div className="flex items-end justify-between mt-4">
+                        <Paginator disabled={isPending} onBack={() => {
+                            router.push(`?${createQueryString("page", 'Reviewers')}`)
+
+                        }} />
                         <Button disabled={isPending}>Submit</Button>
                     </div>
                 </form>

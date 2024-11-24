@@ -20,7 +20,6 @@ export const Contributors = () => {
                     <th className="pb-2 pr-4">Email</th>
                     <th className="pb-2 pr-4">Role</th>
                     <th className="pb-2 pr-4">Primary contact</th>
-                    <th className="pb-2">In browse lists</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,9 +30,6 @@ export const Contributors = () => {
                         <td className="py-2 pr-4">{c.role}</td>
                         <td className="py-2 pr-4">
                             <Checkbox id={`primary-${c.name}`} />
-                        </td>
-                        <td className="py-2">
-                            <Checkbox id={`browse-${c.name}`} />
                         </td>
                     </tr>
                 ))}

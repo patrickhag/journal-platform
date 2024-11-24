@@ -1,7 +1,7 @@
 'use server';
 
 import { signIn } from '@/auth';
-import { metadata, db, files, passwordResets, users, contributors, reviewers, articleSubmissions, finalSubmissions } from '@/db/schema';
+import { db, files, passwordResets, users} from '@/db/schema';
 import { AuthError } from 'next-auth';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
@@ -11,11 +11,7 @@ import { sendPasswordResetEmail } from './emailTransporter';
 import crypto from 'node:crypto'
 import { RESET_PASSWORD_EXPIRATION_TIME } from './consts';
 import { v2 as cloudinary } from "cloudinary";
-import { contributorFormSchema } from '@/schemas/upload';
 import { CloudinaryUploadWidgetInfo } from 'next-cloudinary';
-import { articleSubmitionSchema, filesSchema, reviewerSchema } from '@/schemas/reviewer';
-import { safeParse } from 'zod-urlsearchparams';
-import { metadataSchema } from '@/components/upload/ContributorsForm';
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -197,116 +193,3 @@ export async function createUpload(_: { message?: string; data?: CloudinaryUploa
     return { message: "Internal Server Error" }
   }
 }
-
-
-export async function addReviewer(_: unknown, formData: FormData) {
-
-  const validatedFields = reviewerSchema.safeParse(formData)
-  if (!validatedFields.success) {
-    return { error: validatedFields.error.flatten().fieldErrors }
-  }
-
-  try {
-    await db.insert(reviewers).values(validatedFields.data)
-    return { message: "success" }
-  } catch (error) {
-    console.error('Failed to add reviewer:', error)
-    return { error: 'Failed to add reviewer. Please try again.' }
-  }
-}
-
-const finalSubmissionSchema = z.object({
-  funded: z.enum(["yes", "no"], {
-    required_error: "Funding status is required",
-  }).transform(val => val === "yes"),
-  ethical: z.enum(["yes", "no"], {
-    required_error: "Ethical clearance status is required",
-  }).transform(val => val === "yes"),
-  consent: z.enum(["yes", "no"], {
-    required_error: "Informed consent status is required",
-  }).transform(val => val === "yes"),
-  human: z.enum(["yes", "no"], {
-    required_error: "Human part inclusion status is required",
-  }).transform(val => val === "yes"),
-  founders: z.string().optional(),
-  ethicalReference: z.string().optional()
-})
-
-export async function submitAction(_: unknown, formData: FormData) {
-  const data = Object.fromEntries(formData.entries())
-  const result = finalSubmissionSchema.safeParse(data)
-
-  const others = formData.get('others')?.toString()
-  if (!others) return { message: "Failed to submit" }
-
-  const metadataValidations = safeParse({
-    input: new URLSearchParams(others),
-    schema: metadataSchema
-  })
-
-  const reviewerValidations = safeParse({
-    input: new URLSearchParams(others),
-    schema: z.object({
-      reviewers: z.array(reviewerSchema)
-    })
-  })
-  const articleSubmitionValidations = safeParse({
-    input: new URLSearchParams(others),
-    schema: articleSubmitionSchema
-  })
-  const filesValidations = safeParse({
-    input: new URLSearchParams(others),
-    schema: filesSchema
-  })
-  const contributorValidations = safeParse({
-    input: new URLSearchParams(others),
-    schema: z.object({
-      contributors: z.array(contributorFormSchema),
-    })
-  })
-
-  if (!metadataValidations.success) {
-    console.error(metadataValidations.error.errors)
-    return
-  }
-  if (!reviewerValidations.success) {
-    console.error(reviewerValidations.error.errors)
-    return
-  }
-  if (!articleSubmitionValidations.success) {
-    console.error(articleSubmitionValidations.error.errors)
-    return
-  }
-  if (!filesValidations.success) {
-    console.error(filesValidations.error.errors)
-    return
-  }
-  if (!contributorValidations.success) {
-    console.error(contributorValidations.error.errors)
-    return
-  }
-  if (!result.success) {
-    console.error(result.error.errors)
-    return
-  }
-  try {
-    await db.transaction(async (trx) => {
-
-      await trx.insert(metadata).values(metadataValidations.data)
-      await trx.insert(reviewers).values(reviewerValidations.data.reviewers)
-      await trx.insert(articleSubmissions).values(articleSubmitionValidations.data)
-      await trx.insert(files).values(filesValidations.data.files)
-      await trx.insert(contributors).values(contributorValidations.data.contributors)
-      await trx.insert(finalSubmissions).values(result.data)
-
-      console.log({ message: "success" })
-      return { message: "success" }
-    })
-  } catch (error) {
-    console.error(error)
-    return { message: "Failed to submit" }
-
-  }
-
-}
-

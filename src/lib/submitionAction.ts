@@ -1,5 +1,9 @@
 "use server"
-import { articleSubmissions, contributors, db, files, finalSubmissions, metadata, reviewers } from "@/db/schema"
+import { auth } from "@/auth"
+import { metadataSchema } from "@/components/upload/ContributorsForm"
+import { articleSubmissions, contributors, db, files, metadata, reviewers } from "@/db/schema"
+import { articleSubmitionSchema, fileSchema, reviewerSchema } from "@/schemas/reviewer"
+import { contributorFormSchema } from "@/schemas/upload"
 import * as z from "zod"
 
 const finalSubmissionSchema = z.object({
@@ -28,21 +32,47 @@ export async function submitAction(_: unknown, formData: FormData) {
         console.error(result.error.errors)
         return
     }
-    const metadataValidations = JSON.parse(data.metadataValidations.toString())
-    const reviewerValidations = JSON.parse(data.reviewerValidations.toString())
-    const articleSubmitionValidations = JSON.parse(data.articleSubmitionValidations.toString())
-    const filesValidations = JSON.parse(data.filesValidations.toString())
-    const contributorValidations = JSON.parse(data.contributorValidations.toString())
+    const metadataValidations = JSON.parse(data.metadataValidations.toString()) as z.infer<typeof metadataSchema>
+    const reviewerValidations = JSON.parse(data.reviewerValidations.toString()) as z.infer<typeof reviewerSchema>[]
+    const articleSubmitionValidations = JSON.parse(data.articleSubmitionValidations.toString()) as z.infer<typeof articleSubmitionSchema>
+    const filesValidations = JSON.parse(data.filesValidations.toString()) as z.infer<typeof fileSchema>[]
+    const contributorValidations = JSON.parse(data.contributorValidations.toString()) as z.infer<typeof contributorFormSchema>[]
+
 
     try {
-        await db.transaction(async (trx) => {
-            await trx.insert(metadata).values(metadataValidations)
-            await trx.insert(reviewers).values(reviewerValidations.reviewers)
-            await trx.insert(articleSubmissions).values(articleSubmitionValidations)
-            await trx.insert(files).values(filesValidations.files)
-            await trx.insert(contributors).values(contributorValidations.contributors)
-            await trx.insert(finalSubmissions).values(result.data)
 
+        await db.transaction(async (trx) => {
+            const session = await auth()
+            const userId = session?.user?.id || ''
+
+            const articleSubmissionIds = await trx
+                .insert(articleSubmissions)
+                .values({
+                    ...articleSubmitionValidations,
+                    commentsForEditor: articleSubmitionValidations["Comments for the editor"],
+                    userId: userId,
+                }).returning({ id: articleSubmissions.id })
+
+            const insert = async <T>(
+                vals: T[],
+                // @ts-expect-error any
+                t
+            ) => {
+                for (const v of vals) {
+                    const ids = await trx.insert(t).values({
+                        ...v,
+                        userId: userId,
+                        articleId: articleSubmissionIds[0].id
+                    }).returning({ id: t.id })
+                    console.log(v, ids)
+                }
+            }
+
+            await insert(reviewerValidations, reviewers)
+            await insert(filesValidations, files)
+            await insert(contributorValidations, contributors)
+            await insert(reviewerValidations, reviewers)
+            await trx.insert(metadata).values({ ...metadataValidations, articleId: articleSubmissionIds[0].id, userId: userId })
             console.log({ message: "success" })
             return { message: "success" }
         })

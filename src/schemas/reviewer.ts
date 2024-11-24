@@ -24,7 +24,7 @@ export const articleSubmitionSchema = z.object({
   'Comments for the editor': z.string()
 })
 
-const fileSchema = z.object(
+export const fileSchema = z.object(
   {
     publicId: z.string(),
     fileType: z.string().optional(),
