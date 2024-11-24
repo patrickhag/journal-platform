@@ -46,7 +46,7 @@ export default function FileUpload() {
                         <FileList files={files} />
                     </div>
                 </Card>
-                <Paginator disabled={files.some(f => f.fileType === '')} onBack={() => {
+                <Paginator disabled={files.length <= 0 || files.some(f => !f.fileType)} onBack={() => {
                     router.push(`?${createQueryString("page", 'start')}`)
                 }} onNext={() => {
                     router.push(`?${createQueryString("page", 'Enter metadata')}`)

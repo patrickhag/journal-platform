@@ -9,6 +9,9 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useState } from "react"
 import AddReviewerModal from "./AddReviewerModal"
 import { TNewJournal } from "@/lib/pages"
+import { safeParse } from "zod-urlsearchparams"
+import { reviewerSchema } from "@/schemas/reviewer"
+import { z } from "zod"
 
 export default function Reviewer() {
     const router = useRouter()
@@ -23,6 +26,14 @@ export default function Reviewer() {
         [searchParams])
     const [open, setOpen] = useState(false)
 
+    const reviewersValidation = safeParse({
+        schema: z.object({
+            reviewers: z.array(reviewerSchema)
+        }),
+        input: new URLSearchParams(searchParams.toString()),
+    })
+
+    const reviewers = reviewersValidation.data?.reviewers || []
     return (
         <div className="min-h-screen bg-background">
             <header className="border-b">
@@ -60,7 +71,7 @@ export default function Reviewer() {
                                     open={open}
                                     onOpenChange={setOpen}
                                 />
-                                <Paginator onBack={() => {
+                                <Paginator disabled={reviewers.length <= 0} onBack={() => {
                                     router.push(`?${createQueryString("page", 'Enter metadata')}`)
 
                                 }} onNext={() => {

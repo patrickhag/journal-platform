@@ -76,7 +76,7 @@ export const ContributorsForm = () => {
                     <Textarea className="hidden"  id="abstract" name="abstract" defaultValue={abstract} placeholder="Abstract of the journal" rows={4} />
                 </div>
 
-                <Button variant="secondary" className="mt-4" type="submit">
+                <Button variant="outline" className="mt-4" type="submit">
                     Save meta
                 </Button>
             </form>

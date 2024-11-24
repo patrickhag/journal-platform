@@ -25,7 +25,7 @@ export const Uploadbanner: FC<{ fileFormats: string[]; }> = ({ fileFormats }) =>
 
     useEffect(() => {
         if (!file) return
-        files.push({ fileType: '', originalName: file.type, publicId: file.public_id, resourceType: file.resource_type })
+        files.push({ originalName: file.name, publicId: file.public_id, resourceType: file.resource_type, bytes: file.bytes.toString(), format: file.format })
         const serializedData = serialize({
             data: { files },
             schema: filesSchema

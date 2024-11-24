@@ -19,7 +19,7 @@ export const reviewerSchema = z.object({
 
 
 export const articleSubmitionSchema = z.object({
-  section: z.enum(ARTICLE_TYPES, {message: "Please select a section"}),
+  section: z.enum(ARTICLE_TYPES, { message: "Please select a section" }),
   requirements: z.array(z.string()).length(requirementsCheckboxGroup.length),
   'Comments for the editor': z.string()
 })
@@ -28,6 +28,7 @@ export const fileSchema = z.object(
   {
     publicId: z.string(),
     fileType: z.string().optional(),
+    bytes: z.string().optional(),
     resourceType: z.string(),
     originalName: z.string()
   }
@@ -37,3 +38,19 @@ export const filesSchema = z.object({
 })
 
 export type TFile = (z.infer<typeof fileSchema>)
+export const finalSubmissionSchema = z.object({
+  funded: z.enum(["yes", "no"], {
+    required_error: "Funding status is required",
+  }),
+  ethical: z.enum(["yes", "no"], {
+    required_error: "Ethical clearance status is required",
+  }),
+  consent: z.enum(["yes", "no"], {
+    required_error: "Informed consent status is required",
+  }),
+  human: z.enum(["yes", "no"], {
+    required_error: "Human part inclusion status is required",
+  }),
+  founders: z.string().optional(),
+  ethicalReference: z.string({required_error: 'lorem'}).optional()
+})
