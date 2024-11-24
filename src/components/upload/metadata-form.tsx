@@ -2,10 +2,13 @@ import { Card } from "@/components/ui/card"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Sidebar } from "../Sidebar"
 import { ProgressLine } from "./Progress"
-import { ContributorsForm } from "./ContributorsForm"
+import { ContributorsForm, metadataSchema } from "./ContributorsForm"
 import { Paginator } from "./Paginator"
 import { useCallback } from "react"
 import { TNewJournal } from "@/lib/pages"
+import { safeParse } from "zod-urlsearchparams"
+import { z } from "zod"
+import { contributorFormSchema } from "@/schemas/upload"
 
 export default function MetadataForm() {
   const router = useRouter()
@@ -19,6 +22,17 @@ export default function MetadataForm() {
       },
       [searchParams])
 
+      const parsedData = safeParse({
+        input: new URLSearchParams(searchParams.toString()),
+        schema: metadataSchema,
+    })
+    const validation = safeParse({
+      schema: z.object({
+          contributors: z.array(contributorFormSchema),
+      }),
+      input: new URLSearchParams(searchParams.toString()),
+  })
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
@@ -31,7 +45,7 @@ export default function MetadataForm() {
         <Card className="mb-6 p-6">
           <ContributorsForm />
         </Card>
-        <Paginator onBack={() => {
+        <Paginator disabled={!(parsedData.success && validation.success)} onBack={() => {
           router.push(`?${createQueryString("page", 'Attach files')}`)
         }} onNext={() => {
           router.push(`?${createQueryString("page", 'Reviewers')}`)

@@ -34,36 +34,44 @@ export const FileList: FC<{
                         </svg>
                         <div>
                             <p className="font-medium">{file.originalName}</p>
-                            <p className="text-sm text-gray-500">{file.fileType}
+                            <p className="text-sm text-gray-500">{file.originalName.slice(file.originalName.lastIndexOf('.'))}
                             </p>
                         </div>
                     </div>
-                    <div className="flex space-x-2">
-                        <FileTypesModal originalName={file.originalName} publicId={file.publicId} resourceType={file.resourceType} >
-                            <Button variant="outline" size="icon">
-                                <Pencil className="h-4 w-4" />
-                                <span className="sr-only">Edit</span>
-                            </Button>
-                        </FileTypesModal>
-                        <form action={() => {
+                    <div className="grid gap-2">
 
-                            const serializedData = serialize({
-                                data: { files: files.filter(f => f.publicId !== file.publicId) },
-                                schema: filesSchema
-                            })
+                        <div className="flex space-x-2">
+                            <FileTypesModal originalName={file.originalName} publicId={file.publicId} resourceType={file.resourceType} >
+                                <Button variant="outline" size="icon">
+                                    <Pencil className="h-4 w-4" />
+                                    <span className="sr-only">Edit</span>
+                                </Button>
+                            </FileTypesModal>
+                            <form action={() => {
 
-                            const params = new URLSearchParams(searchParams.toString())
-                            params.delete('files')
-                            router.push(`?${params.toString()}&${serializedData.toString()}`)
+                                const serializedData = serialize({
+                                    data: { files: files.filter(f => f.publicId !== file.publicId) },
+                                    schema: filesSchema
+                                })
 
-                        }}>
-                            <input type="hidden" name="publicId" value={file.publicId} />
-                            <Button
-                                variant="outline" size="icon" type="submit">
-                                <Trash2 className="h-4 w-4" />
-                                <span className="sr-only">Delete</span>
-                            </Button>
-                        </form>
+                                const params = new URLSearchParams(searchParams.toString())
+                                params.delete('files')
+                                router.push(`?${params.toString()}&${serializedData.toString()}`)
+
+                            }}>
+                                <input type="hidden" name="publicId" value={file.publicId} />
+                                <Button
+                                    variant="outline" size="icon" type="submit">
+                                    <Trash2 className="h-4 w-4" />
+                                    <span className="sr-only">Delete</span>
+                                </Button>
+                            </form>
+                        </div>
+                        {file.fileType &&
+                            <small className="bg-gray-300 py-1 px-2 rounded-sm">
+                                {file.fileType}
+                            </small>
+                        }
                     </div>
                 </div>
             ))}

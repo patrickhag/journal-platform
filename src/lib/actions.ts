@@ -187,7 +187,7 @@ export async function createUpload(_: { message?: string; data?: CloudinaryUploa
     }
 
     console.log(result);
-    return { data: result };
+    return { data: {...result, name: (files as File).name} };
   } catch (error) {
     console.log("server err", error);
     return { message: "Internal Server Error" }

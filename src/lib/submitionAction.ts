@@ -2,27 +2,9 @@
 import { auth } from "@/auth"
 import { metadataSchema } from "@/components/upload/ContributorsForm"
 import { articleSubmissions, contributors, db, files, metadata, reviewers } from "@/db/schema"
-import { articleSubmitionSchema, fileSchema, reviewerSchema } from "@/schemas/reviewer"
+import { articleSubmitionSchema, fileSchema, finalSubmissionSchema, reviewerSchema } from "@/schemas/reviewer"
 import { contributorFormSchema } from "@/schemas/upload"
 import * as z from "zod"
-
-const finalSubmissionSchema = z.object({
-    funded: z.enum(["yes", "no"], {
-        required_error: "Funding status is required",
-    }).transform(val => val === "yes"),
-    ethical: z.enum(["yes", "no"], {
-        required_error: "Ethical clearance status is required",
-    }).transform(val => val === "yes"),
-    consent: z.enum(["yes", "no"], {
-        required_error: "Informed consent status is required",
-    }).transform(val => val === "yes"),
-    human: z.enum(["yes", "no"], {
-        required_error: "Human part inclusion status is required",
-    }).transform(val => val === "yes"),
-    founders: z.string().optional(),
-    ethicalReference: z.string().optional()
-})
-
 
 export async function submitAction(_: unknown, formData: FormData) {
     const data = Object.fromEntries(formData.entries())
