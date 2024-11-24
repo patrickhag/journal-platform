@@ -1,10 +1,9 @@
 'use client'
 
 import { Card, CardContent } from "@/components/ui/card"
-import { Textarea } from "@/components/ui/textarea"
 import { Sidebar } from "../Sidebar"
 
-import React, { useCallback, useState } from 'react'
+import React, { useCallback } from 'react'
 import { Paginator } from "./Paginator"
 import { useRouter, useSearchParams } from "next/navigation"
 import { TNewJournal } from "@/lib/pages"
@@ -26,8 +25,6 @@ export default function ArticleSubmitionForm() {
             return prs.toString();
         },
         [searchParams])
-
-    const [value, setValue] = useState('');
 
     const articleValidation = safeParse({
         input: searchParams,
