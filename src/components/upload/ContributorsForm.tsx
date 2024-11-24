@@ -9,6 +9,8 @@ import NewContibutorForm from "../Contibutor"
 import {  z } from "zod"
 import { safeParse, serialize } from "zod-urlsearchparams"
 import { useRouter, useSearchParams } from "next/navigation"
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 
 export const metadataSchema = z.object({
     prefix: z.string().min(2),
@@ -28,6 +30,7 @@ export const ContributorsForm = () => {
     })
 
     const [modalOpen, setModalOpen] = useState(false)
+    const [abstract, setAbstract] = useState(metaValidation.data?.abstract)
 
     return (
         <>
@@ -65,9 +68,12 @@ export const ContributorsForm = () => {
                     <Label htmlFor="subtitle">Subtitle *</Label>
                     <Input id="subtitle" name="subtitle" defaultValue={metaValidation?.data?.subtitle} placeholder="Subtitle of the journal" />
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 py-3">
                     <Label htmlFor="abstract">Abstract *</Label>
-                    <Textarea id="abstract" name="abstract" defaultValue={metaValidation?.data?.abstract} placeholder="Abstract of the journal" rows={4} />
+                    <ReactQuill  theme="snow" value={abstract}  onChange={setAbstract}
+                                className="h-32 mb-4"
+                                />
+                    <Textarea className="hidden"  id="abstract" name="abstract" defaultValue={abstract} placeholder="Abstract of the journal" rows={4} />
                 </div>
 
                 <Button variant="secondary" className="mt-4" type="submit">
