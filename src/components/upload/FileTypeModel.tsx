@@ -80,7 +80,7 @@ const FileTypesModal: FC<{
                                 <RadioGroup name="fileType" defaultValue="article" className="space-y-3">
                                     {fileTypes.map((option) => (
                                         <div key={option.value} className="flex items-center space-x-2">
-                                            <RadioGroupItem value={option.value} id={option.value} />
+                                            <RadioGroupItem value={option.label} id={option.value} />
                                             <Label htmlFor={option.value} className="font-normal">
                                                 {option.label}
                                             </Label>
