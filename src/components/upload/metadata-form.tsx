@@ -1,12 +1,13 @@
+"use client"
 import { Card } from "@/components/ui/card"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Sidebar } from "../Sidebar"
 import { ProgressLine } from "./Progress"
-import { ContributorsForm, metadataSchema } from "./ContributorsForm"
+import { ContributorsForm,  } from "./ContributorsForm"
 import { Paginator } from "./Paginator"
 import { useCallback, useRef } from "react"
 import { TNewJournal } from "@/lib/pages"
-import { safeParse, serialize } from "zod-urlsearchparams"
+import { safeParse,  } from "zod-urlsearchparams"
 import { z } from "zod"
 import { contributorFormSchema } from "@/schemas/upload"
 import { NewMetaForm } from "./NewMetaForm"
@@ -49,8 +50,14 @@ export default function MetadataForm() {
           router.push(`?${createQueryString("page", 'Attach files')}`)
         }} onNext={() => {
           form.current?.requestSubmit()
-          if (form.current?.getAttribute('submited') === 'submited')
-            router.push(`?${createQueryString("page", 'Reviewers')}`)
+          if (form.current?.getAttribute('submited') === 'submited') {
+
+          if (window) {
+            location.href = location.origin + location.pathname + "?" + createQueryString("page", 'Reviewers')
+          }
+          }
+          // NextJS issue https://github.com/vercel/next.js/discussions/9801, https://github.com/vercel/next.js/discussions/58940
+          // router.push(`?${createQueryString("page", 'Reviewers')}`)
         }} />
       </main>
     </div>

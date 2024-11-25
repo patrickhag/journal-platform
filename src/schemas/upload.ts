@@ -6,6 +6,7 @@ export const contributorFormSchema = z.object({
     salutation: z.enum(SALUTATION, { message: "Salutation is required." }),
     country: z.enum(COUNTRIES, { message: "Country is required." }),
     homepage: z.string().url().optional().or(z.literal("")),
+    email: z.string({required_error: "Please provide your email"}).email("Enter a valid email"),
     orcid: z.string().optional(),
     affiliation: z.string().min(2, { message: "Affiliation is required." }),
     bio: z.string().min(10, { message: "Bio must be at least 10 characters." }),

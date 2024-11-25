@@ -4,6 +4,7 @@ import { metadataSchema } from "@/components/upload/ContributorsForm"
 import { articleSubmissions, contributors, db, files, metadata, reviewers } from "@/db/schema"
 import { articleSubmitionSchema, fileSchema, finalSubmissionSchema, reviewerSchema } from "@/schemas/reviewer"
 import { contributorFormSchema } from "@/schemas/upload"
+import { redirect, RedirectType } from "next/navigation"
 import * as z from "zod"
 
 export async function submitAction(_: unknown, formData: FormData) {
@@ -19,7 +20,7 @@ export async function submitAction(_: unknown, formData: FormData) {
     const articleSubmitionValidations = JSON.parse(data.articleSubmitionValidations.toString()) as z.infer<typeof articleSubmitionSchema>
     const filesValidations = JSON.parse(data.filesValidations.toString()) as z.infer<typeof fileSchema>[]
     const contributorValidations = JSON.parse(data.contributorValidations.toString()) as z.infer<typeof contributorFormSchema>[]
-
+    const isError = false
 
     try {
 
@@ -55,14 +56,14 @@ export async function submitAction(_: unknown, formData: FormData) {
             await insert(contributorValidations, contributors)
             await insert(reviewerValidations, reviewers)
             await trx.insert(metadata).values({ ...metadataValidations, articleId: articleSubmissionIds[0].id, userId: userId })
-            console.log({ message: "success" })
-            return { message: "success" }
         })
     } catch (error) {
         console.error("Weeerror", error)
         return { message: "Failed to submit" }
 
     }
+   
+            redirect('/dashboard', RedirectType.push)
 
 }
 

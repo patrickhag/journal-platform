@@ -17,7 +17,7 @@ import * as zu from "zod-urlsearchparams"
 import { contributorFormSchema } from "@/schemas/upload"
 import { Paginator } from "./Paginator"
 import { TNewJournal } from "@/lib/pages"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
+import { Form, FormControl,  FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
@@ -49,34 +49,32 @@ export default function FinalSubmissionForm() {
     const others = searchParams.toString()
     if (!others) return <div>Failed to submit</div>
 
-    const metadataValidations = zu.parse({
+    const metadataValidations = zu.safeParse({
         input: new URLSearchParams(others),
         schema: metadataSchema
     })
 
-    const reviewerValidations = zu.parse({
+    const reviewerValidations = zu.safeParse({
         input: new URLSearchParams(others),
         schema: z.object({
             reviewers: z.array(reviewerSchema)
         })
     })
-    const articleSubmitionValidations = zu.parse({
+    const articleSubmitionValidations = zu.safeParse({
         input: new URLSearchParams(others),
         schema: articleSubmitionSchema
     })
-    const filesValidations = zu.parse({
+    const filesValidations = zu.safeParse({
         input: new URLSearchParams(others),
         schema: filesSchema
     })
-    const contributorValidations = zu.parse({
+    const contributorValidations = zu.safeParse({
         input: new URLSearchParams(others),
         schema: z.object({
             contributors: z.array(contributorFormSchema),
         })
     })
 
-    if (errorMessage?.message === "success") return <div>Success</div>
-    
     return (
         <div className="flex min-h-screen">
             <Sidebar />
@@ -92,11 +90,11 @@ export default function FinalSubmissionForm() {
                                 }
 
                             }
-                            fm.append("metadataValidations", JSON.stringify(metadataValidations))
-                            fm.append("contributorValidations", JSON.stringify(contributorValidations.contributors))
-                            fm.append("filesValidations", JSON.stringify(filesValidations.files))
-                            fm.append("articleSubmitionValidations", JSON.stringify(articleSubmitionValidations))
-                            fm.append("reviewerValidations", JSON.stringify(reviewerValidations.reviewers))
+                            fm.append("metadataValidations", JSON.stringify(metadataValidations.data))
+                            fm.append("contributorValidations", JSON.stringify(contributorValidations.data?.contributors))
+                            fm.append("filesValidations", JSON.stringify(filesValidations.data?.files))
+                            fm.append("articleSubmitionValidations", JSON.stringify(articleSubmitionValidations.data))
+                            fm.append("reviewerValidations", JSON.stringify(reviewerValidations.data?.reviewers))
                             startTransition(() => {
                                 formAction(fm)
 

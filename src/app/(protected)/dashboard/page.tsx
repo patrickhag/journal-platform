@@ -1,19 +1,11 @@
-"use client"
-import { signIn, signOut } from "@/auth/helpers";
-import { Button } from "@/components/ui/button";
-import { useSession } from "next-auth/react";
+import DashboardPannel from "@/components/Dashboard";
+import { articleSubmissions,  db, files } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
-export default function Dashboard() {
-    const session = useSession();
-    return session?.data?.user ? (
-      <Button
-        onClick={async () => {
-          await signOut();
-        }}
-      >
-        {session.data?.user.email} : Sign Out
-      </Button>
-    ) : (
-      <Button onClick={async () => await signIn()}>Sign In</Button>
-    );
-}
+
+export default async function Dashboard() {
+ const articles = await db.select().from(articleSubmissions).leftJoin(files, eq(articleSubmissions.id, files.articleId))
+
+ return <DashboardPannel />
+  }
+

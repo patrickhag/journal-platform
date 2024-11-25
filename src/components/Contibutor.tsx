@@ -63,6 +63,7 @@ export default function NewContibutorForm({
             affiliation: "",
             bio: "",
             role: "author",
+            email:""
         },
     })
 
@@ -99,6 +100,8 @@ export default function NewContibutorForm({
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+
                         <FormField
                             control={form.control}
                             name="name"
@@ -115,6 +118,23 @@ export default function NewContibutorForm({
                                 </FormItem>
                             )}
                         />
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email*</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="Email of the contributor"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        </div>
                         <FormField
                             control={form.control}
                             name="salutation"

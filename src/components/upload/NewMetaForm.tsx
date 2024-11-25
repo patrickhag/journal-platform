@@ -1,7 +1,7 @@
+"use client"
 import React, { FC, RefObject, useState } from 'react'
 import { metadataSchema } from './ContributorsForm'
 import { Input } from "../ui/input"
-import { Label } from "../ui/label"
 import { Textarea } from "../ui/textarea"
 import ReactQuill from 'react-quill-new';
 import { safeParse, serialize } from "zod-urlsearchparams"
@@ -21,23 +21,22 @@ export const NewMetaForm: FC<{
         schema: metadataSchema,
         input: new URLSearchParams(searchParams.toString()),
     })
-    // const [abstract, setAbstract] = useState(metaValidation.data?.abstract)
     const formm = useForm<z.infer<typeof metadataSchema>>({
         resolver: zodResolver(metadataSchema),
-        defaultValues: {
-            abstract: '',
-            prefix: '',
-            subtitle: '',
-            title: ''
+        defaultValues: metaValidation.data || {
+          title:'',
+          prefix:'',
+          abstract:'',
+          subtitle: ''
         }
     })
-    const saveMeta = (formData: FormData) => {
-        const data = Object.fromEntries(formData.entries())
+
+    const saveMeta = formm.handleSubmit((data) => {
         const meta = metadataSchema.safeParse(data)
         if (meta.error) return
 
         const serializedData = serialize({
-            data: Object.fromEntries(formData.entries()) as z.infer<typeof metadataSchema>,
+            data,
             schema: metadataSchema,
         })
 
@@ -47,15 +46,14 @@ export const NewMetaForm: FC<{
         })
 
         router.push(`?${params.toString()}&${serializedData.toString()}`)
-    }
+        router.refresh()
+
+        form.current?.setAttribute('submited', 'submited')
+    })
     return (
         <Form {...formm}>
             <form ref={form}
-                action={saveMeta}
-                onSubmit={formm.handleSubmit((data) => {
-                    console.log(data)
-                    form.current?.setAttribute('submited', 'submited')
-                })}>
+                onSubmit={saveMeta}>
                 <div className="mb-4 grid grid-cols-2 gap-4">
                     <FormField name='prefix' control={formm.control} render={({ field }) => (
                         <FormItem>
