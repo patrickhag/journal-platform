@@ -13,6 +13,7 @@ import { safeParse } from "zod-urlsearchparams";
 import { articleSubmitionSchema } from "@/schemas/reviewer"
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import { ProgressLine } from "./Progress"
 
 export default function ArticleSubmitionForm() {
     const router = useRouter()
@@ -32,9 +33,10 @@ export default function ArticleSubmitionForm() {
     })
 
     return (
-        <div className="flex h-screen bg-gray-50">
+        <div className="flex h-screen bg-gray-100">
             <Sidebar />
             <div className="flex-1 overflow-auto p-8">
+                <ProgressLine />
                 <Card>
                     <CardContent className="p-6">
                         <div className="space-y-8">
@@ -44,11 +46,11 @@ export default function ArticleSubmitionForm() {
                                 <h2 className="text-xl font-semibold mb-4">
                                     Comments for the editor
                                 </h2>
-                                
-                                <ReactQuill theme="snow" value={searchParams.get('Comments for the editor') || undefined}  onChange={(e) => {
-                                        router.push(`?${createQueryString("Comments for the editor", e as TNewJournal)}`)
-                                    }}
-                                className="h-32 mb-4"
+
+                                <ReactQuill theme="snow" value={searchParams.get('Comments for the editor') || undefined} onChange={(e) => {
+                                    router.push(`?${createQueryString("Comments for the editor", e as TNewJournal)}`)
+                                }}
+                                    className="h-32 mb-4"
                                 />
 
                             </div>

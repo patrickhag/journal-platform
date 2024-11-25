@@ -5,10 +5,11 @@ import { Alert } from '../ui/alert'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { safeParse, serialize } from 'zod-urlsearchparams'
 import { filesSchema } from '@/schemas/reviewer'
+import { cn } from '@/lib/utils'
 
 export const Uploadbanner: FC<{ fileFormats: string[]; }> = ({ fileFormats }) => {
     const form = useRef<HTMLFormElement>(null)
-    const [responseMessage, formAction] = useActionState(
+    const [responseMessage, formAction, isPending] = useActionState(
         createUpload,
         undefined,
     );
@@ -25,7 +26,7 @@ export const Uploadbanner: FC<{ fileFormats: string[]; }> = ({ fileFormats }) =>
 
     useEffect(() => {
         if (!file) return
-        files.push({ originalName: file.name, publicId: file.public_id, resourceType: file.resource_type, bytes: file.bytes.toString(), format: file.format })
+        files.push({ originalName: file.name, publicId: file.public_id, resourceType: file.resource_type, bytes: file.bytes.toString() })
         const serializedData = serialize({
             data: { files },
             schema: filesSchema
@@ -36,12 +37,13 @@ export const Uploadbanner: FC<{ fileFormats: string[]; }> = ({ fileFormats }) =>
     }, [responseMessage?.data?.public_id])
 
     return (
-        <form action={formAction} ref={form} className="mb-4 cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-8 text-center">
+        <form action={formAction} ref={form} className={cn("mb-4 cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-8 text-center", isPending && 'bg-yellow-50')}
+         >
             {responseMessage?.message && <Alert>
                 {responseMessage.message}
             </Alert>}
             <label onClick={() => { }} htmlFor='files'>
-                <Upload className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                <Upload className={cn("mx-auto mb-4 h-12 w-12 text-gray-400", isPending && "animate-bounce")} />
                 <p className="text-lg text-gray-600">Drag and drop or click to choose files</p>
                 <p className="text-sm text-gray-500">{fileFormats.map(f => (<span key={f}>{f} </span>))} are allowed</p>
 
