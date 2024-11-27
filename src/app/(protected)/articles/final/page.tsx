@@ -1,6 +1,5 @@
 "use client";
 
-import { Sidebar } from "@/components/Sidebar";
 import Spinner from "@/components/Spinner";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -17,7 +16,6 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup,} from "@/components/ui/radio-group";
 import { metadataSchema } from "@/components/upload/ContributorsForm";
 import { Paginator } from "@/components/upload/Paginator";
-import { ProgressLine } from "@/components/upload/Progress";
 import { submitAction } from "@/lib/submitionAction";
 import {
 	articleSubmitionSchema,
@@ -77,10 +75,7 @@ const Page = () => {
 		}),
 	});
 	return (
-		<div className="flex min-h-screen">
-			<Sidebar />
-			<main className="flex-1 p-8">
-				<ProgressLine />
+
 				<Form {...form}>
 					<form
 						onSubmit={form.handleSubmit((data) => {
@@ -246,26 +241,18 @@ const Page = () => {
 								)}
 							/>
 						</div>
-						<div>
-							<p className="mt-6 text-sm text-gray-600">
-								Your submission has been uploaded and is ready to be sent. You
-								may go back to review and adjust any of the information you have
-								entered before continuing. When you are ready, click
-								&quot;Submit&quot;.
-							</p>
-							<div className="flex items-end justify-between mt-4">
+						<div className="mt-6">
 								<Paginator
-									backLink={`/dashboard/reviewer?${searchParams.toString()}`}
-								></Paginator>
-								<Button disabled={isPending}>
+									backLink={`/articles/reviewer?${searchParams.toString()}`}
+								>
+	<Button disabled={isPending} className="bg-[#626EEF]">
 									Submit {isPending && <Spinner />}
 								</Button>
-							</div>
-						</div>
+
+                </Paginator>
+													</div>
 					</form>
 				</Form>
-			</main>
-		</div>
-	);
+		);
 };
 export default Page;

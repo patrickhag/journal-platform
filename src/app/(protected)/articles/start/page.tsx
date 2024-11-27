@@ -1,9 +1,7 @@
-import { Sidebar } from "@/components/Sidebar";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArticleTypeSection } from "@/components/upload/ArticleTypeSection";
 import { CommentForEditor } from "@/components/upload/CommentForEditor";
 import { Paginator } from "@/components/upload/Paginator";
-import { ProgressLine } from "@/components/upload/Progress";
 import { SubmissionRequirementsSection } from "@/components/upload/SubmissionRequirementsSection";
 const Page = async ({
 	params,
@@ -16,10 +14,6 @@ const Page = async ({
 	console.log("query search param object :", await searchParams);
 	const query = await searchParams;
 	return (
-		<div className="flex h-screen bg-gray-100">
-			<Sidebar />
-			<div className="flex-1 overflow-auto p-8">
-				<ProgressLine />
 				<Card>
 					<CardContent className="p-6">
 						<div className="space-y-8">
@@ -32,14 +26,12 @@ const Page = async ({
 								<CommentForEditor />
 							</div>
 							<Paginator
-								nextLink="/dashboard/attach-files"
+								nextLink="/articles/attach-files"
 								query={query}
 							></Paginator>
 						</div>
 					</CardContent>
 				</Card>
-			</div>
-		</div>
 	);
 };
 export default Page;

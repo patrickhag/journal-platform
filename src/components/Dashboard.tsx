@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { articleSubmissions, db, files } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { Bell, MoreHorizontal, Search, User } from "lucide-react";
+import {  MoreHorizontal, Search } from "lucide-react";
 import { CommentPreview } from "./CommentPreview";
 export default async function DashboardPannel() {
 	const articles = await db
@@ -22,25 +22,6 @@ export default async function DashboardPannel() {
 	const currentUser = session?.user;
 
 	return (
-		<div className="min-h-screen bg-background">
-			<header className="border-b">
-				<div className="container flex h-16 items-center justify-between mx-auto">
-					<h1 className="text-xl font-semibold">
-						Journal of African Epidemiology and Public health
-					</h1>
-					<div className="flex items-center gap-4">
-						<Button variant="ghost" size="icon">
-							<Bell className="h-5 w-5" />
-							<span className="sr-only">Notifications</span>
-						</Button>
-						<Button variant="ghost" size="icon">
-							<User className="h-5 w-5" />
-							<span className="sr-only">Profile</span>
-						</Button>
-					</div>
-				</div>
-			</header>
-
 			<main className="container py-8 mx-auto">
 				<div className="flex flex-col gap-8">
 					<div className="flex flex-col gap-1">
@@ -118,6 +99,5 @@ export default async function DashboardPannel() {
 					</Tabs>
 				</div>
 			</main>
-		</div>
 	);
 }
