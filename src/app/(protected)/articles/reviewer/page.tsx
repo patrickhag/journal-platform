@@ -11,29 +11,26 @@ const Page = async ({
 	console.log("query search param object :", await searchParams);
 	const query = await searchParams;
 	return (
-    <>
+		<>
+			<div className="space-y-6">
+				<h2 className="text-2xl font-semibold tracking-tight">Reviewers</h2>
+				<ReviewCard />
+				<div className="space-y-4">
+					<h3 className="text-lg font-medium">Proposed reviewers list</h3>
 
-								<div className="space-y-6">
-							<h2 className="text-2xl font-semibold tracking-tight">
-								Reviewers
-							</h2>
-							<ReviewCard />
-							<div className="space-y-4">
-								<h3 className="text-lg font-medium">Proposed reviewers list</h3>
+					<div className="space-y-4">
+						<Reviewers />
+					</div>
 
-								<div className="space-y-4">
-									<Reviewers />
-								</div>
-
-								<AddReviewerModal />
-								<Paginator
-									backLink="/articles/meta"
-									nextLink="/articles/final"
-									query={query}
-								></Paginator>
-							</div>
-						</div>
-    </>
+					<AddReviewerModal />
+					<Paginator
+						backLink="/articles/meta"
+						nextLink="/articles/final"
+						query={query}
+					></Paginator>
+				</div>
+			</div>
+		</>
 	);
 };
 export default Page;

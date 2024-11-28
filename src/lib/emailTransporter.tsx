@@ -30,14 +30,25 @@ export const sendPasswordResetEmail = async ({
 	await transporter.sendMail(options);
 };
 
-
 export const notifyContibutor = async ({
 	subject,
 	toEmail,
-  originalAuthor,
-  article
-}: { toEmail: string; url: string; subject: string, originalAuthor: string, article: string }) => {
-	const emailHtml = await render(<NotifiyContributor contributor={toEmail} originalAuthor={originalAuthor} article={article} />);
+	originalAuthor,
+	article,
+}: {
+	toEmail: string;
+	url: string;
+	subject: string;
+	originalAuthor: string;
+	article: string;
+}) => {
+	const emailHtml = await render(
+		<NotifiyContributor
+			contributor={toEmail}
+			originalAuthor={originalAuthor}
+			article={article}
+		/>,
+	);
 	const options = {
 		from: process.env.EMAIL_USER,
 		to: toEmail,

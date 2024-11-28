@@ -14,11 +14,13 @@ import { z } from "zod";
 import { safeParse } from "zod-urlsearchparams";
 import { metadataSchema } from "./ContributorsForm";
 
-export const Paginator: FC<{
-	backLink?: string;
-	nextLink?: string;
-	query?: string | ParsedUrlQueryInput | null;
-}&PropsWithChildren> = ({ nextLink, backLink, query, children }) => {
+export const Paginator: FC<
+	{
+		backLink?: string;
+		nextLink?: string;
+		query?: string | ParsedUrlQueryInput | null;
+	} & PropsWithChildren
+> = ({ nextLink, backLink, query, children }) => {
 	const pathname = usePathname();
 	const page = pathname.split("/").at(-1);
 
@@ -83,10 +85,10 @@ export const Paginator: FC<{
 						href={query ? { pathname: backLink, query } : backLink}
 						className="px-4 py-1 ring-2 ring-gray-100 bg-white rounded-md"
 					>
-					Go back	
+						Go back
 					</Link>
 				)}
-        {children}
+				{children}
 				{nextLink && (
 					<Link
 						href={{ pathname: nextLink, query }}
@@ -95,7 +97,7 @@ export const Paginator: FC<{
 							"px-4 py-1 ring-2 ring-gray-100 bg-[#626EEF] rounded-md text-white",
 						)}
 					>
-					Continue	
+						Continue
 					</Link>
 				)}
 			</div>

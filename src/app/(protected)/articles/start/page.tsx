@@ -14,24 +14,24 @@ const Page = async ({
 	console.log("query search param object :", await searchParams);
 	const query = await searchParams;
 	return (
-				<Card>
-					<CardContent className="p-6">
-						<div className="space-y-8">
-							<ArticleTypeSection />
-							<SubmissionRequirementsSection />
-							<div className="my-4 py-3">
-								<h2 className="text-xl font-semibold mb-4">
-									Comments for the editor
-								</h2>
-								<CommentForEditor />
-							</div>
-							<Paginator
-								nextLink="/articles/attach-files"
-								query={query}
-							></Paginator>
-						</div>
-					</CardContent>
-				</Card>
+		<Card>
+			<CardContent className="p-6">
+				<div className="space-y-8">
+					<ArticleTypeSection />
+					<SubmissionRequirementsSection />
+					<div className="my-4 py-3">
+						<h2 className="text-xl font-semibold mb-4">
+							Comments for the editor
+						</h2>
+						<CommentForEditor />
+					</div>
+					<Paginator
+						nextLink="/articles/attach-files"
+						query={query}
+					></Paginator>
+				</div>
+			</CardContent>
+		</Card>
 	);
 };
 export default Page;

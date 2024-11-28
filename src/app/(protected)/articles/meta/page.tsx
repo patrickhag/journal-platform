@@ -10,19 +10,19 @@ const Page = async ({
 	searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
 	return (
-    <>
-				<h1 className="mb-6 text-3xl font-bold">Metadata</h1>
+		<>
+			<h1 className="mb-6 text-3xl font-bold">Metadata</h1>
 
-				<Card className="mb-6 p-6 grid gap-3">
-					<NewMetaForm />
-					<ContributorsForm />
-				</Card>
-				<Paginator
-					query={await searchParams}
-					nextLink="/articles/reviewer"
-					backLink="/articles/attach-files"
-				></Paginator>
-        </>
+			<Card className="mb-6 p-6 grid gap-3">
+				<NewMetaForm />
+				<ContributorsForm />
+			</Card>
+			<Paginator
+				query={await searchParams}
+				nextLink="/articles/reviewer"
+				backLink="/articles/attach-files"
+			></Paginator>
+		</>
 	);
 };
 export default Page;

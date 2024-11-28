@@ -8,7 +8,7 @@ import {
 	files,
 	metadata,
 	reviewers,
-    sessions,
+	sessions,
 } from "@/db/schema";
 
 import {
@@ -47,7 +47,7 @@ export async function submitAction(_: unknown, formData: FormData) {
 		data.contributorValidations.toString(),
 	) as z.infer<typeof contributorFormSchema>[];
 
-			const session = await auth();
+	const session = await auth();
 	try {
 		await db.transaction(async (trx) => {
 			const session = await auth();
@@ -92,15 +92,15 @@ export async function submitAction(_: unknown, formData: FormData) {
 			});
 		});
 
-    for(const contributor of contributorValidations) {
-     await notifyContibutor({
-        url: 'someone added you to contributors',
-        subject: 'someone added you to contributors',
-        toEmail: contributor.email,
-        article: articleSubmitionValidations.section,
-        originalAuthor:session?.user?.name! 
-      })
-    }
+		for (const contributor of contributorValidations) {
+			await notifyContibutor({
+				url: "someone added you to contributors",
+				subject: "someone added you to contributors",
+				toEmail: contributor.email,
+				article: articleSubmitionValidations.section,
+				originalAuthor: session?.user?.name!,
+			});
+		}
 	} catch (error) {
 		console.error("Weeerror", error);
 		return { message: "Failed to submit" };
