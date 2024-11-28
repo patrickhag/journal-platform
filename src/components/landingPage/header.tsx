@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 const Header = () => {
   return (
     <>
@@ -44,11 +45,13 @@ const Header = () => {
           >
             Submit a manuscript
           </button>
-          <img
-            src="https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732714677/avatar_ddv8a8.png"
-            alt="Profile"
-            className="w-8 h-8 rounded-full"
-          />
+          <Link href={'/dashboard'}>
+            <img
+              src="https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732714677/avatar_ddv8a8.png"
+              alt="Profile"
+              className="w-8 h-8 rounded-full"
+            />
+          </Link>
         </div>
       </header>
     </>

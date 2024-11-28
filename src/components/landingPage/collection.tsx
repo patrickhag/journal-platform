@@ -1,6 +1,8 @@
+import { articleSubmissions, db, metadata, users } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import React from "react";
 
-const Collections = () => {
+const Collections = async () => {
   const collections = [
     {
       id: 1,
@@ -28,6 +30,19 @@ const Collections = () => {
     },
   ];
 
+  const articles = await db
+    .select({
+      id: articleSubmissions.id,
+      abstract: metadata.abstract,
+      title: metadata.title,
+      createdAt: articleSubmissions.createdAt,
+      authorFName: users.firstName,
+      authorLName: users.lastName
+    })
+    .from(articleSubmissions)
+    .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId))
+    .leftJoin(users, eq(articleSubmissions.userId, users.id));
+
   return (
     <div className="col-span-3 space-y-8">
       <div className="w-[90%]">
@@ -48,66 +63,40 @@ const Collections = () => {
         <h2 className="text-xl font-bold mb-4" style={{ color: "#1A237E" }}>
           Recently Published
         </h2>
-        <div className="space-y-6 w-[90%]">
-          {/* Article 1 */}
-          <div className="border-b pb-4">
-            <h3 className="font-semibold text-lg text-gray-800">
-              Lorem ipsum article has been posted has been posted has been
-              posted
-            </h3>
-            <p className="text-sm text-gray-600">
-              Bizimana Jean, Peter Thiel, Peter Thiel
-            </p>
-            <p className="text-sm text-gray-500">30 October 2023</p>
-          </div>
-        </div>
 
-        <div className="space-y-6 w-[90%]">
-          {/* Article 1 */}
-          <div className="border-b pb-4">
-            <h3 className="font-semibold text-lg text-gray-800">
-              Lorem ipsum article has been posted has been posted has been
-              posted
-            </h3>
-            <p className="text-sm text-gray-600">
-              Bizimana Jean, Peter Thiel, Peter Thiel
-            </p>
-            <p className="text-sm text-gray-500">30 October 2023</p>
-          </div>
-        </div>
+        {articles.map(a => (
 
-        <div className="space-y-6 w-[90%]">
-          {/* Article 1 */}
-          <div className="border-b pb-4">
-            <h3 className="font-semibold text-lg text-gray-800">
-              Lorem ipsum article has been posted has been posted has been
-              posted
-            </h3>
-            <p className="text-sm text-gray-600">
-              Bizimana Jean, Peter Thiel, Peter Thiel
-            </p>
-            <p className="text-sm text-gray-500">30 October 2023</p>
-          </div>
-        </div>
-      </div>
-      <div className="w-[70%]">
-        <h2 className="text-2xl font-bold mb-8" style={{ color: "#1A237E" }}>
-          Our largest collections
-        </h2>
-        <div className="grid grid-cols-2">
-          {collections.map((collection) => (
-            <div
-              key={collection.id}
-              className="bg-gray-100 p-2 rounded-md shadow-md hover:shadow-lg transition"
-            >
-              <h3 className="text-lg font-medium">{collection.title}</h3>
-              <img
-                src={collection.image}
-                alt={collection.title}
-                className="object-cover rounded-md mb-2"
-              />
+          <div className="space-y-6 w-[90%]" key={a.id}>
+            <div className="border-b pb-4">
+              <h3 className="font-semibold text-lg text-gray-800">
+                {a.title}              </h3>
+              <p className="text-sm text-gray-600">
+                {a.authorFName} {a.authorLName}
+              </p>
+              <p className="text-sm text-gray-500">{a.createdAt}</p>
             </div>
-          ))}
+          </div>))}
+
+
+        <div className="w-[70%]">
+          <h2 className="text-2xl font-bold mb-8" style={{ color: "#1A237E" }}>
+            Our largest collections
+          </h2>
+          <div className="grid grid-cols-2">
+            {collections.map((collection) => (
+              <div
+                key={collection.id}
+                className="bg-gray-100 p-2 rounded-md shadow-md hover:shadow-lg transition"
+              >
+                <h3 className="text-lg font-medium">{collection.title}</h3>
+                <img
+                  src={collection.image}
+                  alt={collection.title}
+                  className="object-cover rounded-md mb-2"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
