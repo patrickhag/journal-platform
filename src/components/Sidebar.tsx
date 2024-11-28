@@ -1,10 +1,21 @@
+"use client";
+
+import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
+
 export const Sidebar = () => {
+	const pathname = usePathname();
 	return (
 		<aside className="w-64 bg-white p-6 shadow-md">
 			<nav className="space-y-4">
 				<a
 					href="#"
-					className="flex items-center space-x-2 text-gray-700 hover:text-gray-900"
+					className={cn(
+						pathname.toLowerCase().split("/").includes("dashboard")
+							? "text-[#838F9A]"
+							: "text-gray-700 ",
+						"flex items-center space-x-2 hover:text-gray-900",
+					)}
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"

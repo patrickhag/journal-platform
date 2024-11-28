@@ -8,16 +8,20 @@ import {
 	files,
 	metadata,
 	reviewers,
+	sessions,
 } from "@/db/schema";
+
 import {
 	type articleSubmitionSchema,
 	type fileSchema,
 	finalSubmissionSchema,
 	type reviewerSchema,
 } from "@/schemas/reviewer";
+
 import type { contributorFormSchema } from "@/schemas/upload";
 import { RedirectType, redirect } from "next/navigation";
 import type * as z from "zod";
+import { notifyContibutor, sendPasswordResetEmail } from "./emailTransporter";
 
 export async function submitAction(_: unknown, formData: FormData) {
 	const data = Object.fromEntries(formData.entries());
@@ -43,6 +47,7 @@ export async function submitAction(_: unknown, formData: FormData) {
 		data.contributorValidations.toString(),
 	) as z.infer<typeof contributorFormSchema>[];
 
+	const session = await auth();
 	try {
 		await db.transaction(async (trx) => {
 			const session = await auth();
@@ -86,6 +91,16 @@ export async function submitAction(_: unknown, formData: FormData) {
 				userId: userId,
 			});
 		});
+
+		for (const contributor of contributorValidations) {
+			await notifyContibutor({
+				url: "someone added you to contributors",
+				subject: "someone added you to contributors",
+				toEmail: contributor.email,
+				article: articleSubmitionValidations.section,
+				originalAuthor: session?.user?.name!,
+			});
+		}
 	} catch (error) {
 		console.error("Weeerror", error);
 		return { message: "Failed to submit" };
