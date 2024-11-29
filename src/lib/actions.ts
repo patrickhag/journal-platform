@@ -190,7 +190,7 @@ export async function createUpload(
       return { message: "Upload failed" };
     }
 
-    console.log(result);
+    console.log(result.url);
     return { data: { ...result, name: (files as File).name } };
   } catch (error) {
     console.log("server err", error);

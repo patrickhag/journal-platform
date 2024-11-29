@@ -1,15 +1,21 @@
 import { auth } from "@/auth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { articleSubmissions, db } from "@/db/schema";
+import { articleSubmissions, db, files } from "@/db/schema";
 import { ArticleSection } from "./ArticleSection";
 import { SearchArticle } from "./SearchArticle";
-import { like, or } from "drizzle-orm";
+import { eq, like, or } from "drizzle-orm";
 export default async function DashboardPannel({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   console.log(searchParams)
   const articles = await db
-    .select()
+    .select({
+      id: articleSubmissions.id,
+      commentsForEditor: articleSubmissions.commentsForEditor,
+      fileURI: files.publicId,
+      section: articleSubmissions.section
+    })
     .from(articleSubmissions)
     .where(or(like(articleSubmissions.commentsForEditor, `%${searchParams.q || ''}%`)))
+    .leftJoin(files, eq(articleSubmissions.id, files.articleId))
   const session = await auth();
   const currentUser = session?.user;
 

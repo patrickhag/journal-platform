@@ -4,8 +4,16 @@ import { Card, CardContent } from "./ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import { MoreHorizontal } from "lucide-react";
+import Link from "next/link";
 
-export function ArticleSection({ article: a, index: i }: { article: TArticleSubmissions, index: number }) {
+export function ArticleSection({ article: a, index: i }: {
+  article: {
+    id: string;
+    commentsForEditor: string;
+    fileURI: string | null;
+    section: "Articles" | "Editorial Information" | "Editorial" | "Original Research" | "Review Articles" | "Short reports" | "Commentaries" | "Letters to the editor" | null;
+  }, index: number
+}) {
   return <Card key={a.id}>
     <CardContent className="flex items-center justify-between p-6">
       <div className="flex items-start gap-6">
@@ -30,7 +38,7 @@ export function ArticleSection({ article: a, index: i }: { article: TArticleSubm
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem>View details</DropdownMenuItem>
-          <DropdownMenuItem>Download PDF</DropdownMenuItem>
+          <DropdownMenuItem><Link href={a.fileURI || '#'}>Download PDF</Link></DropdownMenuItem>
           <DropdownMenuItem>Share</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
