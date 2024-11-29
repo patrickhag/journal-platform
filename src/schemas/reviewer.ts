@@ -50,3 +50,13 @@ export const finalSubmissionSchema = z.object({
 	founders: z.string().optional(),
 	ethicalReference: z.string({ required_error: "lorem" }).optional(),
 });
+
+
+
+export const reviewSchema = z.object({
+  id: z.string().uuid().optional(),
+  message: z.string(),
+  userId: z.string(),
+  articleId: z.string().optional(),
+  fileId: z.string().optional(),
+});

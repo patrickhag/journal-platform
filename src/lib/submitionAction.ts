@@ -8,6 +8,7 @@ import {
   files,
   metadata,
   reviewers,
+  reviews,
 } from "@/db/schema";
 
 import {
@@ -15,6 +16,7 @@ import {
   type fileSchema,
   finalSubmissionSchema,
   type reviewerSchema,
+  reviewSchema,
 } from "@/schemas/reviewer";
 
 import type { contributorFormSchema } from "@/schemas/upload";
@@ -108,4 +110,38 @@ export async function submitAction(_: unknown, formData: FormData) {
   }
 
   redirect("/dashboard", RedirectType.push);
+}
+
+
+export async function submitReviewAction(_: unknown, formData: FormData) {
+  const data = Object.fromEntries(formData.entries());
+  const result = reviewSchema.safeParse(data);
+
+  if (!result.success) {
+    console.error(result.error.errors);
+    return;
+  }
+
+  const session = await auth();
+  const userId = session?.user?.id || "";
+  await db
+    .insert(reviews)
+    .values({
+      userId: userId,
+      message: result.data.message,
+      articleId: result.data.articleId,
+      fileId: result.data.fileId
+    })
+  // .returning({ id: articleSubmissions.id });
+
+  // await notifyContibutor({
+  //   url: "someone gave you a review",
+  //   subject: "someone gave you a review",
+  //   toEmail: contributor.email,
+  //   article: articleSubmitionValidations.section,
+  //   originalAuthor
+  // });
+  return { message: "Thanks for your review" };
+
+  // redirect("/dashboard", RedirectType.push);
 }

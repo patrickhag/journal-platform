@@ -1,4 +1,3 @@
-import { TArticleSubmissions } from "@/db/schema";
 import { CommentPreview } from "./CommentPreview";
 import { Card, CardContent } from "./ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
@@ -37,7 +36,7 @@ export function ArticleSection({ article: a, index: i }: {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem>View details</DropdownMenuItem>
+          <DropdownMenuItem><Link href={`articles/${a.id}`}>View details</Link></DropdownMenuItem>
           <DropdownMenuItem><Link href={a.fileURI || '#'}>Download PDF</Link></DropdownMenuItem>
           <DropdownMenuItem>Share</DropdownMenuItem>
         </DropdownMenuContent>

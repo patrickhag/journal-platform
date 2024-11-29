@@ -1,4 +1,5 @@
 import { ARTICLE_TYPES, COUNTRIES, SALUTATION } from "@/lib/consts";
+import { USER_ROLES } from "@/lib/roles";
 import {
   boolean,
   date,
@@ -17,7 +18,7 @@ import postgres from "postgres";
 const pool = postgres(process.env.DATABASE_URL!, { max: 1 });
 
 export const db = drizzle(pool);
-export const roleEnum = pgEnum("role", ["NORMAL_USER", "EDITOR", "REVIEWER"]);
+export const roleEnum = pgEnum("role", USER_ROLES);
 export const articleTypeEnum = pgEnum("artticle-type", ARTICLE_TYPES);
 export const salutationEnum = pgEnum("salutation", SALUTATION);
 export const countryEnum = pgEnum("countries", COUNTRIES);
@@ -182,6 +183,22 @@ export const reviewers = pgTable("reviewers", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   articleId: text("articleId").references(() => articleSubmissions.id, {
+    onDelete: "cascade",
+  }),
+});
+
+export const reviews = pgTable("reviews", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  message: text("message").notNull(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  articleId: text("articleId").references(() => articleSubmissions.id, {
+    onDelete: "cascade",
+  }),
+  fileId: text("fileId").references(() => files.id, {
     onDelete: "cascade",
   }),
 });
