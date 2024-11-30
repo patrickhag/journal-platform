@@ -21,7 +21,7 @@ const RightSideBar = () => {
         </button>
       </div>
       <h2 className="text-xl font-bold mt-9" style={{ color: "#1A237E" }}>
-        Editor's pick
+        Editor&apos;s pick
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="rounded-lg overflow-hidden">

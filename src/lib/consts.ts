@@ -233,3 +233,4 @@ export const ARTICLE_TYPES = [
 ] as const;
 
 export const SALUTATION = ["Mr", "Mrs", "Ms", "Dr", "Prof", "Rev"] as const;
+export const fileFormats = [".DOC*", ".PDF"];

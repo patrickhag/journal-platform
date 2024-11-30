@@ -2,8 +2,7 @@ import { Card } from "@/components/ui/card";
 import { FileList } from "@/components/upload/FileList";
 import { Paginator } from "@/components/upload/Paginator";
 import { Uploadbanner } from "@/components/upload/Uploadbanner";
-
-const fileFormats = [".DOC*", ".PDF"];
+import { fileFormats } from "@/lib/consts";
 
 const Page = async ({
   params,
@@ -27,8 +26,8 @@ const Page = async ({
 
       <Paginator
         query={query}
-        backLink="/articles/start"
-        nextLink="/articles/meta"
+        backLink="/articles/new/start"
+        nextLink="/articles/new/meta"
       ></Paginator>
     </>
   );
