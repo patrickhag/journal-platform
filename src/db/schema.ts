@@ -1,5 +1,6 @@
 import { ARTICLE_TYPES, COUNTRIES, SALUTATION } from "@/lib/consts";
 import { USER_ROLES } from "@/lib/roles";
+import { sql } from "drizzle-orm";
 import {
   boolean,
   date,
@@ -198,9 +199,10 @@ export const reviews = pgTable("reviews", {
   articleId: text("articleId").references(() => articleSubmissions.id, {
     onDelete: "cascade",
   }),
-  fileId: text("fileId").references(() => files.id, {
-    onDelete: "cascade",
-  }),
+  fileIds: text('fileIds')
+  .array()
+  .notNull()
+  .default(sql`'{}'::text[]`),
 });
 
 export const articleSubmissions = pgTable("article_submissions", {

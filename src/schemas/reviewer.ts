@@ -56,7 +56,6 @@ export const finalSubmissionSchema = z.object({
 export const reviewSchema = z.object({
   id: z.string().uuid().optional(),
   message: z.string(),
-  userId: z.string(),
-  articleId: z.string().optional(),
-  fileId: z.string().optional(),
+  articleId: z.string(),
+  fileIds: z.string(),
 });

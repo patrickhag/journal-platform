@@ -83,8 +83,8 @@ async function page({
         {/* Reviews Section */}
         <section className="space-y-4">
           <h2 className="text-2xl font-bold text-blue-900">Reviews</h2>
-          <ScrollArea className="h-[300px]">
-            <Reviews role={currentUserRole!}/>
+          <ScrollArea className="h-[500px]">
+            <Reviews role={currentUserRole!} articleId={articleId}/>
           </ScrollArea>
         </section>
       </aside>
