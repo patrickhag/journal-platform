@@ -1,13 +1,8 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -15,24 +10,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { authenticate } from "@/lib/actions";
-import { loginSchema } from "@/schemas/auth.schema";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { startTransition, useActionState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import type { z } from "zod";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { authenticate } from '@/lib/actions';
+import { loginSchema } from '@/schemas/auth.schema';
+import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { startTransition, useActionState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import Loader from '@/components/Loader';
+import type { z } from 'zod';
 
 export default function Login() {
   const [errorMessage, formAction, isPending] = useActionState(
     authenticate,
-    undefined,
+    undefined
   );
 
   const router = useRouter();
@@ -40,24 +35,24 @@ export default function Login() {
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
   useEffect(() => {
-    if (errorMessage === "Success") {
-      router.push("/dashboard");
+    if (errorMessage === 'Success') {
+      router.push('/dashboard');
     }
   }, [errorMessage]);
 
   return (
     <>
-      <Card className="w-full max-w-lg mx-auto p-4 mt-4">
+      <Card className="w-full max-w-2xl mx-auto p-4 mt-32">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
             <Image
-              src={"/logo.png"}
+              src={'/logo.png'}
               alt="logo"
               width={40}
               height={40}
@@ -89,7 +84,7 @@ export default function Login() {
               })}
             >
               <div className="space-y-4">
-                <div className="space-y-2">
+                <div>
                   <FormField
                     control={form.control}
                     name="email"
@@ -97,14 +92,17 @@ export default function Login() {
                       <FormItem>
                         <FormLabel htmlFor="email">Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="enter email..." {...field} />
+                          <Input
+                            placeholder="johndoe@email.example.com"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
-                <div className="space-y-2">
+                <div>
                   <FormField
                     control={form.control}
                     name="password"
@@ -114,7 +112,7 @@ export default function Login() {
                         <FormControl>
                           <Input
                             type="password"
-                            placeholder="enter password..."
+                            placeholder="********"
                             {...field}
                           />
                         </FormControl>
@@ -123,33 +121,36 @@ export default function Login() {
                     )}
                   />
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="remember" />
-                    <label
-                      htmlFor="remember"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Keep me logged in
-                    </label>
-                  </div>
-                  <Link
-                    href="/forgot-password"
-                    className="text-sm text-blue-600 hover:underline"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
-                <Button className="w-full" type="submit" disabled={isPending}>
-                  Login
-                </Button>
               </div>
+              <div className="flex items-center justify-between my-7">
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="remember" />
+                  <label
+                    htmlFor="remember"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Keep me logged in
+                  </label>
+                </div>
+                <Link
+                  href="/forgot-password"
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <Button
+                className="w-full bg-gray-800 hover:bg-gray-700 text-white"
+                disabled={isPending}
+              >
+                {isPending ? <Loader text="Loging in..." /> : 'Login'}
+              </Button>
             </form>
           </Form>
         </CardContent>
       </Card>
-      <div className="text-center mt-4 text-sm">
-        Don&apos;t have an account yet?{" "}
+      <div className="text-center my-16 text-lg text-gray-600">
+        Don&apos;t have an account yet?{' '}
         <Link href="/register" className="text-blue-600 hover:underline">
           Register
         </Link>

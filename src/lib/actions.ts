@@ -1,17 +1,17 @@
-"use server";
+'use server';
 
-import crypto from "node:crypto";
-import { signIn } from "@/auth";
-import { db, files, passwordResets, users } from "@/db/schema";
-import { loginSchema, registerSchema } from "@/schemas/auth.schema";
-import bcrypt from "bcryptjs";
-import { v2 as cloudinary } from "cloudinary";
-import { eq } from "drizzle-orm";
-import { AuthError } from "next-auth";
-import type { CloudinaryUploadWidgetInfo } from "next-cloudinary";
-import type z from "zod";
-import { RESET_PASSWORD_EXPIRATION_TIME } from "./consts";
-import { sendPasswordResetEmail } from "./emailTransporter";
+import crypto from 'node:crypto';
+import { signIn } from '@/auth';
+import { db, files, passwordResets, users } from '@/db/schema';
+import { loginSchema, registerSchema } from '@/schemas/auth.schema';
+import bcrypt from 'bcryptjs';
+import { v2 as cloudinary } from 'cloudinary';
+import { eq } from 'drizzle-orm';
+import { AuthError } from 'next-auth';
+import type { CloudinaryUploadWidgetInfo } from 'next-cloudinary';
+import type z from 'zod';
+import { RESET_PASSWORD_EXPIRATION_TIME } from './consts';
+import { sendPasswordResetEmail } from './emailTransporter';
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -21,29 +21,29 @@ cloudinary.config({
 
 export async function authenticate(
   _prevState: string | undefined,
-  formData: z.infer<typeof loginSchema>,
+  formData: z.infer<typeof loginSchema>
 ) {
   try {
     const login = loginSchema.safeParse(formData);
     if (login.error) return login.error.errors[0].message;
 
-    await signIn("credentials", login.data);
-    return "Success";
+    await signIn('credentials', login.data);
+    return 'Welcome back';
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
-        case "CredentialsSignin":
-          return "Invalid credentials.";
+        case 'CredentialsSignin':
+          return 'Invalid credentials.';
         default:
-          return "Something went wrong during sign-in.";
+          return 'Something went wrong during sign-in.';
       }
     }
-    return "Success";
+    return 'Success';
   }
 }
 export async function resetPassword(
   _prevState: string | undefined,
-  formData: FormData,
+  formData: FormData
 ) {
   try {
     const login = loginSchema.safeParse(Object.fromEntries(formData.entries()));
@@ -55,9 +55,9 @@ export async function resetPassword(
       .where(eq(users.email, login.data.email))
       .limit(1);
 
-    if (!user[0]) return "User not found";
+    if (!user[0]) return 'User not found';
 
-    const token = crypto.randomBytes(24).toString("base64");
+    const token = crypto.randomBytes(24).toString('base64');
     const hashedPassword = bcrypt.hashSync(login.data.password);
 
     await db.insert(passwordResets).values({
@@ -67,23 +67,24 @@ export async function resetPassword(
       password: hashedPassword,
     });
     await sendPasswordResetEmail({
-      subject: "reset your email",
+      subject: 'reset your email',
       toEmail: login.data.email,
-      url: `${process.env.NEXT_PUBLIC_FRONTEND_URL!}/api/auth/reset-password?id=${token}`,
+      url: `${process.env
+        .NEXT_PUBLIC_FRONTEND_URL!}/api/auth/reset-password?id=${token}`,
     });
 
-    return "Success";
+    return 'Success';
   } catch (error) {
     console.log(error);
     if (error instanceof AuthError) {
       switch (error.type) {
-        case "CredentialsSignin":
-          return "Invalid credentials.";
+        case 'CredentialsSignin':
+          return 'Invalid credentials.';
         default:
-          return "Something went wrong during sign-in.";
+          return 'Something went wrong during sign-in.';
       }
     }
-    return "An unexpected error occurred during authentication.";
+    return 'An unexpected error occurred during authentication.';
   }
 }
 
@@ -91,7 +92,7 @@ export async function register(
   _prevState:
     | { message: string; data?: Partial<z.infer<typeof registerSchema>> }
     | undefined,
-  formData: z.infer<typeof registerSchema>,
+  formData: z.infer<typeof registerSchema>
 ) {
   try {
     const register = registerSchema.safeParse(formData);
@@ -105,7 +106,7 @@ export async function register(
       .limit(1);
 
     if (existingUser.length > 0) {
-      return { message: "Email already in use.", data: register.data };
+      return { message: 'Email already in use.', data: register.data };
     }
 
     const hashedPassword = bcrypt.hashSync(register.data.password);
@@ -116,28 +117,28 @@ export async function register(
     };
 
     await db.insert(users).values(user);
-    return { message: "Registration successful", data: register.data };
+    return { message: 'Registration successful', data: register.data };
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
-        case "CredentialsSignin":
-          return { message: "Invalid credentials." };
+        case 'CredentialsSignin':
+          return { message: 'Invalid credentials.' };
         default:
-          return { message: "Something went wrong during registration." };
+          return { message: 'Something went wrong during registration.' };
       }
     }
-    return { message: "An unexpected error occurred during registration." };
+    return { message: 'An unexpected error occurred during registration.' };
   }
 }
 
 export async function deteteresource(_: unknown, formData: FormData) {
-  const publicId = formData.get("publicId")?.toString();
+  const publicId = formData.get('publicId')?.toString();
   if (!publicId) return {};
   try {
     await db.delete(files).where(eq(files.publicId, publicId));
     const res = await cloudinary.uploader.destroy(publicId, {
-      type: "upload",
-      resource_type: "raw",
+      type: 'upload',
+      resource_type: 'raw',
     });
     res.publicId = publicId;
     return res;
@@ -150,11 +151,11 @@ export async function deteteresource(_: unknown, formData: FormData) {
 
 export async function getSignature() {
   const timestamp = Math.round(Date.now() / 1000);
-  const params = { timestamp, folder: "journal_upload" };
+  const params = { timestamp, folder: 'journal_upload' };
   const api_secret = process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET;
   const signature = cloudinary.utils.api_sign_request(
     params,
-    api_secret as string,
+    api_secret as string
   );
 
   return { timestamp, signature, api_key: cloudinary.config().api_key };
@@ -162,16 +163,16 @@ export async function getSignature() {
 
 export async function createUpload(
   _: { message?: string; data?: CloudinaryUploadWidgetInfo } | undefined,
-  formData: FormData,
+  formData: FormData
 ) {
-  const files = formData.get("files");
+  const files = formData.get('files');
   const fileBuffer = await (files instanceof Blob ? files.arrayBuffer() : null);
 
   const mime = (files as File)?.type;
-  const encoding = "base64";
+  const encoding = 'base64';
   const base64Data = fileBuffer
-    ? Buffer.from(fileBuffer).toString("base64")
-    : "";
+    ? Buffer.from(fileBuffer).toString('base64')
+    : '';
   const fileUri = `data:${mime};${encoding},${base64Data}`;
   try {
     const uploadToCloudinary = () => {
@@ -187,13 +188,13 @@ export async function createUpload(
 
     const result = (await uploadToCloudinary()) as CloudinaryUploadWidgetInfo;
     if (!result) {
-      return { message: "Upload failed" };
+      return { message: 'Upload failed' };
     }
 
     console.log(result.url);
     return { data: { ...result, name: (files as File).name } };
   } catch (error) {
-    console.log("server err", error);
-    return { message: "Internal Server Error" };
+    console.log('server err', error);
+    return { message: 'Internal Server Error' };
   }
 }

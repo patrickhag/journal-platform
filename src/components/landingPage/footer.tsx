@@ -1,5 +1,5 @@
 import { FaTwitter, FaLinkedin } from 'react-icons/fa';
-import React from "react";
+import React from 'react';
 
 const Footer = () => {
   return (
@@ -22,11 +22,31 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-lg text-gray-800">For authors</h4>
             <ul className="text-sm mt-2 space-y-1">
-              <li><a href="#" className="hover:text-blue-600">Instructors to authors</a></li>
-              <li><a href="#" className="hover:text-blue-600">Editorial policy</a></li>
-              <li><a href="#" className="hover:text-blue-600">Copyright agreement</a></li>
-              <li><a href="#" className="hover:text-blue-600">Language editing for authors</a></li>
-              <li><a href="#" className="hover:text-blue-600">Scientific editing for authors</a></li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Instructors to authors
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Editorial policy
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Copyright agreement
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Language editing for authors
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Scientific editing for authors
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -34,11 +54,31 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-lg text-gray-800">About JAEPH</h4>
             <ul className="text-sm mt-2 space-y-1">
-              <li><a href="#" className="hover:text-blue-600">About us</a></li>
-              <li><a href="#" className="hover:text-blue-600">Editorial board</a></li>
-              <li><a href="#" className="hover:text-blue-600">Receive our newsletter</a></li>
-              <li><a href="#" className="hover:text-blue-600">Support and contact us</a></li>
-              <li><a href="#" className="hover:text-blue-600">Leave feedback</a></li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  About us
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Editorial board
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Receive our newsletter
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Support and contact us
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Leave feedback
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -49,14 +89,14 @@ const Footer = () => {
             </h4>
             <ul className="text-sm mt-2 space-y-1">
               <li>
-                Email:{" "}
+                Email:{' '}
                 <a href="mailto:info@airpd.org" className="text-blue-500">
                   info@airpd.org
                 </a>
               </li>
               <li>Phone: 07xxxxxxxx</li>
               <li>
-                Website:{" "}
+                Website:{' '}
                 <a href="https://www.airpd.org" className="text-blue-500">
                   www.airpd.org
                 </a>
@@ -75,23 +115,23 @@ const Footer = () => {
         <div className="mt-4 flex justify-between items-center text-sm text-gray-600">
           <span>© 2024 JAEPH. All rights reserved.</span>
           <div className="flex space-x-4">
-          <a
-        href="https://twitter.com/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-500 hover:text-blue-700"
-      >
-        <FaTwitter size={24} />
-      </a>
-      {/* LinkedIn Icon */}
-      <a
-        href="https://linkedin.com/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-700 hover:text-blue-900"
-      >
-        <FaLinkedin size={24} />
-      </a>
+            <a
+              href="https://twitter.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:text-blue-700"
+            >
+              <FaTwitter size={24} />
+            </a>
+            {/* LinkedIn Icon */}
+            <a
+              href="https://linkedin.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-700 hover:text-blue-900"
+            >
+              <FaLinkedin size={24} />
+            </a>
           </div>
         </div>
       </div>

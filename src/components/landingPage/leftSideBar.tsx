@@ -1,12 +1,15 @@
-import React from "react";
-import { EyeIcon } from "@heroicons/react/24/outline";
+import React from 'react';
+import { EyeIcon } from '@heroicons/react/24/outline';
 
 const LeftSideBar = () => {
   return (
     <div className="w-64 bg-gray-50 p-4 space-y-6 border-r border-gray-200">
       {/* Important Information Section */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-700" style={{color: "#1A237E" }}>
+        <h2
+          className="text-lg font-semibold text-gray-700"
+          style={{ color: '#1A237E' }}
+        >
           Important Information
         </h2>
         <ul className="mt-2 space-y-2 text-sm text-gray-600">
@@ -16,7 +19,7 @@ const LeftSideBar = () => {
             </a>
           </li>
           <li>
-            <a href="#" className="hover:text-blue-600" >
+            <a href="#" className="hover:text-blue-600">
               Submission guidelines
             </a>
           </li>
@@ -45,7 +48,12 @@ const LeftSideBar = () => {
 
       {/* Supplements Section */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-700" style={{ color: "#1A237E" }}>Supplements</h2>
+        <h2
+          className="text-lg font-semibold text-gray-700"
+          style={{ color: '#1A237E' }}
+        >
+          Supplements
+        </h2>
         <ul className="mt-2 space-y-2 text-sm text-gray-600">
           <li>
             <a href="#" className="hover:text-blue-600">
@@ -72,7 +80,12 @@ const LeftSideBar = () => {
 
       {/* Most Accessed Section */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-700" style={{ color: "#1A237E" }}>Most Accessed</h2>
+        <h2
+          className="text-lg font-semibold text-gray-700"
+          style={{ color: '#1A237E' }}
+        >
+          Most Accessed
+        </h2>
         <ul className="mt-2 space-y-4">
           {[1, 2, 3].map((item) => (
             <li key={item} className="text-sm text-gray-600">
@@ -93,7 +106,10 @@ const LeftSideBar = () => {
 
       {/* Reserved for Ads Section */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-700" style={{color: "#1A237E" }}>
+        <h2
+          className="text-lg font-semibold text-gray-700"
+          style={{ color: '#1A237E' }}
+        >
           Reserved for Ads
         </h2>
         <div className="mt-2">
@@ -107,7 +123,12 @@ const LeftSideBar = () => {
 
       {/* Archives Section */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-700" style={{color: "#1A237E" }}>Archives</h2>
+        <h2
+          className="text-lg font-semibold text-gray-700"
+          style={{ color: '#1A237E' }}
+        >
+          Archives
+        </h2>
         <ul className="mt-2 space-y-2 text-sm text-gray-600">
           {[4, 3, 2, 1].map((year) => (
             <li key={year}>
@@ -121,7 +142,12 @@ const LeftSideBar = () => {
 
       {/* Downloads Section */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-700" style={{ color: "#1A237E" }}>Downloads</h2>
+        <h2
+          className="text-lg font-semibold text-gray-700"
+          style={{ color: '#1A237E' }}
+        >
+          Downloads
+        </h2>
         <ul className="mt-2 space-y-2 text-sm text-gray-600">
           <li>
             <a href="#" className="hover:text-blue-600">
