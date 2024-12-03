@@ -136,7 +136,7 @@ export async function deteteresource(_: unknown, formData: FormData) {
   if (!publicId) return {};
   try {
     await db.delete(files).where(eq(files.publicId, publicId));
-    const res = await cloudinary.uploader.destroy(publicId, {
+    const res = await cloudinary.uploader.destroy(publicId.split('/').at(-1)?.split('.')[0]!, {
       type: 'upload',
       resource_type: 'raw',
     });

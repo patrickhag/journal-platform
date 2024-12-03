@@ -6,6 +6,7 @@ import {
   contributors,
   db,
   files,
+  finalSubmissions,
   metadata,
   reviewers,
   reviews,
@@ -14,6 +15,7 @@ import {
 import {
   type articleSubmitionSchema,
   type fileSchema,
+  filesSchema,
   finalSubmissionSchema,
   type reviewerSchema,
   reviewSchema,
@@ -91,7 +93,28 @@ export async function submitAction(_: unknown, formData: FormData) {
         articleId: articleSubmissionIds[0].id,
         userId: userId,
       });
+      await trx.insert(finalSubmissions).values({
+        articleId: articleSubmissionIds[0].id,
+        funded: result.data.funded === 'yes',
+        human: result.data.human === 'yes',
+        ethical: result.data.ethical === 'yes',
+        consent: result.data.consent === 'yes',
+        founders: result.data.founders,
+        ethicalReference: result.data.ethicalReference
+      })
     });
+
+    for(const reviewer of reviewerValidations) {
+      const originalAuthor = session?.user?.name
+      if (!originalAuthor) return
+      await notifyContibutor({
+        url: "someone added you to reviewers",
+        subject: "someone added you to reviewers",
+        toEmail: reviewer.email,
+        article: articleSubmitionValidations.section,
+        originalAuthor
+      });
+    }
 
     for (const contributor of contributorValidations) {
       const originalAuthor = session?.user?.name
@@ -140,4 +163,33 @@ export async function submitReviewAction(_: unknown, formData: FormData) {
   }
 
   redirect(`/articles/${result.data.articleId}`, RedirectType.push);
+}
+
+export const attachFile = async (_: unknown, formData: FormData) =>{
+  const data = Object.fromEntries(formData.entries());
+  const result = filesSchema.safeParse(JSON.parse(data.files as string));
+  console.log(result.data)
+
+  if (!result.success || !result.data.files) {
+    return result.error?.errors
+  }
+
+  const session = await auth();
+  const userId = session?.user?.id || "";
+  try {
+    for(const file of result.data.files) {
+    await db
+      .insert(files)
+      .values({
+       ...file,
+       articleId: data.articleId as string,
+       userId: userId
+      })
+    }
+  } catch (error) {
+    if (error instanceof Error)
+      return { message: error.message };
+  }
+
+  redirect(`/articles/${data.articleId}`, RedirectType.push);
 }

@@ -5,15 +5,15 @@ import Link from "next/link"
 import { USER_ROLES } from '@/lib/roles'
 import withPermissions from "../WithPermission"
 import ReviewModal from "./Review"
+import { DeleteFile } from "./DeleteFile"
 
-const FileControls = () => <div className="space-x-1 flex">
+const FileControls = ({ publicId }: { publicId: string }) => <div className="space-x-1 flex">
   <ReviewModal/>
   <Button variant="link" className="text-blue-500 hover:text-blue-600">
     Update
   </Button>
-  <Button variant="link" className="text-red-500 hover:text-red-600">
-    Delete
-  </Button>
+
+  <DeleteFile publicId={publicId}/>
 </div>
 
 const UlterFile = withPermissions(FileControls)
@@ -24,7 +24,7 @@ async function Files({ articleId, role }: { articleId: string, role: typeof USER
       {filesData.map(f => (
         <div key={f.id} className="grid">
           <Link className="text-gray-600" href={f.publicId}>{f.originalName}</Link>
-          <UlterFile requiredPermissions={['DELETE_OWN_ARTICLES']} role={role} fallback={<></>} />
+          <UlterFile requiredPermissions={['DELETE_OWN_ARTICLES']} role={role} fallback={<></>}  publicId={f.publicId}  />
         </div>
       ))}
     </>

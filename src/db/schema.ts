@@ -1,4 +1,4 @@
-import { ARTICLE_TYPES, COUNTRIES, SALUTATION } from '@/lib/consts';
+import { ARTICLE_STATUS, ARTICLE_TYPES, COUNTRIES, SALUTATION } from '@/lib/consts';
 import { USER_ROLES } from '@/lib/roles';
 import { sql } from 'drizzle-orm';
 import {
@@ -23,6 +23,7 @@ export const roleEnum = pgEnum('role', USER_ROLES);
 export const articleTypeEnum = pgEnum('article-type', ARTICLE_TYPES);
 export const salutationEnum = pgEnum('salutation', SALUTATION);
 export const countryEnum = pgEnum('countries', COUNTRIES);
+export const articleStatusEnum = pgEnum('article_status', ARTICLE_STATUS);
 
 export const users = pgTable('user', {
   id: text('id')
@@ -212,6 +213,7 @@ export const articleSubmissions = pgTable('article_submissions', {
   section: articleTypeEnum().$default(() => 'Articles'),
   requirements: text('requirements').array().notNull(),
   commentsForEditor: text('comments_for_editor').notNull(),
+  articleStatus: articleStatusEnum().$default(() => 'Draft'),
   userId: text('userId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
@@ -227,10 +229,7 @@ export const finalSubmissions = pgTable('final_submissions', {
   consent: boolean('consent').notNull(),
   human: boolean('human').notNull(),
   founders: text('founders'),
-  ethicalReference: varchar('ethical_reference', { length: 255 }),
-  userId: text('userId')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
+  ethicalReference: text('ethical_reference'),
   articleId: text('articleId').references(() => articleSubmissions.id, {
     onDelete: 'cascade',
   }),

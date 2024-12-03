@@ -233,4 +233,21 @@ export const ARTICLE_TYPES = [
 ] as const;
 
 export const SALUTATION = ['Mr', 'Mrs', 'Ms', 'Dr', 'Prof', 'Rev'] as const;
-export const fileFormats = ['.docx', '.pdf'];
+export const fileFormats = ['.docx', '.pdf', '.doc'];
+
+export const ARTICLE_STATUS = ["Draft",
+  "Submitted",
+  "In Review",
+  "Approved",
+  "Rejected",
+  "Published",
+  "Archived",
+  "Incomplete",
+  "Pending Revision",
+  "Under Review",
+  "Approved with Changes",
+  "Withdrawn",
+  "Scheduled for Publication",
+  "Needs More Information",
+  "Finalized"] as const;
+

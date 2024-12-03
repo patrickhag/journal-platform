@@ -19,6 +19,7 @@ export default async function DashboardPannel({
       commentsForEditor: articleSubmissions.commentsForEditor,
       fileURI: files.publicId,
       section: articleSubmissions.section,
+      articleStatus: articleSubmissions.articleStatus,
     })
     .from(articleSubmissions)
     .where(

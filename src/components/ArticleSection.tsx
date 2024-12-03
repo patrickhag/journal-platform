@@ -4,14 +4,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from "./ui/button";
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
+import { cn, generateRandomBgColorForStatus } from "@/lib/utils";
+import { TArticle } from "@/schemas/reviewer";
+
 
 export function ArticleSection({ article: a, index: i }: {
-  article: {
-    id: string;
-    commentsForEditor: string;
-    fileURI: string | null;
-    section: "Articles" | "Editorial Information" | "Editorial" | "Original Research" | "Review Articles" | "Short reports" | "Commentaries" | "Letters to the editor" | null;
-  }, index: number
+  article: TArticle, index: number
 }) {
   return <Card key={a.id}>
     <CardContent className="flex items-center justify-between p-6">
@@ -26,6 +24,7 @@ export function ArticleSection({ article: a, index: i }: {
           <CommentPreview
             html={a.commentsForEditor}
           />
+        <small className={cn(generateRandomBgColorForStatus(a.articleStatus || 'Draft'), "py-1 px-2 mt-2 rounded-full")}>{a.articleStatus || 'Draft'}</small>
         </div>
       </div>
       <DropdownMenu>
