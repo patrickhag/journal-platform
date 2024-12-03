@@ -1,10 +1,10 @@
-import Collections from "@/components/landingPage/collection";
-import LeftSideBar from "@/components/landingPage/leftSideBar";
-import RightSideBar from "@/components/landingPage/rightSideBar";
-import Header from "@/components/landingPage/header";
-import Footer from "@/components/landingPage/footer";
-export default async function Home() {
+import Collections from '@/components/landingPage/collection';
+import Footer from '@/components/landingPage/footer';
+import Header from '@/components/landingPage/header';
+import LeftSideBar from '@/components/landingPage/leftSideBar';
+import RightSideBar from '@/components/landingPage/rightSideBar';
 
+export default async function Home() {
   return (
     <main>
       <div className="font-sans">
@@ -16,7 +16,7 @@ export default async function Home() {
               <Collections />
               <LeftSideBar />
             </div>
-            <Footer/>
+            <Footer />
           </section>
         </main>
       </div>

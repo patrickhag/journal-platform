@@ -1,10 +1,8 @@
-
-import { BASE_PATH, auth } from "@/auth";
-import Header from "@/components/Header";
-import { Sidebar } from "@/components/Sidebar";
-import { ProgressLine } from "@/components/upload/Progress";
-import { SessionProvider } from "next-auth/react";
-import type { PropsWithChildren } from "react";
+import { BASE_PATH, auth } from '@/auth';
+import Header from '@/components/Header';
+import { Sidebar } from '@/components/Sidebar';
+import { SessionProvider } from 'next-auth/react';
+import type { PropsWithChildren } from 'react';
 
 export default async function Layout({ children }: PropsWithChildren) {
   const session = await auth();
