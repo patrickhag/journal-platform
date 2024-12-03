@@ -1,7 +1,7 @@
 export const USER_ROLES = [
   "NORMAL_USER",
-  "EDITOR",
-  "REVIEWER",
+  "CHIEF_EDITOR",
+  // "REVIEWER",
   "ADMIN"
 ] as const;
 export type USER_ROLE = typeof USER_ROLES[number]
@@ -32,7 +32,12 @@ export type TPermission = {
 export const ROLE_PERMISSIONS: TPermission = {
   NORMAL_USER: [
     "VIEW_PUBLIC_ARTICLES",
-    "VIEW_REVIEW" // Normal users might have permission to view reviews of public articles
+    "VIEW_REVIEW", // Normal users might have permission to view reviews of public articles
+    "VIEW_PUBLIC_ARTICLES",
+    "CREATE_REVIEW",     // Reviewers can create reviews for articles they are reviewing
+    "UPDATE_REVIEW",     // Reviewers can update their reviews
+    "DELETE_REVIEW",     // Reviewers can delete their reviews
+    "VIEW_REVIEW"        // Reviewers can view reviews
   ],
   EDITOR: [
     "VIEW_PUBLIC_ARTICLES",
@@ -46,13 +51,6 @@ export const ROLE_PERMISSIONS: TPermission = {
     "UPDATE_REVIEW",     // Editors can update reviews
     "DELETE_REVIEW",     // Editors can delete reviews
     "PUBLISH_ARTICLES"   // Editors can publish articles
-  ],
-  REVIEWER: [
-    "VIEW_PUBLIC_ARTICLES",
-    "CREATE_REVIEW",     // Reviewers can create reviews for articles they are reviewing
-    "UPDATE_REVIEW",     // Reviewers can update their reviews
-    "DELETE_REVIEW",     // Reviewers can delete their reviews
-    "VIEW_REVIEW"        // Reviewers can view reviews
   ],
   ADMIN: [
     "VIEW_PUBLIC_ARTICLES",

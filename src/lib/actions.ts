@@ -166,6 +166,7 @@ export async function createUpload(
   formData: FormData
 ) {
   const files = formData.get('files');
+  console.log(files);
   const fileBuffer = await (files instanceof Blob ? files.arrayBuffer() : null);
 
   const mime = (files as File)?.type;
