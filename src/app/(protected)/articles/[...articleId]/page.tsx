@@ -36,6 +36,7 @@ async function page({
   if (!currentUser) return <h1>Not authenticated</h1>
 
   const currentUserRole = (await db.select({ role: users.role }).from(users).limit(1))[0].role
+  
   return (
     <div className="container mx-auto p-6 grid grid-cols-1 lg:grid-cols-[1fr,400px] gap-8">
 

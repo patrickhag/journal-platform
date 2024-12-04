@@ -24,7 +24,7 @@ export type TPermissionItem =
   | 'CREATE_REVIEW'            // New permission: Create a review
   | 'VIEW_REVIEW'              // New permission: View reviews
 
-export type TPermission = {
+type TPermission = {
   [role in typeof USER_ROLES[number]]: TPermissionItem[];
 }
 
@@ -39,7 +39,7 @@ export const ROLE_PERMISSIONS: TPermission = {
     "DELETE_REVIEW",     // Reviewers can delete their reviews
     "VIEW_REVIEW"        // Reviewers can view reviews
   ],
-  EDITOR: [
+  CHIEF_EDITOR: [
     "VIEW_PUBLIC_ARTICLES",
     "CREATE_ARTICLE",
     "EDIT_OWN_ARTICLES",

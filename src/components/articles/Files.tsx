@@ -24,7 +24,7 @@ async function Files({ articleId, role }: { articleId: string, role: typeof USER
       {filesData.map(f => (
         <div key={f.id} className="grid">
           <Link className="text-gray-600" href={f.publicId}>{f.originalName}</Link>
-          <UlterFile requiredPermissions={['DELETE_OWN_ARTICLES']} role={role} fallback={<></>}  publicId={f.publicId}  />
+          <UlterFile requiredPermissions={['DELETE_OWN_ARTICLES', 'UPDATE_JOURNAL', 'CREATE_REVIEW']} role={role} fallback={<></>}  publicId={f.publicId}  />
         </div>
       ))}
     </>

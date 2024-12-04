@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { filesSchema } from "@/schemas/reviewer";
 import { Upload } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { type FC, startTransition, useActionState, useCallback, useEffect, useRef } from "react";
+import { type FC, startTransition, useActionState, useCallback, useEffect, } from "react";
 import { safeParse, serialize } from "zod-urlsearchparams";
 import { Alert } from "../ui/alert";
 import { useDropzone } from 'react-dropzone';
@@ -53,14 +53,16 @@ export const Uploadbanner: FC<{ fileFormats: string[] }> = ({
       formAction(formData);
     });
   }, [])
-  const { getRootProps, getInputProps } = useDropzone({ onDrop, accept:{
-    'pdf': ['application/pdf'],
-    'doc': ['application/msword'],
-    'docx': ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-    'txt': ['text/plain'],
-    'rtf': ['application/rtf'],
-    'odt': ['application/vnd.oasis.opendocument.text'],
-  } });
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop, accept: {
+      'pdf': ['application/pdf'],
+      'doc': ['application/msword'],
+      'docx': ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+      'txt': ['text/plain'],
+      'rtf': ['application/rtf'],
+      'odt': ['application/vnd.oasis.opendocument.text'],
+    }
+  });
 
   return (
     <div

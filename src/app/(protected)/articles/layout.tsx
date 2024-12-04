@@ -17,7 +17,7 @@ export default async function Layout({ children }: PropsWithChildren) {
       <Header />
       <div className="flex h-screen bg-gray-100">
         <Sidebar />
-        <div className="flex-1 overflow-auto p-8">
+        <div className="flex-1 p-8">
           <div className="container">{children}</div>
         </div>
       </div>

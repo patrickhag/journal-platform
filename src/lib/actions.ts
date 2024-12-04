@@ -136,7 +136,9 @@ export async function deteteresource(_: unknown, formData: FormData) {
   if (!publicId) return {};
   try {
     await db.delete(files).where(eq(files.publicId, publicId));
-    const res = await cloudinary.uploader.destroy(publicId.split('/').at(-1)?.split('.')[0]!, {
+    const pid = publicId.split('/').at(-1)?.split('.')[0]
+    if (!pid) return 'can not delete file'
+    const res = await cloudinary.uploader.destroy(pid, {
       type: 'upload',
       resource_type: 'raw',
     });
@@ -147,18 +149,6 @@ export async function deteteresource(_: unknown, formData: FormData) {
       return error.message;
     }
   }
-}
-
-export async function getSignature() {
-  const timestamp = Math.round(Date.now() / 1000);
-  const params = { timestamp, folder: 'journal_upload' };
-  const api_secret = process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET;
-  const signature = cloudinary.utils.api_sign_request(
-    params,
-    api_secret as string
-  );
-
-  return { timestamp, signature, api_key: cloudinary.config().api_key };
 }
 
 export async function createUpload(

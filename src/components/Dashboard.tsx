@@ -7,6 +7,7 @@ import { eq, like, or } from 'drizzle-orm';
 import { PlusCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
+import { TArticle } from "@/schemas/reviewer";
 
 export default async function DashboardPannel({
   searchParams,
@@ -27,7 +28,7 @@ export default async function DashboardPannel({
         like(articleSubmissions.commentsForEditor, `%${searchParams.q || ''}%`)
       )
     )
-    .leftJoin(files, eq(articleSubmissions.id, files.articleId));
+    .leftJoin(files, eq(articleSubmissions.id, files.articleId)) as TArticle[];
   const session = await auth();
   const currentUser = session?.user;
 
