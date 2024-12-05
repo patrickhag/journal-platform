@@ -1,12 +1,12 @@
-import { NotifiyContributor } from "@/components/emails/notify-contributor";
-import { EmailPasswordReset } from "@/components/emails/password-reset";
-import { SendInvitation } from "@/components/emails/sendInvite";
-import { render } from "@react-email/components";
-import nodemailer from "nodemailer";
+import { NotifiyContributor } from '@/components/emails/notify-contributor';
+import { EmailPasswordReset } from '@/components/emails/password-reset';
+import { SendInvitation } from '@/components/emails/sendInvite';
+import { render } from '@react-email/components';
+import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
-  host: "smtp.gmail.com",
+  service: 'gmail',
+  host: 'smtp.gmail.com',
   port: 587,
   secure: false,
   auth: {
@@ -19,7 +19,11 @@ export const sendPasswordResetEmail = async ({
   subject,
   toEmail,
   url,
-}: { toEmail: string; url: string; subject: string }) => {
+}: {
+  toEmail: string;
+  url: string;
+  subject: string;
+}) => {
   const emailHtml = await render(<EmailPasswordReset url={url} />);
   const options = {
     from: process.env.EMAIL_USER,
@@ -47,8 +51,9 @@ export const notifyContibutor = async ({
       contributor={toEmail}
       originalAuthor={originalAuthor}
       article={article}
-    />,
+    />
   );
+
   const options = {
     from: process.env.EMAIL_USER,
     to: toEmail,
@@ -58,9 +63,11 @@ export const notifyContibutor = async ({
   await transporter.sendMail(options);
 };
 
-
 export const sendInvitation = async ({
-  article, author, reviewer, toEmail
+  article,
+  author,
+  reviewer,
+  toEmail,
 }: {
   reviewer: string;
   article: {
@@ -77,7 +84,7 @@ export const sendInvitation = async ({
   toEmail: string;
 }) => {
   const emailHtml = await render(
-    <SendInvitation article={article} author={author} reviewer={reviewer} />,
+    <SendInvitation article={article} author={author} reviewer={reviewer} />
   );
   const options = {
     from: process.env.EMAIL_USER,
@@ -87,4 +94,3 @@ export const sendInvitation = async ({
   };
   await transporter.sendMail(options);
 };
-
