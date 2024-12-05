@@ -11,6 +11,7 @@ export default async function ArticlesPage() {
       ownerLastName: users.lastName,
       createdAt: articleSubmissions.createdAt,
       title: metadata.title,
+      id: articleSubmissions.id,
     })
     .from(articleSubmissions)
     .leftJoin(users, eq(articleSubmissions.userId, users.id))
