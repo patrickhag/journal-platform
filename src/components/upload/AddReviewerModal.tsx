@@ -90,7 +90,9 @@ export default function AddReviewerModal() {
                 name="names"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Names *</FormLabel>
+                    <FormLabel>
+                      Names <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Full names of the contributor"
