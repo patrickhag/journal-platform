@@ -2,7 +2,8 @@
 
 import crypto from 'node:crypto';
 import { signIn } from '@/auth';
-import { db, files, passwordResets, users } from '@/db/schema';
+import { db } from '@/db/drizzle';
+import { files, passwordResets, users } from '@/db/schema';
 import { loginSchema, registerSchema } from '@/schemas/auth.schema';
 import bcrypt from 'bcryptjs';
 import { v2 as cloudinary } from 'cloudinary';
@@ -11,7 +12,11 @@ import { AuthError } from 'next-auth';
 import type { CloudinaryUploadWidgetInfo } from 'next-cloudinary';
 import type z from 'zod';
 import { RESET_PASSWORD_EXPIRATION_TIME } from './consts';
-import { notifyContibutor, sendInvitation, sendPasswordResetEmail } from './emailTransporter';
+import {
+  notifyContibutor,
+  sendInvitation,
+  sendPasswordResetEmail,
+} from './emailTransporter';
 import { redirect, RedirectType } from 'next/navigation';
 
 cloudinary.config({
@@ -38,8 +43,16 @@ export async function authenticate(
       }
     }
   } finally {
-    const user = await db.select().from(users).where(eq(users.email, login.data.email)).limit(1);
-    if (user[0].role && (user[0].role === 'CHIEF_EDITOR' || user[0].role === 'ADMIN')) return redirect('/editor', RedirectType.replace);
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, login.data.email))
+      .limit(1);
+    if (
+      user[0].role &&
+      (user[0].role === 'CHIEF_EDITOR' || user[0].role === 'ADMIN')
+    )
+      return redirect('/editor', RedirectType.replace);
     redirect('/dashboard', RedirectType.replace);
   }
 }
@@ -138,8 +151,8 @@ export async function deteteresource(_: unknown, formData: FormData) {
   if (!publicId) return {};
   try {
     await db.delete(files).where(eq(files.publicId, publicId));
-    const pid = publicId.split('/').at(-1)?.split('.')[0]
-    if (!pid) return 'can not delete file'
+    const pid = publicId.split('/').at(-1)?.split('.')[0];
+    if (!pid) return 'can not delete file';
     const res = await cloudinary.uploader.destroy(pid, {
       type: 'upload',
       resource_type: 'raw',
@@ -192,17 +205,15 @@ export async function createUpload(
   }
 }
 
-
-export async function reachOut(
-  _: unknown,
-  formData: FormData
-) {
-
+export async function reachOut(_: unknown, formData: FormData) {
   await sendInvitation({
-    article: {...JSON.parse(formData.get('article')?.toString() || ''), content: formData.get('message')?.toString() || ''},
+    article: {
+      ...JSON.parse(formData.get('article')?.toString() || ''),
+      content: formData.get('message')?.toString() || '',
+    },
     reviewer: formData.get('reviewer')?.toString() || '',
     author: JSON.parse(formData.get('author')?.toString() || ''),
     toEmail: formData.get('toEmail')?.toString() || '',
-  })
+  });
   return 'Message sent';
 }

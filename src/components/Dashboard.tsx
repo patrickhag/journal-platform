@@ -1,20 +1,21 @@
 import { auth } from '@/auth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { articleSubmissions, db, files } from '@/db/schema';
+import { articleSubmissions, files } from '@/db/schema';
+import { db } from '@/db/drizzle';
 import { ArticleSection } from './ArticleSection';
 import { SearchArticle } from './SearchArticle';
 import { eq, like, or } from 'drizzle-orm';
 import { PlusCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
-import { TArticle } from "@/schemas/reviewer";
+import { TArticle } from '@/schemas/reviewer';
 
 export default async function DashboardPannel({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const articles = await db
+  const articles = (await db
     .select({
       id: articleSubmissions.id,
       commentsForEditor: articleSubmissions.commentsForEditor,
@@ -28,7 +29,7 @@ export default async function DashboardPannel({
         like(articleSubmissions.commentsForEditor, `%${searchParams.q || ''}%`)
       )
     )
-    .leftJoin(files, eq(articleSubmissions.id, files.articleId)) as TArticle[];
+    .leftJoin(files, eq(articleSubmissions.id, files.articleId))) as TArticle[];
   const session = await auth();
   const currentUser = session?.user;
 
