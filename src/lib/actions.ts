@@ -2,7 +2,8 @@
 
 import crypto from 'node:crypto';
 import { signIn } from '@/auth';
-import { db, files, passwordResets, users } from '@/db/schema';
+import { db } from '@/db/drizzle';
+import { files, passwordResets, users } from '@/db/schema';
 import { loginSchema, registerSchema } from '@/schemas/auth.schema';
 import bcrypt from 'bcryptjs';
 import { v2 as cloudinary } from 'cloudinary';
@@ -28,6 +29,7 @@ export async function authenticate(
     if (login.error) return login.error.errors[0].message;
 
     await signIn('credentials', login.data);
+
     return 'Welcome back';
   } catch (error) {
     if (error instanceof AuthError) {
@@ -136,8 +138,8 @@ export async function deteteresource(_: unknown, formData: FormData) {
   if (!publicId) return {};
   try {
     await db.delete(files).where(eq(files.publicId, publicId));
-    const pid = publicId.split('/').at(-1)?.split('.')[0]
-    if (!pid) return 'can not delete file'
+    const pid = publicId.split('/').at(-1)?.split('.')[0];
+    if (!pid) return 'can not delete file';
     const res = await cloudinary.uploader.destroy(pid, {
       type: 'upload',
       resource_type: 'raw',

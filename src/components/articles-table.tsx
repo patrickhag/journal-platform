@@ -1,6 +1,6 @@
-"use client"
+'use client';
 
-import { FC, useState } from "react"
+import { FC, useState } from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -10,8 +10,8 @@ import {
   getSortedRowModel,
   SortingState,
   getFilteredRowModel,
-} from "@tanstack/react-table"
-import { Input } from "@/components/ui/input"
+} from '@tanstack/react-table';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -19,18 +19,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from '@/components/ui/table';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, ArrowUpDown, } from 'lucide-react'
-import { StatusBadge } from "./status-badge"
-import Link from "next/link"
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
+import { StatusBadge } from './status-badge';
 
 type Article = {
   id: string | null;
@@ -39,66 +38,66 @@ type Article = {
   ownerFirstName: string | null;
   ownerLastName: string | null;
   createdAt: string | null;
-}
+};
 const columns: ColumnDef<Article>[] = [
   {
-    accessorKey: "title",
+    accessorKey: 'title',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Title
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
   },
   {
-    accessorKey: "section",
-    header: "Section",
+    accessorKey: 'section',
+    header: 'Section',
   },
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => <StatusBadge status={row.getValue("status")} />,
+    accessorKey: 'status',
+    header: 'Status',
+    cell: ({ row }) => <StatusBadge status={row.getValue('status')} />,
   },
   {
-    accessorKey: "owner",
-    header: "Owner",
+    accessorKey: 'owner',
+    header: 'Owner',
   },
   {
-    accessorKey: "createdAt",
+    accessorKey: 'createdAt',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Created at
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
-      )
+      );
     },
   },
   {
-    id: "actions",
-    cell: ({ row }) => (
-      <Link href={'/articles/'+String(row.original.id)} className="ring-1 px-3 py-2 ring-gray-200 rounded-md">
+    id: 'actions',
+    cell: () => (
+      <Button variant="outline" size="sm">
         View
       </Link>
     ),
   },
-]
+];
 
 interface ArticlesTableProps {
-  data: Article[]
+  data: Article[];
 }
 
 export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [globalFilter, setGlobalFilter] = useState("")
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [globalFilter, setGlobalFilter] = useState('');
 
   const table = useReactTable({
     data,
@@ -118,7 +117,7 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
         pageSize: 15,
       },
     },
-  })
+  });
 
   return (
     <div className="space-y-4">
@@ -140,9 +139,9 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -153,18 +152,24 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
@@ -174,17 +179,21 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
       </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <p className="text-sm font-medium">Total: {table.getFilteredRowModel().rows.length}</p>
+          <p className="text-sm font-medium">
+            Total: {table.getFilteredRowModel().rows.length}
+          </p>
           <div className="flex items-center gap-2">
             <p className="text-sm font-medium">Rows per page</p>
             <Select
               value={`${table.getState().pagination.pageSize}`}
               onValueChange={(value) => {
-                table.setPageSize(Number(value))
+                table.setPageSize(Number(value));
               }}
             >
               <SelectTrigger className="h-8 w-[70px]">
-                <SelectValue placeholder={table.getState().pagination.pageSize} />
+                <SelectValue
+                  placeholder={table.getState().pagination.pageSize}
+                />
               </SelectTrigger>
               <SelectContent>
                 {[10, 15, 20, 25, 30].map((pageSize) => (
@@ -218,6 +227,5 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
         </div>
       </div>
     </div>
-  )
-}
-
+  );
+};
