@@ -11,7 +11,7 @@ import { AuthError } from 'next-auth';
 import type { CloudinaryUploadWidgetInfo } from 'next-cloudinary';
 import type z from 'zod';
 import { RESET_PASSWORD_EXPIRATION_TIME } from './consts';
-import { sendPasswordResetEmail } from './emailTransporter';
+import { notifyContibutor, sendPasswordResetEmail } from './emailTransporter';
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -188,4 +188,19 @@ export async function createUpload(
     console.log('server err', error);
     return { message: 'Internal Server Error' };
   }
+}
+
+
+export async function reachOut(
+  _:unknown,
+  formData: FormData
+) {
+  await notifyContibutor({
+    url: `new message from ${formData.get('name')||''}`,
+    subject: `new message from ${formData.get('name')||''}`,
+    toEmail: formData.get('email')?.toString() || '',
+    article: formData.get('message')?.toString() || '',
+    originalAuthor: formData.get('name')?.toString() || '',
+  });
+  return 'Message sent';
 }

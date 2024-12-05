@@ -1,5 +1,5 @@
-import React from 'react'
-import { Button } from '../ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { ReachOut } from './ReachOut';
 
 export default async function Reviewer({ reviewer: { email, names, affiliation, phone, expertise }, index }: {
   reviewer: {
@@ -13,6 +13,8 @@ export default async function Reviewer({ reviewer: { email, names, affiliation, 
     articleId: string | null;
   }, index: number
 }) {
+
+
   return (
     <>
       <h3 className="font-medium">{index + 1}<sup>{index === 0 ? 'st' : index === 1 ? 'nd' : index === 2 ? 'rd' : 'th'}</sup> proposed reviewer</h3>
@@ -40,8 +42,14 @@ export default async function Reviewer({ reviewer: { email, names, affiliation, 
         <h4 className="text-sm text-muted-foreground mb-2">Expertise</h4>
         <p className="text-base">{expertise}</p>
       </div>
-
-      <Button className="w-full md:w-auto">Reach out</Button>
+      <Popover>
+        <PopoverTrigger className="w-full md:w-auto bg-slate-900 text-lime-50 px-3 py-1 rounded-md">
+          Reach out
+        </PopoverTrigger>
+        <PopoverContent >
+          <ReachOut email={email} names={names} />
+        </PopoverContent>
+      </Popover>
     </>
   )
 }
