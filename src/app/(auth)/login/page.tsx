@@ -40,11 +40,11 @@ export default function Login() {
     },
   });
 
-  useEffect(() => {
-    if (errorMessage === 'Success') {
-      router.push('/dashboard');
-    }
-  }, [errorMessage]);
+  // useEffect(() => {
+  //   if (errorMessage === 'Success') {
+  //     router.push('/dashboard');
+  //   }
+  // }, [errorMessage]);
 
   return (
     <>
