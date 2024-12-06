@@ -37,6 +37,7 @@ export const users = pgTable('user', {
   email: text('email').unique(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
   password: text('password'),
+  avatar: text('avatar'),
 });
 
 export const accounts = pgTable(
@@ -178,9 +179,10 @@ export const reviewers = pgTable('reviewers', {
     .$defaultFn(() => crypto.randomUUID()),
   names: varchar('names', { length: 255 }).notNull(),
   affiliation: varchar('affiliation', { length: 255 }).notNull(),
-  email: varchar('email', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).unique().notNull(),
   phone: varchar('phone', { length: 20 }),
   expertise: text('expertise').notNull(),
+  acceptedInvitation: boolean('acceptedInvitation'),
   userId: text('userId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
@@ -241,3 +243,4 @@ export type TReviewers = typeof reviewers.$inferInsert;
 export type TContributors = typeof contributors.$inferInsert;
 export type TMetadata = typeof metadata.$inferInsert;
 export type TFiles = typeof files.$inferInsert;
+export type TUsers = typeof users.$inferSelect;

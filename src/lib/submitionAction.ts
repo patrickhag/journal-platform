@@ -104,17 +104,17 @@ export async function submitAction(_: unknown, formData: FormData) {
       })
     });
 
-    for(const reviewer of reviewerValidations) {
-      const originalAuthor = session?.user?.name
-      if (!originalAuthor) return
-      await notifyContibutor({
-        url: "someone added you to reviewers",
-        subject: "someone added you to reviewers",
-        toEmail: reviewer.email,
-        article: articleSubmitionValidations.section,
-        originalAuthor
-      });
-    }
+    // for(const reviewer of reviewerValidations) {
+    //   const originalAuthor = session?.user?.name
+    //   if (!originalAuthor) return
+    //   await notifyContibutor({
+    //     url: "someone added you to reviewers",
+    //     subject: "someone added you to reviewers",
+    //     toEmail: reviewer.email,
+    //     article: articleSubmitionValidations.section,
+    //     originalAuthor
+    //   });
+    // }
 
     for (const contributor of contributorValidations) {
       const originalAuthor = session?.user?.name

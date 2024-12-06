@@ -1,5 +1,6 @@
 import { NotifiyContributor } from "@/components/emails/notify-contributor";
 import { EmailPasswordReset } from "@/components/emails/password-reset";
+import { SendInvitation } from "@/components/emails/sendInvite";
 import { render } from "@react-email/components";
 import nodemailer from "nodemailer";
 
@@ -56,3 +57,34 @@ export const notifyContibutor = async ({
   };
   await transporter.sendMail(options);
 };
+
+
+export const sendInvitation = async ({
+  article, author, reviewer, toEmail
+}: {
+  reviewer: string;
+  article: {
+    article: string;
+    title: string;
+    subTitle: string;
+    content: string;
+  };
+  author: {
+    name: string;
+    role: string;
+    avatar: string;
+  };
+  toEmail: string;
+}) => {
+  const emailHtml = await render(
+    <SendInvitation article={article} author={author} reviewer={reviewer} />,
+  );
+  const options = {
+    from: process.env.EMAIL_USER,
+    to: toEmail,
+    subject: 'You have been invited to review the following article',
+    html: emailHtml,
+  };
+  await transporter.sendMail(options);
+};
+

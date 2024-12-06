@@ -3,18 +3,26 @@ import Files from "@/components/articles/Files";
 import Metadata from "@/components/articles/Metadata";
 import Reviewer from "@/components/articles/Reviewer";
 import { articleSubmissions, db, reviewers, users, } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq,and } from "drizzle-orm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 async function page({
   params,
+  searchParams
 }: {
   params: Promise<{ articleId: string[] }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const parameters = await params
   const [articleId] = parameters.articleId
-
+  {
+    const userId = (await auth())?.user?.id
+    const params = await searchParams
+    const isAcceptingInvite = params.accept_invite?.toString()
+    if (isAcceptingInvite && Boolean(isAcceptingInvite) && userId) {
+      await db.update(reviewers).set({ acceptedInvitation: Boolean(parseInt(isAcceptingInvite)) }).where(and(eq(reviewers.articleId, articleId), eq(reviewers.userId, userId)))
+    }
+  }
   const articles = await db
     .select()
     .from(articleSubmissions)
@@ -84,7 +92,7 @@ async function page({
             <CardTitle>Reviewers</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {reviewrs.map((r, index) => <Reviewer reviewer={r} index={index} key={r.id} />)}
+            {reviewrs.map((r, index) => <Reviewer reviewer={r} index={index} key={r.id} article={article.id} />)}
           </CardContent>
         </Card>
       </aside>

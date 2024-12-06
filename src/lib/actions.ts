@@ -11,7 +11,7 @@ import { AuthError } from 'next-auth';
 import type { CloudinaryUploadWidgetInfo } from 'next-cloudinary';
 import type z from 'zod';
 import { RESET_PASSWORD_EXPIRATION_TIME } from './consts';
-import { notifyContibutor, sendPasswordResetEmail } from './emailTransporter';
+import { notifyContibutor, sendInvitation, sendPasswordResetEmail } from './emailTransporter';
 import { redirect, RedirectType } from 'next/navigation';
 
 cloudinary.config({
@@ -197,12 +197,12 @@ export async function reachOut(
   _: unknown,
   formData: FormData
 ) {
-  await notifyContibutor({
-    url: `new message from ${formData.get('name') || ''}`,
-    subject: `new message from ${formData.get('name') || ''}`,
-    toEmail: formData.get('email')?.toString() || '',
-    article: formData.get('message')?.toString() || '',
-    originalAuthor: formData.get('name')?.toString() || '',
-  });
+
+  await sendInvitation({
+    article: {...JSON.parse(formData.get('article')?.toString() || ''), content: formData.get('message')?.toString() || ''},
+    reviewer: formData.get('reviewer')?.toString() || '',
+    author: JSON.parse(formData.get('author')?.toString() || ''),
+    toEmail: formData.get('toEmail')?.toString() || '',
+  })
   return 'Message sent';
 }
