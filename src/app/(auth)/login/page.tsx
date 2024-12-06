@@ -143,7 +143,7 @@ export default function Login() {
                 className="w-full bg-gray-800 hover:bg-gray-700 text-white"
                 disabled={isPending}
               >
-                {isPending ? <Loader text="Loging in..." /> : 'Login'}
+                {isPending ? <Loader text="Logging in..." /> : 'Login'}
               </Button>
             </form>
           </Form>

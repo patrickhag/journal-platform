@@ -17,8 +17,13 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
+import { drizzle } from 'drizzle-orm/postgres-js';
 import type { AdapterAccountType } from 'next-auth/adapters';
+import postgres from 'postgres';
 
+const pool = postgres(process.env.DATABASE_URL!, { max: 1 });
+
+export const db = drizzle(pool);
 export const roleEnum = pgEnum('role', USER_ROLES);
 export const articleTypeEnum = pgEnum('article-type', ARTICLE_TYPES);
 export const salutationEnum = pgEnum('salutation', SALUTATION);

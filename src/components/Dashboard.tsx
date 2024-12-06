@@ -1,10 +1,10 @@
 import { auth } from '@/auth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { articleSubmissions, files } from '@/db/schema';
-import { db } from '@/db/drizzle';
+import { db } from '@/db/schema';
 import { ArticleSection } from './ArticleSection';
 import { SearchArticle } from './SearchArticle';
-import { eq, like, or } from 'drizzle-orm';
+import { and, eq, like } from 'drizzle-orm';
 import { PlusCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
@@ -15,6 +15,22 @@ export default async function DashboardPannel({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
+  const session = await auth();
+  const currentUser = session?.user;
+
+  const where = () => {
+    const conditions = [];
+    if (searchParams.q) {
+      conditions.push(
+        like(articleSubmissions.commentsForEditor, `%${searchParams.q}%`)
+      );
+    }
+    if (currentUser?.id) {
+      conditions.push(eq(articleSubmissions.userId, currentUser.id));
+    }
+    return conditions.length > 0 ? and(...conditions) : undefined;
+  };
+
   const articles = (await db
     .select({
       id: articleSubmissions.id,
@@ -24,17 +40,11 @@ export default async function DashboardPannel({
       articleStatus: articleSubmissions.articleStatus,
     })
     .from(articleSubmissions)
-    .where(
-      or(
-        like(articleSubmissions.commentsForEditor, `%${searchParams.q || ''}%`)
-      )
-    )
+    .where(where())
     .leftJoin(files, eq(articleSubmissions.id, files.articleId))) as TArticle[];
-  const session = await auth();
-  const currentUser = session?.user;
 
   return (
-    <main className="container py-8 mx-auto">
+    <main className="max-w-7xl py-8 mx-auto">
       <div>
         <div className="mb-10">
           <h2 className="text-2xl text-[#141A26] font-medium">
@@ -73,9 +83,16 @@ export default async function DashboardPannel({
           </div>
           <TabsContent value="articles" className="mt-6">
             <div className="grid gap-4">
-              {articles.map((a, i) => (
-                <ArticleSection article={a} key={i} index={i} />
-              ))}
+              {articles.length > 0 ? (
+                articles.map((a, i) => (
+                  <ArticleSection article={a} key={i} index={i} />
+                ))
+              ) : (
+                <div className="text-center text-muted-foreground">
+                  You haven&apos;t submitted any articles yet. Click &quot;New
+                  article&quot; to get started.
+                </div>
+              )}
             </div>
           </TabsContent>
           <TabsContent value="archives" className="mt-6">

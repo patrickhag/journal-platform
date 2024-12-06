@@ -1,7 +1,13 @@
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { ReachOut } from './ReachOut';
+import { eq } from 'drizzle-orm';
+import { users } from '@/db/schema';
+import { db } from '@/db/schema';
+import { ReviewerPopUpWithPermissions } from './ReviewerPopUp';
+import { USER_ROLE } from '@/lib/roles';
 
-export default async function Reviewer({ reviewer: { email, names, affiliation, phone, expertise }, index }: {
+export default async function Reviewer({
+  reviewer: { email, names, affiliation, phone, expertise },
+  index,
+}: {
   reviewer: {
     id: string;
     affiliation: string;
@@ -11,13 +17,28 @@ export default async function Reviewer({ reviewer: { email, names, affiliation, 
     phone: string | null;
     expertise: string;
     articleId: string | null;
-  }, index: number
+  };
+  index: number;
 }) {
+  const user = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, email))
+    .limit(1);
 
+  console.log(user);
+
+  const role = user[0].role;
 
   return (
     <>
-      <h3 className="font-medium">{index + 1}<sup>{index === 0 ? 'st' : index === 1 ? 'nd' : index === 2 ? 'rd' : 'th'}</sup> proposed reviewer</h3>
+      <h3 className="font-medium">
+        {index + 1}
+        <sup>
+          {index === 0 ? 'st' : index === 1 ? 'nd' : index === 2 ? 'rd' : 'th'}
+        </sup>{' '}
+        proposed reviewer
+      </h3>
 
       <div className="grid gap-6 md:grid-cols-2">
         <div>
@@ -42,15 +63,14 @@ export default async function Reviewer({ reviewer: { email, names, affiliation, 
         <h4 className="text-sm text-muted-foreground mb-2">Expertise</h4>
         <p className="text-base">{expertise}</p>
       </div>
-      <Popover>
-        <PopoverTrigger className="w-full md:w-auto bg-slate-900 text-lime-50 px-3 py-1 rounded-md">
-          Reach out
-        </PopoverTrigger>
-        <PopoverContent >
-          <ReachOut email={email} names={names} />
-        </PopoverContent>
-      </Popover>
+      {role === 'ADMIN' || role === 'CHIEF_EDITOR' ? (
+        <ReviewerPopUpWithPermissions
+          email={email}
+          names={names}
+          role={role as USER_ROLE}
+          requiredPermissions={['MANAGE_REVIEWERS']}
+        />
+      ) : null}
     </>
-  )
+  );
 }
-

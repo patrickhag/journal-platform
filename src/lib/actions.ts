@@ -2,7 +2,7 @@
 
 import crypto from 'node:crypto';
 import { signIn } from '@/auth';
-import { db } from '@/db/drizzle';
+import { db } from '@/db/schema';
 import { files, passwordResets, users } from '@/db/schema';
 import { loginSchema, registerSchema } from '@/schemas/auth.schema';
 import bcrypt from 'bcryptjs';
@@ -13,6 +13,7 @@ import type { CloudinaryUploadWidgetInfo } from 'next-cloudinary';
 import type z from 'zod';
 import { RESET_PASSWORD_EXPIRATION_TIME } from './consts';
 import { notifyContibutor, sendPasswordResetEmail } from './emailTransporter';
+import { redirect } from 'next/navigation';
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -24,13 +25,10 @@ export async function authenticate(
   _prevState: string | undefined,
   formData: z.infer<typeof loginSchema>
 ) {
+  const login = loginSchema.safeParse(formData);
+  if (login.error) return login.error.errors[0].message;
   try {
-    const login = loginSchema.safeParse(formData);
-    if (login.error) return login.error.errors[0].message;
-
     await signIn('credentials', login.data);
-
-    return 'Welcome back';
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -40,7 +38,20 @@ export async function authenticate(
           return 'Something went wrong during sign-in.';
       }
     }
-    return 'Success';
+  } finally {
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, login.data.email))
+      .limit(1);
+    if (
+      user[0].role &&
+      (user[0].role === 'ADMIN' || user[0].role === 'CHIEF_EDITOR')
+    ) {
+      redirect('/editor/articles');
+    } else {
+      redirect('/dashboard');
+    }
   }
 }
 export async function resetPassword(
@@ -192,14 +203,10 @@ export async function createUpload(
   }
 }
 
-
-export async function reachOut(
-  _:unknown,
-  formData: FormData
-) {
+export async function reachOut(_: unknown, formData: FormData) {
   await notifyContibutor({
-    url: `new message from ${formData.get('name')||''}`,
-    subject: `new message from ${formData.get('name')||''}`,
+    url: `new message from ${formData.get('name') || ''}`,
+    subject: `new message from ${formData.get('name') || ''}`,
     toEmail: formData.get('email')?.toString() || '',
     article: formData.get('message')?.toString() || '',
     originalAuthor: formData.get('name')?.toString() || '',
