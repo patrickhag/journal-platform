@@ -18,8 +18,7 @@ import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { startTransition, useActionState, useEffect } from 'react';
+import { startTransition, useActionState, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Loader from '@/components/Loader';
 import type { z } from 'zod';
@@ -30,7 +29,7 @@ export default function Login() {
     undefined
   );
 
-  const router = useRouter();
+  const [visible, setVisible] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -40,11 +39,17 @@ export default function Login() {
     },
   });
 
-  // useEffect(() => {
-  //   if (errorMessage === 'Success') {
-  //     router.push('/dashboard');
-  //   }
-  // }, [errorMessage]);
+  console.log('form>>>', form);
+
+  useEffect(() => {
+    if (errorMessage) {
+      setVisible(errorMessage);
+    }
+    const timeout = setTimeout(() => {
+      setVisible(null);
+    }, 5000);
+    return () => clearTimeout(timeout);
+  }, [errorMessage]);
 
   return (
     <>
@@ -63,14 +68,14 @@ export default function Login() {
           <p className="text-sm text-muted-foreground">
             Glad to see you again!
           </p>
-          {errorMessage && (
+          {visible && (
             <div
               className="flex p-4 items-end space-x-1 justify-center bg-red-100 rounded-md"
               aria-live="polite"
               aria-atomic="true"
             >
               <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-              <p className="text-sm text-red-500">{errorMessage}</p>
+              <p className="text-sm text-red-500">{visible}</p>
             </div>
           )}
         </CardHeader>
@@ -143,7 +148,7 @@ export default function Login() {
                 className="w-full bg-gray-800 hover:bg-gray-700 text-white"
                 disabled={isPending}
               >
-                {isPending ? <Loader text="Loging in..." /> : 'Login'}
+                {isPending ? <Loader text="Logging in..." /> : 'Login'}
               </Button>
             </form>
           </Form>

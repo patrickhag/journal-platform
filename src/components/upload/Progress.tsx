@@ -12,9 +12,9 @@ const journalKeys = [
 export const ProgressLine = () => {
   const pathname = usePathname();
   const page = pathname.split('/').at(-1);
-  console.log(page);
+
   return (
-    <div className="mb-8">
+    <div className="mb-8 sticky top-16 w-full">
       <div className="flex items-center space-x-4 bg-gray-100">
         {journalKeys.map(({ page: j, title }, i) => (
           <React.Fragment key={j}>

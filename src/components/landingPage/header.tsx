@@ -1,21 +1,10 @@
 import Image from 'next/image';
 import { auth } from '@/auth';
-import { UserRound } from 'lucide-react';
 import HeaderDropdown from './headerDropdown';
 
 const Header = async () => {
   const session = await auth();
-  if (session?.user) {
-    session.user = {
-      name: session.user.name,
-      email: session.user.email,
-    };
-  }
-
-  const names = session?.user?.name
-    ?.split(' ')
-    .map((name) => name.substring(0, 1))
-    .join('') as string;
+  const names = session?.user?.name?.split(' ')?.[1]?.substring(0, 1) as string;
 
   return (
     <>
@@ -23,7 +12,7 @@ const Header = async () => {
         Free space for journal publication
       </div>
 
-      <header className="flex items-center justify-between px-8 py-4 bg-gray-50 shadow">
+      <header className="flex items-center justify-between px-8 py-4 backdrop-blur-sm shadow sticky top-0 z-50">
         <div className="text-xl font-bold flex items-center gap-2">
           <div className="rounded-full">
             <Image
@@ -53,19 +42,8 @@ const Header = async () => {
             Reviewers
           </a>
         </nav>
-        <div className="flex items-center gap-4">
-          <button
-            className="text-white px-3 py-1 rounded hover:bg-blue-700"
-            style={{ background: '#1A237E' }}
-          >
-            Submit a manuscript
-          </button>
-          {session?.user ? (
-            <HeaderDropdown names={names} />
-          ) : (
-            <UserRound size={20} />
-          )}
-        </div>
+
+        <HeaderDropdown names={names} session={session} />
       </header>
     </>
   );

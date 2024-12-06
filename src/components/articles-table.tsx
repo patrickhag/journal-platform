@@ -30,6 +30,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { StatusBadge } from './status-badge';
+import Link from 'next/link';
 
 type Article = {
   id: string | null;
@@ -83,8 +84,11 @@ const columns: ColumnDef<Article>[] = [
   },
   {
     id: 'actions',
-    cell: () => (
-      <Button variant="outline" size="sm">
+    cell: ({ row }) => (
+      <Link
+        href={'/articles/' + String(row.original.id)}
+        className="ring-1 px-3 py-2 ring-gray-200 rounded-md"
+      >
         View
       </Link>
     ),

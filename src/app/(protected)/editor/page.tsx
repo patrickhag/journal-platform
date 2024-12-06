@@ -1,7 +1,6 @@
 import { ArticlesTable } from '@/components/articles-table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// import { ArticlesTable } from '@/components/articles-table';
-import { db } from '@/db/drizzle';
+import { db } from '@/db/schema';
 import { users, articleSubmissions, metadata } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
@@ -20,12 +19,11 @@ export default async function ArticlesPage() {
     .leftJoin(users, eq(articleSubmissions.userId, users.id))
     .leftJoin(metadata, eq(metadata.articleId, articleSubmissions.id));
 
-  console.log(articles);
   return (
     <div className="container mx-auto py-10">
       <Card>
         <CardHeader>
-          <CardTitle>Articles</CardTitle>
+          <CardTitle className="text-2xl font-bold">Articles</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground mb-6">

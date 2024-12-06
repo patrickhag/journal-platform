@@ -1,5 +1,4 @@
-import { users } from '@/db/schema';
-import { db } from '@/db/drizzle';
+import { db, users } from '@/db/schema';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import NextAuth, { type User, type NextAuthConfig } from 'next-auth';

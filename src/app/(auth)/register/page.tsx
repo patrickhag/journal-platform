@@ -36,6 +36,7 @@ export default function Register() {
     register,
     undefined
   );
+
   const router = useRouter();
 
   const form = useForm<z.infer<typeof registerSchema>>({

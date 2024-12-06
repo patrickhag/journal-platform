@@ -2,8 +2,7 @@
 
 import crypto from 'node:crypto';
 import { signIn } from '@/auth';
-import { db } from '@/db/drizzle';
-import { files, passwordResets, users } from '@/db/schema';
+import { db, files, passwordResets, users } from '@/db/schema';
 import { loginSchema, registerSchema } from '@/schemas/auth.schema';
 import bcrypt from 'bcryptjs';
 import { v2 as cloudinary } from 'cloudinary';
@@ -12,11 +11,7 @@ import { AuthError } from 'next-auth';
 import type { CloudinaryUploadWidgetInfo } from 'next-cloudinary';
 import type z from 'zod';
 import { RESET_PASSWORD_EXPIRATION_TIME } from './consts';
-import {
-  notifyContibutor,
-  sendInvitation,
-  sendPasswordResetEmail,
-} from './emailTransporter';
+import { sendInvitation, sendPasswordResetEmail } from './emailTransporter';
 import { redirect, RedirectType } from 'next/navigation';
 
 cloudinary.config({
@@ -30,30 +25,28 @@ export async function authenticate(
   formData: z.infer<typeof loginSchema>
 ) {
   const login = loginSchema.safeParse(formData);
-  if (login.error) return login.error.errors[0].message;
   try {
+    if (login.error) return login.error.errors[0].message;
     await signIn('credentials', login.data);
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
-          return 'Invalid credentials.';
+          return 'Invalid credentials. Try again!';
         default:
           return 'Something went wrong during sign-in.';
       }
     }
-  } finally {
     const user = await db
       .select()
       .from(users)
-      .where(eq(users.email, login.data.email))
+      .where(eq(users.email, login?.data?.email as string))
       .limit(1);
-    if (
-      user[0].role &&
-      (user[0].role === 'CHIEF_EDITOR' || user[0].role === 'ADMIN')
-    )
-      return redirect('/editor', RedirectType.replace);
-    redirect('/dashboard', RedirectType.replace);
+    if (user[0].role === 'CHIEF_EDITOR' || user[0].role === 'ADMIN') {
+      redirect('/editor', RedirectType.replace);
+    } else {
+      redirect('/dashboard', RedirectType.replace);
+    }
   }
 }
 export async function resetPassword(
