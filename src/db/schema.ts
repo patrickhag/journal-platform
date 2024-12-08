@@ -1,4 +1,9 @@
-import { ARTICLE_STATUS, ARTICLE_TYPES, COUNTRIES, SALUTATION } from '@/lib/consts';
+import {
+  ARTICLE_STATUS,
+  ARTICLE_TYPES,
+  COUNTRIES,
+  SALUTATION,
+} from '@/lib/consts';
 import { USER_ROLES } from '@/lib/roles';
 import { sql } from 'drizzle-orm';
 import {
@@ -179,7 +184,7 @@ export const reviewers = pgTable('reviewers', {
     .$defaultFn(() => crypto.randomUUID()),
   names: varchar('names', { length: 255 }).notNull(),
   affiliation: varchar('affiliation', { length: 255 }).notNull(),
-  email: varchar('email', { length: 255 }).unique().notNull(),
+  email: varchar('email', { length: 255 }).notNull(),
   phone: varchar('phone', { length: 20 }),
   expertise: text('expertise').notNull(),
   acceptedInvitation: boolean('acceptedInvitation'),

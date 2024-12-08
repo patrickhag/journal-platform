@@ -1,6 +1,6 @@
-import { auth } from "@/auth";
-import { ProgressLine } from "@/components/upload/Progress";
-import type { PropsWithChildren } from "react";
+import { auth } from '@/auth';
+import { ProgressLine } from '@/components/upload/Progress';
+import type { PropsWithChildren } from 'react';
 
 export default async function Layout({ children }: PropsWithChildren) {
   const session = await auth();

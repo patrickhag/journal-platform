@@ -29,6 +29,7 @@
 		"@react-email/components": "^0.0.28",
 		"@react-email/tailwind": "1.0.3",
 		"@tanstack/react-table": "^8.20.5",
+		"@uploadthing/react": "^7.1.2",
 		"bcryptjs": "^2.4.3",
 		"class-variance-authority": "^0.7.0",
 		"cloudinary": "^2.5.1",
@@ -36,6 +37,7 @@
 		"dotenv": "^16.4.5",
 		"drizzle-orm": "^0.36.1",
 		"lucide-react": "^0.454.0",
+		"mailgen": "^2.0.28",
 		"next": "latest",
 		"next-auth": "beta",
 		"next-cloudinary": "^6.16.0",
@@ -51,6 +53,7 @@
 		"react-quill-new": "^3.3.3",
 		"tailwind-merge": "^2.5.4",
 		"tailwindcss-animate": "^1.0.7",
+		"uploadthing": "^7.4.0",
 		"zod": "^3.23.8",
 		"zod-urlsearchparams": "^0.0.14"
 	},

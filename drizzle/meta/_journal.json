@@ -15,6 +15,20 @@
       "when": 1733217370672,
       "tag": "0001_chunky_radioactive_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1733571238530,
+      "tag": "0002_sweet_captain_marvel",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1733659677496,
+      "tag": "0003_furry_thor",
+      "breakpoints": true
     }
   ]
 }
