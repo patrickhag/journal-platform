@@ -36,7 +36,7 @@
 		"clsx": "^2.1.1",
 		"dotenv": "^16.4.5",
 		"drizzle-orm": "^0.36.4",
-		"lucide-react": "^0.454.0",
+		"lucide-react": "^0.468.0",
 		"mailgen": "^2.0.28",
 		"next": "latest",
 		"next-auth": "beta",
