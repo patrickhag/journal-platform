@@ -1,5 +1,9 @@
 import { db, metadata } from '@/db/schema';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { ReachOut } from './ReachOut';
 import { eq } from 'drizzle-orm';
 import { auth } from '@/auth';

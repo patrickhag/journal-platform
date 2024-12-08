@@ -81,7 +81,7 @@ dependencies:
     specifier: ^16.4.5
     version: 16.4.7
   drizzle-orm:
-    specifier: ^0.36.1
+    specifier: ^0.36.4
     version: 0.36.4(@neondatabase/serverless@0.10.4)(@types/pg@8.11.10)(@types/react@18.3.14)(pg@8.13.1)(postgres@3.4.5)(react@19.0.0-rc-66855b96-20241106)
   lucide-react:
     specifier: ^0.454.0
