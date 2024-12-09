@@ -15,7 +15,7 @@ export default async function Layout({ children }: PropsWithChildren) {
     <SessionProvider basePath={BASE_PATH} session={session}>
       <Header />
       <div className="bg-gray-100 min-h-screen">
-        <div className="max-w-7xl mx-auto p-8">
+        <div className="max-w-7xl mx-auto p-5">
           <div>{children}</div>
         </div>
       </div>

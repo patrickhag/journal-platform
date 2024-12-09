@@ -1,18 +1,19 @@
-import AddReviewerModal from "@/components/upload/AddReviewerModal";
-import { Paginator } from "@/components/upload/Paginator";
-import { ReviewCard } from "@/components/upload/ReviewCard";
-import { Reviewers } from "@/components/upload/Reviewers";
+import AddReviewerModal from '@/components/upload/AddReviewerModal';
+import { Paginator } from '@/components/upload/Paginator';
+import { ReviewCard } from '@/components/upload/ReviewCard';
+import { Reviewers } from '@/components/upload/Reviewers';
+import { Card } from '@/components/ui/card';
 
 const Page = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
-  console.log("query search param object :", await searchParams);
+  console.log('query search param object :', await searchParams);
   const query = await searchParams;
   return (
     <>
-      <div className="space-y-6">
+      <Card className="mb-6 p-6">
         <h2 className="text-2xl font-semibold tracking-tight">Reviewers</h2>
         <ReviewCard />
         <div className="space-y-4">
@@ -23,13 +24,13 @@ const Page = async ({
           </div>
 
           <AddReviewerModal />
-          <Paginator
-            backLink="/articles/new/meta"
-            nextLink="/articles/new/final"
-            query={query}
-          ></Paginator>
         </div>
-      </div>
+      </Card>
+      <Paginator
+        backLink="/articles/new/meta"
+        nextLink="/articles/new/final"
+        query={query}
+      ></Paginator>
     </>
   );
 };

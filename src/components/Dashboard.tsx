@@ -51,7 +51,7 @@ export default async function DashboardPannel({
             Welcome back, {currentUser?.name}
           </h2>
           <p className="text-muted-foreground">
-            You&apos;ve got {articles.length} submitted articles.
+            You&apos;ve got {articles.length} submitted submissions.
           </p>
         </div>
 
@@ -62,7 +62,7 @@ export default async function DashboardPannel({
                 value="articles"
                 className="rounded-md border-b-2 border-transparent px-4 py-2 font-medium data-[state=active]:border-primary"
               >
-                My articles
+                My submisions
               </TabsTrigger>
               <TabsTrigger
                 value="archives"
