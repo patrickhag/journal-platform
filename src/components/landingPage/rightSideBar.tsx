@@ -1,4 +1,5 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import Image from 'next/image'
 import React from 'react'
 
 const RightSideBar = () => {
@@ -28,7 +29,7 @@ const RightSideBar = () => {
           <div className='relative rounded-lg'>
             <p className='font-semibold mb-2'>Case Study</p>
             {/* Image */}
-            <img
+            <Image
               src='https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732708303/old-books-wooden-table-library-vintage-style-ai-generated-content-design-background-instagram-facebook-wall-323974717_kbravu.webp'
               className='w-full h-40 object-cover rounded-lg'
               alt='Case Study'
@@ -49,7 +50,7 @@ const RightSideBar = () => {
           <div className='relative rounded-lg'>
             <p className='font-semibold mb-2'>Original study</p>
             {/* Image */}
-            <img
+            <Image
               src='https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732708303/old-books-wooden-table-library-vintage-style-ai-generated-content-design-background-instagram-facebook-wall-323974717_kbravu.webp'
               className='w-full h-40 object-cover rounded-lg'
               alt='Case Study'
@@ -70,7 +71,7 @@ const RightSideBar = () => {
           <div className='relative rounded-lg'>
             <p className='font-semibold mb-2'>Case report</p>
             {/* Image */}
-            <img
+            <Image
               src='https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732708303/old-books-wooden-table-library-vintage-style-ai-generated-content-design-background-instagram-facebook-wall-323974717_kbravu.webp'
               className='w-full h-40 object-cover rounded-lg'
               alt='Case Study'
@@ -91,7 +92,7 @@ const RightSideBar = () => {
           <div className='relative rounded-lg'>
             <p className='font-semibold mb-2'>Case Study</p>
             {/* Image */}
-            <img
+            <Image
               src='https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732708303/old-books-wooden-table-library-vintage-style-ai-generated-content-design-background-instagram-facebook-wall-323974717_kbravu.webp'
               className='w-full h-40 object-cover rounded-lg'
               alt='Case Study'

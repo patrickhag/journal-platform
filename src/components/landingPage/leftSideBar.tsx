@@ -1,5 +1,6 @@
 import React from 'react';
 import { EyeIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 
 const LeftSideBar = () => {
   return (
@@ -113,7 +114,7 @@ const LeftSideBar = () => {
           Reserved for Ads
         </h2>
         <div className="mt-2">
-          <img
+          <Image
             src="https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732723406/newss_espiuv.png"
             alt="Ad Placeholder"
             className="w-full h-auto border border-gray-300 rounded-md"

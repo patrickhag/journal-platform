@@ -6,4 +6,4 @@ export const authRoutes = [
   '/forgot-password',
 ];
 export const apiAuthPrefix = '/api/auth';
-export const DEFAULT_LOGIN_REDIRECT = ['/dashboard', '/editor'];
+export const DEFAULT_LOGIN_REDIRECT = '/dashboard';
