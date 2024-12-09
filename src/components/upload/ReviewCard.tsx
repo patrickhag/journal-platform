@@ -1,5 +1,3 @@
-import { Card, CardContent } from '../ui/card';
-
 export function ReviewCard() {
   return (
     <div>

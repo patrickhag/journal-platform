@@ -2,7 +2,7 @@
 import { Check } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 
 const journalKeys = [
   { page: 'start', title: 'Start' },

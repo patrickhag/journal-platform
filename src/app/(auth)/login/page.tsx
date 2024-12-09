@@ -39,8 +39,6 @@ export default function Login() {
     },
   });
 
-  console.log('form>>>', form);
-
   useEffect(() => {
     if (errorMessage) {
       setVisible(errorMessage);
