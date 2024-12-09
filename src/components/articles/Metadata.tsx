@@ -1,9 +1,13 @@
-import React, { PropsWithChildren, } from 'react'
-import { contributors, db, metadata} from '@/db/schema'
-import { eq } from 'drizzle-orm'
-import { USER_ROLE } from '@/lib/roles'
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
+import React, { PropsWithChildren } from 'react';
+import { contributors, db, metadata } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import { USER_ROLE } from '@/lib/roles';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
+export default async function Metadata({
+  articleId,
+  children,
+}: { articleId: string; role: USER_ROLE } & PropsWithChildren) {
 export default async function Metadata({
   articleId,
   children,
@@ -13,11 +17,15 @@ export default async function Metadata({
     .from(metadata)
     .where(eq(metadata.articleId, articleId))
     .limit(1);
+    .where(eq(metadata.articleId, articleId))
+    .limit(1);
 
+  const meta = metas[0];
   const meta = metas[0];
   const contibutors = await db
     .select()
     .from(contributors)
+    .where(eq(contributors.articleId, articleId));
     .where(eq(contributors.articleId, articleId));
 
   return (
@@ -28,15 +36,24 @@ export default async function Metadata({
             <CardTitle className="text-lg font-semibold">
               Article information
             </CardTitle>
+            <CardTitle className="text-lg font-semibold">
+              Article information
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">
                 Title of the journal
               </h3>
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Title of the journal
+              </h3>
               <p className="mt-1">{meta.title}</p>
             </div>
             <div>
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Subtitle of the journal
+              </h3>
               <h3 className="text-sm font-medium text-muted-foreground">
                 Subtitle of the journal
               </h3>
@@ -50,8 +67,18 @@ export default async function Metadata({
                 className="mt-1"
                 dangerouslySetInnerHTML={{ __html: meta.abstract }}
               />
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Abstract
+              </h3>
+              <p
+                className="mt-1"
+                dangerouslySetInnerHTML={{ __html: meta.abstract }}
+              />
             </div>
             <div>
+              <h3 className="text-sm font-medium text-muted-foreground">
+                Comments for the editor
+              </h3>
               <h3 className="text-sm font-medium text-muted-foreground">
                 Comments for the editor
               </h3>
@@ -60,8 +87,12 @@ export default async function Metadata({
           </CardContent>
         </Card>
 
+
         <Card>
           <CardHeader>
+            <CardTitle className="text-lg font-semibold">
+              Contributors
+            </CardTitle>
             <CardTitle className="text-lg font-semibold">
               Contributors
             </CardTitle>
@@ -73,10 +104,16 @@ export default async function Metadata({
                   {c.name}, {c.role}
                 </li>
               ))}
+              {contibutors.map((c) => (
+                <li key={c.id}>
+                  {c.name}, {c.role}
+                </li>
+              ))}
             </ul>
           </CardContent>
         </Card>
       </div>
     </article>
+  );
   );
 }
