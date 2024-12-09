@@ -22,7 +22,7 @@ const Reviews = async ({ role, articleId }: { role: USER_ROLE, articleId: string
                             </ul>
                             <div className="flex items-center justify-between">
                                 <User id={r.userId} />
-                                <ControlReviewsWithPermissions role={role} requiredPermissions={['MANAGE_REVIEWS']} fallback={<></>} />
+                                <ControlReviewsWithPermissions role={role} requiredPermissions={['MANAGE_REVIEWERS']} fallback={<></>} />
                             </div>
                         </div>
                     ))}

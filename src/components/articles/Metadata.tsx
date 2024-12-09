@@ -1,8 +1,8 @@
-import React, { PropsWithChildren } from 'react';
-import { contributors, db, metadata } from '@/db/schema';
-import { eq } from 'drizzle-orm';
-import { USER_ROLE } from '@/lib/roles';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import React, { PropsWithChildren, } from 'react'
+import { contributors, db, metadata} from '@/db/schema'
+import { eq } from 'drizzle-orm'
+import { USER_ROLE } from '@/lib/roles'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 
 export default async function Metadata({
   articleId,
