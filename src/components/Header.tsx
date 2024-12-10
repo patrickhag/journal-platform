@@ -22,7 +22,7 @@ export default async function Header() {
   const name = user?.lastName?.slice(0, 2).toUpperCase() || '';
 
   return (
-    <header className="border-b bg-white sticky top-0">
+    <header className="border-b bg-white sticky top-0 z-50">
       <div className="container mx-auto flex h-16 items-center justify-between">
         <div className="flex items-center gap-8">
           {/* {(role === 'ADMIN' || role === 'CHIEF_EDITOR') && <ShowNav />} */}

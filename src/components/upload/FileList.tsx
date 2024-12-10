@@ -1,10 +1,10 @@
-"use client";
-import { filesSchema } from "@/schemas/reviewer";
-import { Pencil, Trash2 } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { safeParse, serialize } from "zod-urlsearchparams";
-import { Button } from "../ui/button";
-import FileTypesModal from "./FileTypeModel";
+'use client';
+import { filesSchema } from '@/schemas/reviewer';
+import { Pencil, Trash2 } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { safeParse, serialize } from 'zod-urlsearchparams';
+import { Button } from '../ui/button';
+import FileTypesModal from './FileTypeModel';
 
 export const FileList = () => {
   const router = useRouter();
@@ -24,7 +24,6 @@ export const FileList = () => {
           key={file.publicId}
           className="flex items-center justify-between rounded-lg border p-4"
         >
-
           <div className="flex items-center space-x-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -43,13 +42,13 @@ export const FileList = () => {
             <div>
               <p className="font-medium">{file.originalName}</p>
               <p className="text-sm text-gray-500">
-                {file.originalName.slice(file.originalName.lastIndexOf("."))} |{" "}
+                {file.originalName.slice(file.originalName.lastIndexOf('.'))} |{' '}
                 {Math.floor(Number.parseInt(file.bytes!) / 1024)} Kb
               </p>
             </div>
           </div>
           <div className="grid gap-2">
-            <div className="flex space-x-2">
+            <div className="flex space-x-3 justify-end">
               <FileTypesModal
                 originalName={file.originalName}
                 publicId={file.publicId}
@@ -70,9 +69,9 @@ export const FileList = () => {
                   });
 
                   const params = new URLSearchParams(searchParams.toString());
-                  params.delete("files");
+                  params.delete('files');
                   router.push(
-                    `?${params.toString()}&${serializedData.toString()}`,
+                    `?${params.toString()}&${serializedData.toString()}`
                   );
                 }}
               >
