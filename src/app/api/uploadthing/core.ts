@@ -11,7 +11,8 @@ const uploadFileOption = {
        * @see https://docs.uploadthing.com/file-routes#route-config
        */
       maxFileSize: "4MB",
-      maxFileCount: 1,
+      maxFileCount: 6,
+      
     } as const
 // FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
