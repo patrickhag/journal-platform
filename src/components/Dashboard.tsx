@@ -62,7 +62,7 @@ export default async function DashboardPannel({
                 value="articles"
                 className="rounded-md border-b-2 border-transparent px-4 py-2 font-medium data-[state=active]:border-primary"
               >
-                My articles
+                My submisions
               </TabsTrigger>
               <TabsTrigger
                 value="archives"

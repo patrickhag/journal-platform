@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import Spinner from "@/components/Spinner";
-import { Alert } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import Loader from '@/components/Loader';
+import { Alert } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -10,43 +10,44 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup } from "@/components/ui/radio-group";
-import { metadataSchema } from "@/components/upload/ContributorsForm";
-import { Paginator } from "@/components/upload/Paginator";
-import { submitAction } from "@/lib/submitionAction";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup } from '@/components/ui/radio-group';
+import { metadataSchema } from '@/components/upload/ContributorsForm';
+import { Paginator } from '@/components/upload/Paginator';
+import { submitAction } from '@/lib/submitionAction';
 import {
   articleSubmitionSchema,
   filesSchema,
   finalSubmissionSchema,
   reviewerSchema,
-} from "@/schemas/reviewer";
-import { contributorFormSchema } from "@/schemas/upload";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { RedirectType, redirect, useSearchParams } from "next/navigation";
-import { startTransition, useActionState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import * as zu from "zod-urlsearchparams";
+} from '@/schemas/reviewer';
+import { contributorFormSchema } from '@/schemas/upload';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { RedirectType, redirect, useSearchParams } from 'next/navigation';
+import { startTransition, useActionState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import * as zu from 'zod-urlsearchparams';
+
 const Page = () => {
   const searchParams = useSearchParams();
   const [errorMessage, formAction, isPending] = useActionState(
     submitAction,
-    undefined,
+    undefined
   );
   const form = useForm<z.infer<typeof finalSubmissionSchema>>({
     resolver: zodResolver(finalSubmissionSchema),
     defaultValues: {
-      ethicalReference: "",
-      founders: "",
+      ethicalReference: '',
+      founders: '',
     },
   });
 
   const others = searchParams.toString();
   if (!others) {
-    redirect("/dashboard/start", RedirectType.push);
+    redirect('/dashboard/start', RedirectType.push);
   }
 
   const metadataValidations = zu.safeParse({
@@ -85,24 +86,24 @@ const Page = () => {
             }
           }
           fm.append(
-            "metadataValidations",
-            JSON.stringify(metadataValidations.data),
+            'metadataValidations',
+            JSON.stringify(metadataValidations.data)
           );
           fm.append(
-            "contributorValidations",
-            JSON.stringify(contributorValidations.data?.contributors),
+            'contributorValidations',
+            JSON.stringify(contributorValidations.data?.contributors)
           );
           fm.append(
-            "filesValidations",
-            JSON.stringify(filesValidations.data?.files),
+            'filesValidations',
+            JSON.stringify(filesValidations.data?.files)
           );
           fm.append(
-            "articleSubmitionValidations",
-            JSON.stringify(articleSubmitionValidations.data),
+            'articleSubmitionValidations',
+            JSON.stringify(articleSubmitionValidations.data)
           );
           fm.append(
-            "reviewerValidations",
-            JSON.stringify(reviewerValidations.data?.reviewers),
+            'reviewerValidations',
+            JSON.stringify(reviewerValidations.data?.reviewers)
           );
           startTransition(() => {
             formAction(fm);
@@ -111,7 +112,7 @@ const Page = () => {
         className="p-8 bg-white rounded-lg shadow-md"
       >
         {errorMessage?.message && (
-          <Alert variant={"destructive"} className="my-4">
+          <Alert variant={'destructive'} className="my-4">
             {errorMessage?.message}
           </Alert>
         )}
@@ -124,7 +125,7 @@ const Page = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="block mb-2">
-                    Was this study funded?{" "}
+                    Was this study funded?{' '}
                     <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
@@ -174,7 +175,7 @@ const Page = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="block mb-2">
-                    Was this study given an ethical clearance?{" "}
+                    Was this study given an ethical clearance?{' '}
                     <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
@@ -276,9 +277,14 @@ const Page = () => {
           />
         </div>
         <div className="mt-6">
-          <Paginator backLink={`/articles/new/reviewer?${searchParams.toString()}`}>
-            <Button disabled={isPending} className="bg-[#626EEF]">
-              Submit {isPending && <Spinner />}
+          <Paginator
+            backLink={`/articles/new/reviewer?${searchParams.toString()}`}
+          >
+            <Button
+              disabled={isPending}
+              className="bg-indigo-600 hover:bg-indigo-800"
+            >
+              {isPending ? <Loader text="Submitting..." /> : 'Submit'}
             </Button>
           </Paginator>
         </div>

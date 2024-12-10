@@ -1,7 +1,7 @@
-import { Card } from "@/components/ui/card";
-import { ContributorsForm } from "@/components/upload/ContributorsForm";
-import { NewMetaForm } from "@/components/upload/NewMetaForm";
-import { Paginator } from "@/components/upload/Paginator";
+import { Card } from '@/components/ui/card';
+import { ContributorsForm } from '@/components/upload/ContributorsForm';
+import { NewMetaForm } from '@/components/upload/NewMetaForm';
+import { Paginator } from '@/components/upload/Paginator';
 
 const Page = async ({
   searchParams,
@@ -11,9 +11,8 @@ const Page = async ({
 }) => {
   return (
     <>
-      <h1 className="mb-6 text-3xl font-bold">Metadata</h1>
-
       <Card className="mb-6 p-6 grid gap-3">
+        <h1 className="mb-6 text-3xl font-bold">Metadata</h1>
         <NewMetaForm />
         <ContributorsForm />
       </Card>

@@ -31,6 +31,8 @@ const RightSideBar = () => {
             {/* Image */}
             <Image
               src='https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732708303/old-books-wooden-table-library-vintage-style-ai-generated-content-design-background-instagram-facebook-wall-323974717_kbravu.webp'
+              width={90}
+              height={90}
               className='w-full h-40 object-cover rounded-lg'
               alt='Case Study'
             />
@@ -54,6 +56,8 @@ const RightSideBar = () => {
               src='https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732708303/old-books-wooden-table-library-vintage-style-ai-generated-content-design-background-instagram-facebook-wall-323974717_kbravu.webp'
               className='w-full h-40 object-cover rounded-lg'
               alt='Case Study'
+              width={90}
+              height={90}
             />
             <div className='absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2'>
               <p className='text-sm'>
@@ -72,6 +76,8 @@ const RightSideBar = () => {
             <p className='font-semibold mb-2'>Case report</p>
             {/* Image */}
             <Image
+            width={90}
+            height={90}
               src='https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732708303/old-books-wooden-table-library-vintage-style-ai-generated-content-design-background-instagram-facebook-wall-323974717_kbravu.webp'
               className='w-full h-40 object-cover rounded-lg'
               alt='Case Study'
@@ -93,6 +99,8 @@ const RightSideBar = () => {
             <p className='font-semibold mb-2'>Case Study</p>
             {/* Image */}
             <Image
+            width={90}
+            height={90}
               src='https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732708303/old-books-wooden-table-library-vintage-style-ai-generated-content-design-background-instagram-facebook-wall-323974717_kbravu.webp'
               className='w-full h-40 object-cover rounded-lg'
               alt='Case Study'

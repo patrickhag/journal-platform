@@ -26,8 +26,7 @@ export default function HeaderDropdown({
   return (
     <div className="flex items-center gap-4">
       <Button
-        className="text-white px-3 py-2 rounded hover:bg-blue-700"
-        style={{ background: '#1A237E' }}
+        className="text-white px-3 py-2 rounded bg-[#212c9e] hover:bg-[#1A237E]"
         onClick={() =>
           session?.user
             ? router.push('/articles/new/start')

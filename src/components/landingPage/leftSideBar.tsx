@@ -115,6 +115,8 @@ const LeftSideBar = () => {
         </h2>
         <div className="mt-2">
           <Image
+          width={90}
+          height={90}
             src="https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732723406/newss_espiuv.png"
             alt="Ad Placeholder"
             className="w-full h-auto border border-gray-300 rounded-md"

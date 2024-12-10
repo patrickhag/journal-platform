@@ -71,7 +71,9 @@ export default function AddReviewerModal() {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>Add reviewer</Button>
+      <Button variant={'outline'} onClick={() => setOpen(true)}>
+        Add reviewer
+      </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
