@@ -22,7 +22,7 @@ cloudinary.config({
 
 export async function authenticate(
   _prevState: string | undefined,
-  formData: z.infer<typeof loginSchema>
+  formData: z.infer<typeof loginSchema> & {redirect?: string}
 ) {
   const login = loginSchema.safeParse(formData);
   try {
@@ -36,6 +36,9 @@ export async function authenticate(
         default:
           return 'Something went wrong during sign-in.';
       }
+    }
+    if(formData.redirect) {
+      return redirect(formData.redirect, RedirectType.replace);
     }
     const user = await db
       .select()

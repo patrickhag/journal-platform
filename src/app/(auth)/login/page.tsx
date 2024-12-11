@@ -22,6 +22,7 @@ import { startTransition, useActionState, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Loader from '@/components/Loader';
 import type { z } from 'zod';
+import { useSearchParams } from 'next/navigation';
 
 export default function Login() {
   const [errorMessage, formAction, isPending] = useActionState(
@@ -30,7 +31,7 @@ export default function Login() {
   );
 
   const [visible, setVisible] = useState<string | null>(null);
-
+const searchparams = useSearchParams()
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -82,7 +83,7 @@ export default function Login() {
             <form
               onSubmit={form.handleSubmit((data) => {
                 startTransition(() => {
-                  formAction(data);
+                  formAction({...data, redirect: searchparams.get('redirect')||undefined});
                 });
               })}
             >
