@@ -249,3 +249,4 @@ export type TContributors = typeof contributors.$inferInsert;
 export type TMetadata = typeof metadata.$inferInsert;
 export type TFiles = typeof files.$inferInsert;
 export type TUsers = typeof users.$inferSelect;
+export type Users = typeof users.$inferInsert;
