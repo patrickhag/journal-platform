@@ -51,7 +51,7 @@ export default async function DashboardPannel({
             Welcome back, {currentUser?.name}
           </h2>
           <p className="text-muted-foreground">
-            You&apos;ve got {articles.length} submitted articles.
+            You&apos;ve got {articles.length} submissions.
           </p>
         </div>
 

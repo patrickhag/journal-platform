@@ -19,11 +19,11 @@ export default async function Header() {
     .where(eq(users.email, session?.user?.email as string));
 
   const role = user?.role as USER_ROLE;
-  const name = user?.lastName?.slice(0, 2).toUpperCase() || '';
+  const name = session?.user?.name?.split(' ')?.[1]?.substring(0, 1) as string;
 
   return (
-    <header className="border-b bg-white sticky top-0">
-      <div className="container mx-auto flex h-16 items-center justify-between">
+    <header className="border-b bg-white sticky h-16 top-0 z-50">
+      <div className="container mx-auto flex items-center justify-between h-full">
         <div className="flex items-center gap-8">
           {/* {(role === 'ADMIN' || role === 'CHIEF_EDITOR') && <ShowNav />} */}
           <div className="flex items-center gap-4">

@@ -19,7 +19,7 @@ export default function HeaderDropdown({
   names,
   session,
 }: {
-  names: string;
+  names?: string;
   session: Session | null;
 }) {
   const router = useRouter();
@@ -45,7 +45,9 @@ export default function HeaderDropdown({
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Edit Profile</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push('/profile')}>
+              Edit Profile
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
