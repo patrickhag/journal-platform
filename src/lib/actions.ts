@@ -11,7 +11,7 @@ import { AuthError } from 'next-auth';
 import type { CloudinaryUploadWidgetInfo } from 'next-cloudinary';
 import type z from 'zod';
 import { RESET_PASSWORD_EXPIRATION_TIME } from './consts';
-import {  sendInvitation, sendPasswordResetEmail } from './emailTransporter';
+import { sendInvitation, sendPasswordResetEmail } from './emailTransporter';
 import { redirect, RedirectType } from 'next/navigation';
 
 cloudinary.config({
@@ -45,7 +45,7 @@ export async function authenticate(
     if (user[0].role === 'CHIEF_EDITOR' || user[0].role === 'ADMIN') {
       redirect('/editor', RedirectType.replace);
     } else {
-      redirect('/dashboard', RedirectType.replace);
+      redirect('/submissions', RedirectType.replace);
     }
   }
 }

@@ -1,4 +1,5 @@
 import { ArticlesTable } from '@/components/articles-table';
+import Protected from '@/components/Protected';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { db } from '@/db/schema';
 import { users, articleSubmissions, metadata } from '@/db/schema';
@@ -20,23 +21,25 @@ export default async function ArticlesPage() {
     .leftJoin(metadata, eq(metadata.articleId, articleSubmissions.id));
 
   return (
-    <div className="container mx-auto py-10">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Articles</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground mb-6">
-            Manage articles and view their statuses
-          </p>
-          <ArticlesTable
-            data={articles.map((article) => ({
-              ...article,
-              owner: article.ownerFirstName + ' ' + article.ownerLastName,
-            }))}
-          />
-        </CardContent>
-      </Card>
-    </div>
+    <Protected allowedRoles={['ADMIN', 'CHIEF_EDITOR']}>
+      <div className="container mx-auto py-10">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">Articles</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-6">
+              Manage articles and view their statuses
+            </p>
+            <ArticlesTable
+              data={articles.map((article) => ({
+                ...article,
+                owner: article.ownerFirstName + ' ' + article.ownerLastName,
+              }))}
+            />
+          </CardContent>
+        </Card>
+      </div>
+    </Protected>
   );
 }
