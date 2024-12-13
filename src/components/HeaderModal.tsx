@@ -24,7 +24,7 @@ export default function HeaderModal({ name }: { name: string }) {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Edit Profile</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push('/profile')}>Edit Profile</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={async () => {

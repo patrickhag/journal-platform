@@ -16,10 +16,7 @@ const hashedPassword = bcrypt.hashSync(PASSWORD);
 const main = async () => {
   for (let i = 0; i < 9; i++) {
     const email = faker.internet.email();
-
     await db.delete(users).where(eq(users.email, email));
-
-    console.log(`Creating account for ${email}`);
     await db.insert(users).values({
       role: 'NORMAL_USER',
       email,

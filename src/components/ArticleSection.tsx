@@ -9,8 +9,9 @@ import {
 import { Button } from './ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import Link from 'next/link';
-import { cn, generateRandomBgColorForStatus } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { TArticle } from '@/schemas/reviewer';
+import { StatusBadge } from './status-badge';
 
 export function ArticleSection({
   article: a,
@@ -22,20 +23,21 @@ export function ArticleSection({
   return (
     <Card key={a.id}>
       <CardContent className="flex items-center justify-between p-6">
-        <div className="flex items-start gap-6">
-          <span className="text-xl font-medium text-muted-foreground">
+        <div className="flex gap-6">
+          <div className='flex items-center'>
+            <span className="text-xl font-medium text-muted-foreground">
             {(i + 1).toString().padStart(4, '0')}
           </span>
+          </div>
           <div className="space-y-1">
             <h3 className="font-medium uppercase">{a.section}</h3>
             <CommentPreview html={a.commentsForEditor} />
             <small
               className={cn(
-                generateRandomBgColorForStatus(a.articleStatus || 'Draft'),
-                'py-1 px-2 mt-2 rounded-full'
+                'mt-2'
               )}
             >
-              {a.articleStatus || 'Draft'}
+             <StatusBadge status={a.articleStatus || 'Submitted'} />
             </small>
           </div>
         </div>

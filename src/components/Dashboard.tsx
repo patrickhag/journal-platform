@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { articleSubmissions, files } from '@/db/schema';
+import { articleSubmissions, files, metadata } from '@/db/schema';
 import { db } from '@/db/schema';
 import { ArticleSection } from './ArticleSection';
 import { SearchArticle } from './SearchArticle';
@@ -31,20 +31,24 @@ export default async function DashboardPannel({
     return conditions.length > 0 ? and(...conditions) : undefined;
   };
 
-  const articles = (await db
+  const articles = await db
     .select({
       id: articleSubmissions.id,
       commentsForEditor: articleSubmissions.commentsForEditor,
       fileURI: files.publicId,
       section: articleSubmissions.section,
       articleStatus: articleSubmissions.articleStatus,
+      title: metadata.title, // Adding title from metadata
     })
     .from(articleSubmissions)
     .where(where())
-    .leftJoin(files, eq(articleSubmissions.id, files.articleId))) as TArticle[];
+    .leftJoin(files, eq(articleSubmissions.id, files.articleId))
+    .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId)); // Joining metadata table
+
+  console.log(articles);
 
   return (
-    <main className="max-w-7xl py-8 mx-auto">
+    <main className="max-w-5xl mx-auto">
       <div>
         <div className="mb-10">
           <h2 className="text-2xl text-[#141A26] font-medium">

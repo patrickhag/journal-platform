@@ -45,6 +45,9 @@ export default function HeaderDropdown({
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => router.push('/submissions')}>
+              Dashboard
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push('/profile')}>
               Edit Profile
             </DropdownMenuItem>

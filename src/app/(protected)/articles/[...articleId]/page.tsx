@@ -57,73 +57,70 @@ async function page({
 
   return (
     <>
-      <GoBackButton />
-      <div className="container mx-auto p-6 grid grid-cols-1 lg:grid-cols-[1fr,400px] gap-8">
-        <main className="space-y-8">
-          <Metadata articleId={articleId} role={currentUserRole!}>
-            <div
-              className="space-y-4 text-gray-600"
-              dangerouslySetInnerHTML={{ __html: article.commentsForEditor }}
-            />
-          </Metadata>
-        </main>
+      <div className="container mx-auto p-6">
+        <GoBackButton />
 
-        <aside className="space-y-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">
-                Author information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">
-                    Fullnames
-                  </h3>
-                  <p className="mt-1">
-                    {author[0].firstName} {author[0].lastName}
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">
-                    Email
-                  </h3>
-                  <p className="mt-1">{author[0].email}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">
-                    Affiliation
-                  </h3>
-                  <p className="mt-1">{author[0].affiliation}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">
-                    Country
-                  </h3>
-                  <p className="mt-1">{author[0].country}</p>
-                </div>
+        <Metadata articleId={articleId} role={currentUserRole!}>
+          <div
+            className="space-y-4 text-gray-600"
+            dangerouslySetInnerHTML={{ __html: article.commentsForEditor }}
+          />
+        </Metadata>
+
+        <Card className="my-3">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">
+              Author information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground">
+                  Fullnames
+                </h3>
+                <p className="mt-1">
+                  {author[0].firstName} {author[0].lastName}
+                </p>
               </div>
-            </CardContent>
-          </Card>
-          <Files articleId={articleId} />
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground">
+                  Email
+                </h3>
+                <p className="mt-1">{author[0].email}</p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground">
+                  Affiliation
+                </h3>
+                <p className="mt-1">{author[0].affiliation}</p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground">
+                  Country
+                </h3>
+                <p className="mt-1">{author[0].country}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Files articleId={articleId} />
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Reviewers</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {reviewrs.map((r, index) => (
-                <Reviewer
-                  reviewer={r}
-                  index={index}
-                  key={r.id}
-                  article={article.id}
-                />
-              ))}
-            </CardContent>
-          </Card>
-        </aside>
+        <Card className="my-3">
+          <CardHeader>
+            <CardTitle>Reviewers</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {reviewrs.map((r, index) => (
+              <Reviewer
+                reviewer={r}
+                index={index}
+                key={r.id}
+                article={article.id}
+              />
+            ))}
+          </CardContent>
+        </Card>
       </div>
     </>
   );
