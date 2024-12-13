@@ -12,7 +12,6 @@ const { auth } = NextAuth(authOptions);
 export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
-  //const redirect = nextUrl.searchParams.get('redirect')
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
