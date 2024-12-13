@@ -29,6 +29,7 @@ export const articleTypeEnum = pgEnum('article-type', ARTICLE_TYPES);
 export const salutationEnum = pgEnum('salutation', SALUTATION);
 export const countryEnum = pgEnum('countries', COUNTRIES);
 export const articleStatusEnum = pgEnum('article_status', ARTICLE_STATUS);
+export const notificationsEnum = pgEnum('notication_kind', ['Warning', 'Info', 'Hint', 'Error', 'Confused', 'Ok'])
 
 export const users = pgTable('user', {
   id: text('id')
@@ -242,6 +243,19 @@ export const finalSubmissions = pgTable('final_submissions', {
   }),
 });
 
+export const notifications = pgTable('notifications', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  message: text('message').notNull(),
+  createdAt: date('createdAt').defaultNow(),
+  kind: notificationsEnum().$default(() => 'Info'),
+  isRead: boolean("isRead").default(false),
+  userId: text('userId').references(() => users.id, {
+    onDelete: 'cascade',
+  }),
+});
+
 export type TFinalSubmissions = typeof finalSubmissions.$inferInsert;
 export type TArticleSubmissions = typeof articleSubmissions.$inferInsert;
 export type TReviewers = typeof reviewers.$inferInsert;
@@ -250,3 +264,4 @@ export type TMetadata = typeof metadata.$inferInsert;
 export type TFiles = typeof files.$inferInsert;
 export type TUsers = typeof users.$inferSelect;
 export type Users = typeof users.$inferInsert;
+export type TNotifications = typeof notifications.$inferSelect;

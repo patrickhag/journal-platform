@@ -3,14 +3,15 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { Bell } from 'lucide-react';
 import { auth } from '@/auth';
-import { db } from '@/db/schema';
+import { db, TNotifications } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { users } from '@/db/schema';
 import { USER_ROLE } from '@/lib/roles';
 import ShowNav from './ShowNav';
 import HeaderModal from './HeaderModal';
+import NotificationsModal from './NotificationsModal';
 
-export default async function Header() {
+export default async function Header({ notifications = [] }: { notifications: TNotifications[] }) {
   const session = await auth();
 
   const [user] = await db
@@ -45,9 +46,7 @@ export default async function Header() {
           {(role === 'ADMIN' || role === 'CHIEF_EDITOR') && <ShowNav />}
         </div>
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon">
-            <Bell className="h-5 w-5" />
-          </Button>
+         <NotificationsModal notifications={notifications}  />
 
           <HeaderModal name={name} />
         </div>
