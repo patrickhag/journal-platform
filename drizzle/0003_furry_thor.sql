@@ -1,1 +1,0 @@
-ALTER TABLE "reviewers" DROP CONSTRAINT "reviewers_email_unique";
