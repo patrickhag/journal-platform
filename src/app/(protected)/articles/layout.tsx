@@ -7,11 +7,17 @@ import type { PropsWithChildren } from 'react';
 
 export default async function Layout({ children }: PropsWithChildren) {
   const session = await auth();
-  if (!session?.user?.id) return undefined
+  if (!session?.user?.id) return undefined;
 
-  const notificationsData = await db.select()
+  const notificationsData = await db
+    .select()
     .from(notifications)
-    .where(and(eq(notifications.userId, session?.user?.id), eq(notifications.isRead, false)))
+    .where(
+      and(
+        eq(notifications.userId, session?.user?.id),
+        eq(notifications.isRead, false)
+      )
+    );
 
   return (
     <SessionProvider basePath={BASE_PATH} session={session}>

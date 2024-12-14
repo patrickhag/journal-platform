@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { FC, useActionState } from "react";
-import Spinner from "../Spinner";
-import { Button } from "../ui/button";
-import { Textarea } from "../ui/textarea";
-import { reachOut } from "@/actions/reachOut";
+import { FC, useActionState } from 'react';
+import Spinner from '../Spinner';
+import { Button } from '../ui/button';
+import { Textarea } from '../ui/textarea';
+import { reachOut } from '@/actions/reachOut';
 
 export const ReachOut: FC<{
   reviewer: string;
@@ -23,20 +23,50 @@ export const ReachOut: FC<{
 }> = ({ article, author, reviewer, toEmail }) => {
   const [errorMessage, formAction, isPending] = useActionState(
     reachOut,
-    undefined,
+    undefined
   );
 
   return (
-    <form className='grid gap-3' action={formAction}>
+    <form className="grid gap-3" action={formAction}>
       {errorMessage && <p className="text-green-500">{errorMessage}</p>}
       <h3>Send a message to {reviewer}</h3>
-      <input type="hidden" name="toEmail" id="toEmail" value={toEmail} readOnly />
-      <input type="hidden" name="reviewer" id="reviewer" value={reviewer} readOnly />
-      <input type="hidden" name="author" id="author" value={JSON.stringify(author)} readOnly />
-      <input type="hidden" name="article" id="article" value={JSON.stringify(article)} readOnly />
-      <input type="hidden" name="toEmail" id="toEmail" value={reviewer} readOnly />
-      <Textarea placeholder="Message" name='message' />
+      <input
+        type="hidden"
+        name="toEmail"
+        id="toEmail"
+        value={toEmail}
+        readOnly
+      />
+      <input
+        type="hidden"
+        name="reviewer"
+        id="reviewer"
+        value={reviewer}
+        readOnly
+      />
+      <input
+        type="hidden"
+        name="author"
+        id="author"
+        value={JSON.stringify(author)}
+        readOnly
+      />
+      <input
+        type="hidden"
+        name="article"
+        id="article"
+        value={JSON.stringify(article)}
+        readOnly
+      />
+      <input
+        type="hidden"
+        name="toEmail"
+        id="toEmail"
+        value={reviewer}
+        readOnly
+      />
+      <Textarea placeholder="Message" name="message" />
       <Button className="mt-2">Send {isPending && <Spinner />}</Button>
     </form>
-  )
-}
+  );
+};

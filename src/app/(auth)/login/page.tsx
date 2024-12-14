@@ -31,7 +31,7 @@ export default function Login() {
   );
 
   const [visible, setVisible] = useState<string | null>(null);
-const searchparams = useSearchParams()
+  const searchparams = useSearchParams();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -83,7 +83,10 @@ const searchparams = useSearchParams()
             <form
               onSubmit={form.handleSubmit((data) => {
                 startTransition(() => {
-                  formAction({...data, redirect: searchparams.get('redirect')||undefined});
+                  formAction({
+                    ...data,
+                    redirect: searchparams.get('redirect') || undefined,
+                  });
                 });
               })}
             >

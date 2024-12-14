@@ -9,7 +9,11 @@ import ShowNav from './ShowNav';
 import HeaderModal from './HeaderModal';
 import NotificationsModal from './NotificationsModal';
 
-export default async function Header({ notifications = [] }: { notifications: TNotifications[] }) {
+export default async function Header({
+  notifications = [],
+}: {
+  notifications: TNotifications[];
+}) {
   const session = await auth();
 
   const [user] = await db
@@ -44,7 +48,7 @@ export default async function Header({ notifications = [] }: { notifications: TN
           {(role === 'ADMIN' || role === 'CHIEF_EDITOR') && <ShowNav />}
         </div>
         <div className="flex items-center gap-4">
-         <NotificationsModal notifications={notifications}  />
+          <NotificationsModal notifications={notifications} />
 
           <HeaderModal name={name} />
         </div>

@@ -2,7 +2,7 @@
 
 import crypto from 'node:crypto';
 import { db, passwordResets, users } from '@/db/schema';
-import { loginSchema, } from '@/schemas/auth.schema';
+import { loginSchema } from '@/schemas/auth.schema';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import { AuthError } from 'next-auth';
