@@ -13,6 +13,17 @@ import React, { PropsWithChildren, type FC } from 'react';
 import { z } from 'zod';
 import { safeParse } from 'zod-urlsearchparams';
 import { metadataSchema } from './ContributorsForm';
+  articleSubmitionSchema,
+  filesSchema,
+  reviewerSchema,
+} from '@/schemas/reviewer';
+import { contributorFormSchema } from '@/schemas/upload';
+import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
+import React, { PropsWithChildren, type FC } from 'react';
+import { z } from 'zod';
+import { safeParse } from 'zod-urlsearchparams';
+import { metadataSchema } from './ContributorsForm';
 
 export const Paginator: FC<
   {
@@ -30,6 +41,10 @@ export const Paginator: FC<
     schema: articleSubmitionSchema,
   });
 
+  const metadataValidations = safeParse({
+    input: new URLSearchParams(searchParams),
+    schema: metadataSchema,
+  });
   const metadataValidations = safeParse({
     input: new URLSearchParams(searchParams),
     schema: metadataSchema,
@@ -60,12 +75,12 @@ export const Paginator: FC<
         return (
           metadataValidations.success &&
           contributorValidations.success &&
-          contributorValidations.data?.contributors.length >= 0
+          contributorValidations.data?.contributors.length > 0
         );
       case 'reviewer':
         return (
           reviewerValidations.success &&
-          reviewerValidations.data?.reviewers.length >= 0
+          reviewerValidations.data?.reviewers.length > 0
         );
       case 'attach-files':
         return (
@@ -91,10 +106,9 @@ export const Paginator: FC<
         {children}
         {nextLink && (
           <Link
-            aria-disabled={!isAllowedToNext()}
-            href={isAllowedToNext() ? { pathname: nextLink, query }: '#'}
+            href={{ pathname: nextLink, query }}
             className={cn(
-              isAllowedToNext() ? '' : 'cursor-not-allowed',
+              isAllowedToNext() ? '' : 'pointer-events-none',
               'px-4 py-1 ring-2 ring-gray-100 bg-[#626EEF] rounded-md text-white'
             )}
           >
