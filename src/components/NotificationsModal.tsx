@@ -11,14 +11,14 @@ import { TNotifications } from '@/db/schema';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { cn } from '@/lib/utils';
 import { startTransition, useActionState } from 'react';
-import { markAllAsRead } from '@/lib/actions';
 import { useSession } from 'next-auth/react';
 import Spinner from './Spinner';
 import { usePathname } from 'next/navigation';
+import { markAllAsRead } from '@/actions/markAllAsRead';
 
 export default function NotificationsModal({ notifications = [] }: { notifications: TNotifications[] }) {
 
-    const [prevState, formAction, isPending] = useActionState(
+    const [, formAction, isPending] = useActionState(
         markAllAsRead,
         undefined
     );

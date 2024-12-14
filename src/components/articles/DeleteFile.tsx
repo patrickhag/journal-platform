@@ -1,8 +1,8 @@
 'use client'
 import { useActionState } from 'react';
 import { Button } from '../ui/button'
-import { deteteresource } from '@/lib/actions';
 import Spinner from '../Spinner';
+import { deteteresource } from '@/actions/deteteresource';
 
 export const DeleteFile = ({ publicId }: { publicId: string }) => {
   const [, formAction, isPending] = useActionState(

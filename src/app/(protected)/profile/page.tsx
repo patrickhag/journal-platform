@@ -1,6 +1,5 @@
 import { auth } from '@/auth';
 import { db, users } from '@/db/schema';
-import { createUpload } from '@/lib/actions';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -9,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
+import { createUpload } from '@/actions/createUpload';
 
 const page = async () => {
   const session = await auth();

@@ -19,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { register } from '@/lib/actions';
 import { COUNTRIES } from '@/lib/consts';
 import { registerSchema } from '@/schemas/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -30,6 +29,7 @@ import { useRouter } from 'next/navigation';
 import React, { startTransition, useActionState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
+import { register } from '@/actions/register';
 
 export default function Register() {
   const [prevState, formAction, isPending] = useActionState(

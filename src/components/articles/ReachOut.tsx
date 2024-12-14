@@ -1,10 +1,10 @@
 "use client";
 
-import { reachOut } from "@/lib/actions";
 import { FC, useActionState } from "react";
 import Spinner from "../Spinner";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
+import { reachOut } from "@/actions/reachOut";
 
 export const ReachOut: FC<{
   reviewer: string;

@@ -12,7 +12,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { authenticate } from '@/lib/actions';
 import { loginSchema } from '@/schemas/auth.schema';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,6 +22,7 @@ import { useForm } from 'react-hook-form';
 import Loader from '@/components/Loader';
 import type { z } from 'zod';
 import { useSearchParams } from 'next/navigation';
+import { authenticate } from '@/actions/authenticate';
 
 export default function Login() {
   const [errorMessage, formAction, isPending] = useActionState(

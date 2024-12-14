@@ -18,7 +18,6 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 import { drizzle } from 'drizzle-orm/postgres-js';
-import type { AdapterAccountType } from 'next-auth/adapters';
 import postgres from 'postgres';
 
 const pool = postgres(process.env.DATABASE_URL!, { max: 1 });

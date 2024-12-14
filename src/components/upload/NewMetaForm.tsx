@@ -35,15 +35,16 @@ export const NewMetaForm = () => {
       subtitle: '',
     },
   });
+  const currentForm = form.current
   useEffect(() => {
-    form.current?.addEventListener('focusout', () => {
-      form.current?.requestSubmit();
+    currentForm?.addEventListener('focusout', () => {
+      currentForm?.requestSubmit();
     });
 
     return () => {
-      form.current?.removeEventListener('focusout', () => {});
+      currentForm?.removeEventListener('focusout', () => {});
     };
-  }, []);
+  }, [currentForm]);
   console.log(formm.formState.errors);
   const saveMeta = formm.handleSubmit((data) => {
     const meta = metadataSchema.safeParse(data);
