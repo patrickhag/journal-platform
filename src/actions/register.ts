@@ -1,0 +1,51 @@
+'use server';
+
+import { db, users } from '@/db/schema';
+import { registerSchema } from '@/schemas/auth.schema';
+import bcrypt from 'bcryptjs';
+import { eq } from 'drizzle-orm';
+import { AuthError } from 'next-auth';
+import type z from 'zod';
+
+export async function register(
+    _prevState:
+        | { message: string; data?: Partial<z.infer<typeof registerSchema>> }
+        | undefined,
+    formData: z.infer<typeof registerSchema>
+) {
+    try {
+        const register = registerSchema.safeParse(formData);
+        if (register.error)
+            return { message: register.error.errors[0].message, data: formData };
+
+        const existingUser = await db
+            .select()
+            .from(users)
+            .where(eq(users.email, register.data.email))
+            .limit(1);
+
+        if (existingUser.length > 0) {
+            return { message: 'Email already in use.', data: register.data };
+        }
+
+        const hashedPassword = bcrypt.hashSync(register.data.password);
+
+        const user = {
+            ...register.data,
+            password: hashedPassword,
+        };
+
+        await db.insert(users).values(user);
+        return { message: 'Registration successful', data: register.data };
+    } catch (error) {
+        if (error instanceof AuthError) {
+            switch (error.type) {
+                case 'CredentialsSignin':
+                    return { message: 'Invalid credentials.' };
+                default:
+                    return { message: 'Something went wrong during registration.' };
+            }
+        }
+        return { message: 'An unexpected error occurred during registration.' };
+    }
+}

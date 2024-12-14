@@ -11,7 +11,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { submitReviewAction } from '@/lib/submitionAction';
 import { Uploadbanner } from '../upload/Uploadbanner';
 import { fileFormats } from '@/lib/consts';
 import { FileList } from '../upload/FileList';
@@ -19,6 +18,7 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { safeParse } from 'zod-urlsearchparams';
 import { filesSchema } from '@/schemas/reviewer';
 import Spinner from '../Spinner';
+import { submitReviewAction } from '@/actions/submitReviewAction';
 
 export default function ReviewModal() {
   const [open, setOpen] = useState(false);

@@ -16,7 +16,7 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { safeParse } from 'zod-urlsearchparams';
 import { filesSchema } from '@/schemas/reviewer';
 import Spinner from '../Spinner';
-import { attachFile } from '@/lib/submitionAction';
+import { attachFile } from '@/actions/attachFile';
 
 export const NewFile = () => {
   const [open, setOpen] = useState(false);

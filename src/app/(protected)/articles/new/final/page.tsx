@@ -1,5 +1,6 @@
 'use client';
 
+import { submitAction } from '@/actions/submitAction';
 import Loader from '@/components/Loader';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -16,7 +17,6 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup } from '@/components/ui/radio-group';
 import { metadataSchema } from '@/components/upload/ContributorsForm';
 import { Paginator } from '@/components/upload/Paginator';
-import { submitAction } from '@/lib/submitionAction';
 import {
   articleSubmitionSchema,
   filesSchema,
