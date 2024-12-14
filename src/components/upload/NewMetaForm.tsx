@@ -35,7 +35,7 @@ export const NewMetaForm = () => {
       subtitle: '',
     },
   });
-  const currentForm = form.current
+  const currentForm = form.current;
   useEffect(() => {
     currentForm?.addEventListener('focusout', () => {
       currentForm?.requestSubmit();

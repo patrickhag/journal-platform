@@ -9,11 +9,18 @@ export default async function EditorLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-  if (!session?.user?.id) return undefined
+  if (!session?.user?.id) return undefined;
 
-  const notificationsData = await db.select().from(notifications).where(and(eq(notifications.userId, session?.user?.id), eq(notifications.isRead, false)))
+  const notificationsData = await db
+    .select()
+    .from(notifications)
+    .where(
+      and(
+        eq(notifications.userId, session?.user?.id),
+        eq(notifications.isRead, false)
+      )
+    );
 
- 
   return (
     <div className="bg-gray-100 min-h-screen">
       <Header notifications={notificationsData} />

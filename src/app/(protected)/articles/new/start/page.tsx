@@ -1,8 +1,8 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { ArticleTypeSection } from "@/components/upload/ArticleTypeSection";
-import { CommentForEditor } from "@/components/upload/CommentForEditor";
-import { Paginator } from "@/components/upload/Paginator";
-import { SubmissionRequirementsSection } from "@/components/upload/SubmissionRequirementsSection";
+import { Card, CardContent } from '@/components/ui/card';
+import { ArticleTypeSection } from '@/components/upload/ArticleTypeSection';
+import { CommentForEditor } from '@/components/upload/CommentForEditor';
+import { Paginator } from '@/components/upload/Paginator';
+import { SubmissionRequirementsSection } from '@/components/upload/SubmissionRequirementsSection';
 const Page = async ({
   params,
   searchParams,
@@ -10,8 +10,8 @@ const Page = async ({
   params: Promise<{ params: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
-  console.log("param object :", await params);
-  console.log("query search param object :", await searchParams);
+  console.log('param object :', await params);
+  console.log('query search param object :', await searchParams);
   const query = await searchParams;
   return (
     <Card>

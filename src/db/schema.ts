@@ -28,7 +28,14 @@ export const articleTypeEnum = pgEnum('article-type', ARTICLE_TYPES);
 export const salutationEnum = pgEnum('salutation', SALUTATION);
 export const countryEnum = pgEnum('countries', COUNTRIES);
 export const articleStatusEnum = pgEnum('article_status', ARTICLE_STATUS);
-export const notificationsEnum = pgEnum('notication_kind', ['Warning', 'Info', 'Hint', 'Error', 'Confused', 'Ok'])
+export const notificationsEnum = pgEnum('notication_kind', [
+  'Warning',
+  'Info',
+  'Hint',
+  'Error',
+  'Confused',
+  'Ok',
+]);
 
 export const users = pgTable('user', {
   id: text('id')
@@ -217,7 +224,7 @@ export const notifications = pgTable('notifications', {
   message: text('message').notNull(),
   createdAt: date('createdAt').defaultNow(),
   kind: notificationsEnum().$default(() => 'Info'),
-  isRead: boolean("isRead").default(false),
+  isRead: boolean('isRead').default(false),
   userId: text('userId').references(() => users.id, {
     onDelete: 'cascade',
   }),

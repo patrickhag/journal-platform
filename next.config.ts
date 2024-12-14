@@ -1,4 +1,4 @@
-import type { NextConfig } from 'next'
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   images: {
@@ -18,6 +18,6 @@ See more info: https://nextjs.org/docs/messages/next-image-unconfigured-host
       },
     ],
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;

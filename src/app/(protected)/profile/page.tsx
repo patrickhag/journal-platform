@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { db, users } from '@/db/schema';
+import { db, reviewers, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -19,6 +19,12 @@ const page = async () => {
     .where(eq(users.id, session?.user?.id))
     .limit(1);
   if (user.length === 0) return null;
+
+  const reviewerUser = await db
+    .select()
+    .from(reviewers)
+    .where(eq(reviewers.email, user[0].email!))
+    .limit(1);
 
   return (
     <Card className="max-w-5xl mx-auto">
@@ -45,6 +51,13 @@ const page = async () => {
                   lastName: formData.lastName.toString(),
                 })
                 .where(eq(users.id, session?.user?.id));
+              if (formData.expertise.toString())
+                await db
+                  .update(reviewers)
+                  .set({
+                    expertise: formData.expertise.toString(),
+                  })
+                  .where(eq(reviewers.email, user[0].email!));
               revalidatePath('/profile');
             }
           }}
@@ -80,6 +93,17 @@ const page = async () => {
               readOnly
             />
           </div>
+          {reviewerUser[0]?.expertise && (
+            <div className="my-3">
+              <Label htmlFor="expertise" className="text-gray-500">
+                Expertise
+              </Label>
+              <Input
+                name="expertise"
+                defaultValue={reviewerUser[0]?.expertise || undefined}
+              />
+            </div>
+          )}
           <div className="my-3">
             <Label htmlFor="affiliation" className="text-gray-500">
               Affiliation
