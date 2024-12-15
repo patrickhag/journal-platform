@@ -65,7 +65,7 @@ export const Paginator: FC<
       case 'reviewer':
         return (
           reviewerValidations.success &&
-          reviewerValidations.data?.reviewers.length > 0
+          reviewerValidations.data?.reviewers.length >= 0
         );
       case 'attach-files':
         return (
