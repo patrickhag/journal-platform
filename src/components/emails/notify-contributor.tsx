@@ -6,8 +6,6 @@ import {
   Body,
   Container,
   Text,
-  Link,
-  Hr,
 } from '@react-email/components';
 import type * as React from 'react';
 
@@ -46,16 +44,6 @@ export const NotifiyContributor: React.FC<{
             Cheers,
             <br />
             The Team
-          </Text>
-
-          <Hr style={hr} />
-
-          <Text style={footer}>
-            If you&apos;re having trouble clicking the button, copy and paste
-            this URL into your web browser:{' '}
-            <Link href={rejectUrl} style={link}>
-              {rejectUrl}
-            </Link>
           </Text>
         </Container>
       </Body>
@@ -109,18 +97,3 @@ const button = {
   margin: '24px 0',
 };
 
-const hr = {
-  borderColor: '#e6ebf1',
-  margin: '20px 0',
-};
-
-const footer = {
-  color: '#8898aa',
-  fontSize: '12px',
-  lineHeight: '16px',
-};
-
-const link = {
-  color: '#556cd6',
-  textDecoration: 'underline',
-};
