@@ -91,9 +91,10 @@ export const Paginator: FC<
         {children}
         {nextLink && (
           <Link
+            aria-disabled={!isAllowedToNext()}
             href={{ pathname: nextLink, query }}
             className={cn(
-              isAllowedToNext() ? '' : 'pointer-events-none',
+              isAllowedToNext() ? '' : 'cursor-not-allowed pointer-events-none',
               'px-4 py-1 ring-2 ring-gray-100 bg-[#626EEF] rounded-md text-white'
             )}
           >
