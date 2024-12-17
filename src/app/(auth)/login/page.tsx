@@ -141,9 +141,9 @@ export default function Login() {
                             }
                           >
                             {passwordType === 'password' ? (
-                              <EyeIcon width={24} height={24} />
+                              <EyeIcon width={18} height={18}  className='text-gray-600'/>
                             ) : (
-                              <EyeClosedIcon width={24} height={24} />
+                              <EyeClosedIcon width={18} height={24}  className='text-gray-600'/>
                             )}
                           </button>
                         </div>
