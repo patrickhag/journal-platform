@@ -54,7 +54,6 @@ export default function NewContibutorForm() {
       name: '',
       salutation: 'Mr',
       country: 'Rwanda',
-      homepage: '',
       orcid: '',
       affiliation: '',
       bio: '',
@@ -176,19 +175,6 @@ export default function NewContibutorForm() {
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">User details</h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <FormField
-                    control={form.control}
-                    name="homepage"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Homepage URL</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Homepage URL" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                   <FormField
                     control={form.control}
                     name="orcid"

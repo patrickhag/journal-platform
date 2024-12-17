@@ -140,7 +140,6 @@ export const contributors = pgTable('contributor', {
   name: text('name').notNull(),
   salutation: salutationEnum().$defaultFn(() => 'Mr'),
   country: countryEnum().$defaultFn(() => 'Rwanda'),
-  homepage: text('homepage'),
   orcid: text('orcid'),
   affiliation: text('affiliation').notNull(),
   bio: text('bio').notNull(),

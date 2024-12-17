@@ -5,7 +5,6 @@ export const contributorFormSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   salutation: z.enum(SALUTATION, { message: 'Salutation is required.' }),
   country: z.enum(COUNTRIES, { message: 'Country is required.' }),
-  homepage: z.string().url().optional().or(z.literal('')),
   email: z
     .string({ required_error: 'Please provide your email' })
     .email('Enter a valid email'),

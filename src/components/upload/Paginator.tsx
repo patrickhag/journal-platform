@@ -65,7 +65,7 @@ export const Paginator: FC<
       case 'reviewer':
         return (
           reviewerValidations.success &&
-          reviewerValidations.data?.reviewers.length > 0
+          reviewerValidations.data?.reviewers.length >= 0
         );
       case 'attach-files':
         return (
@@ -91,9 +91,10 @@ export const Paginator: FC<
         {children}
         {nextLink && (
           <Link
-            href={{ pathname: nextLink, query }}
+            aria-disabled={!isAllowedToNext()}
+            href={isAllowedToNext() ? { pathname: nextLink, query }: '#'}
             className={cn(
-              isAllowedToNext() ? '' : 'pointer-events-none',
+              isAllowedToNext() ? '' : 'cursor-not-allowed',
               'px-4 py-1 ring-2 ring-gray-100 bg-[#626EEF] rounded-md text-white'
             )}
           >
