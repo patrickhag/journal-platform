@@ -60,7 +60,7 @@ export const Paginator: FC<
         return (
           metadataValidations.success &&
           contributorValidations.success &&
-          contributorValidations.data?.contributors.length > 0
+          contributorValidations.data?.contributors.length >= 0
         );
       case 'reviewer':
         return (

@@ -8,7 +8,7 @@ export const SearchArticle = async () => {
       action={async (formData) => {
         'use server';
         console.log(formData);
-        redirect(`/dashboard?q=${formData.get('q')}`);
+        redirect(`/submissions?q=${formData.get('q')}`);
       }}
     >
       <div className="relative w-72">
