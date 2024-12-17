@@ -150,8 +150,7 @@ const Page = () => {
                 </FormItem>
               )}
             />
-
-            <FormField
+            {form.watch('funded') === 'yes' && <FormField
               control={form.control}
               name="founders"
               render={({ field }) => (
@@ -165,7 +164,9 @@ const Page = () => {
                   </FormControl>
                 </FormItem>
               )}
-            />
+            />}
+
+
           </div>
 
           <div className="grid">
@@ -200,8 +201,7 @@ const Page = () => {
                 </FormItem>
               )}
             />
-
-            <FormField
+            {form.watch('ethical') === 'yes' && <FormField
               control={form.control}
               name="ethicalReference"
               render={({ field }) => (
@@ -215,7 +215,8 @@ const Page = () => {
                   </FormControl>
                 </FormItem>
               )}
-            />
+            />}
+
           </div>
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 mt-4">
