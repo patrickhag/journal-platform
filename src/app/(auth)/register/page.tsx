@@ -26,10 +26,11 @@ import Loader from '@/components/Loader';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { startTransition, useActionState, useEffect } from 'react';
+import React, { startTransition, useActionState, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 import { register } from '@/actions/register';
+import { EyeClosedIcon, EyeIcon } from 'lucide-react';
 
 export default function Register() {
   const [prevState, formAction, isPending] = useActionState(
@@ -59,6 +60,9 @@ export default function Register() {
     }
   }, [prevState?.message]);
 
+  const [passwordType, setPasswordType] = useState<'password' | 'text'>(
+    'password'
+  );
   return (
     <>
       <Card className="w-full max-w-2xl mx-auto border-gray-200 shadow-md p-2 mt-32">
@@ -223,14 +227,34 @@ export default function Register() {
                       >
                         Password <span className="text-red-700">*</span>
                       </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Use at least 8 characters."
-                          {...field}
+                        <div className="relative">
+                          <FormControl>
+                            <Input
+                              type={passwordType}
                           className="border-gray-300 focus:border-gray-500 focus:ring-gray-500"
-                        />
-                      </FormControl>
+
+                              placeholder="Use at least 8 characters."
+                              {...field}
+                            />
+                          </FormControl>
+                          <button
+                            type="button"
+                            className="-translate-x-2 absolute right-0 top-[50%] -translate-y-[50%]"
+                            onClick={() =>
+                              setPasswordType(
+                                passwordType === 'password'
+                                  ? 'text'
+                                  : 'password'
+                              )
+                            }
+                          >
+                            {passwordType === 'password' ? (
+                              <EyeIcon width={18} height={18}  className='text-gray-600'/>
+                            ) : (
+                              <EyeClosedIcon width={18} height={24}  className='text-gray-600'/>
+                            )}
+                          </button>
+                        </div>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -248,14 +272,34 @@ export default function Register() {
                       >
                         Confirm Password <span className="text-red-700">*</span>
                       </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Confirm your password..."
-                          {...field}
+                        <div className="relative">
+                          <FormControl>
+                            <Input
+                              type={passwordType}
                           className="border-gray-300 focus:border-gray-500 focus:ring-gray-500"
-                        />
-                      </FormControl>
+
+                              placeholder="Confirm your password..."
+                              {...field}
+                            />
+                          </FormControl>
+                          <button
+                            type="button"
+                            className="-translate-x-2 absolute right-0 top-[50%] -translate-y-[50%]"
+                            onClick={() =>
+                              setPasswordType(
+                                passwordType === 'password'
+                                  ? 'text'
+                                  : 'password'
+                              )
+                            }
+                          >
+                            {passwordType === 'password' ? (
+                              <EyeIcon width={18} height={18}  className='text-gray-600'/>
+                            ) : (
+                              <EyeClosedIcon width={18} height={24}  className='text-gray-600'/>
+                            )}
+                          </button>
+                        </div>
                       <FormMessage />
                     </FormItem>
                   )}

@@ -1,10 +1,12 @@
 'use server';
 
+import { signIn } from '@/auth';
 import { db, users } from '@/db/schema';
 import { registerSchema } from '@/schemas/auth.schema';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import { AuthError } from 'next-auth';
+import { redirect, RedirectType } from 'next/navigation';
 import type z from 'zod';
 
 export async function register(
@@ -13,10 +15,10 @@ export async function register(
     | undefined,
   formData: z.infer<typeof registerSchema>
 ) {
+  const register = registerSchema.safeParse(formData);
+  if (register.error)
+    return { message: register.error.errors[0].message, data: formData };
   try {
-    const register = registerSchema.safeParse(formData);
-    if (register.error)
-      return { message: register.error.errors[0].message, data: formData };
 
     const existingUser = await db
       .select()
@@ -36,16 +38,42 @@ export async function register(
     };
 
     await db.insert(users).values(user);
-    return { message: 'Registration successful', data: register.data };
+    await signIn('credentials', {
+      email: register.data.email,
+      password: register.data.password
+    });
+
+    // return { message: 'Registration successful', data: register.data };
   } catch (error) {
+    // if (error instanceof AuthError) {
+    //   switch (error.type) {
+    //     case 'CredentialsSignin':
+    //       return { message: 'Invalid credentials.' };
+    //     default:
+    //       return { message: 'Something went wrong during registration.' };
+    //   }
+    // }
+    // return { message: 'An unexpected error occurred during registration.' };
+
+
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
-          return { message: 'Invalid credentials.' };
+          return { message: 'Invalid credentials. Try again!' };
         default:
-          return { message: 'Something went wrong during registration.' };
+          return { message: 'Something went wrong during sign-in.' };
       }
     }
-    return { message: 'An unexpected error occurred during registration.' };
+
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, register.data.email))
+      .limit(1);
+    if (user[0].role === 'CHIEF_EDITOR' || user[0].role === 'ADMIN') {
+      redirect('/editor', RedirectType.replace);
+    } else {
+      redirect('/submissions', RedirectType.replace);
+    }
   }
 }
