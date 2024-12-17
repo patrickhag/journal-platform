@@ -23,6 +23,7 @@ import Loader from '@/components/Loader';
 import type { z } from 'zod';
 import { useSearchParams } from 'next/navigation';
 import { authenticate } from '@/actions/authenticate';
+import { EyeClosedIcon, EyeIcon } from 'lucide-react';
 
 export default function Login() {
   const [errorMessage, formAction, isPending] = useActionState(
@@ -49,6 +50,10 @@ export default function Login() {
     }, 5000);
     return () => clearTimeout(timeout);
   }, [errorMessage]);
+
+  const [passwordType, setPasswordType] = useState<'password' | 'text'>(
+    'password'
+  );
 
   return (
     <>
@@ -116,13 +121,32 @@ export default function Login() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel htmlFor="password">Password</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="password"
-                            placeholder="********"
-                            {...field}
-                          />
-                        </FormControl>
+                        <div className="relative">
+                          <FormControl>
+                            <Input
+                              type={passwordType}
+                              placeholder="********"
+                              {...field}
+                            />
+                          </FormControl>
+                          <button
+                            type="button"
+                            className="-translate-x-2 absolute right-0 top-[50%] -translate-y-[50%]"
+                            onClick={() =>
+                              setPasswordType(
+                                passwordType === 'password'
+                                  ? 'text'
+                                  : 'password'
+                              )
+                            }
+                          >
+                            {passwordType === 'password' ? (
+                              <EyeIcon width={24} height={24} />
+                            ) : (
+                              <EyeClosedIcon width={24} height={24} />
+                            )}
+                          </button>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     )}

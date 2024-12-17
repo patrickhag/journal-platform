@@ -96,4 +96,3 @@ const button = {
   padding: '12px',
   margin: '24px 0',
 };
-
