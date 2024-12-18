@@ -92,7 +92,7 @@ export const Paginator: FC<
         {nextLink && (
           <Link
             aria-disabled={!isAllowedToNext()}
-            href={isAllowedToNext() ? { pathname: nextLink, query }: '#'}
+            href={isAllowedToNext() ? { pathname: nextLink, query } : '#'}
             className={cn(
               isAllowedToNext() ? '' : 'cursor-not-allowed',
               'px-4 py-1 ring-2 ring-gray-100 bg-[#626EEF] rounded-md text-white'

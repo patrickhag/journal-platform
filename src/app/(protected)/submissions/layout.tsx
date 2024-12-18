@@ -23,7 +23,7 @@ export default async function Layout({ children }: PropsWithChildren) {
       <Header notifications={notificationsData} />
       <div className="flex bg-gray-100 min-h-screen">
         <div className="flex-1 overflow-auto p-8">
-          <div className="container">{children}</div>
+          {children}
         </div>
       </div>
     </SessionProvider>

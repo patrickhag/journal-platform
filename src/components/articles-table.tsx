@@ -45,13 +45,13 @@ const columns: ColumnDef<Article>[] = [
     accessorKey: 'title',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
+        <div
+          className="flex items-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Title
           <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        </div>
       );
     },
   },
@@ -72,13 +72,13 @@ const columns: ColumnDef<Article>[] = [
     accessorKey: 'createdAt',
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
+        <div
+          className="flex items-center"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Created at
           <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        </div>
       );
     },
   },
@@ -157,6 +157,7 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  className="py-5"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

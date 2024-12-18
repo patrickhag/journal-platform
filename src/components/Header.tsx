@@ -1,5 +1,7 @@
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import { Bell } from 'lucide-react';
 import { auth } from '@/auth';
 import { db, TNotifications } from '@/db/schema';
 import { eq } from 'drizzle-orm';
@@ -26,7 +28,7 @@ export default async function Header({
 
   return (
     <header className="border-b bg-white sticky h-16 top-0 z-50">
-      <div className="container mx-auto flex items-center justify-between h-full">
+      <div className="flex items-center justify-between h-full mx-3">
         <div className="flex items-center gap-8">
           {/* {(role === 'ADMIN' || role === 'CHIEF_EDITOR') && <ShowNav />} */}
           <div className="flex items-center gap-4">

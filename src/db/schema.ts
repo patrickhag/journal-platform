@@ -194,7 +194,7 @@ export const articleSubmissions = pgTable('article_submissions', {
   section: articleTypeEnum().$default(() => 'Articles'),
   requirements: text('requirements').array().notNull(),
   commentsForEditor: text('comments_for_editor').notNull(),
-  articleStatus: articleStatusEnum().$default(() => 'Draft'),
+  articleStatus: articleStatusEnum().$default(() => 'Submitted'),
   userId: text('userId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),

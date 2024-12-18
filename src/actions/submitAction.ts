@@ -84,7 +84,6 @@ export async function submitAction(_: unknown, formData: FormData) {
       await insert(reviewerValidations, reviewers);
       await insert(filesValidations, files);
       await insert(contributorValidations, contributors);
-      await insert(reviewerValidations, reviewers);
       await trx.insert(metadata).values({
         ...metadataValidations,
         articleId: articleSubmissionIds[0].id,
@@ -117,5 +116,5 @@ export async function submitAction(_: unknown, formData: FormData) {
     return { message: 'Failed to submit' };
   }
 
-  redirect('/dashboard', RedirectType.push);
+  redirect('/submissions', RedirectType.push);
 }

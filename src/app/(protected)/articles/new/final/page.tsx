@@ -130,43 +130,47 @@ const Page = () => {
                   </FormLabel>
                   <FormControl>
                     <RadioGroup className="flex space-x-4" {...field}>
-                      <input
-                        type="radio"
-                        name="funded"
-                        value="yes"
-                        id="funded-yes"
-                      />
-                      <Label htmlFor="funded-yes">yes</Label>
-                      <input
-                        type="radio"
-                        name="funded"
-                        value="no"
-                        id="funded-no"
-                      />
-                      <Label htmlFor="funded-no">no</Label>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="funded"
+                          value="yes"
+                          id="funded-yes"
+                        />
+                        <Label htmlFor="funded-yes">yes</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="funded"
+                          value="no"
+                          id="funded-no"
+                        />
+                        <Label htmlFor="funded-no">no</Label>
+                      </div>
                     </RadioGroup>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            {form.watch('funded') === 'yes' && <FormField
-              control={form.control}
-              name="founders"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      placeholder="If yes write the funding organization"
-                      className="mt-2"
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />}
-
-
+            {form.watch('funded') === 'yes' && (
+              <FormField
+                control={form.control}
+                name="founders"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        placeholder="If yes write the funding organization"
+                        className="mt-2"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            )}
           </div>
 
           <div className="grid">
@@ -181,42 +185,47 @@ const Page = () => {
                   </FormLabel>
                   <FormControl>
                     <RadioGroup className="flex space-x-4" {...field}>
-                      <input
-                        type="radio"
-                        name="ethical"
-                        value="yes"
-                        id="ethical-yes"
-                      />
-                      <Label htmlFor="ethical-yes">yes</Label>
-                      <input
-                        type="radio"
-                        name="ethical"
-                        value="no"
-                        id="ethical-no"
-                      />
-                      <Label htmlFor="ethical-no">no</Label>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="ethical"
+                          value="yes"
+                          id="ethical-yes"
+                        />
+                        <Label htmlFor="ethical-yes">yes</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="ethical"
+                          value="no"
+                          id="ethical-no"
+                        />
+                        <Label htmlFor="ethical-no">no</Label>
+                      </div>
                     </RadioGroup>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            {form.watch('ethical') === 'yes' && <FormField
-              control={form.control}
-              name="ethicalReference"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      placeholder="If yes write its reference number"
-                      className="mt-2"
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />}
-
+            {form.watch('ethical') === 'yes' && (
+              <FormField
+                control={form.control}
+                name="ethicalReference"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        placeholder="If yes write its reference number"
+                        className="mt-2"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            )}
           </div>
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 mt-4">
@@ -230,20 +239,24 @@ const Page = () => {
                 </FormLabel>
                 <FormControl>
                   <RadioGroup className="flex space-x-4" {...field}>
-                    <input
-                      type="radio"
-                      name="consent"
-                      value="yes"
-                      id="consent-yes"
-                    />
-                    <Label htmlFor="consent-yes">yes</Label>
-                    <input
-                      type="radio"
-                      name="consent"
-                      value="no"
-                      id="consent-no"
-                    />
-                    <Label htmlFor="consent-no">no</Label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        name="consent"
+                        value="yes"
+                        id="consent-yes"
+                      />
+                      <Label htmlFor="consent-yes">yes</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        name="consent"
+                        value="no"
+                        id="consent-no"
+                      />
+                      <Label htmlFor="consent-no">no</Label>
+                    </div>
                   </RadioGroup>
                 </FormControl>
                 <FormMessage />
@@ -261,15 +274,24 @@ const Page = () => {
                 </FormLabel>
                 <FormControl>
                   <RadioGroup className="flex space-x-4" {...field}>
-                    <input
-                      type="radio"
-                      name="human"
-                      value="yes"
-                      id="human-yes"
-                    />
-                    <Label htmlFor="human-yes">yes</Label>
-                    <input type="radio" name="human" value="no" id="human-no" />
-                    <Label htmlFor="human-no">no</Label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        name="human"
+                        value="yes"
+                        id="human-yes"
+                      />
+                      <Label htmlFor="human-yes">yes</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        name="human"
+                        value="no"
+                        id="human-no"
+                      />
+                      <Label htmlFor="human-no">No</Label>
+                    </div>
                   </RadioGroup>
                 </FormControl>
                 <FormMessage />
