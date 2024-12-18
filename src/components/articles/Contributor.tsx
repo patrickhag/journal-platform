@@ -24,12 +24,7 @@ export default async function Contributor({
         Names: {contributorData.salutation} {contributorData.name}
       </p>
       <div>{contributorData.bio}</div>
-      {contributorData.homepage && (
-        <p>
-          homepage:{' '}
-          <a href={contributorData.homepage}>{contributorData.homepage}</a>
-        </p>
-      )}
+ 
       <p>Country: {contributorData.country}</p>
       <p>{contributorData.affiliation}</p>
       <RemoveContributorWithPermissions

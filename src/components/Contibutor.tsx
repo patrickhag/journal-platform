@@ -1,13 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 
 import {
   Form,
@@ -55,6 +48,7 @@ export default function NewContibutorForm() {
       salutation: 'Mr',
       country: 'Rwanda',
       orcid: '',
+      homepage: '',
       affiliation: '',
       bio: '',
       role: 'author',
@@ -81,142 +75,23 @@ export default function NewContibutorForm() {
   };
 
   return (
-    <>
-      <Dialog open={modalOpen}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Contributors</DialogTitle>
-          </DialogHeader>
-          <div className="text-sm text-muted-foreground mb-4">
-            * Denotes a required field
-          </div>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Names <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Full names of the contributor"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email*</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Email of the contributor"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+    <div className='my-8'>
+      {modalOpen && <>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 my-8 py-12">
+            <hr />
+            <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
-                name="salutation"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Salutation <span className="text-red-500">*</span>
+                      Names <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder={SALUTATION.join(', ')} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="country"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Country <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select country" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {COUNTRIES.map((c) => (
-                          <SelectItem value={c} key={c}>
-                            {c}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">User details</h3>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <FormField
-                    control={form.control}
-                    name="orcid"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>ORCID ID</FormLabel>
-                        <FormControl>
-                          <Input placeholder="ORCID ID" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-              <FormField
-                control={form.control}
-                name="affiliation"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Affiliation <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g: Organisation" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="bio"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Bio statement <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="e.g: department, achievements, ..."
-                        className="min-h-[100px]"
+                      <Input
+                        placeholder="Full names of the contributor"
                         {...field}
                       />
                     </FormControl>
@@ -226,61 +101,189 @@ export default function NewContibutorForm() {
               />
               <FormField
                 control={form.control}
-                name="role"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      Contributor&apos;s role{' '}
-                      <span className="text-red-500">*</span>
-                    </FormLabel>
+                    <FormLabel>Email*</FormLabel>
                     <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex flex-col space-y-1"
-                      >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="author" />
-                          </FormControl>
-                          <FormLabel className="font-normal">Author</FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="translator" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Translator
-                          </FormLabel>
-                        </FormItem>
-                      </RadioGroup>
+                      <Input
+                        placeholder="Email of the contributor"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setModalOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit">Add</Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-      <Button
-        onClick={() => setModalOpen(!modalOpen)}
-        variant="outline"
-        className="mt-4"
-        type="submit"
-      >
-        Add contributor
-      </Button>
-    </>
+            </div>
+            <FormField
+              control={form.control}
+              name="salutation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Salutation <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder={SALUTATION.join(', ')} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="country"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Country <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {COUNTRIES.map((c) => (
+                        <SelectItem value={c} key={c}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">User details</h3>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="orcid"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>ORCID ID</FormLabel>
+                      <FormControl>
+                        <Input placeholder="ORCID ID" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="homepage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Homepage</FormLabel>
+                      <FormControl>
+                        <Input placeholder="https://..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+            <FormField
+              control={form.control}
+              name="affiliation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Affiliation <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g: Organisation" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="bio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Bio statement <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="e.g: department, achievements, ..."
+                      className="min-h-[100px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Contributor&apos;s role{' '}
+                    <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex flex-col space-y-1"
+                    >
+                      <FormItem className="flex items-center space-x-3 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="author" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Author</FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-3 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="translator" />
+                        </FormControl>
+                        <FormLabel className="font-normal">
+                          Translator
+                        </FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className='flex gap-3'>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setModalOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit">Add</Button>
+            </div>
+          </form>
+        </Form>
+      </>}
+      {!modalOpen &&
+        <Button
+          onClick={() => setModalOpen(!modalOpen)}
+          variant="outline"
+          className="mt-4"
+          type="submit"
+        >
+          Add contributor
+        </Button>
+      }
+    </div>
   );
 }
