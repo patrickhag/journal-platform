@@ -104,7 +104,7 @@ async function page({
             </div>
           </CardContent>
         </Card>
-        <Files articleId={articleId} />
+        <Files articleId={articleId} role={currentUserRole || 'NORMAL_USER'} />
 
         <Card className="my-3">
           <CardHeader>

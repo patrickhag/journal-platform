@@ -4,8 +4,11 @@ import { eq } from 'drizzle-orm';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { FileText } from 'lucide-react';
+import ReviewModal from "./Review"
+import withPermissions from "../WithPermission"
+import { USER_ROLES } from '@/lib/roles'
 
-async function Files({ articleId }: { articleId: string }) {
+async function Files({ articleId, role }: { articleId: string, role: typeof USER_ROLES[number] }) {
   const filesData = await db
     .select()
     .from(files)
@@ -36,6 +39,7 @@ async function Files({ articleId }: { articleId: string }) {
                   Download
                 </Link>
               </Button>
+              <UlterFile requiredPermissions={['MANAGE_REVIEWERS']} role={role} fallback={<></>} />
             </div>
           ))}
         </CardContent>
@@ -45,3 +49,15 @@ async function Files({ articleId }: { articleId: string }) {
 }
 
 export default Files;
+
+const FileControls = () => <div className="space-x-1 flex">
+  <ReviewModal />
+  <Button variant="link" className="text-blue-500 hover:text-blue-600">
+    Update
+  </Button>
+  <Button variant="link" className="text-red-500 hover:text-red-600">
+    Delete
+  </Button>
+</div>
+
+const UlterFile = withPermissions(FileControls)
