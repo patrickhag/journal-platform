@@ -251,4 +251,7 @@ export const ARTICLE_STATUS = [
   'Scheduled for Publication',
   'Needs More Information',
   'Finalized',
+  'Accepted',
+  'Minor issue',
+  'Major issue'
 ] as const;

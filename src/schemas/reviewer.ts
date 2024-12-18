@@ -63,6 +63,7 @@ export const reviewSchema = z.object({
   message: z.string(),
   articleId: z.string(),
   fileIds: z.string(),
+  status: z.enum(ARTICLE_STATUS),
 });
 
 export type TArticle = z.infer<typeof articleSubmitionSchema> & {

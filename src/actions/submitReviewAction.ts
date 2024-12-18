@@ -23,6 +23,7 @@ export async function submitReviewAction(_: unknown, formData: FormData) {
       message: result.data.message,
       articleId: result.data.articleId,
       fileIds: JSON.parse(result.data.fileIds),
+      status: result.data.status
     });
   } catch (error) {
     if (error instanceof Error) return { message: error.message };

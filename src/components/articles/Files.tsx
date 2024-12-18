@@ -39,7 +39,7 @@ async function Files({ articleId, role }: { articleId: string, role: typeof USER
                   Download
                 </Link>
               </Button>
-              <UlterFile requiredPermissions={['MANAGE_REVIEWERS']} role={role} fallback={<></>} />
+              <UlterFile requiredPermissions={['VIEW_REVIEW']} role={role} fallback={<></>} />
             </div>
           ))}
         </CardContent>

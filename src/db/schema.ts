@@ -185,6 +185,7 @@ export const reviews = pgTable('reviews', {
     .array()
     .notNull()
     .default(sql`'{}'::text[]`),
+  status: articleStatusEnum().$default(() => 'Minor issue'),
 });
 
 export const articleSubmissions = pgTable('article_submissions', {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -19,7 +19,10 @@ import { safeParse } from 'zod-urlsearchparams';
 import { filesSchema } from '@/schemas/reviewer';
 import Spinner from '../Spinner';
 import { submitReviewAction } from '@/actions/submitReviewAction';
-
+import {
+  ARTICLE_STATUS,
+} from '@/lib/consts';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
 export default function ReviewModal() {
   const [open, setOpen] = useState(false);
   const [errorMessage, formAction, isPending] = useActionState(
@@ -35,6 +38,9 @@ export default function ReviewModal() {
 
   const files = filesValidation.data?.files || [];
   console.log(errorMessage);
+
+  const reviewStatus: (typeof ARTICLE_STATUS[number])[] = ['Major issue', 'Minor issue', 'Accepted']
+  const [status, setStatus] = useState('')
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -84,9 +90,20 @@ export default function ReviewModal() {
             readOnly
             className="hidden"
           />
+          <input type="hidden" name="status" defaultValue={status || reviewStatus[0]} />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button>{status || "Select status"}</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {reviewStatus.map(r => <DropdownMenuItem key={r} onClick={() => {
+                  setStatus(r)
+              }}>{r}</DropdownMenuItem>)}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <div className="space-y-3">
-            <Button disabled={isPending} className="bg-[#626EEF]">
+            <Button disabled={isPending} className="bg-[#626EEF] block w-full">
               Submit {isPending && <Spinner />}
             </Button>
           </div>
