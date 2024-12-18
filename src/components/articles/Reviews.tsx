@@ -4,6 +4,7 @@ import { Button } from '../ui/button';
 import withPermissions from '../WithPermission';
 import { db, reviews, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { Card, CardContent, CardHeader } from '../ui/card';
 
 const Reviews = async ({
   role,
@@ -17,7 +18,12 @@ const Reviews = async ({
     .from(reviews)
     .where(eq(reviews.articleId, articleId));
   return (
-    <div className="space-y-4">
+    <Card className="space-y-4 my-4">
+      <CardHeader>
+      <h3 className="font-bold text-xl">Reviews</h3>
+      </CardHeader>
+      <CardContent>
+
       {reviewerReviews.length <= 0 ? (
         <p>No reviews given</p>
       ) : (
@@ -47,7 +53,8 @@ const Reviews = async ({
           ))}
         </>
       )}
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

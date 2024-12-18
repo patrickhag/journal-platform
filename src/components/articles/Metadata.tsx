@@ -58,21 +58,21 @@ export default async function Metadata({
           </div>
         </CardContent>
       </Card>
-
-      <Card className="my-3">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">Contributors</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-2">
-            {contibutors.map((c) => (
-              <li key={c.id}>
-                {c.name}, {c.role}
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
+      {contibutors.length > 0 &&
+        <Card className="my-3">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Contributors</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              {contibutors.map((c) => (
+                <li key={c.id}>
+                  {c.name}, {c.role}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>}
     </article>
   );
 }

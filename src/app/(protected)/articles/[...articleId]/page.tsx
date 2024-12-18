@@ -6,6 +6,7 @@ import { articleSubmissions, db, reviewers, users } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import GoBackButton from '@/components/articles/GoBackButton';
+import Reviews from '@/components/articles/Reviews';
 
 async function page({
   params,
@@ -105,8 +106,8 @@ async function page({
           </CardContent>
         </Card>
         <Files articleId={articleId} role={currentUserRole || 'NORMAL_USER'} />
-
-        <Card className="my-3">
+        <Reviews articleId={articleId} role={currentUserRole || 'NORMAL_USER'}/>
+        {reviewrs.length > 0 && <Card className="my-3">
           <CardHeader>
             <CardTitle>Reviewers</CardTitle>
           </CardHeader>
@@ -120,7 +121,7 @@ async function page({
               />
             ))}
           </CardContent>
-        </Card>
+        </Card>}
       </div>
     </>
   );
