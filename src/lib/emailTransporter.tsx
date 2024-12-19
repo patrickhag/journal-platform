@@ -4,7 +4,7 @@ import { SendInvitation } from '@/components/emails/sendInvite';
 import { render } from '@react-email/components';
 import nodemailer from 'nodemailer';
 
-const transporter = nodemailer.createTransport({
+export const transporter = nodemailer.createTransport({
   service: 'gmail',
   host: 'smtp.gmail.com',
   port: 587,

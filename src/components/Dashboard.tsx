@@ -1,14 +1,15 @@
 import { auth } from '@/auth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { articleSubmissions, files, metadata } from '@/db/schema';
+import { articleSubmissions, files, metadata, reviewers } from '@/db/schema';
 import { db } from '@/db/schema';
 import { ArticleSection } from './ArticleSection';
 import { SearchArticle } from './SearchArticle';
-import { and, eq, like } from 'drizzle-orm';
+import { and, eq, like, inArray } from 'drizzle-orm';
 import { PlusCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
-import { TArticle } from '@/schemas/reviewer';
+import { ArticleFilters } from './ArticleFilters';
+import { ARTICLE_STATUS, articleFilters } from '@/lib/consts';
 
 export default async function DashboardPannel({
   searchParams,
@@ -18,14 +19,26 @@ export default async function DashboardPannel({
   const session = await auth();
   const currentUser = session?.user;
 
-  const where = () => {
+  const where = async () => {
     const conditions = [];
+
     if (searchParams.q) {
       conditions.push(
         like(articleSubmissions.commentsForEditor, `%${searchParams.q}%`)
       );
     }
     if (currentUser?.id) {
+
+      if (searchParams.status) {
+        conditions.push(eq(articleSubmissions.articleStatus, searchParams.status as typeof ARTICLE_STATUS[number]));
+      }
+      if ((searchParams.f as typeof articleFilters[number]) === 'Assigned to review') {
+        const article = await db.select({ articleId: reviewers.articleId }).from(reviewers).where(eq(reviewers.userId, currentUser.id!))
+        const ids = article.map(a => String(a.articleId))
+        conditions.push(
+          inArray(articleSubmissions.id, ids),
+        )
+      }
       conditions.push(eq(articleSubmissions.userId, currentUser.id));
     }
     return conditions.length > 0 ? and(...conditions) : undefined;
@@ -41,12 +54,12 @@ export default async function DashboardPannel({
       title: metadata.title, // Adding title from metadata
     })
     .from(articleSubmissions)
-    .where(where())
+    .where(await where())
+    .rightJoin(reviewers, eq(articleSubmissions.userId, reviewers.userId))
     .leftJoin(files, eq(articleSubmissions.id, files.articleId))
     .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId)); // Joining metadata table
 
-  console.log(articles);
-
+  console.log(articles)
   return (
     <main className="max-w-5xl mx-auto">
       <div>
@@ -62,18 +75,7 @@ export default async function DashboardPannel({
         <Tabs defaultValue="articles">
           <div className="flex justify-between">
             <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
-              <TabsTrigger
-                value="articles"
-                className="rounded-md border-b-2 border-transparent px-4 py-2 font-medium data-[state=active]:border-primary"
-              >
-                My submisions
-              </TabsTrigger>
-              <TabsTrigger
-                value="archives"
-                className="rounded-md border-b-2 border-transparent px-4 py-2 font-medium data-[state=active]:border-primary"
-              >
-                Archives
-              </TabsTrigger>
+              <ArticleFilters />
             </TabsList>
             <SearchArticle />
             <Button className="mx-5 bg-[#141A26]">

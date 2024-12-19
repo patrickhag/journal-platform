@@ -255,3 +255,5 @@ export const ARTICLE_STATUS = [
   'Minor issue',
   'Major issue'
 ] as const;
+
+export const articleFilters = ['Assigned to review', "My articles"] as const

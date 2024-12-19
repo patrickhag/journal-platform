@@ -7,7 +7,6 @@ export const SearchArticle = async () => {
       className="flex items-center justify-end"
       action={async (formData) => {
         'use server';
-        console.log(formData);
         redirect(`/submissions?q=${formData.get('q')}`);
       }}
     >
