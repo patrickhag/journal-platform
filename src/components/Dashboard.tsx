@@ -59,7 +59,6 @@ export default async function DashboardPannel({
     .leftJoin(files, eq(articleSubmissions.id, files.articleId))
     .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId)); // Joining metadata table
 
-  console.log(articles)
   return (
     <main className="max-w-5xl mx-auto">
       <div>

@@ -1,33 +1,20 @@
 import React from 'react';
 import Image from 'next/image';
+import { Recents } from '../Recents';
+import { articleSubmissions, db, files, metadata } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
-const Collections = () => {
-  const collections = [
-    {
-      id: 1,
-      title: 'Lorem ipsum collection 1',
-      image:
-        'https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732723406/newss_espiuv.png',
-    },
-    {
-      id: 2,
-      title: 'Lorem ipsum collection 2',
-      image:
-        'https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732723406/newss_espiuv.png',
-    },
-    {
-      id: 3,
-      title: 'Lorem ipsum collection 3',
-      image:
-        'https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732723406/newss_espiuv.png',
-    },
-    {
-      id: 4,
-      title: 'Lorem ipsum collection 3',
-      image:
-        'https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732723406/newss_espiuv.png',
-    },
-  ];
+const Collections = async () => {
+
+  const fileCollections = await db
+    .select({
+      id: files.id,
+      fileURI: files.publicId,
+      title: metadata.title
+    })
+    .from(articleSubmissions)
+    .leftJoin(files, eq(articleSubmissions.id, files.articleId))
+    .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId)).limit(10);
 
   return (
     <div className="col-span-3 space-y-8">
@@ -45,65 +32,20 @@ const Collections = () => {
         </p>
       </div>
 
-      <div>
-        <h2 className="text-xl font-bold mb-4" style={{ color: '#1A237E' }}>
-          Recently Published
-        </h2>
-        <div className="space-y-6 w-[90%]">
-          {/* Article 1 */}
-          <div className="border-b pb-4">
-            <h3 className="font-semibold text-lg text-gray-800">
-              Lorem ipsum article has been posted has been posted has been
-              posted
-            </h3>
-            <p className="text-sm text-gray-600">
-              Bizimana Jean, Peter Thiel, Peter Thiel
-            </p>
-            <p className="text-sm text-gray-500">30 October 2023</p>
-          </div>
-        </div>
-
-        <div className="space-y-6 w-[90%]">
-          {/* Article 1 */}
-          <div className="border-b pb-4">
-            <h3 className="font-semibold text-lg text-gray-800">
-              Lorem ipsum article has been posted has been posted has been
-              posted
-            </h3>
-            <p className="text-sm text-gray-600">
-              Bizimana Jean, Peter Thiel, Peter Thiel
-            </p>
-            <p className="text-sm text-gray-500">30 October 2023</p>
-          </div>
-        </div>
-
-        <div className="space-y-6 w-[90%]">
-          {/* Article 1 */}
-          <div className="border-b pb-4">
-            <h3 className="font-semibold text-lg text-gray-800">
-              Lorem ipsum article has been posted has been posted has been
-              posted
-            </h3>
-            <p className="text-sm text-gray-600">
-              Bizimana Jean, Peter Thiel, Peter Thiel
-            </p>
-            <p className="text-sm text-gray-500">30 October 2023</p>
-          </div>
-        </div>
-      </div>
+      <Recents />
       <div className="w-[70%]">
         <h2 className="text-2xl font-bold mb-8" style={{ color: '#1A237E' }}>
           Our largest collections
         </h2>
         <div className="grid grid-cols-2 gap-3">
-          {collections.map((collection) => (
+          {fileCollections.map((collection) => (
             <div key={collection.id}>
               <h3 className="text-lg font-medium">{collection.title}</h3>
               <Image
-                src={collection.image}
+                src={'https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732723406/newss_espiuv.png'}
                 width={500}
                 height={250}
-                alt={collection.title}
+                alt={collection.title || ''}
                 objectFit="cover"
                 className="rounded-md mb-2 p-2 shadow-md hover:shadow-lg transition"
               />
@@ -114,5 +56,6 @@ const Collections = () => {
     </div>
   );
 };
+
 
 export default Collections;
