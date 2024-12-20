@@ -45,7 +45,6 @@ export const NewMetaForm = () => {
       currentForm?.removeEventListener('focusout', () => {});
     };
   }, [currentForm]);
-  console.log(formm.formState.errors);
   const saveMeta = formm.handleSubmit((data) => {
     const meta = metadataSchema.safeParse(data);
     if (meta.error) return;

@@ -37,7 +37,6 @@ export default function ReviewModal() {
   });
 
   const files = filesValidation.data?.files || [];
-  console.log(errorMessage);
 
   const reviewStatus: (typeof ARTICLE_STATUS[number])[] = ['Major issue', 'Minor issue', 'Accepted']
   const [status, setStatus] = useState('')

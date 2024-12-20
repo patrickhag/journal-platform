@@ -10,7 +10,6 @@ import { RedirectType, redirect } from 'next/navigation';
 
 export async function submitReviewAction(_: unknown, formData: FormData) {
   const data = Object.fromEntries(formData.entries());
-  console.log(data);
   const result = reviewSchema.safeParse(data);
 
   if (!result.success) {

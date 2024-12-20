@@ -13,7 +13,6 @@ export async function createUpload(
   formData: FormData
 ) {
   const files = formData.get('files');
-  console.log(files);
   const fileBuffer = await (files instanceof Blob ? files.arrayBuffer() : null);
 
   const mime = (files as File)?.type;
@@ -39,10 +38,8 @@ export async function createUpload(
       return { message: 'Upload failed' };
     }
 
-    console.log(result.url);
     return { data: { ...result, name: (files as File).name } };
   } catch (error) {
-    console.log('server err', error);
     return { message: 'Internal Server Error' };
   }
 }

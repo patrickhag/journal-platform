@@ -78,7 +78,6 @@ export async function submitAction(_: unknown, formData: FormData) {
               articleId: articleSubmissionIds[0].id,
             })
             .returning({ id: t.id });
-          console.log(v, ids);
         }
       };
 

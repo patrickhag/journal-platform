@@ -9,7 +9,6 @@ import { RedirectType, redirect } from 'next/navigation';
 export const attachFile = async (_: unknown, formData: FormData) => {
   const data = Object.fromEntries(formData.entries());
   const result = filesSchema.safeParse(JSON.parse(data.files as string));
-  console.log(result.data);
 
   if (!result.success || !result.data.files) {
     return result.error?.errors;

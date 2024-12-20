@@ -20,7 +20,6 @@ export const Uploadbanner: FC<{ fileFormats: string[] }> = ({}) => {
     <UploadDropzone<OurFileRouter, 'imageUploader'>
       endpoint="imageUploader"
       onClientUploadComplete={(res) => {
-        console.log('Files: ', res);
         res.forEach((file) => {
           files.push({
             originalName: file.name,
@@ -43,10 +42,6 @@ export const Uploadbanner: FC<{ fileFormats: string[] }> = ({}) => {
         alert(`ERROR! ${error.message}`);
       }}
       onUploadBegin={(name) => {
-        console.log('Uploading: ', name);
-      }}
-      onDrop={(acceptedFiles) => {
-        console.log('Accepted files: ', acceptedFiles);
       }}
     />
   );

@@ -9,7 +9,6 @@ const Page = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
-  console.log('query search param object :', await searchParams);
   const query = await searchParams;
   return (
     <>
