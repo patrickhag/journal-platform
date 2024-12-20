@@ -70,7 +70,7 @@ export async function submitAction(_: unknown, formData: FormData) {
         t
       ) => {
         for (const v of vals) {
-          const ids = await trx
+          await trx
             .insert(t)
             .values({
               ...v,

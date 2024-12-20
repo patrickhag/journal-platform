@@ -4,7 +4,6 @@ import { CommentForEditor } from '@/components/upload/CommentForEditor';
 import { Paginator } from '@/components/upload/Paginator';
 import { SubmissionRequirementsSection } from '@/components/upload/SubmissionRequirementsSection';
 const Page = async ({
-  params,
   searchParams,
 }: {
   params: Promise<{ params: string }>;

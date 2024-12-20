@@ -41,8 +41,6 @@ export const Uploadbanner: FC<{ fileFormats: string[] }> = ({}) => {
       onUploadError={(error: Error) => {
         alert(`ERROR! ${error.message}`);
       }}
-      onUploadBegin={(name) => {
-      }}
     />
   );
 };

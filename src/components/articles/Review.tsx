@@ -25,7 +25,7 @@ import {
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu';
 export default function ReviewModal() {
   const [open, setOpen] = useState(false);
-  const [errorMessage, formAction, isPending] = useActionState(
+  const [, formAction, isPending] = useActionState(
     submitReviewAction,
     undefined
   );

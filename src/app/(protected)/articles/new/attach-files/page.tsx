@@ -5,7 +5,6 @@ import { Uploadbanner } from '@/components/upload/Uploadbanner';
 import { fileFormats } from '@/lib/consts';
 
 const Page = async ({
-  params,
   searchParams,
 }: {
   params: Promise<{ params: string }>;
