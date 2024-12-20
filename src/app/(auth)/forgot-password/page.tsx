@@ -20,7 +20,7 @@ export default function Login() {
   const params = useSearchParams();
 
   return (
-    <Card className="w-full max-w-lg mx-auto p-4 mt-4">
+    <Card className="w-full max-w-lg mx-auto p-4 mt-32">
       <CardHeader className="space-y-1 text-center">
         <div className="flex justify-center mb-4">
           <Image
@@ -32,7 +32,6 @@ export default function Login() {
           />
         </div>
         <h2 className="text-2xl font-semibold">Request password reset</h2>
-        <p className="text-sm text-muted-foreground">!</p>
         {(params.get('msg') || errorMessage) && (
           <div
             className="flex p-4 items-end space-x-1 justify-center bg-red-100 rounded-md"
@@ -70,7 +69,11 @@ export default function Login() {
               />
             </div>
 
-            <Button className="w-full" type="submit" aria-disabled={isPending}>
+            <Button
+              className="w-full bg-gray-800 hover:bg-gray-700 text-white"
+              type="submit"
+              aria-disabled={isPending}
+            >
               Reset password
             </Button>
           </div>

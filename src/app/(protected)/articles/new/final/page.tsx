@@ -97,10 +97,11 @@ const Page = () => {
             'filesValidations',
             JSON.stringify(filesValidations.data?.files)
           );
-          fm.append(
-            'articleSubmitionValidations',
-            JSON.stringify(articleSubmitionValidations.data)
-          );
+          if (articleSubmitionValidations.data)
+            fm.append(
+              'articleSubmitionValidations',
+              JSON.stringify(articleSubmitionValidations.data)
+            );
           fm.append(
             'reviewerValidations',
             JSON.stringify(reviewerValidations.data?.reviewers)
@@ -290,7 +291,7 @@ const Page = () => {
                         value="no"
                         id="human-no"
                       />
-                      <Label htmlFor="human-no">No</Label>
+                      <Label htmlFor="human-no">no</Label>
                     </div>
                   </RadioGroup>
                 </FormControl>

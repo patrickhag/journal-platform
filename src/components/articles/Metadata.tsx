@@ -51,17 +51,19 @@ export default async function Metadata({
             />
           </div>
           <div>
-            <h3 className="text-sm font-medium text-muted-foreground">
+            <h3 className="text-sm font-medium text-muted-foreground text-gray-600">
               Comments for the editor
             </h3>
             <p className="mt-1">{children}</p>
           </div>
         </CardContent>
       </Card>
-      {contibutors.length > 0 &&
+      {contibutors.length > 0 && (
         <Card className="my-3">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">Contributors</CardTitle>
+            <CardTitle className="text-lg font-semibold">
+              Contributors
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
@@ -72,7 +74,8 @@ export default async function Metadata({
               ))}
             </ul>
           </CardContent>
-        </Card>}
+        </Card>
+      )}
     </article>
   );
 }

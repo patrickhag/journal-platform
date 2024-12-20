@@ -1,4 +1,4 @@
-import { db, metadata } from '@/db/schema';
+import { db, metadata, users } from '@/db/schema';
 import {
   Popover,
   PopoverContent,
@@ -38,6 +38,14 @@ export default async function Reviewer({
     .limit(1);
   const session = await auth();
   if (!session?.user?.id) return null;
+  // get the user role from db
+
+  const currentUserRole = await db
+    .select({ role: users.role })
+    .from(users)
+    .where(eq(users.id, session.user.id))
+    .limit(1);
+
   return (
     <>
       <div className="flex justify-between items-center">
@@ -87,23 +95,26 @@ export default async function Reviewer({
         <h4 className="text-sm text-muted-foreground mb-2">Expertise</h4>
         <p className="text-base">{expertise}</p>
       </div>
-      <Popover>
-        <PopoverTrigger className="w-full md:w-auto bg-slate-900 text-lime-50 px-3 py-1 rounded-md">
-          Reach out
-        </PopoverTrigger>
-        <PopoverContent>
-          <ReachOut
-            article={{ ...meta, article }}
-            reviewer={names}
-            author={{
-              avatar: '',
-              name: session.user.name,
-              role: session.user.email,
-            }}
-            toEmail={email}
-          />
-        </PopoverContent>
-      </Popover>
+      {(currentUserRole[0].role === 'CHIEF_EDITOR' ||
+        currentUserRole[0].role === 'ADMIN') && (
+        <Popover>
+          <PopoverTrigger className="w-full md:w-auto bg-slate-900 text-lime-50 px-3 py-1 rounded-md">
+            Reach out
+          </PopoverTrigger>
+          <PopoverContent>
+            <ReachOut
+              article={{ ...meta, article }}
+              reviewer={names}
+              author={{
+                avatar: '',
+                name: session.user.name,
+                role: session.user.email,
+              }}
+              toEmail={email}
+            />
+          </PopoverContent>
+        </Popover>
+      )}
     </>
   );
 }

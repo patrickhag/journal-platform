@@ -57,7 +57,7 @@ export default function Login() {
 
   return (
     <>
-      <Card className="w-full max-w-2xl mx-auto p-4 mt-32">
+      <Card className="w-full max-w-2xl mx-auto p-4 mt-24">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
             <Image
@@ -141,9 +141,17 @@ export default function Login() {
                             }
                           >
                             {passwordType === 'password' ? (
-                              <EyeIcon width={18} height={18}  className='text-gray-600'/>
+                              <EyeIcon
+                                width={18}
+                                height={18}
+                                className="text-gray-600"
+                              />
                             ) : (
-                              <EyeClosedIcon width={18} height={24}  className='text-gray-600'/>
+                              <EyeClosedIcon
+                                width={18}
+                                height={24}
+                                className="text-gray-600"
+                              />
                             )}
                           </button>
                         </div>
@@ -179,13 +187,13 @@ export default function Login() {
             </form>
           </Form>
         </CardContent>
+        <div className="text-center mt-4 text-sm">
+          Don&apos;t have an account yet?{' '}
+          <Link href="/register" className="text-blue-600 hover:underline">
+            Register
+          </Link>
+        </div>
       </Card>
-      <div className="text-center my-16 text-lg text-gray-600">
-        Don&apos;t have an account yet?{' '}
-        <Link href="/register" className="text-blue-600 hover:underline">
-          Register
-        </Link>
-      </div>
     </>
   );
 }

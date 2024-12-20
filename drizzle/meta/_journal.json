@@ -8,6 +8,20 @@
       "when": 1734439752514,
       "tag": "0000_faulty_iron_monger",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1734552970512,
+      "tag": "0001_material_the_leader",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1734558167447,
+      "tag": "0002_skinny_malice",
+      "breakpoints": true
     }
   ]
 }

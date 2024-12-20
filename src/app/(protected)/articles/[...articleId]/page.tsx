@@ -63,7 +63,7 @@ async function page({
 
         <Metadata articleId={articleId} role={currentUserRole!}>
           <div
-            className="space-y-4 text-gray-600"
+            className="space-y-4"
             dangerouslySetInnerHTML={{ __html: article.commentsForEditor }}
           />
         </Metadata>
@@ -106,22 +106,27 @@ async function page({
           </CardContent>
         </Card>
         <Files articleId={articleId} role={currentUserRole || 'NORMAL_USER'} />
-        <Reviews articleId={articleId} role={currentUserRole || 'NORMAL_USER'}/>
-        {reviewrs.length > 0 && <Card className="my-3">
-          <CardHeader>
-            <CardTitle>Reviewers</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {reviewrs.map((r, index) => (
-              <Reviewer
-                reviewer={r}
-                index={index}
-                key={r.id}
-                article={article.id}
-              />
-            ))}
-          </CardContent>
-        </Card>}
+        <Reviews
+          articleId={articleId}
+          role={currentUserRole || 'NORMAL_USER'}
+        />
+        {reviewrs.length > 0 && (
+          <Card className="my-3">
+            <CardHeader>
+              <CardTitle>Reviewers</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {reviewrs.map((r, index) => (
+                <Reviewer
+                  reviewer={r}
+                  index={index}
+                  key={r.id}
+                  article={article.id}
+                />
+              ))}
+            </CardContent>
+          </Card>
+        )}
       </div>
     </>
   );

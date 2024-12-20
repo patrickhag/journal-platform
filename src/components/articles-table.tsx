@@ -31,6 +31,13 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { StatusBadge } from './status-badge';
 import Link from 'next/link';
+import { Label } from '@/components/ui/label';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type Article = {
   id: string | null;
@@ -103,6 +110,8 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
 
+  const statuses = [...new Set(data.map((articles) => articles.status))];
+
   const table = useReactTable({
     data,
     columns,
@@ -132,6 +141,19 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
           onChange={(e) => setGlobalFilter(e.target.value)}
           className="max-w-sm"
         />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline">Filter by Status</Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80">
+            {statuses.map((status) => (
+              <div key={status} className="flex items-center gap-2">
+                <Checkbox id={status as string} />
+                <Label htmlFor={status as string}>{status}</Label>
+              </div>
+            ))}
+          </PopoverContent>
+        </Popover>
       </div>
       <div className="rounded-md border">
         <Table>

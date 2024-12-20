@@ -77,7 +77,7 @@ export const NewMetaForm = () => {
                   Prefix <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder="A, the" {...field} />
+                  <Input placeholder="Dr, Mr, Mrs..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

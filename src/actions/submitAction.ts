@@ -48,6 +48,7 @@ export async function submitAction(_: unknown, formData: FormData) {
   ) as z.infer<typeof contributorFormSchema>[];
 
   const session = await auth();
+  let isError = false;
   try {
     await db.transaction(async (trx) => {
       const session = await auth();
@@ -111,10 +112,11 @@ export async function submitAction(_: unknown, formData: FormData) {
         originalAuthor,
       });
     }
+    isError = true;
   } catch (error) {
     console.error('Weeerror', error);
     return { message: 'Failed to submit' };
   }
 
-  redirect('/submissions', RedirectType.push);
+  if (isError) redirect('/submissions', RedirectType.push);
 }
