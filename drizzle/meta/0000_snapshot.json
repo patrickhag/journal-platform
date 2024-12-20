@@ -1,5 +1,5 @@
 {
-  "id": "c91d24bc-acd9-42d0-9e8e-0135bce903fa",
+  "id": "6e993907-259a-4df5-9214-9c536175b12f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -763,6 +763,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'{}'::text[]"
+        },
+        "status": {
+          "name": "status",
+          "type": "article_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -928,21 +935,15 @@
       "name": "article_status",
       "schema": "public",
       "values": [
-        "Draft",
         "Submitted",
         "In Review",
         "Approved",
         "Rejected",
         "Published",
         "Archived",
-        "Incomplete",
-        "Pending Revision",
-        "Under Review",
-        "Approved with Changes",
-        "Withdrawn",
-        "Scheduled for Publication",
-        "Needs More Information",
-        "Finalized"
+        "Accepted",
+        "Minor issue",
+        "Major issue"
       ]
     },
     "public.article-type": {
