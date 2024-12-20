@@ -39,7 +39,7 @@ export async function createUpload(
     }
 
     return { data: { ...result, name: (files as File).name } };
-  } catch (error) {
+  } catch {
     return { message: 'Internal Server Error' };
   }
 }
