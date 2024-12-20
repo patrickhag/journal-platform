@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList } from '@/components/ui/tabs';
 import { articleSubmissions, files, metadata, reviewers } from '@/db/schema';
 import { db } from '@/db/schema';
 import { ArticleSection } from './ArticleSection';
@@ -91,7 +91,16 @@ export default async function DashboardPannel({
             <div className="grid gap-4">
               {articles.length > 0 ? (
                 articles.map((a, i) => (
-                  <ArticleSection article={a} key={i} index={i} />
+                  <ArticleSection article={{
+                    "Comments for the editor": a.commentsForEditor || '',
+                    commentsForEditor: a.commentsForEditor || '',
+                    fileURI: a.fileURI || '',
+                    id: a.id || '',
+                    requirements: [''],
+                    section: a.section || 'Articles',
+                    title: a.title || '',
+                    articleStatus: a.articleStatus || 'Submitted'
+                  }} key={i} index={i} />
                 ))
               ) : (
                 <div className="text-center text-muted-foreground">

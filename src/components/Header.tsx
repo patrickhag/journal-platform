@@ -1,7 +1,5 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { Bell } from 'lucide-react';
 import { auth } from '@/auth';
 import { db, TNotifications } from '@/db/schema';
 import { eq } from 'drizzle-orm';

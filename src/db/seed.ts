@@ -4,12 +4,6 @@ import { faker } from '@faker-js/faker';
 import bcrypt from 'bcryptjs';
 import { exit } from 'process';
 const PASSWORD = 'whyoneAt@1';
-import { eq } from 'drizzle-orm';
-import { db, users } from './schema';
-import { faker } from '@faker-js/faker';
-import bcrypt from 'bcryptjs';
-import { exit } from 'process';
-const PASSWORD = 'whyoneAt@1';
 
 const hashedPassword = bcrypt.hashSync(PASSWORD);
 
