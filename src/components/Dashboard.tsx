@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { Tabs, TabsContent, TabsList } from '@/components/ui/tabs';
-import { articleSubmissions, files, metadata, reviewers } from '@/db/schema';
+import { articles as articleSubmissions, articleFiles as files, articleMetadata as metadata, articleReviewers as reviewers } from '@/db/schema';
 import { db } from '@/db/schema';
 import { ArticleSection } from './ArticleSection';
 import { SearchArticle } from './SearchArticle';

@@ -1,7 +1,7 @@
 'use server';
 
 import { signIn } from '@/auth';
-import { db, users } from '@/db/schema';
+import { db, people, users, } from '@/db/schema';
 import { registerSchema } from '@/schemas/auth.schema';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
@@ -16,6 +16,7 @@ export async function register(
   formData: z.infer<typeof registerSchema>
 ) {
   const register = registerSchema.safeParse(formData);
+
   if (register.error)
     return { message: register.error.errors[0].message, data: formData };
   try {
@@ -23,7 +24,8 @@ export async function register(
     const existingUser = await db
       .select()
       .from(users)
-      .where(eq(users.email, register.data.email))
+      .leftJoin(people, eq(users.personId, people.id))
+      .where(eq(people.email, register.data.email))
       .limit(1);
 
     if (existingUser.length > 0) {
@@ -37,7 +39,12 @@ export async function register(
       password: hashedPassword,
     };
 
-    await db.insert(users).values(user);
+    await db.transaction(async (tx) => {
+      const [person] = await tx.insert(people).values(user).returning()
+
+      console.log(person)
+      await tx.insert(users).values({ personId: person.id, password: hashedPassword })
+    })
     await signIn('credentials', {
       email: register.data.email,
       password: register.data.password
@@ -56,6 +63,7 @@ export async function register(
     // return { message: 'An unexpected error occurred during registration.' };
 
 
+    console.log(error)
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
@@ -66,10 +74,12 @@ export async function register(
     }
 
     const user = await db
-      .select()
+      .select({ role: users.role })
       .from(users)
-      .where(eq(users.email, register.data.email))
+      .leftJoin(people, eq(users.personId, people.id))
+      .where(eq(people.email, register.data.email))
       .limit(1);
+    console.log(user)
     if (user[0].role === 'CHIEF_EDITOR' || user[0].role === 'ADMIN') {
       redirect('/editor', RedirectType.replace);
     } else {

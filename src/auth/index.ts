@@ -1,4 +1,4 @@
-import { db, users } from '@/db/schema';
+import { db, people, users } from '@/db/schema';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import NextAuth, { type User, type NextAuthConfig } from 'next-auth';
@@ -21,10 +21,11 @@ export const authOptions: NextAuthConfig = {
         }
 
         const usersData = await db
-          .select()
+          .select({ password: users.password, firstName: people.firstName, lastName: people.lastName, email: people.email, id: users.id })
           .from(users)
+          .leftJoin(people, eq(users.personId, people.id))
           .limit(1)
-          .where(eq(users.email, String(credentials.email)));
+          .where(eq(people.email, String(credentials.email)));
         const user = usersData[0];
 
         if (

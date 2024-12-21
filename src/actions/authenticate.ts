@@ -1,7 +1,7 @@
 'use server';
 
 import { signIn } from '@/auth';
-import { db, users } from '@/db/schema';
+import { db, people, users } from '@/db/schema';
 import { loginSchema } from '@/schemas/auth.schema';
 import { eq } from 'drizzle-orm';
 import { AuthError } from 'next-auth';
@@ -29,9 +29,10 @@ export async function authenticate(
       return redirect(formData.redirect, RedirectType.replace);
     }
     const user = await db
-      .select()
+      .select({ role: users.role })
       .from(users)
-      .where(eq(users.email, login?.data?.email as string))
+      .leftJoin(people, eq(users.personId, people.id))
+      .where(eq(people.email, login?.data?.email as string))
       .limit(1);
     if (user[0].role === 'CHIEF_EDITOR' || user[0].role === 'ADMIN') {
       redirect('/editor', RedirectType.replace);

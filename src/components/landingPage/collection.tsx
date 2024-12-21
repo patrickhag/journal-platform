@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Recents } from '../Recents';
-import { articleSubmissions, db, files, metadata } from '@/db/schema';
+import { articles as articleSubmissions, db, articleFiles as files, articleMetadata as metadata } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
 const Collections = async () => {
