@@ -27,7 +27,7 @@ export default auth((req) => {
     return undefined;
   }
   if (!(isLoggedIn || isPublicRoute)) {
-    return Response.redirect(new URL(`/login`));
+    return Response.redirect(new URL(`/`, nextUrl.origin));
   }
   return undefined;
 });

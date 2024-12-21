@@ -13,6 +13,8 @@ import React, { PropsWithChildren, type FC } from 'react';
 import { z } from 'zod';
 import { safeParse } from 'zod-urlsearchparams';
 import { metadataSchema } from './ContributorsForm';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 export const Paginator: FC<
   {
@@ -75,9 +77,18 @@ export const Paginator: FC<
         );
     }
   };
+
+  const router = useRouter();
+
   return (
     <div className="flex justify-between">
-      <p className="mb-4 text-sm text-gray-500">* Denotes a required field</p>
+      <Button
+        className="hover:border-red-500 hover:text-red-500"
+        variant={'outline'}
+        onClick={() => router.push('/submissions')}
+      >
+        Cancel
+      </Button>
 
       <div className="flex justify-between gap-4 items-center">
         {backLink && (

@@ -48,9 +48,9 @@ async function page({
   const currentUser = session?.user;
   if (!currentUser) return <h1>Not authenticated</h1>;
 
-  const currentUserRole = (
-    await db.select({ role: users.role }).from(users).limit(1)
-  )[0].role;
+  const currentUserRole = session?.user?.role
+
+  console.log("currentUserRole>>>", currentUserRole)
 
   const author = await db
     .select()
@@ -146,7 +146,7 @@ async function page({
           </CardContent>
         </Card>
         <Publish
-          role="CHIEF_EDITOR"
+          role={currentUserRole}
           requiredPermissions={['PUBLISH_ARTICLES']}
           fallback=""
           articleId={articleId}

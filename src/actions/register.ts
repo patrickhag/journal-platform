@@ -37,6 +37,8 @@ export async function register(
       password: hashedPassword,
     };
 
+    console.log('passedUser>>>', user)
+
     const createdUser = await db.insert(users).values(user).returning();
     const token = jwt.sign(
       { email: createdUser[0].email, id: createdUser[0].id },
@@ -50,13 +52,17 @@ export async function register(
     console.log(createdUser);
 
     await sendVerifyToken({ email: createdUser[0].email, token: token });
+
     await signIn('credentials', {
       email: register.data.email,
       password: register.data.password,
     });
-
+    
     // return { message: 'Registration successful', data: register.data };
   } catch (error) {
+    if (error instanceof Error) {
+      console.log(error.message)
+    }
     // if (error instanceof AuthError) {
     //   switch (error.type) {
     //     case 'CredentialsSignin':
@@ -76,15 +82,15 @@ export async function register(
       }
     }
 
-    const user = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, register.data.email))
-      .limit(1);
-    if (user[0].role === 'CHIEF_EDITOR' || user[0].role === 'ADMIN') {
-      redirect('/editor', RedirectType.replace);
-    } else {
-      redirect('/submissions', RedirectType.replace);
-    }
+  //   const user = await db
+  //     .select()
+  //     .from(users)
+  //     .where(eq(users.email, register.data.email))
+  //     .limit(1);
+  //   if (user[0].role === 'CHIEF_EDITOR' || user[0].role === 'ADMIN') {
+  //     redirect('/editor', RedirectType.replace);
+  //   } else {
+  //     redirect('/submissions', RedirectType.replace);
+  //   }
   }
 }

@@ -26,7 +26,7 @@ const Header = async () => {
           Journal of African Epidemiology and Public Health
         </div>
         <nav className="flex gap-4 text-gray-700">
-          <a href="#" className="hover:text-blue-500">
+          <a href="/" className="hover:text-blue-500">
             Home
           </a>
           <a href="#" className="hover:text-blue-500">

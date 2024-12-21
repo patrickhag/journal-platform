@@ -37,6 +37,7 @@ export const authOptions: NextAuthConfig = {
           name: `${user.firstName} ${user.lastName}`,
           email: user.email,
           id: user.id,
+          role: user.role ?? 'NORMAL_USER',
         };
       },
     }),
@@ -61,8 +62,9 @@ export const authOptions: NextAuthConfig = {
         const u = user as (User | AdapterUser) & { randomKey: string };
         return {
           ...token,
-          id: u.id,
+          id: u.id as string,
           randomKey: u.randomKey,
+          role: u.role,
         };
       }
       return token;
@@ -74,6 +76,7 @@ export const authOptions: NextAuthConfig = {
           ...params.session.user,
           id: params.token.id as string,
           randomKey: params.token.randomKey,
+          role: params.token.role,
         },
       };
     },

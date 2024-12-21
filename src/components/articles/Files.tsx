@@ -19,6 +19,7 @@ async function Files({
     .select()
     .from(files)
     .where(eq(files.articleId, articleId));
+  console.log(filesData);
   return (
     <>
       <Card>
@@ -36,7 +37,7 @@ async function Files({
                 <div>
                   <p className="font-medium">{file.originalName}</p>
                   <p className="text-sm text-muted-foreground">
-                    {file.publicId.split('.').at(-1)} | 12kb
+                    {file.fileType} | 12kb
                   </p>
                 </div>
               </div>
@@ -45,11 +46,25 @@ async function Files({
                   Download
                 </Link>
               </Button>
-              <UlterFile
-                requiredPermissions={['VIEW_REVIEW']}
-                role={role}
-                fallback={<></>}
-              />
+              <div className="flex space-x-1">
+                <UlterFile
+                  requiredPermissions={['CREATE_REVIEW']}
+                  role={role}
+                  fallback={<></>}
+                />
+                <Button
+                  variant="link"
+                  className="text-blue-500 hover:text-blue-600"
+                >
+                  Update
+                </Button>
+                <Button
+                  variant="link"
+                  className="text-red-500 hover:text-red-600"
+                >
+                  Delete
+                </Button>
+              </div>
             </div>
           ))}
         </CardContent>
@@ -60,16 +75,6 @@ async function Files({
 
 export default Files;
 
-const FileControls = () => (
-  <div className="space-x-1 flex">
-    <ReviewModal />
-    <Button variant="link" className="text-blue-500 hover:text-blue-600">
-      Update
-    </Button>
-    <Button variant="link" className="text-red-500 hover:text-red-600">
-      Delete
-    </Button>
-  </div>
-);
+const FileControls = () => <ReviewModal />;
 
 const UlterFile = withPermissions(FileControls);
