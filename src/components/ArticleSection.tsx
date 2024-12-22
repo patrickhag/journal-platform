@@ -34,6 +34,7 @@ export function ArticleSection({
           </div>
           <div className="space-y-1">
             <h3 className="font-medium uppercase">{a.section}</h3>
+            {a.title}
             <CommentPreview html={a.commentsForEditor} />
             <small
               className={cn(

@@ -51,6 +51,7 @@ async function page({
     .where(eq(users.id, articles[0].submittedBy))
     .limit(1);
 
+  console.log(author)
   const reviewrs = await db
     .select()
     .from(reviewers)

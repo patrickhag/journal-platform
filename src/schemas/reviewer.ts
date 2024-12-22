@@ -40,13 +40,13 @@ export const articleSubmitionSchema = z.object({
 
 
 export const fileSchema = z.object({
-  id: z.string().uuid(),
-  articleId: z.string().uuid(),
+  id: z.string().optional(),
+  articleId: z.string().uuid().optional(),
   publicId: z.string().min(1),
   resourceType: z.string(),
   originalName: z.string().min(1),
   fileType: z.string().nullable().optional(),
-  uploadedBy: z.string().uuid(),
+  uploadedBy: z.string().optional(),
 });
 
 export const filesSchema = z.object({

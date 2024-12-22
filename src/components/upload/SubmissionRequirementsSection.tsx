@@ -54,7 +54,7 @@ export const SubmissionRequirementsSection = () => {
                     newSearchParams.delete(param[0]);
                   }
                 }
-                router.push(
+                router.replace(
                   `?${newSearchParams.toString()}&${serializedData.toString()}`
                 );
               }}

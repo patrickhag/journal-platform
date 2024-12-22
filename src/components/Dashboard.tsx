@@ -48,17 +48,18 @@ export default async function DashboardPannel({
     .select({
       id: articleSubmissions.id,
       commentsForEditor: metadata.commentsForEditor,
-      fileURI: files.publicId,
+      //fileURI: files.publicId,
       section: articleSubmissions.section,
       articleStatus: articleSubmissions.articleStatus,
       title: metadata.title, // Adding title from metadata
     })
     .from(articleSubmissions)
     .where(await where())
-    .rightJoin(reviewers, eq(articleSubmissions.submittedBy, reviewers.personId))
-    .leftJoin(files, eq(articleSubmissions.id, files.articleId))
+    //.rightJoin(reviewers, eq(articleSubmissions.submittedBy, reviewers.personId))
+    //.leftJoin(files, eq(articleSubmissions.id, files.articleId))
     .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId)); // Joining metadata table
-
+  //
+  console.log(articles)
   return (
     <main className="max-w-5xl mx-auto">
       <div>
@@ -93,7 +94,7 @@ export default async function DashboardPannel({
                   <ArticleSection article={{
                     "Comments for the editor": a.commentsForEditor || '',
                     commentsForEditor: a.commentsForEditor || '',
-                    fileURI: a.fileURI || '',
+                    fileURI: '',
                     id: a.id || '',
                     requirements: [''],
                     section: a.section || 'Articles',

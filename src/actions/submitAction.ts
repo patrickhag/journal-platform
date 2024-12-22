@@ -46,6 +46,7 @@ export async function submitAction(_: unknown, formData: FormData) {
   const contributorValidations = JSON.parse(
     data.contributorValidations.toString()
   ) as z.infer<typeof contributorFormSchema>[];
+  console.log(articleSubmitionValidations)
 
   const session = await auth();
   let isError = false;
@@ -56,7 +57,7 @@ export async function submitAction(_: unknown, formData: FormData) {
 
       const articleSubmissionIds = await trx
         .insert(articleSubmissions)
-        .values(articleSubmitionValidations)
+        .values({ ...articleSubmitionValidations, submittedBy: userId })
         .returning({ id: articleSubmissions.id });
 
       const insert = async <T>(
@@ -77,9 +78,10 @@ export async function submitAction(_: unknown, formData: FormData) {
       };
 
       await insert(reviewerValidations, reviewers);
-      await insert(filesValidations, files);
+      await insert(filesValidations.map(f => ({ ...f, uploadedBy: userId }))
+        , files);
       await insert(contributorValidations, contributors);
-      await trx.insert(metadata).values(metadataValidations);
+      await trx.insert(metadata).values({ ...metadataValidations, articleId: articleSubmissionIds[0].id });
       await trx.insert(finalSubmissions).values({
         articleId: articleSubmissionIds[0].id,
         funded: result.data.funded === 'yes',

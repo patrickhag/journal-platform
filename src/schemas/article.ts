@@ -10,7 +10,7 @@ export const articleSchema = z.object({
   id: z.string().uuid(),
   section: articleTypeSchema.default('Articles'),
   articleStatus: articleStatusSchema.default('Submitted'),
-  submittedBy: z.string().uuid(),
+  submittedBy: z.string(),
   createdAt: z.coerce.date(),
 });
 

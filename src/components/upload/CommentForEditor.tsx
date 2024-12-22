@@ -14,12 +14,11 @@ export const CommentForEditor = () => {
       theme="snow"
       className="h-32 mb-4 rounded-md"
       value={newParams.get('Comments for the editor') || ''}
-      onBlur={() => {
-        router.push(`${pathname}?${newParams?.toString()}`);
-      }}
       onChange={(e) => {
+        console.log(e)
         newParams.delete('Comments for the editor');
         newParams.set('Comments for the editor', e);
+        router.replace(`${pathname}?${newParams?.toString()}`)
       }}
     />
   );

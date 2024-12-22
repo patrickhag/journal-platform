@@ -17,8 +17,8 @@ export const Uploadbanner: FC<{ fileFormats: string[] }> = ({ }) => {
   });
   const files = filesValidation.data?.files || [];
 
-  const param = useParams()
   const session = useSession()
+
   if (!session.data?.user?.id) return undefined
 
   return (
@@ -30,12 +30,11 @@ export const Uploadbanner: FC<{ fileFormats: string[] }> = ({ }) => {
             originalName: file.name,
             publicId: file.url,
             resourceType: file.type,
-            articleId: (param as { articleId: string }).articleId,
             uploadedBy: session.data.user?.id as string,
-            id: ''
           });
         });
 
+        console.log(files)
         const serializedData = serialize({
           data: { files },
           schema: filesSchema,
@@ -43,7 +42,7 @@ export const Uploadbanner: FC<{ fileFormats: string[] }> = ({ }) => {
 
         const params = new URLSearchParams(searchParams.toString());
         params.delete('files');
-        router.push(`?${params.toString()}&${serializedData.toString()}`);
+        router.replace(`?${params.toString()}&${serializedData.toString()}`);
       }}
       onUploadError={(error: Error) => {
         alert(`ERROR! ${error.message}`);
