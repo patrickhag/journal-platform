@@ -1,4 +1,4 @@
-import { db, files } from '@/db/schema';
+import { db, articleFiles as files } from '@/db/schema';
 import { Button } from '../ui/button';
 import { eq } from 'drizzle-orm';
 import Link from 'next/link';

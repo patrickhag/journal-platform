@@ -1,8 +1,8 @@
 import { ArticlesTable } from '@/components/articles-table';
 import Protected from '@/components/Protected';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { db } from '@/db/schema';
-import { users, articleSubmissions, metadata } from '@/db/schema';
+import { db, people } from '@/db/schema';
+import { users, articles as articleSubmissions, articleMetadata as metadata } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
 export default async function ArticlesPage() {
@@ -10,14 +10,15 @@ export default async function ArticlesPage() {
     .select({
       section: articleSubmissions.section,
       status: articleSubmissions.articleStatus,
-      ownerFirstName: users.firstName,
-      ownerLastName: users.lastName,
+      ownerFirstName: people.firstName,
+      ownerLastName: people.lastName,
       createdAt: articleSubmissions.createdAt,
       title: metadata.title,
       id: articleSubmissions.id,
     })
     .from(articleSubmissions)
-    .leftJoin(users, eq(articleSubmissions.userId, users.id))
+    .leftJoin(people, eq(articleSubmissions.submittedBy, people.id))
+    .leftJoin(users, eq(articleSubmissions.submittedBy, users.id))
     .leftJoin(metadata, eq(metadata.articleId, articleSubmissions.id));
 
   return (

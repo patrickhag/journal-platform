@@ -30,13 +30,25 @@ export const articleSubmitionSchema = z.object({
     .optional(),
 });
 
+//export const fileSchema = z.object({
+//  publicId: z.string(),
+//  fileType: z.string().optional(),
+//  bytes: z.string().optional(),
+//  resourceType: z.string(),
+//  originalName: z.string(),
+//});
+
+
 export const fileSchema = z.object({
-  publicId: z.string(),
-  fileType: z.string().optional(),
-  bytes: z.string().optional(),
+  id: z.string().uuid(),
+  articleId: z.string().uuid(),
+  publicId: z.string().min(1),
   resourceType: z.string(),
-  originalName: z.string(),
+  originalName: z.string().min(1),
+  fileType: z.string().nullable().optional(),
+  uploadedBy: z.string().uuid(),
 });
+
 export const filesSchema = z.object({
   files: z.array(fileSchema),
 });

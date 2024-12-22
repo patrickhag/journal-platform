@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { TArticle } from '@/schemas/reviewer';
 import { StatusBadge } from './status-badge';
-import { articleSubmissions, db } from '@/db/schema';
+import { articles as articleSubmissions, db } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
@@ -61,8 +61,8 @@ export function ArticleSection({
                 await db.update(articleSubmissions).set({
                   articleStatus: 'Archived'
                 }).where(eq(articleSubmissions.id, a.id))
-                
-        revalidatePath('/submissions')
+
+                revalidatePath('/submissions')
               }}>
                 <button >Move to archive</button>
               </form>

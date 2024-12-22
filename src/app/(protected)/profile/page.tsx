@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { db, reviewers, users } from '@/db/schema';
+import { db, people, articleReviewers as reviewers, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -14,16 +14,25 @@ const page = async () => {
   const session = await auth();
   if (!session?.user?.id) return null;
   const user = await db
-    .select()
+    .select({
+      email: people.email,
+      personId: people.id,
+      firstName: people.firstName,
+      lastName: people.lastName,
+      affiliation: people.affiliation,
+      avatar: users.avatar
+    })
     .from(users)
+    .leftJoin(people, eq(users.personId, people.id))
     .where(eq(users.id, session?.user?.id))
     .limit(1);
   if (user.length === 0) return null;
 
   const reviewerUser = await db
-    .select()
+    .select({ expertise: reviewers.expertise })
     .from(reviewers)
-    .where(eq(reviewers.email, user[0].email!))
+    .leftJoin(people, eq(reviewers.personId, people.id))
+    .where(eq(reviewers.personId, user[0].personId!))
     .limit(1);
 
   return (
@@ -44,7 +53,7 @@ const page = async () => {
               const formData = Object.fromEntries(form.entries());
 
               await db
-                .update(users)
+                .update(people)
                 .set({
                   affiliation: formData.affiliation.toString(),
                   firstName: formData.firstName.toString(),
@@ -57,7 +66,7 @@ const page = async () => {
                   .set({
                     expertise: formData.expertise.toString(),
                   })
-                  .where(eq(reviewers.email, user[0].email!));
+                  .where(eq(reviewers.personId, user[0].personId!));
               revalidatePath('/profile');
             }
           }}

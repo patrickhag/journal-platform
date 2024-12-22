@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { contributors, db, metadata } from '@/db/schema';
+import { articleContributors as contributors, db, articleMetadata as metadata, people } from '@/db/schema';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { eq } from 'drizzle-orm';
 import { USER_ROLE } from '@/lib/roles';
@@ -16,9 +16,11 @@ export default async function Metadata({
 
   const meta = metas[0];
   const contibutors = await db
-    .select()
+    .select({ firstName: people.firstName, lastName: people.lastName, id: contributors.id, role: contributors.role })
     .from(contributors)
+    .leftJoin(people, eq(contributors.personId, people.id))
     .where(eq(contributors.articleId, articleId));
+
   if (!meta) return undefined
   return (
     <article>
@@ -69,7 +71,7 @@ export default async function Metadata({
             <ul className="space-y-2">
               {contibutors.map((c) => (
                 <li key={c.id}>
-                  {c.name}, {c.role}
+                  {c.firstName}, {c.role}
                 </li>
               ))}
             </ul>

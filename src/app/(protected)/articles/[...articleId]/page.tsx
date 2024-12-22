@@ -1,8 +1,7 @@
 import { auth } from '@/auth';
 import Files from '@/components/articles/Files';
-import Metadata from '@/components/articles/Metadata';
 import Reviewer from '@/components/articles/Reviewer';
-import { articleSubmissions, db, reviewers, users } from '@/db/schema';
+import { articles as articleSubmissions, db, people, articleReviewers as reviewers, users } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import GoBackButton from '@/components/articles/GoBackButton';
@@ -26,7 +25,7 @@ async function page({
         .update(reviewers)
         .set({ acceptedInvitation: Boolean(parseInt(isAcceptingInvite)) })
         .where(
-          and(eq(reviewers.articleId, articleId), eq(reviewers.userId, userId))
+          and(eq(reviewers.articleId, articleId), eq(reviewers.personId, userId))
         );
     }
   }
@@ -46,9 +45,10 @@ async function page({
     await db.select({ role: users.role }).from(users).limit(1)
   )[0].role;
   const author = await db
-    .select()
+    .select({ lastName: people.lastName, firstName: people.firstName, email: people.email, affiliation: people.affiliation, country: people.country })
     .from(users)
-    .where(eq(users.id, articles[0].userId))
+    .leftJoin(people, eq(users.personId, people.id))
+    .where(eq(users.id, articles[0].submittedBy))
     .limit(1);
 
   const reviewrs = await db
@@ -60,14 +60,18 @@ async function page({
     <>
       <div className="container mx-auto p-6">
         <GoBackButton />
-
-        <Metadata articleId={articleId} role={currentUserRole!}>
+        {
+          /*
+ <Metadata articleId={articleId} role={currentUserRole!}>
           <div
             className="space-y-4"
-            dangerouslySetInnerHTML={{ __html: article.commentsForEditor }}
+            dangerouslySetInnerHTML={{ __html: article.section }}
           />
         </Metadata>
 
+
+           */
+        }
         <Card className="my-3">
           <CardHeader>
             <CardTitle className="text-lg font-semibold">

@@ -1,12 +1,13 @@
 'use client';
 import { filesSchema } from '@/schemas/reviewer';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { type FC } from 'react';
 import { safeParse, serialize } from 'zod-urlsearchparams';
 import { UploadDropzone } from '@uploadthing/react';
 import { OurFileRouter } from '@/app/api/uploadthing/core';
+import { useSession } from 'next-auth/react';
 
-export const Uploadbanner: FC<{ fileFormats: string[] }> = ({}) => {
+export const Uploadbanner: FC<{ fileFormats: string[] }> = ({ }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -15,6 +16,10 @@ export const Uploadbanner: FC<{ fileFormats: string[] }> = ({}) => {
     input: new URLSearchParams(searchParams.toString()),
   });
   const files = filesValidation.data?.files || [];
+
+  const param = useParams()
+  const session = useSession()
+  if (!session.data?.user?.id) return undefined
 
   return (
     <UploadDropzone<OurFileRouter, 'imageUploader'>
@@ -25,7 +30,9 @@ export const Uploadbanner: FC<{ fileFormats: string[] }> = ({}) => {
             originalName: file.name,
             publicId: file.url,
             resourceType: file.type,
-            bytes: file.size.toString(),
+            articleId: (param as { articleId: string }).articleId,
+            uploadedBy: session.data.user?.id as string,
+            id: ''
           });
         });
 

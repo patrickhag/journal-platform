@@ -1,4 +1,4 @@
-import { db, metadata, users } from '@/db/schema';
+import { db, articleMetadata as metadata, people, Reviewers, users } from '@/db/schema';
 import {
   Popover,
   PopoverContent,
@@ -9,21 +9,11 @@ import { eq } from 'drizzle-orm';
 import { auth } from '@/auth';
 
 export default async function Reviewer({
-  reviewer: { email, names, affiliation, phone, expertise, acceptedInvitation },
+  reviewer: { expertise, acceptedInvitation, personId },
   index,
   article,
 }: {
-  reviewer: {
-    id: string;
-    affiliation: string;
-    email: string;
-    userId: string;
-    names: string;
-    acceptedInvitation: boolean | null;
-    phone: string | null;
-    expertise: string;
-    articleId: string | null;
-  };
+  reviewer: Reviewers;
   index: number;
   article: string;
 }) {
@@ -36,6 +26,7 @@ export default async function Reviewer({
     .from(metadata)
     .where(eq(metadata.articleId, article))
     .limit(1);
+  const persons = await db.select().from(people).where(eq(people.id, personId)).limit(1)
   const session = await auth();
   if (!session?.user?.id) return null;
   // get the user role from db
@@ -75,19 +66,19 @@ export default async function Reviewer({
       <div className="grid gap-6 md:grid-cols-2">
         <div>
           <h4 className="text-sm text-muted-foreground mb-2">Fullnames</h4>
-          <p className="font-medium">{names}</p>
+          <p className="font-medium">{persons[0].firstName} {persons[0].lastName}</p>
         </div>
         <div>
           <h4 className="text-sm text-muted-foreground mb-2">Email</h4>
-          <p className="font-medium">{email}</p>
+          <p className="font-medium">{persons[0].email}</p>
         </div>
         <div>
           <h4 className="text-sm text-muted-foreground mb-2">Affiliation</h4>
-          <p className="font-medium">{affiliation}</p>
+          <p className="font-medium">{persons[0].affiliation}</p>
         </div>
         <div>
           <h4 className="text-sm text-muted-foreground mb-2">Phone</h4>
-          <p className="font-medium">{phone}</p>
+          <p className="font-medium">{persons[0].phone}</p>
         </div>
       </div>
 
@@ -97,24 +88,24 @@ export default async function Reviewer({
       </div>
       {(currentUserRole[0].role === 'CHIEF_EDITOR' ||
         currentUserRole[0].role === 'ADMIN') && (
-        <Popover>
-          <PopoverTrigger className="w-full md:w-auto bg-slate-900 text-lime-50 px-3 py-1 rounded-md">
-            Reach out
-          </PopoverTrigger>
-          <PopoverContent>
-            <ReachOut
-              article={{ ...meta, article }}
-              reviewer={names}
-              author={{
-                avatar: '',
-                name: session.user.name,
-                role: session.user.email,
-              }}
-              toEmail={email}
-            />
-          </PopoverContent>
-        </Popover>
-      )}
+          <Popover>
+            <PopoverTrigger className="w-full md:w-auto bg-slate-900 text-lime-50 px-3 py-1 rounded-md">
+              Reach out
+            </PopoverTrigger>
+            <PopoverContent>
+              <ReachOut
+                article={{ ...meta, article }}
+                reviewer={persons[0].firstName + " " + persons[0].lastName}
+                author={{
+                  avatar: '',
+                  name: session.user.name,
+                  role: session.user.email,
+                }}
+                toEmail={persons[0].email}
+              />
+            </PopoverContent>
+          </Popover>
+        )}
     </>
   );
 }

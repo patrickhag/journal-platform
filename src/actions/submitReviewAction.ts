@@ -1,38 +1,31 @@
 'use server';
-import { auth } from '@/auth';
-import { articleSubmissions, db, reviews, users } from '@/db/schema';
+import { articles as articleSubmissions, db, people, reviews, users } from '@/db/schema';
 import { transporter } from '@/lib/emailTransporter';
+import { createReviewSchema } from '@/schemas/review';
 
-import { reviewSchema } from '@/schemas/reviewer';
 import { eq } from 'drizzle-orm';
 
 import { RedirectType, redirect } from 'next/navigation';
 
 export async function submitReviewAction(_: unknown, formData: FormData) {
   const data = Object.fromEntries(formData.entries());
-  const result = reviewSchema.safeParse(data);
+  const result = createReviewSchema.safeParse(data);
 
   if (!result.success) {
     return result.error.errors;
   }
 
-  const session = await auth();
-  const userId = session?.user?.id || '';
   try {
-    await db.insert(reviews).values({
-      userId: userId,
-      message: result.data.message,
-      articleId: result.data.articleId,
-      fileIds: JSON.parse(result.data.fileIds),
-      status: result.data.status
-    });
+    await db.insert(reviews).values(result.data);
 
     const articl = await db
-      .select({ email: users.email })
+      .select({ email: people.email })
       .from(users)
-      .leftJoin(articleSubmissions, eq(users.id, articleSubmissions.userId))
+      .leftJoin(people, eq(users.personId, people.id))
+      .leftJoin(articleSubmissions, eq(users.id, articleSubmissions.submittedBy))
       .where(eq(articleSubmissions.id, result.data.articleId))
       .limit(1)
+
     if (articl[0].email) {
       await transporter.sendMail({
         from: process.env.EMAIL_USER,

@@ -19,7 +19,7 @@ export default async function Header({
   const [user] = await db
     .select()
     .from(users)
-    .where(eq(users.email, session?.user?.email as string));
+    .where(eq(users.personId, session?.user?.id as string));
 
   const role = user?.role as USER_ROLE;
   const name = session?.user?.name?.split(' ')?.[1]?.substring(0, 1) as string;

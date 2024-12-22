@@ -1,6 +1,6 @@
 'use server';
 
-import { db, files } from '@/db/schema';
+import { db, articleFiles as files } from '@/db/schema';
 import { v2 as cloudinary } from 'cloudinary';
 import { eq } from 'drizzle-orm';
 

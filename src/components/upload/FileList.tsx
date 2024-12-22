@@ -43,7 +43,7 @@ export const FileList = () => {
               <p className="font-medium">{file.originalName}</p>
               <p className="text-sm text-gray-500">
                 {file.originalName.slice(file.originalName.lastIndexOf('.'))} |{' '}
-                {Math.floor(Number.parseInt(file.bytes!) / 1024)} Kb
+                {/* Math.floor(Number.parseInt(file.bytes || '') / 1024)*/} Kb
               </p>
             </div>
           </div>

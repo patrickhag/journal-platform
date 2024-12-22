@@ -1,7 +1,7 @@
 'use server';
 
 import crypto from 'node:crypto';
-import { db, passwordResets, users } from '@/db/schema';
+import { db, passwordResets, people, users } from '@/db/schema';
 import { loginSchema } from '@/schemas/auth.schema';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
@@ -20,7 +20,8 @@ export async function resetPassword(
     const user = await db
       .select()
       .from(users)
-      .where(eq(users.email, login.data.email))
+      .leftJoin(people, eq(users.personId, people.id))
+      .where(eq(people.email, login.data.email))
       .limit(1);
 
     if (!user[0]) return 'User not found';

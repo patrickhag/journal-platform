@@ -1,19 +1,19 @@
 'use server';
 import { auth } from '@/auth';
-import type { metadataSchema } from '@/components/upload/ContributorsForm';
 import {
-  articleSubmissions,
-  contributors,
+  articles as articleSubmissions,
+  articleContributors as contributors,
   db,
-  files,
+  articleFiles as files,
   finalSubmissions,
-  metadata,
-  reviewers,
+  articleMetadata as metadata,
+  articleReviewers as reviewers,
 } from '@/db/schema';
 import { notifyContibutor } from '@/lib/emailTransporter';
+import { createArticleSchema } from '@/schemas/article';
+import { createArticleMetadataSchema } from '@/schemas/articleMeta';
 
 import {
-  type articleSubmitionSchema,
   type fileSchema,
   finalSubmissionSchema,
   type reviewerSchema,
@@ -33,13 +33,13 @@ export async function submitAction(_: unknown, formData: FormData) {
   }
   const metadataValidations = JSON.parse(
     data.metadataValidations.toString()
-  ) as z.infer<typeof metadataSchema>;
+  ) as z.infer<typeof createArticleMetadataSchema>;
   const reviewerValidations = JSON.parse(
     data.reviewerValidations.toString()
   ) as z.infer<typeof reviewerSchema>[];
   const articleSubmitionValidations = JSON.parse(
     data.articleSubmitionValidations.toString()
-  ) as z.infer<typeof articleSubmitionSchema>;
+  ) as z.infer<typeof createArticleSchema>;
   const filesValidations = JSON.parse(
     data.filesValidations.toString()
   ) as z.infer<typeof fileSchema>[];
@@ -56,12 +56,7 @@ export async function submitAction(_: unknown, formData: FormData) {
 
       const articleSubmissionIds = await trx
         .insert(articleSubmissions)
-        .values({
-          ...articleSubmitionValidations,
-          commentsForEditor:
-            articleSubmitionValidations['Comments for the editor'],
-          userId: userId,
-        })
+        .values(articleSubmitionValidations)
         .returning({ id: articleSubmissions.id });
 
       const insert = async <T>(
@@ -84,11 +79,7 @@ export async function submitAction(_: unknown, formData: FormData) {
       await insert(reviewerValidations, reviewers);
       await insert(filesValidations, files);
       await insert(contributorValidations, contributors);
-      await trx.insert(metadata).values({
-        ...metadataValidations,
-        articleId: articleSubmissionIds[0].id,
-        userId: userId,
-      });
+      await trx.insert(metadata).values(metadataValidations);
       await trx.insert(finalSubmissions).values({
         articleId: articleSubmissionIds[0].id,
         funded: result.data.funded === 'yes',

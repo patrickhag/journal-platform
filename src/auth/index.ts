@@ -20,17 +20,18 @@ export const authOptions: NextAuthConfig = {
           return null;
         }
 
+
         const usersData = await db
-          .select({ password: users.password, firstName: people.firstName, lastName: people.lastName, email: people.email, id: users.id })
+          .select({ password: users.password, firstName: people.firstName, lastName: people.lastName, email: people.email, id: people.id })
           .from(users)
           .leftJoin(people, eq(users.personId, people.id))
+          .where(eq(people.email, String(credentials.email)))
           .limit(1)
-          .where(eq(people.email, String(credentials.email)));
         const user = usersData[0];
 
         if (
           !user ||
-          !(await bcrypt.compare(String(credentials.password), user.password!))
+          !(await bcrypt.compare(String(credentials.password), user.password!)) || !user.id
         ) {
           return null;
         }

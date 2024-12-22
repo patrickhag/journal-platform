@@ -1,6 +1,5 @@
 'use server';
-import { auth } from '@/auth';
-import { db, files } from '@/db/schema';
+import { db, articleFiles as files } from '@/db/schema';
 
 import { filesSchema } from '@/schemas/reviewer';
 
@@ -14,15 +13,10 @@ export const attachFile = async (_: unknown, formData: FormData) => {
     return result.error?.errors;
   }
 
-  const session = await auth();
-  const userId = session?.user?.id || '';
   try {
     for (const file of result.data.files) {
-      await db.insert(files).values({
-        ...file,
-        articleId: data.articleId as string,
-        userId: userId,
-      });
+      await db.insert(files)
+        .values(file);
     }
   } catch (error) {
     if (error instanceof Error) return { message: error.message };

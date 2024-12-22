@@ -13,7 +13,6 @@ export async function markAllAsRead(
     .set({
       isRead: true,
     })
-    .where(eq(notifications.userId, id));
-  redirect(pathname, RedirectType.replace);
-  return 'success';
+    .where(eq(notifications.personId, id));
+  return redirect(pathname, RedirectType.replace);
 }

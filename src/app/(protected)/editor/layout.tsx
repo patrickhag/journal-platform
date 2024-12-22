@@ -16,7 +16,7 @@ export default async function EditorLayout({
     .from(notifications)
     .where(
       and(
-        eq(notifications.userId, session?.user?.id),
+        eq(notifications.personId, session?.user?.id),
         eq(notifications.isRead, false)
       )
     );

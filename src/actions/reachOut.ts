@@ -1,6 +1,6 @@
 'use server';
 
-import { db, notifications, users } from '@/db/schema';
+import { db, notifications, people, users } from '@/db/schema';
 import { sendInvitation } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
 
@@ -19,11 +19,12 @@ export async function reachOut(_: unknown, formData: FormData) {
       id: users.id,
     })
     .from(users)
-    .where(eq(users.email, formData.get('toEmail')?.toString() || ''))
+    .leftJoin(people, eq(users.personId, people.id))
+    .where(eq(people.email, formData.get('toEmail')?.toString() || ''))
     .limit(1);
   await db.insert(notifications).values({
     message: formData.get('message')?.toString() || '',
-    userId: userIds[0].id,
+    personId: userIds[0].id,
   });
   return 'Message sent';
 }

@@ -253,6 +253,7 @@ export const notifications = pgTable('notifications', {
 export type TFinalSubmissions = typeof finalSubmissions.$inferInsert;
 export type TArticleSubmissions = typeof articles.$inferSelect;
 export type TReviewers = typeof articleReviewers.$inferInsert
+export type Reviewers = typeof articleReviewers.$inferSelect
 export type TContributors = typeof articleContributors.$inferInsert
 export type TMetadata = typeof articleMetadata.$inferInsert
 export type TFiles = typeof articleFiles.$inferInsert

@@ -24,7 +24,7 @@ export default async function DashboardPannel({
 
     if (searchParams.q) {
       conditions.push(
-        like(articleSubmissions.commentsForEditor, `%${searchParams.q}%`)
+        like(metadata.commentsForEditor, `%${searchParams.q}%`)
       );
     }
     if (currentUser?.id) {
@@ -33,13 +33,13 @@ export default async function DashboardPannel({
         conditions.push(eq(articleSubmissions.articleStatus, searchParams.status as typeof ARTICLE_STATUS[number]));
       }
       if ((searchParams.f as typeof articleFilters[number]) === 'Assigned to review') {
-        const article = await db.select({ articleId: reviewers.articleId }).from(reviewers).where(eq(reviewers.userId, currentUser.id!))
+        const article = await db.select({ articleId: reviewers.articleId }).from(reviewers).where(eq(reviewers.personId, currentUser.id!))
         const ids = article.map(a => String(a.articleId))
         conditions.push(
           inArray(articleSubmissions.id, ids),
         )
       }
-      conditions.push(eq(articleSubmissions.userId, currentUser.id));
+      conditions.push(eq(articleSubmissions.submittedBy, currentUser.id));
     }
     return conditions.length > 0 ? and(...conditions) : undefined;
   };
@@ -47,7 +47,7 @@ export default async function DashboardPannel({
   const articles = await db
     .select({
       id: articleSubmissions.id,
-      commentsForEditor: articleSubmissions.commentsForEditor,
+      commentsForEditor: metadata.commentsForEditor,
       fileURI: files.publicId,
       section: articleSubmissions.section,
       articleStatus: articleSubmissions.articleStatus,
@@ -55,7 +55,7 @@ export default async function DashboardPannel({
     })
     .from(articleSubmissions)
     .where(await where())
-    .rightJoin(reviewers, eq(articleSubmissions.userId, reviewers.userId))
+    .rightJoin(reviewers, eq(articleSubmissions.submittedBy, reviewers.personId))
     .leftJoin(files, eq(articleSubmissions.id, files.articleId))
     .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId)); // Joining metadata table
 

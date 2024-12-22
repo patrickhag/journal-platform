@@ -14,7 +14,7 @@ export default async function Layout({ children }: PropsWithChildren) {
     .from(notifications)
     .where(
       and(
-        eq(notifications.userId, session?.user?.id),
+        eq(notifications.personId, session?.user?.id),
         eq(notifications.isRead, false)
       )
     );

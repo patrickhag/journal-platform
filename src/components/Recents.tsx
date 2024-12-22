@@ -13,6 +13,7 @@ export const Recents = async () => {
     .from(articleSubmissions)
     .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId)).limit(10);
 
+  if(articles.length<=0) return undefined
   return (
     <div>
       <h2 className="text-xl font-bold mb-4" style={{ color: '#1A237E' }}>
@@ -34,10 +35,11 @@ export const Recents = async () => {
 }
 const ContributorList = async ({ articleId }: { articleId: string }) => {
   const contributorList = await db.select({
-    name: people.name,
+    firstName: people.firstName,
+    lastName: people.lastName,
     id: contributors.id
   }).from(contributors).leftJoin(people, eq(contributors.personId, people.id)).where(eq(contributors.articleId, articleId))
   return <p className="text-sm text-gray-600">
-    {contributorList.map(c => <span key={c.id}>{c.name}</span>)}
+    {contributorList.map(c => <span key={c.id}>{c.firstName} {c.lastName}</span>)}
   </p>
 }

@@ -1,4 +1,4 @@
-import { contributors, db } from '@/db/schema';
+import { articleContributors as contributors, db, people } from '@/db/schema';
 import { USER_ROLE } from '@/lib/roles';
 import { eq } from 'drizzle-orm';
 import React from 'react';
@@ -13,18 +13,19 @@ export default async function Contributor({
   role: USER_ROLE;
 }) {
   const reviewerrs = await db
-    .select()
+    .select({ salutation: people.salutation, country: people.country, affiliation: people.affiliation, bio: contributors.bio, firstName: people.firstName, lastName: people.lastName })
     .from(contributors)
+    .leftJoin(people, eq(contributors.personId, people.id))
     .where(eq(contributors.id, contributor))
     .limit(1);
   const contributorData = reviewerrs[0];
   return (
     <div className="space-y-2 text-gray-600">
       <p>
-        Names: {contributorData.salutation} {contributorData.name}
+        Names: {contributorData.salutation} {contributorData.firstName} {contributorData.lastName}
       </p>
       <div>{contributorData.bio}</div>
- 
+
       <p>Country: {contributorData.country}</p>
       <p>{contributorData.affiliation}</p>
       <RemoveContributorWithPermissions

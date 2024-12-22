@@ -33,6 +33,8 @@ const Collections = async () => {
       </div>
 
       <Recents />
+      {fileCollections.length > 0 && (
+
       <div className="w-[70%]">
         <h2 className="text-2xl font-bold mb-8" style={{ color: '#1A237E' }}>
           Our largest collections
@@ -53,6 +55,7 @@ const Collections = async () => {
           ))}
         </div>
       </div>
+      )}
     </div>
   );
 };
