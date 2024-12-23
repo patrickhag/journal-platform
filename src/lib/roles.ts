@@ -23,7 +23,7 @@ export type TPermissionItem =
   | 'DELETE_REVIEW' // New permission: Delete a review
   | 'CREATE_REVIEW' // New permission: Create a review
   | 'VIEW_REVIEW' // New permission: View reviews
-  | 'ARCHIVE_OWN_ARTICLE'
+  | 'ARCHIVE_OWN_ARTICLE';
 
 type TPermission = {
   [role in (typeof USER_ROLES)[number]]: TPermissionItem[];

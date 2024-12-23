@@ -8,6 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import GoBackButton from '@/components/articles/GoBackButton';
 import Reviews from '@/components/articles/Reviews';
 import AddReviewerModal from '@/components/upload/AddReviewerModal';
+import { Button } from '@/components/ui/button';
+import withPermissions from '@/components/WithPermission';
+import { revalidatePath } from 'next/cache';
+import { ARTICLE_STATUS } from '@/lib/consts';
 
 async function page({
   params,
@@ -129,6 +133,13 @@ async function page({
                   article={article.id}
                 />
               ))}
+              <Publish
+                role="CHIEF_EDITOR"
+                requiredPermissions={['PUBLISH_ARTICLES']}
+                fallback=""
+                articleId={articleId}
+                status={article.articleStatus}
+              />
             </CardContent>
           </Card>
         )}
@@ -138,3 +149,33 @@ async function page({
 }
 
 export default page;
+
+const PublishArticle = ({
+  articleId,
+  status,
+}: {
+  articleId: string;
+  status: (typeof ARTICLE_STATUS)[number] | null;
+}) => {
+  return (
+    <form
+      className="flex justify-center items-center"
+      action={async () => {
+        'use server';
+        await db
+          .update(articleSubmissions)
+          .set({
+            articleStatus: status === 'Published' ? 'Submitted' : 'Published',
+          })
+          .where(eq(articleSubmissions.id, articleId));
+        revalidatePath('/articles/' + articleId);
+      }}
+    >
+      <Button className="w-4/5 mx-auto bg-green-700">
+        {' '}
+        {status === 'Published' ? 'Unpublish' : 'Publish'} this article{' '}
+      </Button>
+    </form>
+  );
+};
+const Publish = withPermissions(PublishArticle);

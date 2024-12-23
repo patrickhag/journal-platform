@@ -54,7 +54,12 @@ export function ArticleSection({
             <DropdownMenuItem>
               <Link href={`articles/${a.id}`}>View details</Link>
             </DropdownMenuItem>
-            <ArticleArchiver role='NORMAL_USER' article={a} requiredPermissions={['ARCHIVE_OWN_ARTICLE']} fallback={''} />
+            <ArticleArchiver
+              role="NORMAL_USER"
+              article={a}
+              requiredPermissions={['ARCHIVE_OWN_ARTICLE']}
+              fallback={''}
+            />
             <DropdownMenuItem>
               <Link href={a.fileURI || '#'}>Download PDF</Link>
             </DropdownMenuItem>
@@ -67,27 +72,28 @@ export function ArticleSection({
 }
 
 const ArchiveArticle = async ({ article }: { article: TArticle }) => {
-  return <DropdownMenuItem>
-    <form
-      action={async () => {
-        'use server';
-        const session = await auth()
-        if (!session?.user?.id) return
+  return (
+    <DropdownMenuItem>
+      <form
+        action={async () => {
+          'use server';
+          const session = await auth();
+          if (!session?.user?.id) return;
 
-        if (article.owner !== session.user.id) return
-        await db
-          .update(articleSubmissions)
-          .set({
-            articleStatus: 'Archived',
-          })
-          .where(eq(articleSubmissions.id, article.id));
+          if (article.owner !== session.user.id) return;
+          await db
+            .update(articleSubmissions)
+            .set({
+              articleStatus: 'Archived',
+            })
+            .where(eq(articleSubmissions.id, article.id));
 
-        revalidatePath('/submissions');
-      }}
-    >
-      <button>Move to archive</button>
-    </form>
-  </DropdownMenuItem>
-
-}
-const ArticleArchiver = withPermissions(ArchiveArticle)
+          revalidatePath('/submissions');
+        }}
+      >
+        <button>Move to archive</button>
+      </form>
+    </DropdownMenuItem>
+  );
+};
+const ArticleArchiver = withPermissions(ArchiveArticle);

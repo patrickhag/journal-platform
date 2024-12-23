@@ -60,7 +60,7 @@ export default async function DashboardPannel({
       section: articleSubmissions.section,
       articleStatus: articleSubmissions.articleStatus,
       title: metadata.title, // Adding title from metadata
-      owner: articleSubmissions.userId
+      owner: articleSubmissions.userId,
     })
     .from(articleSubmissions)
     .where(await where())
@@ -109,6 +109,7 @@ export default async function DashboardPannel({
                       section: a.section || 'Articles',
                       title: a.title || '',
                       articleStatus: a.articleStatus || 'Submitted',
+                      owner: a.owner,
                     }}
                     key={i}
                     index={i}
