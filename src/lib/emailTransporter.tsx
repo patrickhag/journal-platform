@@ -1,6 +1,7 @@
 import { NotifiyContributor } from '@/components/emails/notify-contributor';
 import { EmailPasswordReset } from '@/components/emails/password-reset';
 import { SendInvitation } from '@/components/emails/sendInvite';
+import { SendVerifyEmail } from '@/components/emails/verify';
 import { render } from '@react-email/components';
 import nodemailer from 'nodemailer';
 
@@ -94,3 +95,18 @@ export const sendInvitation = async ({
   };
   await transporter.sendMail(options);
 };
+
+export const sendVerifyToken = async ({ email, token }: { email: string, token: string }) => {
+  const emailHtml = await render(
+    <SendVerifyEmail link={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/verify-user?id=${token}`} />
+  );
+  const options = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Please verify your account",
+    html: emailHtml
+  };
+
+  await transporter.sendMail(options)
+
+}

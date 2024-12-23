@@ -61,7 +61,7 @@ export default function Register() {
 
   useEffect(() => {
     if (prevState?.message === 'Registration successful') {
-      router.push('/login');
+      router.replace('/login');
     }
   }, [prevState?.message]);
 
