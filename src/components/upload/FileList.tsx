@@ -70,7 +70,7 @@ export const FileList = () => {
 
                   const params = new URLSearchParams(searchParams.toString());
                   params.delete('files');
-                  router.push(
+                  router.replace(
                     `?${params.toString()}&${serializedData.toString()}`
                   );
                 }}

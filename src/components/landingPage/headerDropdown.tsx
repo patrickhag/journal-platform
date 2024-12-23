@@ -29,8 +29,8 @@ export default function HeaderDropdown({
         className="text-white px-3 py-2 rounded bg-[#212c9e] hover:bg-[#1A237E]"
         onClick={() =>
           session?.user
-            ? router.push('/articles/new/start')
-            : router.push('/login')
+            ? router.replace('/articles/new/start')
+            : router.replace('/login')
         }
       >
         Submit a manuscript
@@ -45,17 +45,17 @@ export default function HeaderDropdown({
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push('/submissions')}>
+            <DropdownMenuItem onClick={() => router.replace('/submissions')}>
               Dashboard
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => router.push('/profile')}>
+            <DropdownMenuItem onClick={() => router.replace('/profile')}>
               Edit Profile
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
                 signOut();
-                router.push('/');
+                router.replace('/');
               }}
             >
               Log out
@@ -66,7 +66,7 @@ export default function HeaderDropdown({
       {!session?.user && (
         <UserRound
           size={20}
-          onClick={() => router.push('/login')}
+          onClick={() => router.replace('/login')}
           className="cursor-pointer"
         />
       )}

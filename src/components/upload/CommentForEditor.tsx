@@ -15,7 +15,7 @@ export const CommentForEditor = () => {
       className="h-32 mb-4 rounded-md"
       value={newParams.get('Comments for the editor') || ''}
       onBlur={() => {
-        router.push(`${pathname}?${newParams?.toString()}`);
+        router.replace(`${pathname}?${newParams?.toString()}`);
       }}
       onChange={(e) => {
         newParams.delete('Comments for the editor');

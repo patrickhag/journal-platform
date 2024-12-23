@@ -68,7 +68,7 @@ export const Reviewer: FC<z.infer<typeof reviewerSchema>> = ({
 
             const params = new URLSearchParams(searchParams.toString());
             params.delete('reviewers');
-            router.push(`?${params.toString()}&${serializedData.toString()}`);
+            router.replace(`?${params.toString()}&${serializedData.toString()}`);
           }}
         >
           <Trash2 className="w-4 h-4" />

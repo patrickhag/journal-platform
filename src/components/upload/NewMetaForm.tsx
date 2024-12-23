@@ -59,7 +59,7 @@ export const NewMetaForm = () => {
       params.delete(key);
     });
 
-    router.push(`?${params.toString()}&${serializedData.toString()}`);
+    router.replace(`?${params.toString()}&${serializedData.toString()}`);
     router.refresh();
     form.current?.setAttribute('submited', 'submited');
   });

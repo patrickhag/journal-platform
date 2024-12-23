@@ -36,7 +36,7 @@ export const ArticleTypeSection = () => {
           <Select
             defaultValue={section || undefined}
             onValueChange={(e) => {
-              router.push(`?${createQueryString('section', e)}`);
+              router.replace(`?${createQueryString('section', e)}`);
             }}
           >
             <SelectTrigger className="w-full">

@@ -36,7 +36,7 @@ export const Uploadbanner: FC<{ fileFormats: string[] }> = ({}) => {
 
         const params = new URLSearchParams(searchParams.toString());
         params.delete('files');
-        router.push(`?${params.toString()}&${serializedData.toString()}`);
+        router.replace(`?${params.toString()}&${serializedData.toString()}`);
       }}
       onUploadError={(error: Error) => {
         alert(`ERROR! ${error.message}`);

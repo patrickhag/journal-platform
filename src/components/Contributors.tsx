@@ -55,7 +55,7 @@ export const Contributors = () => {
                   const params = new URLSearchParams(searchParams.toString());
 
                   params.delete('contributors');
-                  router.push(
+                  router.replace(
                     `?${params.toString()}&${serializedData.toString()}`
                   );
                 }}

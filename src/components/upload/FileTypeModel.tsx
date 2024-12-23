@@ -70,7 +70,7 @@ const FileTypesModal: FC<
                   data: { files },
                   schema: filesSchema,
                 });
-                router.push(
+                router.replace(
                   `?${params.toString()}&${serializedData.toString()}`
                 );
                 setOpen(false);

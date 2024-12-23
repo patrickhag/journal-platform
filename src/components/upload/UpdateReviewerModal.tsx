@@ -68,7 +68,7 @@ export default function UpdateReviewerModal({
     const params = new URLSearchParams(searchParams.toString());
 
     params.delete('reviewers');
-    router.push(`?${params.toString()}&${serializedData.toString()}`);
+    router.replace(`?${params.toString()}&${serializedData.toString()}`);
     form.reset();
     onOpenChange(false);
   }

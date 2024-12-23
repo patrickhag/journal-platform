@@ -68,7 +68,7 @@ export default function NewContibutorForm() {
     const params = new URLSearchParams(searchParams.toString());
 
     params.delete('contributors');
-    router.push(`?${params.toString()}&${serializedData.toString()}`);
+    router.replace(`?${params.toString()}&${serializedData.toString()}`);
     form.reset();
     setModalOpen(false);
   };
