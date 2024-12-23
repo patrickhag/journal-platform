@@ -60,6 +60,7 @@ export default async function DashboardPannel({
       section: articleSubmissions.section,
       articleStatus: articleSubmissions.articleStatus,
       title: metadata.title, // Adding title from metadata
+      owner: articleSubmissions.userId
     })
     .from(articleSubmissions)
     .where(await where())

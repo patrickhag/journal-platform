@@ -15,6 +15,9 @@ import { StatusBadge } from './status-badge';
 import { articleSubmissions, db } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { auth } from '@/auth';
+
+import withPermissions from './WithPermission';
 
 export function ArticleSection({
   article: a,
@@ -51,23 +54,7 @@ export function ArticleSection({
             <DropdownMenuItem>
               <Link href={`articles/${a.id}`}>View details</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <form
-                action={async () => {
-                  'use server';
-                  await db
-                    .update(articleSubmissions)
-                    .set({
-                      articleStatus: 'Archived',
-                    })
-                    .where(eq(articleSubmissions.id, a.id));
-
-                  revalidatePath('/submissions');
-                }}
-              >
-                <button>Move to archive</button>
-              </form>
-            </DropdownMenuItem>
+            <ArticleArchiver role='NORMAL_USER' article={a} requiredPermissions={['ARCHIVE_OWN_ARTICLE']} fallback={''} />
             <DropdownMenuItem>
               <Link href={a.fileURI || '#'}>Download PDF</Link>
             </DropdownMenuItem>
@@ -78,3 +65,29 @@ export function ArticleSection({
     </Card>
   );
 }
+
+const ArchiveArticle = async ({ article }: { article: TArticle }) => {
+  return <DropdownMenuItem>
+    <form
+      action={async () => {
+        'use server';
+        const session = await auth()
+        if (!session?.user?.id) return
+
+        if (article.owner !== session.user.id) return
+        await db
+          .update(articleSubmissions)
+          .set({
+            articleStatus: 'Archived',
+          })
+          .where(eq(articleSubmissions.id, article.id));
+
+        revalidatePath('/submissions');
+      }}
+    >
+      <button>Move to archive</button>
+    </form>
+  </DropdownMenuItem>
+
+}
+const ArticleArchiver = withPermissions(ArchiveArticle)
