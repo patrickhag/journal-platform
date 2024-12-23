@@ -22,9 +22,7 @@ export default async function Layout({ children }: PropsWithChildren) {
     <SessionProvider basePath={BASE_PATH} session={session}>
       <Header notifications={notificationsData} />
       <div className="flex bg-gray-100 min-h-screen">
-        <div className="flex-1 overflow-auto p-8">
-          {children}
-        </div>
+        <div className="flex-1 overflow-auto p-8">{children}</div>
       </div>
     </SessionProvider>
   );

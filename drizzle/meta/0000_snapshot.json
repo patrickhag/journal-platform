@@ -60,12 +60,8 @@
           "name": "article_submissions_userId_user_id_fk",
           "tableFrom": "article_submissions",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -135,12 +131,8 @@
           "name": "authenticator_userId_user_id_fk",
           "tableFrom": "authenticator",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -148,19 +140,14 @@
       "compositePrimaryKeys": {
         "authenticator_userId_credentialID_pk": {
           "name": "authenticator_userId_credentialID_pk",
-          "columns": [
-            "userId",
-            "credentialID"
-          ]
+          "columns": ["userId", "credentialID"]
         }
       },
       "uniqueConstraints": {
         "authenticator_credentialID_unique": {
           "name": "authenticator_credentialID_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "credentialID"
-          ]
+          "columns": ["credentialID"]
         }
       },
       "policies": {},
@@ -240,12 +227,8 @@
           "name": "contributor_userId_user_id_fk",
           "tableFrom": "contributor",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -253,12 +236,8 @@
           "name": "contributor_articleId_article_submissions_id_fk",
           "tableFrom": "contributor",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -322,12 +301,8 @@
           "name": "files_userId_user_id_fk",
           "tableFrom": "files",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -335,12 +310,8 @@
           "name": "files_articleId_article_submissions_id_fk",
           "tableFrom": "files",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -350,9 +321,7 @@
         "files_publicId_unique": {
           "name": "files_publicId_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "publicId"
-          ]
+          "columns": ["publicId"]
         }
       },
       "policies": {},
@@ -418,12 +387,8 @@
           "name": "final_submissions_articleId_article_submissions_id_fk",
           "tableFrom": "final_submissions",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -487,12 +452,8 @@
           "name": "metadata_userId_user_id_fk",
           "tableFrom": "metadata",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -500,12 +461,8 @@
           "name": "metadata_articleId_article_submissions_id_fk",
           "tableFrom": "metadata",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -515,9 +472,7 @@
         "metadata_title_unique": {
           "name": "metadata_title_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "title"
-          ]
+          "columns": ["title"]
         }
       },
       "policies": {},
@@ -574,12 +529,8 @@
           "name": "notifications_userId_user_id_fk",
           "tableFrom": "notifications",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -624,10 +575,7 @@
       "compositePrimaryKeys": {
         "passwordResets_identifier_token_pk": {
           "name": "passwordResets_identifier_token_pk",
-          "columns": [
-            "identifier",
-            "token"
-          ]
+          "columns": ["identifier", "token"]
         }
       },
       "uniqueConstraints": {},
@@ -700,12 +648,8 @@
           "name": "reviewers_userId_user_id_fk",
           "tableFrom": "reviewers",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -713,12 +657,8 @@
           "name": "reviewers_articleId_article_submissions_id_fk",
           "tableFrom": "reviewers",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -778,12 +718,8 @@
           "name": "reviews_userId_user_id_fk",
           "tableFrom": "reviews",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -791,12 +727,8 @@
           "name": "reviews_articleId_article_submissions_id_fk",
           "tableFrom": "reviews",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -881,9 +813,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -918,10 +848,7 @@
       "compositePrimaryKeys": {
         "verificationToken_identifier_token_pk": {
           "name": "verificationToken_identifier_token_pk",
-          "columns": [
-            "identifier",
-            "token"
-          ]
+          "columns": ["identifier", "token"]
         }
       },
       "uniqueConstraints": {},
@@ -1164,35 +1091,17 @@
     "public.notication_kind": {
       "name": "notication_kind",
       "schema": "public",
-      "values": [
-        "Warning",
-        "Info",
-        "Hint",
-        "Error",
-        "Confused",
-        "Ok"
-      ]
+      "values": ["Warning", "Info", "Hint", "Error", "Confused", "Ok"]
     },
     "public.role": {
       "name": "role",
       "schema": "public",
-      "values": [
-        "NORMAL_USER",
-        "CHIEF_EDITOR",
-        "ADMIN"
-      ]
+      "values": ["NORMAL_USER", "CHIEF_EDITOR", "ADMIN"]
     },
     "public.salutation": {
       "name": "salutation",
       "schema": "public",
-      "values": [
-        "Mr",
-        "Mrs",
-        "Ms",
-        "Dr",
-        "Prof",
-        "Rev"
-      ]
+      "values": ["Mr", "Mrs", "Ms", "Dr", "Prof", "Rev"]
     }
   },
   "schemas": {},

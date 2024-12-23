@@ -52,10 +52,7 @@ export default function AddReviewerModal({ autoSave }: { autoSave?: boolean }) {
   });
 
   const reviewers = reviewersValidation.data?.reviewers || [];
-  const [errorMessage, formAction, isPending] = useActionState(
-    addReviewerAction,
-    undefined
-  );
+  const [, formAction] = useActionState(addReviewerAction, undefined);
 
   const { articleId } = useParams();
   console.log(articleId);
@@ -65,7 +62,7 @@ export default function AddReviewerModal({ autoSave }: { autoSave?: boolean }) {
         if (articleId?.[0]) {
           formAction({ ...data, articleId: articleId[0] });
         }
-      })
+      });
       return;
     }
     reviewers.push(data);

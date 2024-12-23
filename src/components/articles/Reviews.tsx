@@ -5,7 +5,6 @@ import withPermissions from '../WithPermission';
 import { db, reviews, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { Card, CardContent, CardHeader } from '../ui/card';
-import AddReviewerModal from '../upload/AddReviewerModal';
 
 const Reviews = async ({
   role,
@@ -25,7 +24,6 @@ const Reviews = async ({
       </CardHeader>
       <CardContent>
         {reviewerReviews.length <= 0 ? (
-
           <p>No reviews given</p>
         ) : (
           <>

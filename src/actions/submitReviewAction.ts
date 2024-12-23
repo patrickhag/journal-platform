@@ -24,7 +24,7 @@ export async function submitReviewAction(_: unknown, formData: FormData) {
       message: result.data.message,
       articleId: result.data.articleId,
       fileIds: JSON.parse(result.data.fileIds),
-      status: result.data.status
+      status: result.data.status,
     });
 
     const articl = await db
@@ -32,15 +32,14 @@ export async function submitReviewAction(_: unknown, formData: FormData) {
       .from(users)
       .leftJoin(articleSubmissions, eq(users.id, articleSubmissions.userId))
       .where(eq(articleSubmissions.id, result.data.articleId))
-      .limit(1)
+      .limit(1);
     if (articl[0].email) {
       await transporter.sendMail({
         from: process.env.EMAIL_USER,
         to: articl[0].email,
-        subject: "You have received a review",
-        text: result.data.message
+        subject: 'You have received a review',
+        text: result.data.message,
       });
-
     }
   } catch (error) {
     if (error instanceof Error) return { message: error.message };

@@ -8,8 +8,8 @@ import { eq } from 'drizzle-orm';
 import { AuthError } from 'next-auth';
 import { redirect, RedirectType } from 'next/navigation';
 import type z from 'zod';
-import jwt from "jsonwebtoken"
-import { sendVerifyToken, transporter } from '@/lib/emailTransporter';
+import jwt from 'jsonwebtoken';
+import { sendVerifyToken } from '@/lib/emailTransporter';
 export async function register(
   _prevState:
     | { message: string; data?: Partial<z.infer<typeof registerSchema>> }
@@ -20,7 +20,6 @@ export async function register(
   if (register.error)
     return { message: register.error.errors[0].message, data: formData };
   try {
-
     const existingUser = await db
       .select()
       .from(users)
@@ -39,18 +38,22 @@ export async function register(
     };
 
     const createdUser = await db.insert(users).values(user).returning();
-    const token = jwt.sign({ email: createdUser[0].email, id: createdUser[0].id }, process.env.AUTH_SECRET!, {
-      expiresIn: '1d'
-    });
-    if (!createdUser[0].email) return
+    const token = jwt.sign(
+      { email: createdUser[0].email, id: createdUser[0].id },
+      process.env.AUTH_SECRET!,
+      {
+        expiresIn: '1d',
+      }
+    );
+    if (!createdUser[0].email) return;
 
     console.log(createdUser);
 
-    await sendVerifyToken({ email: createdUser[0].email, token: token })
-      await signIn('credentials', {
-        email: register.data.email,
-        password: register.data.password
-      });
+    await sendVerifyToken({ email: createdUser[0].email, token: token });
+    await signIn('credentials', {
+      email: register.data.email,
+      password: register.data.password,
+    });
 
     // return { message: 'Registration successful', data: register.data };
   } catch (error) {
@@ -63,7 +66,6 @@ export async function register(
     //   }
     // }
     // return { message: 'An unexpected error occurred during registration.' };
-
 
     if (error instanceof AuthError) {
       switch (error.type) {

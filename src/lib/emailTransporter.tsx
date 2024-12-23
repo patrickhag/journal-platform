@@ -96,17 +96,24 @@ export const sendInvitation = async ({
   await transporter.sendMail(options);
 };
 
-export const sendVerifyToken = async ({ email, token }: { email: string, token: string }) => {
+export const sendVerifyToken = async ({
+  email,
+  token,
+}: {
+  email: string;
+  token: string;
+}) => {
   const emailHtml = await render(
-    <SendVerifyEmail link={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/verify-user?id=${token}`} />
+    <SendVerifyEmail
+      link={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/verify-user?id=${token}`}
+    />
   );
   const options = {
     from: process.env.EMAIL_USER,
     to: email,
-    subject: "Please verify your account",
-    html: emailHtml
+    subject: 'Please verify your account',
+    html: emailHtml,
   };
 
-  await transporter.sendMail(options)
-
-}
+  await transporter.sendMail(options);
+};

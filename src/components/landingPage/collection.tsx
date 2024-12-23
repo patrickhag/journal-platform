@@ -5,16 +5,16 @@ import { articleSubmissions, db, files, metadata } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
 const Collections = async () => {
-
   const fileCollections = await db
     .select({
       id: files.id,
       fileURI: files.publicId,
-      title: metadata.title
+      title: metadata.title,
     })
     .from(articleSubmissions)
     .leftJoin(files, eq(articleSubmissions.id, files.articleId))
-    .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId)).limit(10);
+    .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId))
+    .limit(10);
 
   return (
     <div className="col-span-3 space-y-8">
@@ -42,7 +42,9 @@ const Collections = async () => {
             <div key={collection.id}>
               <h3 className="text-lg font-medium">{collection.title}</h3>
               <Image
-                src={'https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732723406/newss_espiuv.png'}
+                src={
+                  'https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732723406/newss_espiuv.png'
+                }
                 width={500}
                 height={250}
                 alt={collection.title || ''}
@@ -56,6 +58,5 @@ const Collections = async () => {
     </div>
   );
 };
-
 
 export default Collections;

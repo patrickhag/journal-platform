@@ -27,7 +27,7 @@ export function ArticleSection({
     <Card key={a.id}>
       <CardContent className="flex items-center justify-between p-6">
         <div className="flex gap-6">
-          <div className='flex items-center'>
+          <div className="flex items-center">
             <span className="text-xl font-medium text-muted-foreground">
               {(i + 1).toString().padStart(4, '0')}
             </span>
@@ -35,11 +35,7 @@ export function ArticleSection({
           <div className="space-y-1">
             <h3 className="font-medium uppercase">{a.section}</h3>
             <CommentPreview html={a.commentsForEditor} />
-            <small
-              className={cn(
-                'mt-2'
-              )}
-            >
+            <small className={cn('mt-2')}>
               <StatusBadge status={a.articleStatus || 'Submitted'} />
             </small>
           </div>
@@ -56,15 +52,20 @@ export function ArticleSection({
               <Link href={`articles/${a.id}`}>View details</Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <form action={async () => {
-                "use server"
-                await db.update(articleSubmissions).set({
-                  articleStatus: 'Archived'
-                }).where(eq(articleSubmissions.id, a.id))
+              <form
+                action={async () => {
+                  'use server';
+                  await db
+                    .update(articleSubmissions)
+                    .set({
+                      articleStatus: 'Archived',
+                    })
+                    .where(eq(articleSubmissions.id, a.id));
 
-                revalidatePath('/submissions')
-              }}>
-                <button >Move to archive</button>
+                  revalidatePath('/submissions');
+                }}
+              >
+                <button>Move to archive</button>
               </form>
             </DropdownMenuItem>
             <DropdownMenuItem>

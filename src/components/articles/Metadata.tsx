@@ -19,7 +19,7 @@ export default async function Metadata({
     .select()
     .from(contributors)
     .where(eq(contributors.articleId, articleId));
-  if (!meta) return undefined
+  if (!meta) return undefined;
   return (
     <article>
       <Card>

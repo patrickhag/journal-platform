@@ -66,11 +66,9 @@ export const reviewSchema = z.object({
   status: z.enum(ARTICLE_STATUS),
 });
 
-
-export type TArticle = (z.infer<typeof articleSubmitionSchema>
-  & {
-    id: string;
-    commentsForEditor: string;
-    fileURI: string;
-    title: string;
-  })
+export type TArticle = z.infer<typeof articleSubmitionSchema> & {
+  id: string;
+  commentsForEditor: string;
+  fileURI: string;
+  title: string;
+};

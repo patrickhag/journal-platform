@@ -118,8 +118,7 @@ async function page({
               <CardTitle>Reviewers</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className='mb-4'>
-
+              <div className="mb-4">
                 <AddReviewerModal autoSave />
               </div>
               {reviewrs.map((r, index) => (

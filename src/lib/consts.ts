@@ -247,4 +247,4 @@ export const ARTICLE_STATUS = [
   'Major issue',
 ] as const;
 
-export const articleFilters = ['Assigned to review', "My articles"] as const
+export const articleFilters = ['Assigned to review', 'My articles'] as const;

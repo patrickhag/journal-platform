@@ -28,16 +28,24 @@ export default async function DashboardPannel({
       );
     }
     if (currentUser?.id) {
-
       if (searchParams.status) {
-        conditions.push(eq(articleSubmissions.articleStatus, searchParams.status as typeof ARTICLE_STATUS[number]));
-      }
-      if ((searchParams.f as typeof articleFilters[number]) === 'Assigned to review') {
-        const article = await db.select({ articleId: reviewers.articleId }).from(reviewers).where(eq(reviewers.userId, currentUser.id!))
-        const ids = article.map(a => String(a.articleId))
         conditions.push(
-          inArray(articleSubmissions.id, ids),
-        )
+          eq(
+            articleSubmissions.articleStatus,
+            searchParams.status as (typeof ARTICLE_STATUS)[number]
+          )
+        );
+      }
+      if (
+        (searchParams.f as (typeof articleFilters)[number]) ===
+        'Assigned to review'
+      ) {
+        const article = await db
+          .select({ articleId: reviewers.articleId })
+          .from(reviewers)
+          .where(eq(reviewers.userId, currentUser.id!));
+        const ids = article.map((a) => String(a.articleId));
+        conditions.push(inArray(articleSubmissions.id, ids));
       }
       conditions.push(eq(articleSubmissions.userId, currentUser.id));
     }
@@ -58,7 +66,7 @@ export default async function DashboardPannel({
     // .rightJoin(reviewers, eq(articleSubmissions.id, reviewers.articleId))
     .leftJoin(files, eq(articleSubmissions.id, files.articleId))
     .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId)); // Joining metadata table
-  console.log(articles)
+  console.log(articles);
   return (
     <main className="max-w-5xl mx-auto">
       <div>
@@ -90,16 +98,20 @@ export default async function DashboardPannel({
             <div className="grid gap-4">
               {articles.length > 0 ? (
                 articles.map((a, i) => (
-                  <ArticleSection article={{
-                    "Comments for the editor": a.commentsForEditor || '',
-                    commentsForEditor: a.commentsForEditor || '',
-                    fileURI: a.fileURI || '',
-                    id: a.id || '',
-                    requirements: [''],
-                    section: a.section || 'Articles',
-                    title: a.title || '',
-                    articleStatus: a.articleStatus || 'Submitted'
-                  }} key={i} index={i} />
+                  <ArticleSection
+                    article={{
+                      'Comments for the editor': a.commentsForEditor || '',
+                      commentsForEditor: a.commentsForEditor || '',
+                      fileURI: a.fileURI || '',
+                      id: a.id || '',
+                      requirements: [''],
+                      section: a.section || 'Articles',
+                      title: a.title || '',
+                      articleStatus: a.articleStatus || 'Submitted',
+                    }}
+                    key={i}
+                    index={i}
+                  />
                 ))
               ) : (
                 <div className="text-center text-muted-foreground">
