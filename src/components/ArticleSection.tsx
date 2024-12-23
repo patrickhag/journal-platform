@@ -61,8 +61,8 @@ export function ArticleSection({
                 await db.update(articleSubmissions).set({
                   articleStatus: 'Archived'
                 }).where(eq(articleSubmissions.id, a.id))
-                
-        revalidatePath('/submissions')
+
+                revalidatePath('/submissions')
               }}>
                 <button >Move to archive</button>
               </form>

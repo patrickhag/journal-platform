@@ -7,6 +7,7 @@ import { eq, and } from 'drizzle-orm';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import GoBackButton from '@/components/articles/GoBackButton';
 import Reviews from '@/components/articles/Reviews';
+import AddReviewerModal from '@/components/upload/AddReviewerModal';
 
 async function page({
   params,
@@ -110,12 +111,17 @@ async function page({
           articleId={articleId}
           role={currentUserRole || 'NORMAL_USER'}
         />
+
         {reviewrs.length > 0 && (
           <Card className="my-3">
             <CardHeader>
               <CardTitle>Reviewers</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
+              <div className='mb-4'>
+
+                <AddReviewerModal autoSave />
+              </div>
               {reviewrs.map((r, index) => (
                 <Reviewer
                   reviewer={r}

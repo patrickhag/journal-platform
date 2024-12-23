@@ -22,13 +22,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { reviewerSchema } from '@/schemas/reviewer';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { startTransition, useActionState, useState } from 'react';
 import { safeParse, serialize } from 'zod-urlsearchparams';
+import { addReviewerAction } from '@/actions/addReviewer';
 
 type ReviewerFormValues = z.infer<typeof reviewerSchema>;
 
-export default function AddReviewerModal() {
+export default function AddReviewerModal({ autoSave }: { autoSave?: boolean }) {
   const form = useForm<ReviewerFormValues>({
     resolver: zodResolver(reviewerSchema),
     defaultValues: {
@@ -51,8 +52,22 @@ export default function AddReviewerModal() {
   });
 
   const reviewers = reviewersValidation.data?.reviewers || [];
+  const [errorMessage, formAction, isPending] = useActionState(
+    addReviewerAction,
+    undefined
+  );
 
+  const { articleId } = useParams();
+  console.log(articleId);
   function handleSubmit(data: ReviewerFormValues) {
+    if (autoSave) {
+      startTransition(() => {
+        if (articleId?.[0]) {
+          formAction({ ...data, articleId: articleId[0] });
+        }
+      })
+      return;
+    }
     reviewers.push(data);
     const serializedData = serialize({
       data: { reviewers },

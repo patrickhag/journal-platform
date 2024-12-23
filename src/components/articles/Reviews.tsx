@@ -5,6 +5,7 @@ import withPermissions from '../WithPermission';
 import { db, reviews, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { Card, CardContent, CardHeader } from '../ui/card';
+import AddReviewerModal from '../upload/AddReviewerModal';
 
 const Reviews = async ({
   role,
@@ -20,39 +21,39 @@ const Reviews = async ({
   return (
     <Card className="space-y-4 my-4">
       <CardHeader>
-      <h3 className="font-bold text-xl">Reviews</h3>
+        <h3 className="font-bold text-xl">Reviews</h3>
       </CardHeader>
       <CardContent>
+        {reviewerReviews.length <= 0 ? (
 
-      {reviewerReviews.length <= 0 ? (
-        <p>No reviews given</p>
-      ) : (
-        <>
-          {reviewerReviews.map((r) => (
-            <div key={r.id} className="space-y-2">
-              <p className="text-gray-600">{r.message}</p>
-              <h3 className="font-bold text-xl">Files</h3>
-              <ul>
-                {r.fileIds.map((f, i) => (
-                  <li key={f}>
-                    <a href={f}>
-                      {i + 1}. {f.split('/').at(-1)}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-              <div className="flex items-center justify-between">
-                <User id={r.userId} />
-                <ControlReviewsWithPermissions
-                  role={role}
-                  requiredPermissions={['MANAGE_REVIEWERS']}
-                  fallback={<></>}
-                />
+          <p>No reviews given</p>
+        ) : (
+          <>
+            {reviewerReviews.map((r) => (
+              <div key={r.id} className="space-y-2">
+                <p className="text-gray-600">{r.message}</p>
+                <h3 className="font-bold text-xl">Files</h3>
+                <ul>
+                  {r.fileIds.map((f, i) => (
+                    <li key={f}>
+                      <a href={f}>
+                        {i + 1}. {f.split('/').at(-1)}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+                <div className="flex items-center justify-between">
+                  <User id={r.userId} />
+                  <ControlReviewsWithPermissions
+                    role={role}
+                    requiredPermissions={['MANAGE_REVIEWERS']}
+                    fallback={<></>}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
-        </>
-      )}
+            ))}
+          </>
+        )}
       </CardContent>
     </Card>
   );
