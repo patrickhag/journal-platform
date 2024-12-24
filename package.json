@@ -38,7 +38,7 @@
     "cloudinary": "^2.5.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
-    "drizzle-orm": "^0.36.4",
+    "drizzle-orm": "^0.38.2",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.468.0",
     "mailgen": "^2.0.28",
