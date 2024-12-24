@@ -48,6 +48,7 @@ export const users = pgTable('user', {
   role: roleEnum().$default(() => 'NORMAL_USER'),
   email: text('email').unique(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
+  isActive: boolean('is_active').default(true),
   password: text('password'),
   avatar: text('avatar'),
 });

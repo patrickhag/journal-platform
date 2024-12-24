@@ -1,4 +1,5 @@
 'use client';
+import { disactivateUser } from '@/actions/disactivateUser';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,7 +17,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import withPermissions from '@/components/WithPermission';
 import { Users } from '@/db/schema';
+import { cn } from '@/lib/utils';
 
 import {
   ColumnDef,
@@ -25,13 +28,13 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  Row,
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import { ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
-import { useState } from 'react';
+import { startTransition, useState } from 'react';
 
 const columns: ColumnDef<Users>[] = [
   {
@@ -100,16 +103,35 @@ const columns: ColumnDef<Users>[] = [
   {
     id: 'actions',
     cell: ({ row }) => (
-      <Link
-        href={'/articles/' + String(row.original.id)}
-        className="ring-1 px-3 py-2 ring-gray-200 rounded-md"
-      >
-        Delete
-      </Link>
+      <DisactivateUser
+        row={row}
+        role="ADMIN"
+        requiredPermissions={['MANAGE_USERS']}
+        fallback=""
+      />
     ),
   },
 ];
 
+const Disactivate = ({ row }: { row: Row<Users> }) => (
+  <form
+    action={() => {
+      startTransition(() => {
+        disactivateUser(row.original.id, row.original.isActive);
+      });
+    }}
+  >
+    <Button
+      className={cn(
+        'ring-1 px-3 py-2 ring-gray-200 rounded-md',
+        row.original.isActive ? 'bg-red-500' : 'bg-black'
+      )}
+    >
+      {row.original.isActive ? 'Disactivate' : 'Activate'}
+    </Button>
+  </form>
+);
+const DisactivateUser = withPermissions(Disactivate);
 interface ArticlesTableProps {
   data: Users[];
 }
