@@ -55,7 +55,7 @@ export default function AddReviewerModal({ autoSave }: { autoSave?: boolean }) {
   const [, formAction] = useActionState(addReviewerAction, undefined);
 
   const { articleId } = useParams();
-  console.log(articleId);
+
   function handleSubmit(data: ReviewerFormValues) {
     if (autoSave) {
       startTransition(() => {
@@ -81,9 +81,15 @@ export default function AddReviewerModal({ autoSave }: { autoSave?: boolean }) {
     setOpen(false);
   }
 
+  console.log(open);
+
   return (
     <>
-      <Button variant={'outline'} onClick={() => setOpen(true)}>
+      <Button
+        variant={'link'}
+        onClick={() => setOpen(true)}
+        className="text-blue-500 hover:text-blue-600"
+      >
         Add reviewer
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -122,9 +128,7 @@ export default function AddReviewerModal({ autoSave }: { autoSave?: boolean }) {
                 name="affiliation"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      Affiliation <span className="text-red-500">*</span>
-                    </FormLabel>
+                    <FormLabel>Affiliation</FormLabel>
                     <FormControl>
                       <Input placeholder="e.g: Organisation" {...field} />
                     </FormControl>
@@ -190,7 +194,9 @@ export default function AddReviewerModal({ autoSave }: { autoSave?: boolean }) {
                 >
                   Cancel
                 </Button>
-                <Button type="submit">Add</Button>
+                <Button type="submit" onClick={() => setOpen(false)}>
+                  Add
+                </Button>
               </div>
             </form>
           </Form>

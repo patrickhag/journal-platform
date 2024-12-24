@@ -66,8 +66,8 @@ export default async function DashboardPannel({
     .where(await where())
     // .rightJoin(reviewers, eq(articleSubmissions.id, reviewers.articleId))
     .leftJoin(files, eq(articleSubmissions.id, files.articleId))
-    .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId)); // Joining metadata table
-  console.log(articles);
+    .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId));
+
   return (
     <main className="max-w-5xl mx-auto">
       <div>

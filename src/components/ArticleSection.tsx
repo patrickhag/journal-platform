@@ -91,7 +91,7 @@ const ArchiveArticle = async ({ article }: { article: TArticle }) => {
           revalidatePath('/submissions');
         }}
       >
-        <button>Move to archive</button>
+        <Button>Move to archive</Button>
       </form>
     </DropdownMenuItem>
   );
