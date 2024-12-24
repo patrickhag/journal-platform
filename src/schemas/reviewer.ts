@@ -9,9 +9,7 @@ export const reviewerSchema = z.object({
   names: z.string().min(2, {
     message: 'Name must be at least 2 characters.',
   }),
-  affiliation: z.string().min(2, {
-    message: 'Affiliation must be at least 2 characters.',
-  }),
+  affiliation: z.string(),
   email: z.string().email({
     message: 'Please enter a valid email address.',
   }),

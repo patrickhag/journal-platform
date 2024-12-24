@@ -7,11 +7,12 @@ import { eq, and } from 'drizzle-orm';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import GoBackButton from '@/components/articles/GoBackButton';
 import Reviews from '@/components/articles/Reviews';
+import { Separator } from '@/components/ui/separator';
 import AddReviewerModal from '@/components/upload/AddReviewerModal';
-import { Button } from '@/components/ui/button';
-import withPermissions from '@/components/WithPermission';
-import { revalidatePath } from 'next/cache';
 import { ARTICLE_STATUS } from '@/lib/consts';
+import { revalidatePath } from 'next/cache';
+import withPermissions from '@/components/WithPermission';
+import { Button } from '@/components/ui/button';
 
 async function page({
   params,
@@ -50,6 +51,7 @@ async function page({
   const currentUserRole = (
     await db.select({ role: users.role }).from(users).limit(1)
   )[0].role;
+
   const author = await db
     .select()
     .from(users)
@@ -115,34 +117,41 @@ async function page({
           articleId={articleId}
           role={currentUserRole || 'NORMAL_USER'}
         />
-
-        {reviewrs.length > 0 && (
-          <Card className="my-3">
-            <CardHeader>
-              <CardTitle>Reviewers</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="mb-4">
-                <AddReviewerModal autoSave />
-              </div>
-              {reviewrs.map((r, index) => (
-                <Reviewer
-                  reviewer={r}
-                  index={index}
-                  key={r.id}
-                  article={article.id}
-                />
-              ))}
-              <Publish
-                role="CHIEF_EDITOR"
-                requiredPermissions={['PUBLISH_ARTICLES']}
-                fallback=""
-                articleId={articleId}
-                status={article.articleStatus}
+        <Card className="my-3">
+          <CardHeader>
+            <CardTitle>Reviewers</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex justify-between">
+              {reviewrs.length === 0 ? (
+                <>
+                  <p className="text-sm">
+                    This user has not proposed any reviewer. Add one instead!
+                  </p>
+                </>
+              ) : (
+                <p className="text-sm">Add new reviewers</p>
+              )}
+              <AddReviewerModal autoSave />
+            </div>
+            <Separator />
+            {reviewrs.map((r, index) => (
+              <Reviewer
+                reviewer={r}
+                index={index}
+                key={r.id}
+                article={article.id}
               />
-            </CardContent>
-          </Card>
-        )}
+            ))}
+          </CardContent>
+        </Card>
+        <Publish
+          role="CHIEF_EDITOR"
+          requiredPermissions={['PUBLISH_ARTICLES']}
+          fallback=""
+          articleId={articleId}
+          status={article.articleStatus}
+        />
       </div>
     </>
   );
@@ -171,8 +180,7 @@ const PublishArticle = ({
         revalidatePath('/articles/' + articleId);
       }}
     >
-      <Button className="w-4/5 mx-auto bg-green-700">
-        {' '}
+      <Button className="w-4/5 mx-auto bg-green-600 mt-3">
         {status === 'Published' ? 'Unpublish' : 'Publish'} this article{' '}
       </Button>
     </form>
