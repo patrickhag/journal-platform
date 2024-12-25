@@ -3,6 +3,8 @@ import { disactivateUser } from '@/actions/disactivateUser';
 import { StatusBadge } from '@/components/status-badge';
 import TableData from '@/components/Table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import TableData from '@/components/Table';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import withPermissions from '@/components/WithPermission';
 import { Users } from '@/db/schema';
@@ -63,8 +65,8 @@ const columns: ColumnDef<Users>[] = [
       <Avatar className="h-16 w-16">
         <AvatarImage src={row.getValue('avatar')} />
 
-        <AvatarFallback>
-          <User2 className="h-4 w-4" />
+        <AvatarFallback className="bg-white text-xl font-bold text-gray-500">
+          {(row.getValue('firstName') as string).at(0)}
         </AvatarFallback>
       </Avatar>
     ),
