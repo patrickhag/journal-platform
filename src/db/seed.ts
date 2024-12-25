@@ -14,7 +14,7 @@ const main = async () => {
     await db.insert(users).values({
       role: 'NORMAL_USER',
       email,
-      country: 'Rwanda',
+      country: faker.location.country(),
       lastName: faker.person.lastName(),
       firstName: faker.person.firstName(),
       affiliation: faker.company.name(),

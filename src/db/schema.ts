@@ -44,7 +44,7 @@ export const users = pgTable('user', {
   firstName: text('firstName'),
   lastName: text('lastName'),
   affiliation: text('affiliation'),
-  country: countryEnum().$defaultFn(() => 'Rwanda'),
+  country: text('country').notNull(),
   role: roleEnum().$default(() => 'NORMAL_USER'),
   email: text('email').unique(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
