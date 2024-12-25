@@ -36,6 +36,7 @@ import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 import { register } from '@/actions/register';
 import { EyeClosedIcon, EyeIcon } from 'lucide-react';
+import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 
 export default function Register() {
   const [prevState, formAction, isPending] = useActionState(
@@ -44,6 +45,7 @@ export default function Register() {
   );
 
   const router = useRouter();
+  const [visible, setVisible] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -63,6 +65,13 @@ export default function Register() {
     if (prevState?.message === 'Registration successful') {
       router.replace('/login');
     }
+    if (prevState?.message === 'Email already in use.') {
+      setVisible(prevState.message);
+    }
+    const timeout = setTimeout(() => {
+      setVisible(null);
+    }, 5000);
+    return () => clearTimeout(timeout);
   }, [prevState?.message]);
 
   const [passwordType, setPasswordType] = useState<'password' | 'text'>(
@@ -83,6 +92,16 @@ export default function Register() {
           </div>
           <h2 className="text-3xl font-semibold text-gray-800">Sign up</h2>
           <p className="text-sm text-gray-600">Register and get to login</p>
+          {visible && (
+            <div
+              className="flex p-4 items-end space-x-1 justify-center bg-red-100 rounded-md"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+              <p className="text-sm text-red-500">{visible}</p>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -178,7 +197,10 @@ export default function Register() {
                         Country <span className="text-red-700">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Select defaultValue="Rwanda" {...field}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <SelectTrigger className="border-gray-300 focus:border-gray-500 focus:ring-gray-500">
                             <SelectValue placeholder="Select your country" />
                           </SelectTrigger>

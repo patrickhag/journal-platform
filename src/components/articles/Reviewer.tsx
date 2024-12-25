@@ -7,6 +7,7 @@ import {
 import { ReachOut } from './ReachOut';
 import { eq } from 'drizzle-orm';
 import { auth } from '@/auth';
+import { Separator } from '@/components/ui/separator';
 
 export default async function Reviewer({
   reviewer: { email, names, affiliation, phone, expertise, acceptedInvitation },
@@ -115,6 +116,7 @@ export default async function Reviewer({
           </PopoverContent>
         </Popover>
       )}
+      <Separator className="my-1" />
     </>
   );
 }

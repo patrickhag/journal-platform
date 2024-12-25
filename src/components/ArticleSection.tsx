@@ -35,7 +35,7 @@ export function ArticleSection({
               {(i + 1).toString().padStart(4, '0')}
             </span>
           </div>
-          <div className="space-y-1">
+          <div className="space-y-2">
             <h3 className="font-medium uppercase">{a.section}</h3>
             <CommentPreview html={a.commentsForEditor} />
             <small className={cn('mt-2')}>

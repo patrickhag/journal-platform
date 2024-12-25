@@ -19,7 +19,9 @@ export default async function Metadata({
     .select()
     .from(contributors)
     .where(eq(contributors.articleId, articleId));
+
   if (!meta) return undefined;
+
   return (
     <article>
       <Card>
@@ -45,7 +47,7 @@ export default async function Metadata({
             <h3 className="text-sm font-medium text-muted-foreground">
               Abstract
             </h3>
-            <p
+            <div
               className="mt-1"
               dangerouslySetInnerHTML={{ __html: meta.abstract }}
             />
@@ -66,13 +68,28 @@ export default async function Metadata({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2">
+            <div className="space-y-2">
               {contibutors.map((c) => (
-                <li key={c.id}>
-                  {c.name}, {c.role}
-                </li>
+                <div key={c.id} className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <h3 className="text-sm font-medium text-muted-foreground">
+                      Names
+                    </h3>
+                    <p className="my-2">
+                      {c.salutation} {c.name}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-muted-foreground">
+                      Contributor's role
+                    </h3>
+                    <p className="my-2">
+                      {c.role} {c.name},
+                    </p>
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
           </CardContent>
         </Card>
       )}
