@@ -33,9 +33,10 @@ export const authOptions: NextAuthConfig = {
         ) {
           return null;
         }
+
         return {
           name: `${user.firstName} ${user.lastName}`,
-          email: user.email,
+          email: user.isActive ? user.email : '',
           id: user.id,
           role: user.role ?? 'NORMAL_USER',
         };

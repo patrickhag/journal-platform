@@ -11,7 +11,7 @@ import { Users } from '@/db/schema';
 import { cn } from '@/lib/utils';
 
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { ArrowUpDown, User2 } from 'lucide-react';
+import { ArrowUpDown } from 'lucide-react';
 import { startTransition } from 'react';
 
 const columns: ColumnDef<Users>[] = [
