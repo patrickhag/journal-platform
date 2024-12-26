@@ -45,15 +45,18 @@ export default async function DashboardPannel({
           .from(reviewers)
           .where(eq(reviewers.userId, currentUser.id!));
         const ids = article.map((a) => String(a.articleId));
-        conditions.push(inArray(articleSubmissions.id, ids));
+        conditions.push(inArray(articleSubmissions.id, [...new Set(ids)]));
+      } else {
+        conditions.push(eq(articleSubmissions.userId, currentUser.id));
       }
-      conditions.push(eq(articleSubmissions.userId, currentUser.id));
     }
     return conditions.length > 0 ? and(...conditions) : undefined;
   };
 
-
-  console.log("whereCondition>>>", where().then((whatever) => console.log(whatever?.getSQL())))
+  console.log(
+    'whereCondition>>>',
+    where().then((whatever) => console.log(whatever?.getSQL()))
+  );
 
   const articles = await db
     .select({
@@ -67,7 +70,6 @@ export default async function DashboardPannel({
     })
     .from(articleSubmissions)
     .where(await where())
-    // .rightJoin(reviewers, eq(articleSubmissions.id, reviewers.articleId))
     .leftJoin(files, eq(articleSubmissions.id, files.articleId))
     .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId));
 

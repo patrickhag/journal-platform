@@ -6,7 +6,6 @@ import { registerSchema } from '@/schemas/auth.schema';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import { AuthError } from 'next-auth';
-import { redirect, RedirectType } from 'next/navigation';
 import type z from 'zod';
 import jwt from 'jsonwebtoken';
 import { sendVerifyToken } from '@/lib/emailTransporter';
@@ -37,7 +36,7 @@ export async function register(
       password: hashedPassword,
     };
 
-    console.log('passedUser>>>', user)
+    console.log('passedUser>>>', user);
 
     const createdUser = await db.insert(users).values(user).returning();
     const token = jwt.sign(
@@ -57,11 +56,11 @@ export async function register(
       email: register.data.email,
       password: register.data.password,
     });
-    
+
     // return { message: 'Registration successful', data: register.data };
   } catch (error) {
     if (error instanceof Error) {
-      console.log(error.message)
+      console.log(error.message);
     }
     // if (error instanceof AuthError) {
     //   switch (error.type) {
@@ -82,15 +81,15 @@ export async function register(
       }
     }
 
-  //   const user = await db
-  //     .select()
-  //     .from(users)
-  //     .where(eq(users.email, register.data.email))
-  //     .limit(1);
-  //   if (user[0].role === 'CHIEF_EDITOR' || user[0].role === 'ADMIN') {
-  //     redirect('/editor', RedirectType.replace);
-  //   } else {
-  //     redirect('/submissions', RedirectType.replace);
-  //   }
+    //   const user = await db
+    //     .select()
+    //     .from(users)
+    //     .where(eq(users.email, register.data.email))
+    //     .limit(1);
+    //   if (user[0].role === 'CHIEF_EDITOR' || user[0].role === 'ADMIN') {
+    //     redirect('/editor', RedirectType.replace);
+    //   } else {
+    //     redirect('/submissions', RedirectType.replace);
+    //   }
   }
 }

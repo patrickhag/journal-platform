@@ -48,9 +48,9 @@ async function page({
   const currentUser = session?.user;
   if (!currentUser) return <h1>Not authenticated</h1>;
 
-  const currentUserRole = session?.user?.role
+  const currentUserRole = session?.user?.role;
 
-  console.log("currentUserRole>>>", currentUserRole)
+  console.log('currentUserRole>>>', currentUserRole);
 
   const author = await db
     .select()
