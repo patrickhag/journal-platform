@@ -39,7 +39,7 @@ export default function HeaderDropdown({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="cursor-pointer">
-              <AvatarFallback>{names}</AvatarFallback>
+              <AvatarFallback className="lowercase">{names}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

@@ -60,13 +60,8 @@ const columns: ColumnDef<Users>[] = [
     accessorKey: 'avatar',
     header: 'Picture',
     cell: ({ row }) => (
-      <Avatar className="h-16 w-16">
-        <AvatarImage
-          src={row.getValue('avatar')}
-          width={16}
-          height={16}
-          className="w-16 h-16 "
-        />
+      <Avatar className="h-5 w-5">
+        <AvatarImage src={row.getValue('avatar')} />
 
         <AvatarFallback className="bg-white text-xl font-bold text-gray-500">
           {(row.getValue('firstName') as string).at(0)}
@@ -102,14 +97,18 @@ const Disactivate = ({ row }: { row: Row<Users> }) => (
   >
     <Button
       className={cn(
-        'ring-1 px-3 py-2 ring-gray-200 rounded-md',
-        row.original.isActive ? 'bg-red-500' : 'bg-black'
+        'px-2 py-1 ring-gray-200 rounded-md text-sm',
+        row.original.isActive
+          ? 'hover:border-red-500 hover:text-red-500'
+          : 'hover:border-green-500 hover:text-green-500'
       )}
+      variant={'outline'}
     >
-      {row.original.isActive ? 'Disactivate' : 'Activate'}
+      {row.original.isActive ? 'Deactivate' : 'Activate'}
     </Button>
   </form>
 );
+
 const DisactivateUser = withPermissions(Disactivate);
 interface ArticlesTableProps {
   data: Users[];

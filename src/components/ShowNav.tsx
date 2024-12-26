@@ -28,7 +28,7 @@ export default function ShowNav({ isOpen = false }: { isOpen: boolean }) {
       </Link>
 
       <Link
-        href="/articles"
+        href="/editor/articles"
         className={cn(
           pathname.toLowerCase().split('/').includes('articles')
             ? 'text-gray-700 bg-gray-100 rounded-md px-2.5 py-1.5'
@@ -42,7 +42,7 @@ export default function ShowNav({ isOpen = false }: { isOpen: boolean }) {
       </Link>
 
       <Link
-        href="/users"
+        href="/editor/users"
         className={cn(
           pathname.toLowerCase().split('/').includes('users')
             ? 'text-gray-700 bg-gray-100 rounded-md px-2.5 py-1.5'

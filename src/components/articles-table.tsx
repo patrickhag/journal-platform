@@ -32,11 +32,7 @@ import { ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { StatusBadge } from './status-badge';
 import Link from 'next/link';
 import { Label } from '@/components/ui/label';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+
 import { Checkbox } from '@/components/ui/checkbox';
 
 type Article = {
@@ -92,12 +88,9 @@ const columns: ColumnDef<Article>[] = [
   {
     id: 'actions',
     cell: ({ row }) => (
-      <Link
-        href={'/articles/' + String(row.original.id)}
-        className="ring-1 px-3 py-2 ring-gray-200 rounded-md"
-      >
-        View
-      </Link>
+      <Button variant={'outline'}>
+        <Link href={'/articles/' + String(row.original.id)}>View</Link>
+      </Button>
     ),
   },
 ];
@@ -110,7 +103,7 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
 
-  const statuses = [...new Set(data.map((articles) => articles.status))];
+  [...new Set(data.map((articles) => articles.status))];
 
   const table = useReactTable({
     data,
@@ -141,19 +134,6 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
           onChange={(e) => setGlobalFilter(e.target.value)}
           className="max-w-sm"
         />
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline">Filter by Status</Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-80">
-            {statuses.map((status) => (
-              <div key={status} className="flex items-center gap-2">
-                <Checkbox id={status as string} />
-                <Label htmlFor={status as string}>{status}</Label>
-              </div>
-            ))}
-          </PopoverContent>
-        </Popover>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -179,7 +159,7 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className="py-5"
+                  className="py-5 border-b w-10 h-10"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

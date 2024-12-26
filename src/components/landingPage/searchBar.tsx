@@ -13,7 +13,7 @@ export default function SearchBar() {
       <div className="flex items-center border ml-[38%] border-gray-300 rounded-md px-3 py-2 shadow-sm w-80">
         <input
           type="text"
-          placeholder="Search journals..."
+          placeholder="Search journals, authors, reviewers..."
           className="flex-1 outline-none border-none text-gray-700 placeholder-gray-400"
         />
         <button type="button">

@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 const LeftSideBar = () => {
   return (
-    <div className="w-64 bg-gray-50 p-4 space-y-6 border-r border-gray-200">
+    <div className="w-90 bg-gray-50 p-4 space-y-6 border-r border-gray-200">
       {/* Important Information Section */}
       <div>
         <h2

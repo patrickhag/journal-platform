@@ -50,8 +50,6 @@ async function page({
 
   const currentUserRole = session?.user?.role;
 
-  console.log('currentUserRole>>>', currentUserRole);
-
   const author = await db
     .select()
     .from(users)

@@ -36,8 +36,6 @@ export async function register(
       password: hashedPassword,
     };
 
-    console.log('passedUser>>>', user);
-
     const createdUser = await db.insert(users).values(user).returning();
     const token = jwt.sign(
       { email: createdUser[0].email, id: createdUser[0].id },

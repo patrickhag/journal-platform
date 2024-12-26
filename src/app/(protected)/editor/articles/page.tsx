@@ -1,6 +1,12 @@
 import { ArticlesTable } from '@/components/articles-table';
 import Protected from '@/components/Protected';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { db } from '@/db/schema';
 import { users, articleSubmissions, metadata } from '@/db/schema';
 import { eq } from 'drizzle-orm';
@@ -26,11 +32,11 @@ export default async function ArticlesPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl font-bold">Articles</CardTitle>
+            <CardDescription className="mb-6">
+              Manage articles and view their statuses
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground mb-6">
-              Manage articles and view their statuses
-            </p>
             <ArticlesTable
               data={articles.map((article) => ({
                 ...article,

@@ -1,6 +1,7 @@
 import { Search } from 'lucide-react';
 import { Input } from './ui/input';
 import { redirect } from 'next/navigation';
+
 export const SearchArticle = async () => {
   return (
     <form

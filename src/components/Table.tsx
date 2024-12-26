@@ -26,7 +26,8 @@ import {
 } from '@tanstack/react-table';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from './ui/button';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 interface Props<T> {
   data: T[];
@@ -60,6 +61,14 @@ const TableData = <T,>({ data, columns }: Props<T>) => {
 
   return (
     <div>
+      <div className="flex items-center gap-4 my-3">
+        <Input
+          placeholder="Search article..."
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          className="max-w-sm"
+        />
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -102,7 +111,7 @@ const TableData = <T,>({ data, columns }: Props<T>) => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No users found.
                 </TableCell>
               </TableRow>
             )}

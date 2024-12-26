@@ -53,11 +53,6 @@ export default async function DashboardPannel({
     return conditions.length > 0 ? and(...conditions) : undefined;
   };
 
-  console.log(
-    'whereCondition>>>',
-    where().then((whatever) => console.log(whatever?.getSQL()))
-  );
-
   const articles = await db
     .select({
       id: articleSubmissions.id,
