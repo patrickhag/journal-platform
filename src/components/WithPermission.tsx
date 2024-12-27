@@ -17,6 +17,7 @@ const withPermissions = <P extends object>(
       }
   > = ({ requiredPermissions, role, fallback = defaultFallback, ...props }) => {
     const userPermissions = ROLE_PERMISSIONS[role];
+    console.log('role', userPermissions);
 
     // Check if the user has all the required permissions
     const hasPermission = requiredPermissions.every((permission) =>

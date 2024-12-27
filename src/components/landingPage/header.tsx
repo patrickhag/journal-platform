@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { auth } from '@/auth';
 import HeaderDropdown from './headerDropdown';
+import Link from 'next/link';
 
 const Header = async () => {
   const session = await auth();
@@ -26,21 +27,21 @@ const Header = async () => {
           Journal of African Epidemiology and Public Health
         </div>
         <nav className="flex gap-4 text-gray-700">
-          <a href="/" className="hover:text-blue-500">
+          <Link href="/" className="hover:text-blue-500">
             Home
-          </a>
-          <a href="#" className="hover:text-blue-500">
+          </Link>
+          <Link href="#" className="hover:text-blue-500">
             About
-          </a>
-          <a href="#" className="hover:text-blue-500">
+          </Link>
+          <Link href="#" className="hover:text-blue-500">
             Articles
-          </a>
-          <a href="#" className="hover:text-blue-500">
+          </Link>
+          <Link href="#" className="hover:text-blue-500">
             Authors
-          </a>
-          <a href="#" className="hover:text-blue-500">
+          </Link>
+          <Link href="#" className="hover:text-blue-500">
             Reviewers
-          </a>
+          </Link>
         </nav>
         <HeaderDropdown names={names} session={session} />
       </header>

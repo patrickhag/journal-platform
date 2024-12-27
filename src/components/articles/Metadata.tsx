@@ -81,7 +81,7 @@ export default async function Metadata({
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-muted-foreground">
-                      Contributor's role
+                      Contributor&apos;s role
                     </h3>
                     <p className="my-2">
                       {c.role} {c.name},

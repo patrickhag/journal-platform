@@ -3,8 +3,6 @@ import { disactivateUser } from '@/actions/disactivateUser';
 import { StatusBadge } from '@/components/status-badge';
 import TableData from '@/components/Table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import TableData from '@/components/Table';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import withPermissions from '@/components/WithPermission';
 import { Users } from '@/db/schema';

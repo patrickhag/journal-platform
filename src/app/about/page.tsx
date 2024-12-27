@@ -1,4 +1,3 @@
-import Collections from '@/components/landingPage/collection';
 import Footer from '@/components/landingPage/footer';
 import Header from '@/components/landingPage/header';
 import LeftSideBar from '@/components/landingPage/leftSideBar';
