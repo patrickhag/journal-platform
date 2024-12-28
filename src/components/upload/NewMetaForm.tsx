@@ -1,10 +1,6 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  useParams,
-  useRouter,
-  useSearchParams,
-} from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import React, {
   FC,
   PropsWithChildren,
@@ -56,7 +52,7 @@ export const NewMetaForm: FC<
     });
 
     return () => {
-      currentForm?.removeEventListener('focusout', () => { });
+      currentForm?.removeEventListener('focusout', () => {});
     };
   }, [currentForm]);
   const saveMeta = formm.handleSubmit((data) => {

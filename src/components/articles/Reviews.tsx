@@ -52,8 +52,6 @@ const Reviews = async ({
             ))}
           </>
         )}
-        {/* TODO: -- */}
-        <Button>Add review</Button>
       </CardContent>
     </Card>
   );

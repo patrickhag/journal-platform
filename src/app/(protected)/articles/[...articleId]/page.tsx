@@ -110,8 +110,6 @@ async function page({
                 <p className="mt-1">{author[0].country}</p>
               </div>
             </div>
-            {/* TODO: -- */}
-            <Button>Update author info</Button>
           </CardContent>
         </Card>
         <Files articleId={articleId} role={currentUserRole || 'NORMAL_USER'} />

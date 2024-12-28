@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm';
 import { USER_ROLE } from '@/lib/roles';
 import { Button } from '../ui/button';
 import Link from 'next/link';
+import NewContibutorForm from '../Contibutor';
 
 export default async function Metadata({
   articleId,
@@ -95,8 +96,7 @@ export default async function Metadata({
                 </div>
               ))}
             </div>
-            {/* TODO: -- */}
-            <Button>Add new contributor</Button>
+            <NewContibutorForm autoSave />
           </CardContent>
         </Card>
       )}

@@ -25,13 +25,18 @@ import { Textarea } from '@/components/ui/textarea';
 import { COUNTRIES, SALUTATION } from '@/lib/consts';
 import { contributorFormSchema } from '@/schemas/upload';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { startTransition, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { safeParse, serialize } from 'zod-urlsearchparams';
+import addNewContributor from '@/actions/addNewContributor';
 
-export default function NewContibutorForm() {
+export default function NewContibutorForm({
+  autoSave,
+}: {
+  autoSave?: boolean;
+}) {
   const [modalOpen, setModalOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -56,7 +61,17 @@ export default function NewContibutorForm() {
     },
   });
 
+  const { articleId } = useParams();
+
   const onSubmit = (data: z.infer<typeof contributorFormSchema>) => {
+    if (autoSave) {
+      startTransition(async () => {
+        await addNewContributor({ data, articleId: articleId?.[0] });
+      });
+      form.reset();
+      setModalOpen(false);
+      return;
+    }
     const contributors = validation.data?.contributors || [];
     contributors.push(data);
     const serializedData = serialize({

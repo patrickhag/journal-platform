@@ -67,8 +67,6 @@ async function Files({
               </div>
             </div>
           ))}
-          {/* TODO: -- */}
-          <Button>Attach new file</Button>
         </CardContent>
       </Card>
     </>
