@@ -160,7 +160,7 @@ export const reviewers = pgTable('reviewers', {
   names: varchar('names', { length: 255 }).notNull(),
   affiliation: varchar('affiliation', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).notNull(),
-  phone: varchar('phone', { length: 20 }),
+  phone: varchar('phone', { length: 40 }),
   expertise: text('expertise').notNull(),
   acceptedInvitation: boolean('acceptedInvitation'),
   userId: text('userId')
@@ -233,6 +233,7 @@ export const notifications = pgTable('notifications', {
 
 export type TFinalSubmissions = typeof finalSubmissions.$inferInsert;
 export type TArticleSubmissions = typeof articleSubmissions.$inferSelect;
+export type ArticleSubmissions = typeof articleSubmissions.$inferInsert;
 export type TReviewers = typeof reviewers.$inferInsert;
 export type TContributors = typeof contributors.$inferInsert;
 export type TMetadata = typeof metadata.$inferInsert;
@@ -240,3 +241,4 @@ export type TFiles = typeof files.$inferInsert;
 export type TUsers = typeof users.$inferSelect;
 export type Users = typeof users.$inferInsert;
 export type TNotifications = typeof notifications.$inferSelect;
+export type Notifications = typeof notifications.$inferInsert;

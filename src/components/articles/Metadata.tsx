@@ -3,6 +3,8 @@ import { contributors, db, metadata } from '@/db/schema';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { eq } from 'drizzle-orm';
 import { USER_ROLE } from '@/lib/roles';
+import { Button } from '../ui/button';
+import Link from 'next/link';
 
 export default async function Metadata({
   articleId,
@@ -58,6 +60,9 @@ export default async function Metadata({
             </h3>
             <p className="mt-1">{children}</p>
           </div>
+          <Link href={`/meta/${articleId}`}>
+            <Button> Update meta</Button>
+          </Link>
         </CardContent>
       </Card>
       {contibutors.length > 0 && (
@@ -90,6 +95,8 @@ export default async function Metadata({
                 </div>
               ))}
             </div>
+            {/* TODO: -- */}
+            <Button>Add new contributor</Button>
           </CardContent>
         </Card>
       )}

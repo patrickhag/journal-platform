@@ -1,7 +1,17 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useRef } from 'react';
+import {
+  useParams,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
+import React, {
+  FC,
+  PropsWithChildren,
+  startTransition,
+  useEffect,
+  useRef,
+} from 'react';
 import { useForm } from 'react-hook-form';
 import ReactQuill from 'react-quill-new';
 import type { z } from 'zod';
@@ -17,9 +27,13 @@ import {
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { metadataSchema } from './ContributorsForm';
+import updateArticleMeta from '@/actions/updateArticleMeta';
 
-export const NewMetaForm = () => {
+export const NewMetaForm: FC<
+  { meta?: z.infer<typeof metadataSchema> } & PropsWithChildren
+> = ({ children, meta }) => {
   const searchParams = useSearchParams();
+  const parameters = useParams();
   const router = useRouter();
   const form = useRef<HTMLFormElement>(null);
   const metaValidation = safeParse({
@@ -29,10 +43,10 @@ export const NewMetaForm = () => {
   const formm = useForm<z.infer<typeof metadataSchema>>({
     resolver: zodResolver(metadataSchema),
     defaultValues: metaValidation.data || {
-      title: '',
-      prefix: '',
-      abstract: '',
-      subtitle: '',
+      title: meta?.title || '',
+      prefix: meta?.prefix || '',
+      abstract: meta?.abstract || '',
+      subtitle: meta?.subtitle || '',
     },
   });
   const currentForm = form.current;
@@ -42,13 +56,28 @@ export const NewMetaForm = () => {
     });
 
     return () => {
-      currentForm?.removeEventListener('focusout', () => {});
+      currentForm?.removeEventListener('focusout', () => { });
     };
   }, [currentForm]);
   const saveMeta = formm.handleSubmit((data) => {
     const meta = metadataSchema.safeParse(data);
     if (meta.error) return;
 
+    if (children) {
+      startTransition(async () => {
+        console.log(parameters.articleId?.[0]);
+        if (!parameters.articleId) return;
+        const res = await updateArticleMeta({
+          meta: data,
+          articleId: parameters?.articleId?.[0],
+        });
+        console.log(res);
+        if (res === undefined) {
+          return router.push(`/articles/${parameters.articleId?.[0]}`);
+        }
+      });
+      return;
+    }
     const serializedData = serialize({
       data,
       schema: metadataSchema,
@@ -141,6 +170,7 @@ export const NewMetaForm = () => {
             </FormItem>
           )}
         />
+        {children}
       </form>
     </Form>
   );
