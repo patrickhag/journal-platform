@@ -22,11 +22,7 @@ export default async function Layout({ children }: PropsWithChildren) {
   return (
     <SessionProvider basePath={BASE_PATH} session={session}>
       <Header notifications={notificationsData} />
-      <div className="flex bg-gray-100 min-h-screen">
-        <div className="flex-1 p-8">
-          <div className="container mx-auto">{children}</div>
-        </div>
-      </div>
+      <div className="container mx-auto">{children}</div>
     </SessionProvider>
   );
 }
