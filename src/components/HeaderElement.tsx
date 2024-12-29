@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import ShowNav from './ShowNav';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -14,20 +14,25 @@ import { FaTimes } from 'react-icons/fa';
 export const HeaderElement = ({
   notifications = [],
   name,
-  role
+  role,
 }: {
-  notifications: TNotifications[]; role: "NORMAL_USER" | "CHIEF_EDITOR" | "ADMIN"; name: string
+  notifications: TNotifications[];
+  role: 'NORMAL_USER' | 'CHIEF_EDITOR' | 'ADMIN';
+  name: string;
 }) => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <>
       <div className="flex items-center gap-8">
         <div className="lg:flex items-center gap-4">
-          <Button onClick={() => setIsOpen(!isOpen)} variant={'ghost'} className='block md:hidden'>
-            {isOpen ?
-              <FaTimes /> :
-              <Bars3Icon height={36} width={36} />}</Button>
-          <Link href="/" className='hidden md:block'>
+          <Button
+            onClick={() => setIsOpen(!isOpen)}
+            variant={'ghost'}
+            className="block md:hidden"
+          >
+            {isOpen ? <FaTimes /> : <Bars3Icon height={36} width={36} />}
+          </Button>
+          <Link href="/" className="hidden md:block">
             <Image
               src="/jaep-logo.jpg"
               alt="Logo"
@@ -42,7 +47,9 @@ export const HeaderElement = ({
             </h1>
           )}
         </div>
-        {(role === 'ADMIN' || role === 'CHIEF_EDITOR') && <ShowNav isOpen={isOpen} />}
+        {(role === 'ADMIN' || role === 'CHIEF_EDITOR') && (
+          <ShowNav isOpen={isOpen} />
+        )}
       </div>
       <div className="flex items-center gap-4">
         <NotificationsModal notifications={notifications} />
@@ -50,6 +57,5 @@ export const HeaderElement = ({
         <HeaderModal name={name} />
       </div>
     </>
-  )
-}
-
+  );
+};

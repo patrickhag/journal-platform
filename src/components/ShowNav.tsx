@@ -7,7 +7,12 @@ import { cn } from '@/lib/utils';
 export default function ShowNav({ isOpen = false }: { isOpen: boolean }) {
   const pathname = usePathname();
   return (
-    <nav className={cn("max-w-6xl bg-white absolute md:top-0 top-[60px] md:p-0 p-8 grid left-0 md:relative md:flex items-center gap-6", !isOpen ? 'hidden' : '')}>
+    <nav
+      className={cn(
+        'max-w-6xl bg-white absolute md:top-0 top-[60px] md:p-0 p-8 grid left-0 md:relative md:flex items-center gap-6',
+        !isOpen ? 'hidden' : ''
+      )}
+    >
       <Link
         href="/dashboard"
         className={cn(

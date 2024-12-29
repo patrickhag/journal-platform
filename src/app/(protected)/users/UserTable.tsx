@@ -61,7 +61,12 @@ const columns: ColumnDef<Users>[] = [
     header: 'Picture',
     cell: ({ row }) => (
       <Avatar className="h-16 w-16">
-        <AvatarImage src={row.getValue('avatar')} width={16} height={16} className='w-16 h-16 ' />
+        <AvatarImage
+          src={row.getValue('avatar')}
+          width={16}
+          height={16}
+          className="w-16 h-16 "
+        />
 
         <AvatarFallback className="bg-white text-xl font-bold text-gray-500">
           {(row.getValue('firstName') as string).at(0)}
