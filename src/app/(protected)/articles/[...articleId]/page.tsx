@@ -124,7 +124,7 @@ async function page({
                   ) : (
                     <p className="text-sm">Add new reviewers</p>
                   )}
-                  <AddReviewerModal autoSave />
+                  <AddReviewerModal autoSave typeOfPage="review" />
                 </div>
               </>
             ) : null}
@@ -139,7 +139,7 @@ async function page({
             ))}
           </CardContent>
         </Card>
-        <Reviews articleId={articleId} role={currentUserRole} />
+        <Reviews articleId={articleId} />
         <Publish
           role={currentUserRole}
           requiredPermissions={['PUBLISH_ARTICLES']}

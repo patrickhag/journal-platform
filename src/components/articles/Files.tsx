@@ -3,7 +3,7 @@ import { Button } from '../ui/button';
 import { eq } from 'drizzle-orm';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { FileText } from 'lucide-react';
+import { Download, FileText } from 'lucide-react';
 import ReviewModal from './Review';
 import withPermissions from '../WithPermission';
 import { USER_ROLES } from '@/lib/roles';
@@ -19,7 +19,7 @@ async function Files({
     .select()
     .from(files)
     .where(eq(files.articleId, articleId));
-  console.log(filesData);
+
   return (
     <>
       <Card>
@@ -43,7 +43,9 @@ async function Files({
               </div>
               <Button variant="secondary" size="sm">
                 <Link href={file.publicId} download>
-                  Download
+                  <span className="flex items-center">
+                    <Download className="mr-2 text-gray-600" /> Download
+                  </span>
                 </Link>
               </Button>
               <div className="flex space-x-1">
