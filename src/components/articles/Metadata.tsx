@@ -1,5 +1,5 @@
-import React, { PropsWithChildren } from 'react';
-import { contributors, db, metadata } from '@/db/schema';
+import React from 'react';
+import { articleSubmissions, contributors, db, metadata } from '@/db/schema';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { eq } from 'drizzle-orm';
 import { USER_ROLE } from '@/lib/roles';
@@ -9,8 +9,10 @@ import NewContibutorForm from '../Contibutor';
 
 export default async function Metadata({
   articleId,
-  children,
-}: { articleId: string; role: USER_ROLE } & PropsWithChildren) {
+}: {
+  articleId: string;
+  role: USER_ROLE;
+}) {
   const metas = await db
     .select()
     .from(metadata)
@@ -22,6 +24,16 @@ export default async function Metadata({
     .select()
     .from(contributors)
     .where(eq(contributors.articleId, articleId));
+
+  const comments = await db
+    .select({
+      commentsForEditor: articleSubmissions.commentsForEditor,
+    })
+    .from(articleSubmissions)
+    .where(eq(articleSubmissions.id, articleId))
+    .limit(1);
+
+  const comment = comments[0];
 
   if (!meta) return undefined;
 
@@ -59,11 +71,16 @@ export default async function Metadata({
             <h3 className="text-sm font-medium text-muted-foreground text-gray-600">
               Comments for the editor
             </h3>
-            <p className="mt-1">{children}</p>
+            <div
+              className="mt-1"
+              dangerouslySetInnerHTML={{ __html: comment.commentsForEditor }}
+            />
           </div>
-          <Link href={`/meta/${articleId}`}>
-            <Button> Update meta</Button>
-          </Link>
+          {/* <Link href={`/meta/${articleId}`}>
+            <Button className="mt-3 bg-slate-900 text-lime-50 hover:bg-slate-900">
+              Update article information
+            </Button>
+          </Link> */}
         </CardContent>
       </Card>
       {contibutors.length > 0 && (
@@ -89,14 +106,11 @@ export default async function Metadata({
                     <h3 className="text-sm font-medium text-muted-foreground">
                       Contributor&apos;s role
                     </h3>
-                    <p className="my-2">
-                      {c.role} {c.name},
-                    </p>
+                    <p className="my-2 uppercase">{c.role}</p>
                   </div>
                 </div>
               ))}
             </div>
-            <NewContibutorForm autoSave />
           </CardContent>
         </Card>
       )}

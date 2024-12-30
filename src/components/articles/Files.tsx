@@ -52,7 +52,7 @@ async function Files({
                   role={role}
                   fallback={<></>}
                 />
-                <Button
+                {/* <Button
                   variant="link"
                   className="text-blue-500 hover:text-blue-600"
                 >
@@ -63,7 +63,7 @@ async function Files({
                   className="text-red-500 hover:text-red-600"
                 >
                   Delete
-                </Button>
+                </Button> */}
               </div>
             </div>
           ))}

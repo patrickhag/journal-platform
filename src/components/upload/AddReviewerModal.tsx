@@ -88,9 +88,9 @@ export default function AddReviewerModal({ autoSave }: { autoSave?: boolean }) {
       <Button
         variant={'link'}
         onClick={() => setOpen(true)}
-        className="text-blue-500 hover:text-blue-600"
+        className="text-blue-500 hover:text-blue-600 underline"
       >
-        Add reviewer
+        Add a reviewer
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[500px]">

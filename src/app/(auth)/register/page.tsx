@@ -62,10 +62,10 @@ export default function Register() {
   });
 
   useEffect(() => {
-    if (prevState?.message === 'Registration successful') {
+    if (prevState?.message == 'Registration successful') {
       router.replace('/login');
     }
-    if (prevState?.message === 'Email already in use.') {
+    if (prevState?.message == 'Email already in use.') {
       setVisible(prevState.message);
     }
     const timeout = setTimeout(() => {

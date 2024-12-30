@@ -52,9 +52,9 @@ export default function ReviewModal() {
       <DialogTrigger asChild>
         <Button
           variant="link"
-          className="text-blue-500 hover:text-blue-600 px-0"
+          className="text-blue-500 hover:text-blue-600 px-0 underline"
         >
-          Write a review
+          Add a review
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
