@@ -139,7 +139,7 @@ async function page({
             ))}
           </CardContent>
         </Card>
-        <Reviews articleId={articleId} role={currentUserRole} />
+        <Reviews articleId={articleId} />
         <Publish
           role={currentUserRole}
           requiredPermissions={['PUBLISH_ARTICLES']}

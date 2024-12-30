@@ -14,7 +14,7 @@ export default async function Header({
   return (
     <header className="border-b bg-white sticky h-16 top-0 z-50">
       <div className="flex items-center justify-between h-full mx-3">
-        <HeaderElement notifications={notifications} role={role} name={name} />
+        <HeaderElement notifications={notifications} role={role!} name={name} />
       </div>
     </header>
   );
