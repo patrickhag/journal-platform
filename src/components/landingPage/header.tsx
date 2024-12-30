@@ -1,11 +1,16 @@
+'use client';
+
 import Image from 'next/image';
-import { auth } from '@/auth';
+import { usePathname } from 'next/navigation';
 import HeaderDropdown from './headerDropdown';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
-const Header = async () => {
-  const session = await auth();
+export default function Header() {
+  const { data: session } = useSession();
   const names = session?.user?.name?.split(' ')?.[1]?.substring(0, 1);
+
+  const pathname = usePathname();
 
   return (
     <>
@@ -27,16 +32,36 @@ const Header = async () => {
           Journal of African Epidemiology and Public Health
         </div>
         <nav className="flex gap-4 text-gray-700">
-          <Link href="/" className="hover:text-blue-500">
+          <Link
+            href="/"
+            className={`${
+              pathname === '/' ? 'text-blue-500' : 'hover:text-blue-500'
+            }`}
+          >
             Home
           </Link>
-          <Link href="#" className="hover:text-blue-500">
+          <Link
+            href="/about"
+            className={`${
+              pathname === '/about' ? 'text-blue-500' : 'hover:text-blue-500'
+            }`}
+          >
             About
           </Link>
-          <Link href="#" className="hover:text-blue-500">
+          <Link
+            href="/articles"
+            className={`${
+              pathname === '/articles' ? 'text-blue-500' : 'hover:text-blue-500'
+            }`}
+          >
             Articles
           </Link>
-          <Link href="#" className="hover:text-blue-500">
+          <Link
+            href="/authors"
+            className={`${
+              pathname === '/authors' ? 'text-blue-500' : 'hover:text-blue-500'
+            }`}
+          >
             Authors
           </Link>
           <Link href="#" className="hover:text-blue-500">
@@ -47,5 +72,4 @@ const Header = async () => {
       </header>
     </>
   );
-};
-export default Header;
+}

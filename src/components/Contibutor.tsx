@@ -40,12 +40,14 @@ export default function NewContibutorForm({
   const [modalOpen, setModalOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+
   const validation = safeParse({
     schema: z.object({
       contributors: z.array(contributorFormSchema),
     }),
     input: new URLSearchParams(searchParams.toString()),
   });
+
   const form = useForm<z.infer<typeof contributorFormSchema>>({
     resolver: zodResolver(contributorFormSchema),
     defaultValues: {

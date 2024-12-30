@@ -66,6 +66,7 @@ export const authOptions: NextAuthConfig = {
           id: u.id as string,
           randomKey: u.randomKey,
           role: u.role,
+          email: u.email,
         };
       }
       return token;
@@ -78,6 +79,7 @@ export const authOptions: NextAuthConfig = {
           id: params.token.id as string,
           randomKey: params.token.randomKey,
           role: params.token.role,
+          email: params.token.email,
         },
       };
     },

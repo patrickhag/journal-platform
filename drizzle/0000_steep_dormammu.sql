@@ -116,10 +116,11 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"firstName" text,
 	"lastName" text,
 	"affiliation" text,
-	"country" "countries",
+	"country" text NOT NULL,
 	"role" "role",
 	"email" text,
 	"emailVerified" timestamp,
+	"is_active" boolean DEFAULT true,
 	"password" text,
 	"avatar" text,
 	CONSTRAINT "user_email_unique" UNIQUE("email")

@@ -34,7 +34,7 @@ export async function authenticate(
       .where(eq(users.email, login?.data?.email as string))
       .limit(1);
     if (user[0].role === 'CHIEF_EDITOR' || user[0].role === 'ADMIN') {
-      redirect('/editor', RedirectType.replace);
+      redirect('/editor/articles', RedirectType.replace);
     } else {
       redirect('/submissions', RedirectType.replace);
     }

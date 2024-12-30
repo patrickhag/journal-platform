@@ -37,6 +37,7 @@ export const ROLE_PERMISSIONS: TPermission = {
     'VIEW_PUBLIC_ARTICLES',
     'VIEW_REVIEW', // Reviewers can view reviews
     'ARCHIVE_OWN_ARTICLE', // Reviewers can view reviews
+    'CREATE_REVIEW',
   ],
   CHIEF_EDITOR: [
     'VIEW_PUBLIC_ARTICLES',
@@ -66,7 +67,6 @@ export const ROLE_PERMISSIONS: TPermission = {
     'DELETE_CONTRIBUTOR', // Admin can delete contributors
     'INVITE_CONTRIBUTOR', // Admin can invite contributors
     'MANAGE_REVIEWERS', // Admin can manage all reviews (CRUD for all reviews)
-    'CREATE_REVIEW', // Admin can create any review
     'UPDATE_REVIEW', // Admin can update any review
     'DELETE_REVIEW', // Admin can delete any review
   ],

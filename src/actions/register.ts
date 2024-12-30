@@ -8,7 +8,8 @@ import { eq } from 'drizzle-orm';
 import { AuthError } from 'next-auth';
 import type z from 'zod';
 import jwt from 'jsonwebtoken';
-import { sendVerifyToken } from '@/lib/emailTransporter';
+import { redirect, RedirectType } from 'next/navigation';
+
 export async function register(
   _prevState:
     | { message: string; data?: Partial<z.infer<typeof registerSchema>> }
@@ -36,10 +37,8 @@ export async function register(
       password: hashedPassword,
     };
 
-    console.log('passedUser>>>', user);
-
     const createdUser = await db.insert(users).values(user).returning();
-    const token = jwt.sign(
+    jwt.sign(
       { email: createdUser[0].email, id: createdUser[0].id },
       process.env.AUTH_SECRET!,
       {
@@ -48,29 +47,16 @@ export async function register(
     );
     if (!createdUser[0].email) return;
 
-    console.log(createdUser);
-
-    await sendVerifyToken({ email: createdUser[0].email, token: token });
-
     await signIn('credentials', {
       email: register.data.email,
       password: register.data.password,
     });
 
-    // return { message: 'Registration successful', data: register.data };
+    return { message: 'Registration successful', data: register.data };
   } catch (error) {
     if (error instanceof Error) {
       console.log(error.message);
     }
-    // if (error instanceof AuthError) {
-    //   switch (error.type) {
-    //     case 'CredentialsSignin':
-    //       return { message: 'Invalid credentials.' };
-    //     default:
-    //       return { message: 'Something went wrong during registration.' };
-    //   }
-    // }
-    // return { message: 'An unexpected error occurred during registration.' };
 
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -81,15 +67,15 @@ export async function register(
       }
     }
 
-    //   const user = await db
-    //     .select()
-    //     .from(users)
-    //     .where(eq(users.email, register.data.email))
-    //     .limit(1);
-    //   if (user[0].role === 'CHIEF_EDITOR' || user[0].role === 'ADMIN') {
-    //     redirect('/editor', RedirectType.replace);
-    //   } else {
-    //     redirect('/submissions', RedirectType.replace);
-    //   }
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, register.data.email))
+      .limit(1);
+    if (user[0].role === 'CHIEF_EDITOR' || user[0].role === 'ADMIN') {
+      redirect('/editor', RedirectType.replace);
+    } else {
+      redirect('/submissions', RedirectType.replace);
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { db, metadata, users } from '@/db/schema';
+import { db, metadata } from '@/db/schema';
 import {
   Popover,
   PopoverContent,
@@ -41,11 +41,7 @@ export default async function Reviewer({
   if (!session?.user?.id) return null;
   // get the user role from db
 
-  const currentUserRole = await db
-    .select({ role: users.role })
-    .from(users)
-    .where(eq(users.id, session.user.id))
-    .limit(1);
+  const currentUserRole = session?.user?.role;
 
   return (
     <>
@@ -96,8 +92,7 @@ export default async function Reviewer({
         <h4 className="text-sm text-muted-foreground mb-2">Expertise</h4>
         <p className="text-base">{expertise}</p>
       </div>
-      {(currentUserRole[0].role === 'CHIEF_EDITOR' ||
-        currentUserRole[0].role === 'ADMIN') && (
+      {(currentUserRole === 'CHIEF_EDITOR' || currentUserRole === 'ADMIN') && (
         <Popover>
           <PopoverTrigger className="w-full md:w-auto bg-slate-900 text-lime-50 px-3 py-1 rounded-md">
             Reach out

@@ -6,7 +6,6 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -20,12 +19,15 @@ import { filesSchema } from '@/schemas/reviewer';
 import Spinner from '../Spinner';
 import { submitReviewAction } from '@/actions/submitReviewAction';
 import { ARTICLE_STATUS } from '@/lib/consts';
+
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
+
 export default function ReviewModal() {
   const [open, setOpen] = useState(false);
   const [, formAction, isPending] = useActionState(
@@ -52,9 +54,9 @@ export default function ReviewModal() {
       <DialogTrigger asChild>
         <Button
           variant="link"
-          className="text-blue-500 hover:text-blue-600 px-0"
+          className="text-blue-500 hover:text-blue-600 px-0 underline"
         >
-          Write a review
+          Add a review
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
@@ -62,9 +64,6 @@ export default function ReviewModal() {
           <DialogTitle className="text-2xl font-semibold text-[#1a237e]">
             Write a review
           </DialogTitle>
-          <DialogDescription className="text-gray-500">
-            Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum
-          </DialogDescription>
         </DialogHeader>
         <Uploadbanner fileFormats={fileFormats} />
         <FileList />
@@ -76,7 +75,7 @@ export default function ReviewModal() {
             <Textarea
               id="message"
               name="message"
-              placeholder="What is your update"
+              placeholder="What's your thoughts on this article?"
               className="min-h-[150px] resize-none p-4 text-gray-500 bg-white rounded-lg"
             />
           </div>
@@ -101,26 +100,29 @@ export default function ReviewModal() {
             name="status"
             defaultValue={status || reviewStatus[0]}
           />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button>{status || 'Select status'}</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {reviewStatus.map((r) => (
-                <DropdownMenuItem
-                  key={r}
-                  onClick={() => {
-                    setStatus(r);
-                  }}
-                >
-                  {r}
-                </DropdownMenuItem>
+          <Select onValueChange={(value) => setStatus(value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select article status" />
+            </SelectTrigger>
+            <SelectContent>
+              {reviewStatus.map((status) => (
+                <SelectItem key={status} value={status}>
+                  {status}
+                </SelectItem>
               ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </SelectContent>
+          </Select>
+
+          {/* 
+          
+           
+          */}
 
           <div className="space-y-3">
-            <Button disabled={isPending} className="bg-[#626EEF] block w-full">
+            <Button
+              disabled={isPending}
+              className="bg-indigo-500 hover:bg-indigo-600 block w-full"
+            >
               Submit {isPending && <Spinner />}
             </Button>
           </div>

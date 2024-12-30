@@ -1,5 +1,5 @@
 {
-  "id": "6e993907-259a-4df5-9214-9c536175b12f",
+  "id": "1015f996-f3ec-42c3-9f43-4fe8468a012a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -769,10 +769,9 @@
         },
         "country": {
           "name": "country",
-          "type": "countries",
-          "typeSchema": "public",
+          "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "role": {
           "name": "role",
@@ -792,6 +791,13 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
         },
         "password": {
           "name": "password",

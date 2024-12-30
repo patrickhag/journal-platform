@@ -21,40 +21,23 @@ export default async function AboutPage() {
                     About JAEPH
                   </h1>
                   <p className="my-2">
-                    The Journal of African Epidemiology and Public Health is a
-                    leading platform dedicated to advancing knowledge and
-                    innovation in the fields of epidemiology and public health
-                    across Africa. Our mission is to address health disparities
-                    and promote health equity by publishing evidence-based
-                    research that informs effective public health interventions,
-                    policy development, and healthcare systems improvement. We
-                    are committed to showcasing studies on infectious and
-                    chronic diseases, environmental health, and preventive
-                    medicine that resonate with the unique challenges and
-                    opportunities in African contexts.
+                    The Journal of African Epidemiology and Public Health
+                    focuses on improving health across Africa by sharing
+                    research on important public health issues. We publish
+                    studies on topics like infectious diseases, chronic
+                    illnesses, environmental health, and disease prevention. Our
+                    goal is to provide knowledge that helps create effective
+                    health policies, improve healthcare systems, and promote
+                    health equity across communities.
                   </p>
                   <p className="my-2">
-                    Through interdisciplinary and collaborative approaches, the
-                    journal fosters dialogue among researchers, policymakers,
-                    and practitioners across the continent and beyond. By
-                    promoting translational research and sustainable health
-                    solutions, we aim to bridge the gap between science and
-                    practice, ensuring that the latest advancements contribute
-                    to meaningful health outcomes at the community and
-                    population levels. Our focus includes disease surveillance,
-                    biostatistics, and global health perspectives, with an
-                    emphasis on addressing the social determinants of health.
-                  </p>
-                  <p className="my-2">
-                    As a catalyst for regional collaboration and global
-                    partnerships, the Journal of African Epidemiology and Public
-                    Health is dedicated to knowledge dissemination and capacity
-                    building. By supporting innovative and multisectoral
-                    approaches to healthcare, the journal serves as a vital
-                    resource for advancing health equity and shaping resilient
-                    healthcare systems across Africa and the world. Join us in
-                    our mission to create lasting impact through impactful
-                    research and dialogue.
+                    We bring together researchers, policymakers, and health
+                    professionals to tackle challenges and find sustainable
+                    health solutions. By highlighting innovative approaches and
+                    fostering collaboration within Africa and beyond, we aim to
+                    support better health outcomes for individuals and
+                    populations. Our journal is a platform for sharing impactful
+                    research that makes a real difference in public health.
                   </p>
                 </div>
               </div>

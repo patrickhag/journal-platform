@@ -50,8 +50,6 @@ async function page({
 
   const currentUserRole = session?.user?.role;
 
-  console.log('currentUserRole>>>', currentUserRole);
-
   const author = await db
     .select()
     .from(users)
@@ -68,12 +66,7 @@ async function page({
       <div className="container mx-auto p-6">
         <GoBackButton />
 
-        <Metadata articleId={articleId} role={currentUserRole!}>
-          <div
-            className="space-y-4"
-            dangerouslySetInnerHTML={{ __html: article.commentsForEditor }}
-          />
-        </Metadata>
+        <Metadata articleId={articleId} role={currentUserRole!} />
 
         <Card className="my-3">
           <CardHeader>
@@ -112,28 +105,29 @@ async function page({
             </div>
           </CardContent>
         </Card>
-        <Files articleId={articleId} role={currentUserRole || 'NORMAL_USER'} />
-        <Reviews
-          articleId={articleId}
-          role={currentUserRole || 'NORMAL_USER'}
-        />
+        <Files articleId={articleId} role={currentUserRole} />
         <Card className="my-3">
           <CardHeader>
             <CardTitle>Reviewers</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex justify-between">
-              {reviewrs.length === 0 ? (
-                <>
-                  <p className="text-sm">
-                    This user has not proposed any reviewer. Add one instead!
-                  </p>
-                </>
-              ) : (
-                <p className="text-sm">Add new reviewers</p>
-              )}
-              <AddReviewerModal autoSave />
-            </div>
+            {currentUserRole === 'CHIEF_EDITOR' ? (
+              <>
+                <div className="flex justify-between">
+                  {reviewrs.length === 0 ? (
+                    <>
+                      <p className="text-sm">
+                        This user has not proposed any reviewer. Add one
+                        instead!
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-sm">Add new reviewers</p>
+                  )}
+                  <AddReviewerModal autoSave />
+                </div>
+              </>
+            ) : null}
             <Separator />
             {reviewrs.map((r, index) => (
               <Reviewer
@@ -145,6 +139,7 @@ async function page({
             ))}
           </CardContent>
         </Card>
+        <Reviews articleId={articleId} role={currentUserRole} />
         <Publish
           role={currentUserRole}
           requiredPermissions={['PUBLISH_ARTICLES']}
@@ -180,7 +175,7 @@ const PublishArticle = ({
         revalidatePath('/articles/' + articleId);
       }}
     >
-      <Button className="w-4/5 mx-auto bg-green-600 mt-3">
+      <Button className="w-4/5 mx-auto bg-green-500 hover:bg-green-600 mt-3">
         {status === 'Published' ? 'Unpublish' : 'Publish'} this article{' '}
       </Button>
     </form>

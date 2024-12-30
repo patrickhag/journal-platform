@@ -1,10 +1,10 @@
 'use client';
 
 import { FC, useActionState } from 'react';
-import Spinner from '../Spinner';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { reachOut } from '@/actions/reachOut';
+import Loader from '../Loader';
 
 export const ReachOut: FC<{
   reviewer: string;
@@ -66,7 +66,9 @@ export const ReachOut: FC<{
         readOnly
       />
       <Textarea placeholder="Message" name="message" />
-      <Button className="mt-2">Send {isPending && <Spinner />}</Button>
+      <Button className="mt-2" disabled={isPending}>
+        {isPending ? <Loader text="Sending..." /> : 'Send'}
+      </Button>
     </form>
   );
 };
