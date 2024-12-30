@@ -29,7 +29,13 @@ import { addReviewerAction } from '@/actions/addReviewer';
 
 type ReviewerFormValues = z.infer<typeof reviewerSchema>;
 
-export default function AddReviewerModal({ autoSave }: { autoSave?: boolean }) {
+export default function AddReviewerModal({
+  typeOfPage,
+  autoSave,
+}: {
+  typeOfPage?: string;
+  autoSave?: boolean;
+}) {
   const form = useForm<ReviewerFormValues>({
     resolver: zodResolver(reviewerSchema),
     defaultValues: {
@@ -81,14 +87,16 @@ export default function AddReviewerModal({ autoSave }: { autoSave?: boolean }) {
     setOpen(false);
   }
 
-  console.log(open);
-
   return (
     <>
       <Button
-        variant={'link'}
+        variant={typeOfPage === 'review' ? 'link' : 'outline'}
+        className={
+          typeOfPage === 'review'
+            ? 'text-blue-500 hover:text-blue-600 underline'
+            : ''
+        }
         onClick={() => setOpen(true)}
-        className="text-blue-500 hover:text-blue-600 underline"
       >
         Add a reviewer
       </Button>
@@ -156,9 +164,7 @@ export default function AddReviewerModal({ autoSave }: { autoSave?: boolean }) {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      Phone number <span className="text-red-500">*</span>
-                    </FormLabel>
+                    <FormLabel>Phone number</FormLabel>
                     <FormControl>
                       <Input placeholder="Phone number" {...field} />
                     </FormControl>

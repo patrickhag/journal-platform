@@ -1,8 +1,5 @@
 import { auth } from '@/auth';
-import { db, TNotifications } from '@/db/schema';
-import { eq } from 'drizzle-orm';
-import { users } from '@/db/schema';
-import { USER_ROLE } from '@/lib/roles';
+import { TNotifications } from '@/db/schema';
 import { HeaderElement } from './HeaderElement';
 export default async function Header({
   notifications = [],

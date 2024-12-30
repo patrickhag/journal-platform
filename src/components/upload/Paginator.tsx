@@ -92,12 +92,14 @@ export const Paginator: FC<
 
       <div className="flex justify-between gap-4 items-center">
         {backLink && (
-          <Link
-            href={query ? { pathname: backLink, query } : backLink}
-            className="px-4 py-1 ring-2 ring-gray-100 bg-white rounded-md"
-          >
-            Go back
-          </Link>
+          <Button variant={'outline'}>
+            <Link
+              href={query ? { pathname: backLink, query } : backLink}
+              // className="px-4 py-1 ring-2 ring-gray-100 bg-white rounded-md"
+            >
+              Go back
+            </Link>
+          </Button>
         )}
         {children}
         {nextLink && (
@@ -106,7 +108,7 @@ export const Paginator: FC<
             href={isAllowedToNext() ? { pathname: nextLink, query } : '#'}
             className={cn(
               isAllowedToNext() ? '' : 'cursor-not-allowed',
-              'px-4 py-1 ring-2 ring-gray-100 bg-[#626EEF] rounded-md text-white'
+              'px-4 py-1 ring-2 ring-gray-100 bg-indigo-500 hover:bg-indigo-600 rounded-md text-white'
             )}
           >
             Continue

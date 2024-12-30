@@ -31,9 +31,6 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { StatusBadge } from './status-badge';
 import Link from 'next/link';
-import { Label } from '@/components/ui/label';
-
-import { Checkbox } from '@/components/ui/checkbox';
 
 type Article = {
   id: string | null;
@@ -102,8 +99,6 @@ interface ArticlesTableProps {
 export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
-
-  [...new Set(data.map((articles) => articles.status))];
 
   const table = useReactTable({
     data,

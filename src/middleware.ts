@@ -29,10 +29,10 @@ export default auth((req) => {
   if (!(isLoggedIn || isPublicRoute)) {
     return Response.redirect(new URL(`/`, nextUrl.origin));
   }
-  if (!isPublicRoute)
-    if (!req.auth?.user?.email) {
-      return Response.redirect(new URL(`/`, nextUrl.origin));
-    }
+  // if (!isPublicRoute)
+  //   if (!req.auth?.user?.email) {
+  //     return Response.redirect(new URL(`/`, nextUrl.origin));
+  //   }
   return undefined;
 });
 

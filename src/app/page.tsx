@@ -3,7 +3,7 @@ import Footer from '@/components/landingPage/footer';
 import Header from '@/components/landingPage/header';
 import LeftSideBar from '@/components/landingPage/leftSideBar';
 import RightSideBar from '@/components/landingPage/rightSideBar';
-import { main } from '@/db/seed';
+// import { main } from '@/db/seed';
 
 export default async function Home() {
   // await main();

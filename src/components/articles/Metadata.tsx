@@ -3,9 +3,6 @@ import { articleSubmissions, contributors, db, metadata } from '@/db/schema';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { eq } from 'drizzle-orm';
 import { USER_ROLE } from '@/lib/roles';
-import { Button } from '../ui/button';
-import Link from 'next/link';
-import NewContibutorForm from '../Contibutor';
 
 export default async function Metadata({
   articleId,

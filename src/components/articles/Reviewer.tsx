@@ -1,4 +1,4 @@
-import { db, metadata, users } from '@/db/schema';
+import { db, metadata } from '@/db/schema';
 import {
   Popover,
   PopoverContent,
