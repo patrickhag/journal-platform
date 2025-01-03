@@ -42,7 +42,7 @@
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.468.0",
     "mailgen": "^2.0.28",
-    "next": "15.1.0",
+    "next": "15.1.2",
     "next-auth": "beta",
     "next-cloudinary": "^6.16.0",
     "next-themes": "^0.4.4",
