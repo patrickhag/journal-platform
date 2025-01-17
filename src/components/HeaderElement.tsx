@@ -17,7 +17,7 @@ export const HeaderElement = ({
   role,
 }: {
   notifications: TNotifications[];
-  role: 'NORMAL_USER' | 'CHIEF_EDITOR' | 'ADMIN';
+  role?: 'NORMAL_USER' | 'CHIEF_EDITOR' | 'ADMIN' | 'REVIEWER';
   name: string;
 }) => {
   const [isOpen, setIsOpen] = useState(false);

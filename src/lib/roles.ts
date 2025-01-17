@@ -1,7 +1,7 @@
 export const USER_ROLES = [
   'NORMAL_USER',
   'CHIEF_EDITOR',
-  // "REVIEWER",
+  'REVIEWER',
   'ADMIN',
 ] as const;
 export type USER_ROLE = (typeof USER_ROLES)[number];
@@ -37,7 +37,6 @@ export const ROLE_PERMISSIONS: TPermission = {
     'VIEW_PUBLIC_ARTICLES',
     'VIEW_REVIEW', // Reviewers can view reviews
     'ARCHIVE_OWN_ARTICLE', // Reviewers can view reviews
-    'CREATE_REVIEW',
   ],
   CHIEF_EDITOR: [
     'VIEW_PUBLIC_ARTICLES',
@@ -47,7 +46,6 @@ export const ROLE_PERMISSIONS: TPermission = {
     'UPDATE_JOURNAL', // Editors can update journal content
     'DELETE_JOURNAL', // Editors can delete journals (maybe their own?)
     'MANAGE_REVIEWERS', // Editors can manage reviews (CRUD)
-    'CREATE_REVIEW', // Editors can create new reviews
     'UPDATE_REVIEW', // Editors can update reviews
     'DELETE_REVIEW', // Editors can delete reviews
     'PUBLISH_ARTICLES', // Editors can publish articles
@@ -69,6 +67,15 @@ export const ROLE_PERMISSIONS: TPermission = {
     'MANAGE_REVIEWERS', // Admin can manage all reviews (CRUD for all reviews)
     'UPDATE_REVIEW', // Admin can update any review
     'DELETE_REVIEW', // Admin can delete any review
+  ],
+  REVIEWER: [
+    'VIEW_PUBLIC_ARTICLES',
+    'CREATE_REVIEW',
+    'VIEW_REVIEW',
+    'ARCHIVE_OWN_ARTICLE',
+    'CREATE_ARTICLE',
+    'EDIT_OWN_ARTICLES',
+    'DELETE_OWN_ARTICLES',
   ],
 };
 

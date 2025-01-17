@@ -24,8 +24,6 @@ export const Recents = async () => {
     .where(eq(articleSubmissions.articleStatus, 'Published'))
     .limit(10);
 
-  console.log(articles);
-
   return (
     <div>
       <h2 className="text-xl font-bold mb-4" style={{ color: '#1A237E' }}>

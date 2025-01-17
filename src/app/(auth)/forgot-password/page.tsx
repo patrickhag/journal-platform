@@ -1,15 +1,21 @@
 'use client';
 
 import { resetPassword } from '@/actions/resetPassword';
+import Loader from '@/components/Loader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+  EyeIcon,
+} from '@heroicons/react/24/outline';
+import { EyeClosedIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useActionState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 
 export default function Login() {
   const [errorMessage, formAction, isPending] = useActionState(
@@ -17,7 +23,20 @@ export default function Login() {
     undefined
   );
 
+  const [visible, setVisible] = useState<boolean>(false);
+  const [passwordType, setPasswordType] = useState<string>('password');
+
   const params = useSearchParams();
+
+  useEffect(() => {
+    if (params.get('msg') || errorMessage) {
+      setVisible(true);
+    }
+    const timeout = setTimeout(() => {
+      setVisible(false);
+    }, 5000);
+    return () => clearTimeout(timeout);
+  }, [errorMessage]);
 
   return (
     <Card className="w-full max-w-lg mx-auto p-4 mt-32">
@@ -31,15 +50,26 @@ export default function Login() {
             className="mx-auto"
           />
         </div>
-        <h2 className="text-2xl font-semibold">Request password reset</h2>
-        {(params.get('msg') || errorMessage) && (
+        <h2 className="text-2xl font-semibold">Reset your password</h2>
+
+        {visible && (
           <div
-            className="flex p-4 items-end space-x-1 justify-center bg-red-100 rounded-md"
+            className={`flex p-4 items-end space-x-1 justify-center bg-red-100 rounded-md ${
+              errorMessage === 'Success' ? 'bg-green-100' : 'bg-red-100'
+            }`}
             aria-live="polite"
             aria-atomic="true"
           >
-            <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-            <p className="text-sm text-red-500">
+            {errorMessage === 'Success' ? (
+              <CheckCircleIcon className="h-5 w-5 text-green-500" />
+            ) : (
+              <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+            )}
+            <p
+              className={`text-sm ${
+                errorMessage === 'Success' ? 'text-green-500' : 'text-red-500'
+              }`}
+            >
               {params.get('msg') || errorMessage}
             </p>
           </div>
@@ -60,21 +90,47 @@ export default function Login() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">New password</Label>
-              <Input
-                id="password"
-                placeholder="enter new password..."
-                type="password"
-                name="password"
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  placeholder="enter new password..."
+                  type={passwordType}
+                  name="password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="-translate-x-2 absolute right-0 top-[50%] -translate-y-[50%]"
+                  onClick={() =>
+                    setPasswordType(
+                      passwordType === 'password' ? 'text' : 'password'
+                    )
+                  }
+                >
+                  {passwordType === 'password' ? (
+                    <EyeIcon width={18} height={18} className="text-gray-600" />
+                  ) : (
+                    <EyeClosedIcon
+                      width={18}
+                      height={24}
+                      className="text-gray-600"
+                    />
+                  )}
+                </button>
+              </div>
             </div>
 
             <Button
               className="w-full bg-gray-800 hover:bg-gray-700 text-white"
               type="submit"
+              disabled={isPending}
               aria-disabled={isPending}
             >
-              Reset password
+              {isPending ? (
+                <Loader text="Resetting password..." />
+              ) : (
+                'Sending reset link'
+              )}
             </Button>
           </div>
         </form>

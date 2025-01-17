@@ -35,10 +35,11 @@ export async function resetPassword(
       password: hashedPassword,
     });
     await sendPasswordResetEmail({
-      subject: 'reset your email',
+      subject: 'Password Change Confirmation for JAEPH',
       toEmail: login.data.email,
       url: `${process.env
         .NEXT_PUBLIC_FRONTEND_URL!}/api/auth/reset-password?id=${token}`,
+      name: user[0].firstName!,
     });
 
     return 'Success';

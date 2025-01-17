@@ -20,12 +20,14 @@ export const sendPasswordResetEmail = async ({
   subject,
   toEmail,
   url,
+  name,
 }: {
   toEmail: string;
   url: string;
   subject: string;
+  name: string;
 }) => {
-  const emailHtml = await render(<EmailPasswordReset url={url} />);
+  const emailHtml = await render(<EmailPasswordReset url={url} name={name} />);
   const options = {
     from: process.env.EMAIL_USER,
     to: toEmail,

@@ -124,7 +124,7 @@ async function page({
                   ) : (
                     <p className="text-sm">Add new reviewers</p>
                   )}
-                  <AddReviewerModal autoSave />
+                  <AddReviewerModal typeOfPage="review" autoSave />
                 </div>
               </>
             ) : null}

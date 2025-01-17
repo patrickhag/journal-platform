@@ -18,7 +18,7 @@ export default function HeaderModal({ name }: { name: string }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer">
-          <AvatarFallback>{name}</AvatarFallback>
+          <AvatarFallback className="lowercase">{name}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

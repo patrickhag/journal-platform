@@ -63,7 +63,6 @@ export function ArticleSection({
             <DropdownMenuItem>
               <Link href={a.fileURI || '#'}>Download PDF</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>Share</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </CardContent>

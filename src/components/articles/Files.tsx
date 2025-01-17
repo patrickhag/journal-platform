@@ -19,7 +19,7 @@ async function Files({
     .select()
     .from(files)
     .where(eq(files.articleId, articleId));
-  console.log(filesData);
+
   return (
     <>
       <Card>
@@ -32,7 +32,7 @@ async function Files({
               key={file.id}
               className="flex items-center justify-between p-2 border rounded-lg"
             >
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center align-end">
                 <FileText className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="font-medium">{file.originalName}</p>
@@ -46,13 +46,14 @@ async function Files({
                   Download
                 </Link>
               </Button>
-              <div className="flex space-x-1">
-                <UlterFile
-                  requiredPermissions={['CREATE_REVIEW']}
-                  role={role}
-                  fallback={<></>}
-                />
-                {/* <Button
+
+              {/* <div className="flex space-x-1"> */}
+              <UlterFile
+                requiredPermissions={['CREATE_REVIEW']}
+                role={role}
+                fallback={<></>}
+              />
+              {/* <Button
                   variant="link"
                   className="text-blue-500 hover:text-blue-600"
                 >
@@ -64,7 +65,7 @@ async function Files({
                 >
                   Delete
                 </Button> */}
-              </div>
+              {/* </div> */}
             </div>
           ))}
         </CardContent>
