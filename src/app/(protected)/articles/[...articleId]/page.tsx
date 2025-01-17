@@ -36,14 +36,13 @@ async function page({
         );
     }
   }
-  const articles = await db
+  const foundArticle = await db
     .select()
     .from(articleSubmissions)
     .where(eq(articleSubmissions.id, articleId))
     .limit(1);
-  console.log(articles);
-  if (articles.length <= 0) return <h1>Article Not Found</h1>;
-  const article = articles[0];
+
+  const article = foundArticle[0];
   const session = await auth();
   const currentUser = session?.user;
   if (!currentUser) return <h1>Not authenticated</h1>;
@@ -53,7 +52,7 @@ async function page({
   const author = await db
     .select()
     .from(users)
-    .where(eq(users.id, articles[0].userId))
+    .where(eq(users.id, article.userId))
     .limit(1);
 
   const reviewrs = await db
@@ -170,6 +169,7 @@ const PublishArticle = ({
           .update(articleSubmissions)
           .set({
             articleStatus: status === 'Published' ? 'Submitted' : 'Published',
+            updatedAt: new Date().toISOString(),
           })
           .where(eq(articleSubmissions.id, articleId));
         revalidatePath('/articles/' + articleId);

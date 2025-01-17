@@ -1,15 +1,6 @@
-import { Button, Html, Tailwind } from '@react-email/components';
+import { Button, Tailwind } from '@react-email/components';
 import type * as React from 'react';
-import {
-  Row,
-  Hr,
-  Section,
-  Img,
-  Heading,
-  Text,
-  Link,
-} from '@react-email/components';
-import { title } from 'process';
+import { Section, Text, Container, Row, Column } from '@react-email/components';
 
 export const SendInvitation: React.FC<{
   reviewer: string;
@@ -25,92 +16,55 @@ export const SendInvitation: React.FC<{
     avatar: string;
   };
 }> = (props) => {
-  const { article, reviewer, author } = props;
+  const { article, reviewer } = props;
   return (
-    <Tailwind
-      config={{
-        theme: {
-          extend: {
-            colors: {
-              brand: '#007291',
-            },
-          },
-        },
-      }}
-    >
-      <Html lang="en">
-        Hi {reviewer}
-        <Section className="my-[16px]">
-          <Text className="text-[16px] leading-[24px] text-gray-500">
-            You have been invited to review the following article:
+    <Tailwind>
+      <Container className="bg-white border border-gray-200 max-w-xl mx-auto my-8 p-6 text-center">
+        <Section className="text-center py-4 border-b bg-gray-100 font-semibold text-gray-600">
+          <Text className="text-xl font-semibold text-gray-800">
+            Journal of African Epidemiology and Public Health
           </Text>
-
-          <Section className="mt-[32px] text-center">
-            <Text className="my-[16px] text-[18px] font-semibold leading-[28px] text-indigo-600">
-              {title}
-            </Text>
-            <Text className="m-0 mt-[8px] text-[22px]  leading-[36px] text-gray-900">
-              {article.subTitle}
-            </Text>
-            <Text className="text-[16px] leading-[24px] text-gray-500">
-              {article.content}
-            </Text>
-            <section className="grid grid-cols-2 gap-4">
-              <Button
-                className="mt-[16px] rounded-[8px] bg-indigo-600 px-[40px] py-[12px] font-semibold text-white"
-                href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/articles/${article.article}?accept_invite=1`}
-              >
-                Accept invitation
-              </Button>
-              <Button
-                className="mt-[16px] rounded-[8px] bg-indigo-400 px-[40px] py-[12px] font-semibold text-white"
-                href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/articles/${article.article}?accept_invite=0`}
-              >
-                Reject invitation
-              </Button>
-            </section>
-          </Section>
         </Section>
-        <Row>
-          <Hr className="my-[16px] !border-gray-300" />
-          <Section className="mt-[5px] inline-block max-h-[48px] max-w-[48px] text-left">
-            <Img
-              alt={author.name}
-              className="block h-[48px] w-[48px] rounded-full object-cover object-center"
-              height={48}
-              src={author.avatar}
-              width={48}
-            />
-          </Section>
-          <Section className="ml-[18px] inline-block max-w-[120px] text-left align-top">
-            <Heading
-              as="h3"
-              className="m-[0px] text-[14px] font-medium leading-[20px] text-gray-800"
-            >
-              {author.name}
-            </Heading>
-            <Text className="m-[0px] text-[12px] font-medium leading-[14px] text-gray-500">
-              {author.role}
-            </Text>
-            <Section className="mt-[4px]">
-              <Link className="inline-flex h-[12px] w-[12px]" href="#">
-                <Img
-                  alt="X"
-                  src="https://react.email/static/x-icon.png"
-                  style={{ height: '12px', width: '12px' }}
-                />
-              </Link>
-              <Link className="ml-[8px] inline-flex h-[12px] w-[12px]" href="#">
-                <Img
-                  alt="LinkedIn"
-                  src="https://react.email/static/in-icon.png"
-                  style={{ height: '12px', width: '12px' }}
-                />
-              </Link>
-            </Section>
-          </Section>
-        </Row>
-      </Html>
+        <Section className="px-6 py-4">
+          <Text className="text-lg font-medium text-gray-800">
+            Hi, <span className="font-semibold">{reviewer}</span>
+          </Text>
+          <Text className="text-gray-700 my-4">
+            You have received this email because JAEPH editors are proposing you
+            to review the manuscript titled{' '}
+            <span className="font-semibold">“{article.title}”</span>.
+          </Text>
+          <Text className="text-gray-700 my-4">
+            Editor-in-chief has left a message{' '}
+            <span className="font-semibold">&quot;{article.content}&quot;</span>
+          </Text>
+          <Row>
+            <Column align="center">
+              <Row>
+                <td align="center" className="w-1/2 pr-[16px]" colSpan={1}>
+                  <Button
+                    className="box-border w-full rounded-[8px] bg-indigo-600 px-[20px] py-[12px] text-center font-semibold text-white"
+                    href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/articles/${article.article}?accept_invite=1`}
+                  >
+                    Accept invitation
+                  </Button>
+                </td>
+                <td align="center" className="w-1/2 pl-[16px]" colSpan={1}>
+                  <Button
+                    className="box-border w-full rounded-[8px] border border-solid border-gray-200 bg-red-500 px-[20px] py-[12px] text-center font-semibold text-white"
+                    href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/articles/${article.article}?accept_invite=0`}
+                  >
+                    Reject invitation
+                  </Button>
+                </td>
+              </Row>
+            </Column>
+          </Row>
+        </Section>
+        <Section className="bg-gray-100 text-center py-4 text-sm font-semibold text-gray-600">
+          <Text>© 2025 JAEPH. All rights reserved.</Text>
+        </Section>
+      </Container>
     </Tailwind>
   );
 };

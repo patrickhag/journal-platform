@@ -29,6 +29,34 @@
       "when": 1736929234418,
       "tag": "0003_zippy_tinkerer",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1737196317266,
+      "tag": "0004_mean_iron_monger",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1737196724034,
+      "tag": "0005_bright_rage",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1737198954310,
+      "tag": "0006_cooing_harpoon",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1737386830297,
+      "tag": "0007_wise_saracen",
+      "breakpoints": true
     }
   ]
 }

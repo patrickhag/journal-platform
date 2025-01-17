@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/card';
 import { db } from '@/db/schema';
 import { users, articleSubmissions, metadata } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 
 export default async function ArticlesPage() {
   const articles = await db
@@ -24,7 +24,8 @@ export default async function ArticlesPage() {
     })
     .from(articleSubmissions)
     .leftJoin(users, eq(articleSubmissions.userId, users.id))
-    .leftJoin(metadata, eq(metadata.articleId, articleSubmissions.id));
+    .leftJoin(metadata, eq(metadata.articleId, articleSubmissions.id))
+    .orderBy(desc(articleSubmissions.createdAt));
 
   return (
     <Protected allowedRoles={['ADMIN', 'CHIEF_EDITOR']}>

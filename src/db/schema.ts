@@ -5,7 +5,7 @@ import {
   SALUTATION,
 } from '@/lib/consts';
 import { USER_ROLES } from '@/lib/roles';
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import {
   boolean,
   date,
@@ -44,13 +44,14 @@ export const users = pgTable('user', {
   firstName: text('firstName'),
   lastName: text('lastName'),
   affiliation: text('affiliation'),
-  country: text('country').notNull(),
+  country: countryEnum().$defaultFn(() => 'Rwanda'),
   role: roleEnum().$default(() => 'NORMAL_USER'),
   email: text('email').unique(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
   isActive: boolean('is_active').default(true),
   password: text('password'),
   avatar: text('avatar'),
+  orcid: text('orcid'),
 });
 
 export const verificationTokens = pgTable(
@@ -124,7 +125,7 @@ export const metadata = pgTable('metadata', {
     .$defaultFn(() => crypto.randomUUID()),
   title: text('title').notNull().unique(),
   prefix: text('prefix').notNull(),
-  subtitle: text('subtitle').notNull(),
+  subtitle: text('subtitle'),
   abstract: text('abstract').notNull(),
   topics: text('topics')
     .array()
@@ -144,6 +145,7 @@ export const contributors = pgTable('contributor', {
     .$defaultFn(() => crypto.randomUUID()),
   name: text('name').notNull(),
   salutation: salutationEnum().$defaultFn(() => 'Mr'),
+  email: text('email').notNull(),
   country: countryEnum().$defaultFn(() => 'Rwanda'),
   orcid: text('orcid'),
   affiliation: text('affiliation').notNull(),
@@ -205,6 +207,7 @@ export const articleSubmissions = pgTable('article_submissions', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   createdAt: date('createdAt').defaultNow(),
+  updatedAt: date('updatedAt').defaultNow(),
 });
 
 export const finalSubmissions = pgTable('final_submissions', {
@@ -234,6 +237,57 @@ export const notifications = pgTable('notifications', {
     onDelete: 'cascade',
   }),
 });
+
+/*** RELATIONS ***/
+
+export const articleSubmissionsRelations = relations(
+  articleSubmissions,
+  ({ one, many }) => ({
+    user: one(users, {
+      fields: [articleSubmissions.userId],
+      references: [users.id],
+    }),
+    metadata: one(metadata, {
+      fields: [articleSubmissions.id],
+      references: [metadata.articleId],
+    }),
+    files: many(files, {
+      relationName: 'files',
+    }),
+    contributors: many(contributors, {
+      relationName: 'contributors',
+    }),
+  })
+);
+
+export const usersRelations = relations(users, ({ many }) => ({
+  articles: many(articleSubmissions, {
+    relationName: 'articleSubmissions',
+  }),
+}));
+
+export const metadataRelations = relations(metadata, ({ one }) => ({
+  article: one(articleSubmissions, {
+    fields: [metadata.articleId],
+    references: [articleSubmissions.id],
+  }),
+}));
+
+export const filesRelations = relations(files, ({ one }) => ({
+  article: one(articleSubmissions, {
+    fields: [files.articleId],
+    references: [articleSubmissions.id],
+    relationName: 'files',
+  }),
+}));
+
+export const contributorsRelations = relations(contributors, ({ one }) => ({
+  article: one(articleSubmissions, {
+    fields: [contributors.articleId],
+    references: [articleSubmissions.id],
+    relationName: 'contributors',
+  }),
+}));
 
 export type TFinalSubmissions = typeof finalSubmissions.$inferInsert;
 export type TArticleSubmissions = typeof articleSubmissions.$inferSelect;

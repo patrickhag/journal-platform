@@ -21,13 +21,15 @@ export default function Header() {
       <header className="flex items-center justify-between px-8 py-4 backdrop-blur-md shadow sticky top-0 z-50">
         <div className="text-xl font-bold flex items-center gap-2">
           <div className="rounded-full">
-            <Image
-              src="/jaep-logo.jpg"
-              alt="Logo"
-              width={32}
-              height={32}
-              className="rounded-full object-cover"
-            />
+            <Link href="/">
+              <Image
+                src="/jaep-logo.jpg"
+                alt="JAEPH Logo"
+                width={32}
+                height={32}
+                className="rounded-full object-cover"
+              />
+            </Link>
           </div>
           Journal of African Epidemiology and Public Health
         </div>

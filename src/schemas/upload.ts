@@ -6,7 +6,7 @@ export const contributorFormSchema = z.object({
   salutation: z.enum(SALUTATION, { message: 'Salutation is required.' }),
   country: z.enum(COUNTRIES, { message: 'Country is required.' }),
   email: z
-    .string({ required_error: 'Please provide your email' })
+    .string({ required_error: 'Please provide his/her email' })
     .email('Enter a valid email'),
   orcid: z.string().optional(),
   homepage: z.string().optional(),

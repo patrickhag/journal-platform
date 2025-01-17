@@ -5,7 +5,7 @@ import {
   files,
   metadata,
 } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { FileText } from 'lucide-react';
 import Link from 'next/link';
 
@@ -21,7 +21,12 @@ export const Recents = async () => {
     .from(articleSubmissions)
     .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId))
     .leftJoin(files, eq(articleSubmissions.id, files.articleId))
-    .where(eq(articleSubmissions.articleStatus, 'Published'))
+    .where(
+      and(
+        eq(articleSubmissions.articleStatus, 'Published'),
+        eq(files.fileType, 'Article Text')
+      )
+    )
     .limit(10);
 
   return (
@@ -29,27 +34,27 @@ export const Recents = async () => {
       <h2 className="text-xl font-bold mb-4" style={{ color: '#1A237E' }}>
         Recently Published
       </h2>
-      {articles.map((a) => {
+      {articles.map((article) => {
         return (
-          <div key={a.id} className="my-6 w-[90%]">
+          <div key={article.id} className="my-6 w-[90%]">
             <div>
               <div className="flex items-center justify-between">
                 <Link
-                  href={`/articles/${a.id}`}
+                  href={`/article/${article.id}`}
                   className="text-lg text-blue-500 hover:text-blue-600"
                 >
-                  {a.title}
+                  {article.title}
                 </Link>
 
-                <p className="text-sm text-gray-500">{a.createdAt}</p>
+                <p className="text-sm text-gray-500">{article.createdAt}</p>
               </div>
-              <ContributorList articleId={a.id} />
+              <ContributorList articleId={article.id} />
             </div>
             <div className="text-gray-600 cursor-pointer">
-              <Link href={a.file as string}>
+              <Link href={article.file as string}>
                 <span className="flex items-center gap-2 hover:text-blue-500">
                   <FileText size={20} />
-                  {a.fileName}
+                  {article.fileName}
                 </span>
               </Link>
             </div>

@@ -8,6 +8,8 @@ import { ReachOut } from './ReachOut';
 import { eq } from 'drizzle-orm';
 import { auth } from '@/auth';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '../ui/button';
+import { Send } from 'lucide-react';
 
 export default async function Reviewer({
   reviewer: { email, names, affiliation, phone, expertise, acceptedInvitation },
@@ -94,8 +96,13 @@ export default async function Reviewer({
       </div>
       {(currentUserRole === 'CHIEF_EDITOR' || currentUserRole === 'ADMIN') && (
         <Popover>
-          <PopoverTrigger className="w-full md:w-auto bg-slate-900 text-lime-50 px-3 py-1 rounded-md">
-            Reach out
+          <PopoverTrigger>
+            <Button variant={'outline'}>
+              {' '}
+              <span className="flex items-center">
+                Reach out <Send className="ml-2" />
+              </span>{' '}
+            </Button>
           </PopoverTrigger>
           <PopoverContent>
             <ReachOut

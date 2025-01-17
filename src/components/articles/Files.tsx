@@ -32,8 +32,8 @@ async function Files({
               key={file.id}
               className="flex items-center justify-between p-2 border rounded-lg"
             >
-              <div className="flex items-center align-end">
-                <FileText className="h-5 w-5 text-muted-foreground" />
+              <div className="flex items-center">
+                <FileText className="h-5 w-5 text-muted-foreground mr-2" />
                 <div>
                   <p className="font-medium">{file.originalName}</p>
                   <p className="text-sm text-muted-foreground">

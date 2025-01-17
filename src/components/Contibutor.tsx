@@ -124,7 +124,9 @@ export default function NewContibutorForm({
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email*</FormLabel>
+                      <FormLabel>
+                        Email <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Email of the contributor"
@@ -151,6 +153,7 @@ export default function NewContibutorForm({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="country"

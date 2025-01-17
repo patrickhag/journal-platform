@@ -1,4 +1,5 @@
 'use client';
+
 import ShowNav from './ShowNav';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -16,7 +17,7 @@ export const HeaderElement = ({
   name,
   role,
 }: {
-  notifications: TNotifications[];
+  notifications?: TNotifications[];
   role?: 'NORMAL_USER' | 'CHIEF_EDITOR' | 'ADMIN' | 'REVIEWER';
   name: string;
 }) => {

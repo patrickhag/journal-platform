@@ -42,16 +42,18 @@ export const notifyContibutor = async ({
   toEmail,
   originalAuthor,
   article,
+  contributor,
 }: {
   toEmail: string;
   url: string;
   subject: string;
   originalAuthor: string;
   article: string;
+  contributor: string;
 }) => {
   const emailHtml = await render(
     <NotifiyContributor
-      contributor={toEmail}
+      contributor={contributor}
       originalAuthor={originalAuthor}
       article={article}
     />
@@ -64,6 +66,7 @@ export const notifyContibutor = async ({
     html: emailHtml,
   };
   await transporter.sendMail(options);
+  return true;
 };
 
 export const sendInvitation = async ({

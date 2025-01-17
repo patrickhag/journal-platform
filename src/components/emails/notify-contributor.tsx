@@ -1,98 +1,50 @@
-import {
-  Button,
-  Html,
-  Head,
-  Preview,
-  Body,
-  Container,
-  Text,
-} from '@react-email/components';
 import type * as React from 'react';
+import {
+  Tailwind,
+  Text,
+  Button,
+  Container,
+  Section,
+} from '@react-email/components';
 
 export const NotifiyContributor: React.FC<{
   originalAuthor: string;
   contributor: string;
   article: string;
-  rejectUrl?: string;
-}> = ({ contributor, article, originalAuthor, rejectUrl }) => {
+}> = ({ contributor, article, originalAuthor }) => {
   return (
-    <Html lang="en">
-      <Head />
-      <Preview>You have been added as a contributor</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          <Text style={title}>Contribution Notice</Text>
-
-          <Text style={greeting}>Hi {contributor},</Text>
-
-          <Text style={paragraph}>
-            You have been added as a contributor to &quot;{article}&quot; by{' '}
-            {originalAuthor}. We&apos;re excited to have you as part of this
-            collaboration.
+    <Tailwind>
+      <Container className="bg-white border border-gray-200 rounded-lg max-w-xl mx-auto my-8 p-6 text-center">
+        <Section className="text-center py-4 border-b bg-gray-100 font-semibold text-gray-600">
+          <Text className="text-xl font-semibold text-gray-800">
+            Journal of African Epidemiology and Public Health
           </Text>
-
-          <Button href={rejectUrl} style={button}>
-            Reject contribution
+        </Section>
+        <Section className="px-6 py-4">
+          <Text className="text-lg font-medium text-gray-800">
+            Hi, {contributor}
+          </Text>
+          <Text className="text-gray-700 my-4">
+            You are receiving this email because you contributed to the
+            manuscript titled{' '}
+            <span className="font-semibold">&quot;{article}&quot;</span>, which
+            was written by{' '}
+            <span className="font-semibold">{originalAuthor}</span>.
+          </Text>
+          <Text className="text-gray-700 my-4">
+            Wanna submit your own manuscript on our platform?
+          </Text>
+          <Button
+            href={process.env.NEXT_PUBLIC_URL}
+            className="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-md font-medium my-4 cursor-pointer"
+          >
+            Join here
           </Button>
-
-          <Text style={paragraph}>
-            Need help, or have questions? Just reply to this email, we&apos;d
-            love to help.
-          </Text>
-
-          <Text style={paragraph}>
-            Cheers,
-            <br />
-            The Team
-          </Text>
-        </Container>
-      </Body>
-    </Html>
+        </Section>
+        <Section className="bg-gray-100 text-center py-4 text-sm font-semibold text-gray-600">
+          <Text>© 2025 JAEPH. All rights reserved.</Text>
+        </Section>
+      </Container>
+    </Tailwind>
   );
-};
-
-const main = {
-  backgroundColor: '#f6f9fc',
-  fontFamily:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Ubuntu,sans-serif',
-};
-
-const container = {
-  backgroundColor: '#ffffff',
-  margin: '0 auto',
-  padding: '20px 0 48px',
-  marginBottom: '64px',
-};
-
-const title = {
-  fontSize: '24px',
-  fontWeight: '600',
-  textAlign: 'center' as const,
-  margin: '30px 0',
-};
-
-const greeting = {
-  margin: '0 0 24px',
-  fontSize: '18px',
-  fontWeight: '500',
-};
-
-const paragraph = {
-  fontSize: '16px',
-  lineHeight: '26px',
-  margin: '16px 0',
-};
-
-const button = {
-  backgroundColor: '#50b7b2',
-  borderRadius: '5px',
-  color: '#fff',
-  fontSize: '16px',
-  fontWeight: '600',
-  textDecoration: 'none',
-  textAlign: 'center' as const,
-  display: 'block',
-  width: '100%',
-  padding: '12px',
-  margin: '24px 0',
 };

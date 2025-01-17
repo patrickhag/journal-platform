@@ -105,11 +105,12 @@ export async function submitAction(_: unknown, formData: FormData) {
       const originalAuthor = session?.user?.name;
       if (!originalAuthor) return;
       await notifyContibutor({
-        url: 'someone added you to contributors',
-        subject: 'someone added you to contributors',
+        url: process.env.NEXT_PUBLIC_URL || 'https://www.google.com',
+        subject: 'Thank You for Your Contribution!',
         toEmail: contributor.email,
-        article: articleSubmitionValidations.section,
+        article: metadataValidations.title,
         originalAuthor,
+        contributor: contributor.name,
       });
     }
     isError = true;

@@ -12,8 +12,6 @@ const Reviews = async ({ articleId }: { articleId: string }) => {
     .from(reviews)
     .where(eq(reviews.articleId, articleId));
 
-  console.log('reviewerReviews>>>', reviewerReviews);
-
   return (
     <Card>
       <CardHeader>
