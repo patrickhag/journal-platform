@@ -41,7 +41,7 @@ async function page({
     .from(articleSubmissions)
     .where(eq(articleSubmissions.id, articleId))
     .limit(1);
-
+  console.log(articles);
   if (articles.length <= 0) return <h1>Article Not Found</h1>;
   const article = articles[0];
   const session = await auth();

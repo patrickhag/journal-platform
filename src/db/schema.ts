@@ -126,6 +126,10 @@ export const metadata = pgTable('metadata', {
   prefix: text('prefix').notNull(),
   subtitle: text('subtitle').notNull(),
   abstract: text('abstract').notNull(),
+  topics: text('topics')
+    .array()
+    .notNull()
+    .default(sql`ARRAY[]::text[]`),
   userId: text('userId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),

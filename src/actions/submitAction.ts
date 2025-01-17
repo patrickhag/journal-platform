@@ -26,7 +26,7 @@ import type * as z from 'zod';
 export async function submitAction(_: unknown, formData: FormData) {
   const data = Object.fromEntries(formData.entries());
   const result = finalSubmissionSchema.safeParse(data);
-
+  console.log('data', data);
   if (!result.success) {
     console.error(result.error.errors);
     return;
@@ -49,6 +49,7 @@ export async function submitAction(_: unknown, formData: FormData) {
 
   const session = await auth();
   let isError = false;
+
   try {
     await db.transaction(async (trx) => {
       const session = await auth();

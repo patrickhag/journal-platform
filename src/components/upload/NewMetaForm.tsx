@@ -7,6 +7,7 @@ import React, {
   startTransition,
   useEffect,
   useRef,
+  useState,
 } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactQuill from 'react-quill-new';
@@ -24,6 +25,7 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { metadataSchema } from './ContributorsForm';
 import updateArticleMeta from '@/actions/updateArticleMeta';
+import { FaTimes } from 'react-icons/fa';
 
 export const NewMetaForm: FC<
   { meta?: z.infer<typeof metadataSchema> } & PropsWithChildren
@@ -43,9 +45,14 @@ export const NewMetaForm: FC<
       prefix: meta?.prefix || '',
       abstract: meta?.abstract || '',
       subtitle: meta?.subtitle || '',
+      topics: meta?.topics || [],
     },
   });
   const currentForm = form.current;
+  const [topics, setTopics] = useState<string[]>(
+    metaValidation.data?.topics || []
+  );
+
   useEffect(() => {
     currentForm?.addEventListener('focusout', () => {
       currentForm?.requestSubmit();
@@ -61,21 +68,20 @@ export const NewMetaForm: FC<
 
     if (children) {
       startTransition(async () => {
-        console.log(parameters.articleId?.[0]);
         if (!parameters.articleId) return;
         const res = await updateArticleMeta({
           meta: data,
           articleId: parameters?.articleId?.[0],
         });
-        console.log(res);
         if (res === undefined) {
           return router.push(`/articles/${parameters.articleId?.[0]}`);
         }
       });
       return;
     }
+
     const serializedData = serialize({
-      data,
+      data: { ...meta.data, topics },
       schema: metadataSchema,
     });
 
@@ -88,86 +94,138 @@ export const NewMetaForm: FC<
     router.refresh();
     form.current?.setAttribute('submited', 'submited');
   });
+
+  const topicRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    currentForm?.requestSubmit();
+  }, [topics, setTopics]);
   return (
-    <Form {...formm}>
-      <form ref={form} onSubmit={saveMeta}>
-        <div className="mb-4 grid grid-cols-2 gap-4">
+    <>
+      <Form {...formm}>
+        <form ref={form} onSubmit={saveMeta}>
+          <div className="mb-4 grid grid-cols-2 gap-4">
+            <FormField
+              name="prefix"
+              control={formm.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="prefix">
+                    Prefix <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="Dr, Mr, Mrs..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="title"
+              control={formm.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="title">
+                    Title <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="Title of the journal" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
-            name="prefix"
+            name="subtitle"
             control={formm.control}
             render={({ field }) => (
-              <FormItem>
-                <FormLabel htmlFor="prefix">
-                  Prefix <span className="text-red-500">*</span>
+              <FormItem className="mb-4">
+                <FormLabel htmlFor="subtitle">
+                  Subtitle <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder="Dr, Mr, Mrs..." {...field} />
+                  <Input placeholder="Subtitle of the journal" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <FormField
-            name="title"
+            name="abstract"
             control={formm.control}
             render={({ field }) => (
-              <FormItem>
-                <FormLabel htmlFor="title">
-                  Title <span className="text-red-500">*</span>
+              <FormItem className="mb-4 py-3">
+                <FormLabel htmlFor="abstract">
+                  Abstract <span className="text-red-500">*</span>
                 </FormLabel>
-                <FormControl>
-                  <Input placeholder="Title of the journal" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <FormField
-          name="subtitle"
-          control={formm.control}
-          render={({ field }) => (
-            <FormItem className="mb-4">
-              <FormLabel htmlFor="subtitle">
-                Subtitle <span className="text-red-500">*</span>
-              </FormLabel>
-              <FormControl>
-                <Input placeholder="Subtitle of the journal" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          name="abstract"
-          control={formm.control}
-          render={({ field }) => (
-            <FormItem className="mb-4 py-3">
-              <FormLabel htmlFor="abstract">
-                Abstract <span className="text-red-500">*</span>
-              </FormLabel>
-              <ReactQuill
-                theme="snow"
-                value={formm.getValues().abstract}
-                onChange={(d) => {
-                  formm.setValue('abstract', d);
-                }}
-                className="h-32 mb-4"
-              />
-              <FormControl>
-                <Textarea
-                  className="hidden"
-                  placeholder="Abstract of the journal"
-                  rows={4}
-                  {...field}
+                <ReactQuill
+                  theme="snow"
+                  value={formm.getValues().abstract}
+                  onChange={(d) => {
+                    formm.setValue('abstract', d);
+                  }}
+                  className="h-32 mb-4"
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {children}
+                <FormControl>
+                  <Textarea
+                    className="hidden"
+                    placeholder="Abstract of the journal"
+                    rows={4}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {children}
+        </form>
+      </Form>
+      <form
+        action={(e) => {
+          const topic = e.get('topic')?.toString();
+          if (!topic) return;
+          setTopics((prevTopics) => [...new Set([...prevTopics, topic])]);
+        }}
+      >
+        <label
+          htmlFor="topics"
+          className="mt-5 flex gap-2 items-center ring-1 ring-gray-400 has-[:focus]:ring-gray-600 rounded-sm flex-wrap p-2"
+        >
+          <input
+            id="topics"
+            placeholder="Add seo tags/topics"
+            name="topic"
+            ref={topicRef}
+            className="outline-none px-2 border-none ring-0"
+          />
+          {topics.map((topic) => (
+            <span
+              key={topic}
+              className="flex items-center gap-1 bg-blue-300 rounded-full pl-4"
+            >
+              {topic}{' '}
+              <span
+                className="bg-blue-500 p-2 rounded-full cursor-pointer text-white"
+                onClick={() => {
+                  setTopics(() => topics.filter((t) => t !== topic));
+                }}
+              >
+                <FaTimes />
+              </span>
+            </span>
+          ))}
+        </label>
+        <button
+          onFocus={(e) => {
+            e.currentTarget.closest('form')?.requestSubmit();
+            topicRef.current?.focus();
+          }}
+          className="opacity-0"
+        >
+          sseend
+        </button>
       </form>
-    </Form>
+    </>
   );
 };

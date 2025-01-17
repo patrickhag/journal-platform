@@ -16,6 +16,7 @@ export const metadataSchema = z.object({
   abstract: z
     .string({ required_error: 'Abstract must be provided' })
     .min(100, { message: 'Atleast 100 character are required' }),
+  topics: z.array(z.string().min(3)),
 });
 
 export const ContributorsForm = () => {
