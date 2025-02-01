@@ -26,7 +26,7 @@ const LeftSideBar = ({
   );
 
   return (
-    <div className="w-90">
+    <div>
       {/* Download, Cite and Share */}
       {isAbstract && (
         <div className="flex flex-col gap-2 mb-5">
@@ -55,7 +55,7 @@ const LeftSideBar = ({
           </div>
         </div>
       )}
-      <div className="bg-gray-50 p-4 space-y-6 border-r border-gray-200">
+      <div className="bg-gray-50 p-4 space-y-6 border-r border-gray-200 rounded-lg">
         {/* Important Information Section */}
         <div>
           <h2

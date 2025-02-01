@@ -30,7 +30,7 @@ export const Recents = async () => {
     .limit(10);
 
   return (
-    <div>
+    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 className="text-xl font-bold mb-4" style={{ color: '#1A237E' }}>
         Recently Published
       </h2>
