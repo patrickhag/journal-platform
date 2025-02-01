@@ -1,6 +1,11 @@
 import NextAuth from 'next-auth';
 import { authOptions } from './auth';
-import { DEFAULT_LOGIN_REDIRECT, apiAuthPrefix, authRoutes } from './routes';
+import {
+  DEFAULT_LOGIN_REDIRECT,
+  apiAuthPrefix,
+  authRoutes,
+  publicRoutes,
+} from './routes';
 
 const { auth } = NextAuth(authOptions);
 
@@ -9,7 +14,11 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-  // const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
+  const isPublicRoute = publicRoutes.some((route) => {
+    const dynamicRoute = route.replace(/:\w+/g, '.*'); // Convert "/article/:id" → "/article/.*"
+    return new RegExp(`^${dynamicRoute}$`).test(nextUrl.pathname);
+  });
+
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
   if (isApiAuthRoute) {
@@ -21,9 +30,10 @@ export default auth((req) => {
     }
     return undefined;
   }
-  // if (!(isLoggedIn || isPublicRoute)) {
-  //   return Response.redirect(new URL(`/`, nextUrl.origin));
-  // }
+
+  if (!(isLoggedIn || isPublicRoute)) {
+    return Response.redirect(new URL(`/`, nextUrl.origin));
+  }
   // if (!isPublicRoute)
   //   if (!req.auth?.user?.email) {
   //     return Response.redirect(new URL(`/`, nextUrl.origin));

@@ -15,8 +15,11 @@ export const SendInvitation: React.FC<{
     role: string;
     avatar: string;
   };
+  reviewerEmail: string;
 }> = (props) => {
   const { article, reviewer } = props;
+  const nameParts = reviewer.split(' ');
+  const password = nameParts.length > 2 ? nameParts[1] : nameParts[0];
   return (
     <Tailwind>
       <Container className="bg-white border border-gray-200 max-w-xl mx-auto my-8 p-6 text-center">
@@ -36,7 +39,17 @@ export const SendInvitation: React.FC<{
           </Text>
           <Text className="text-gray-700 my-4">
             Editor-in-chief has left a message{' '}
-            <span className="font-semibold">&quot;{article.content}&quot;</span>
+            <span className="font-semibold">&quot;{article.content}&quot;</span>{' '}
+            and you might want to visit the manuscript page to accept or reject
+            the invitation.
+          </Text>
+          <Text className="text-gray-700 my-4">
+            If you’re ready to review the manuscript you can use your email and
+            <span className="font-semibold">
+              {' '}
+              &quot;@123{password}&quot;
+            </span>{' '}
+            as your password.
           </Text>
           <Row>
             <Column align="center">

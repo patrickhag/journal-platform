@@ -10,7 +10,6 @@ export const ReachOut: FC<{
   reviewer: string;
   article: {
     title: string;
-    subTitle: string;
     content: string;
     article: string;
   };

@@ -199,7 +199,7 @@ export const articleSubmissions = pgTable('article_submissions', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  section: articleTypeEnum().$default(() => 'Articles'),
+  section: articleTypeEnum().$default(() => 'Original Research'),
   requirements: text('requirements').array().notNull(),
   commentsForEditor: text('comments_for_editor').notNull(),
   articleStatus: articleStatusEnum().$default(() => 'Submitted'),

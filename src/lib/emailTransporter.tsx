@@ -90,7 +90,12 @@ export const sendInvitation = async ({
   toEmail: string;
 }) => {
   const emailHtml = await render(
-    <SendInvitation article={article} author={author} reviewer={reviewer} />
+    <SendInvitation
+      reviewerEmail={toEmail}
+      article={article}
+      author={author}
+      reviewer={reviewer}
+    />
   );
   const options = {
     from: process.env.EMAIL_USER,

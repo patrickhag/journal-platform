@@ -4,11 +4,11 @@ import { auth } from '@/auth';
 import { db, notifications, users } from '@/db/schema';
 import { sendInvitation } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
+import bcrypt from 'bcryptjs';
 
 export async function reachOut(_: unknown, formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) return null;
-  // get the user role from db
 
   const currentUserRole = await db
     .select({ role: users.role })
@@ -22,25 +22,60 @@ export async function reachOut(_: unknown, formData: FormData) {
   )
     return;
 
+  // Extract email and reviewer name
+  const toEmail = formData.get('toEmail')?.toString() || '';
+  const reviewer = formData.get('reviewer')?.toString() || '';
+
+  // Split reviewer name
+  const nameParts = reviewer.split(' ');
+  const firstName = nameParts.length > 2 ? nameParts[1] : nameParts[0];
+  const lastName = nameParts.length > 2 ? nameParts[2] : nameParts[1];
+
+  // Check if user exists
+  const existingUser = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.email, toEmail))
+    .limit(1);
+
+  let userId;
+  if (existingUser.length === 0) {
+    // Generate cryptic password
+    const password = `@123${firstName}`;
+
+    // Insert new user
+    const [newUser] = await db
+      .insert(users)
+      .values({
+        firstName: firstName,
+        lastName: lastName,
+        email: toEmail,
+        password: bcrypt.hashSync(password),
+        role: 'REVIEWER',
+      })
+      .returning({ id: users.id });
+
+    userId = newUser.id;
+  } else {
+    userId = existingUser[0].id;
+  }
+
+  // Send invitation
   await sendInvitation({
     article: {
-      ...JSON.parse(formData.get('article')?.toString() || ''),
+      ...JSON.parse(formData.get('article')?.toString() || '{}'),
       content: formData.get('message')?.toString() || '',
     },
-    reviewer: formData.get('reviewer')?.toString() || '',
-    author: JSON.parse(formData.get('author')?.toString() || ''),
-    toEmail: formData.get('toEmail')?.toString() || '',
+    reviewer,
+    author: JSON.parse(formData.get('author')?.toString() || '{}'),
+    toEmail,
   });
-  const userIds = await db
-    .select({
-      id: users.id,
-    })
-    .from(users)
-    .where(eq(users.email, formData.get('toEmail')?.toString() || ''))
-    .limit(1);
+
+  // Add notification
   await db.insert(notifications).values({
     message: formData.get('message')?.toString() || '',
-    userId: userIds[0].id,
+    userId,
   });
+
   return 'Message sent';
 }

@@ -18,7 +18,7 @@ import { useSearchParams } from 'next/navigation';
 import { useActionState, useEffect, useState } from 'react';
 
 export default function Login() {
-  const [errorMessage, formAction, isPending] = useActionState(
+  const [returnedMessage, formAction, isPending] = useActionState(
     resetPassword,
     undefined
   );
@@ -29,14 +29,14 @@ export default function Login() {
   const params = useSearchParams();
 
   useEffect(() => {
-    if (params.get('msg') || errorMessage) {
+    if (params.get('msg') || returnedMessage) {
       setVisible(true);
     }
     const timeout = setTimeout(() => {
       setVisible(false);
     }, 5000);
     return () => clearTimeout(timeout);
-  }, [errorMessage]);
+  }, [returnedMessage]);
 
   return (
     <Card className="w-full max-w-lg mx-auto p-4 mt-32">
@@ -54,23 +54,25 @@ export default function Login() {
 
         {visible && (
           <div
-            className={`flex p-4 items-end space-x-1 justify-center bg-red-100 rounded-md ${
-              errorMessage === 'Success' ? 'bg-green-100' : 'bg-red-100'
+            className={`flex p-4 items-end space-x-1 justify-center rounded-md ${
+              returnedMessage === 'Success' ? 'bg-green-100' : 'bg-red-100'
             }`}
             aria-live="polite"
             aria-atomic="true"
           >
-            {errorMessage === 'Success' ? (
+            {returnedMessage === 'Success' ? (
               <CheckCircleIcon className="h-5 w-5 text-green-500" />
             ) : (
               <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
             )}
             <p
               className={`text-sm ${
-                errorMessage === 'Success' ? 'text-green-500' : 'text-red-500'
+                returnedMessage === 'Success'
+                  ? 'text-green-500'
+                  : 'text-red-500'
               }`}
             >
-              {params.get('msg') || errorMessage}
+              {params.get('msg') || 'Password reset sent to your email.'}
             </p>
           </div>
         )}
@@ -137,9 +139,9 @@ export default function Login() {
       </CardContent>
 
       <div className="text-center mt-4 text-sm">
-        Don&apos;t have an account yet?{' '}
-        <Link href="/register" className="text-blue-600 hover:underline">
-          Register
+        Alredy have an account?{' '}
+        <Link href="/login" className="text-blue-600 hover:underline">
+          Login
         </Link>
       </div>
     </Card>

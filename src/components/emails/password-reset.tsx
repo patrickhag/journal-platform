@@ -38,8 +38,8 @@ export const EmailPasswordReset: React.FC<{ url: string; name: string }> = (
             Reset your password
           </Button>
           <Text className="text-gray-700 mt-6 text-sm">
-            If you did not require a password, no further action is required on
-            your part.
+            If you did not require a password change, no further action is
+            required on your part.
           </Text>
         </Section>
         <Section className="bg-gray-100 text-center py-4 text-sm font-semibold text-gray-600">
