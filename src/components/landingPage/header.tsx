@@ -1,201 +1,3 @@
-// 'use client';
-
-// import Image from 'next/image';
-// import { usePathname } from 'next/navigation';
-// import HeaderDropdown from './headerDropdown';
-// import Link from 'next/link';
-// import { useSession } from 'next-auth/react';
-
-// export default function Header() {
-//   const { data: session } = useSession();
-//   const names = session?.user?.name?.split(' ')?.[1]?.substring(0, 1);
-
-//   const pathname = usePathname();
-
-//   return (
-//     <>
-//       <div className="text-white text-center py-2 text-sm bg-gradient-to-r from-[#B8BCE4] to-[#737373]">
-//         Free space for journal publication
-//       </div>
-
-//       <header className="flex items-center justify-between px-8 py-4 backdrop-blur-md shadow sticky top-0 z-50">
-//         <div className="text-xl font-bold flex items-center gap-2">
-//           <div className="rounded-full">
-//             <Link href="/">
-//               <Image
-//                 src="/jaep-logo.jpg"
-//                 alt="JAEPH Logo"
-//                 width={32}
-//                 height={32}
-//                 className="rounded-full object-cover"
-//               />
-//             </Link>
-//           </div>
-//           Journal of African Epidemiology and Public Health
-//         </div>
-//         <nav className="flex gap-4 text-gray-700">
-//           <Link
-//             href="/"
-//             className={`${
-//               pathname === '/' ? 'text-blue-500' : 'hover:text-blue-500'
-//             }`}
-//           >
-//             Home
-//           </Link>
-//           <Link
-//             href="/about"
-//             className={`${
-//               pathname === '/about' ? 'text-blue-500' : 'hover:text-blue-500'
-//             }`}
-//           >
-//             About
-//           </Link>
-//           <Link
-//             href="/articles"
-//             className={`${
-//               pathname === '/articles' ? 'text-blue-500' : 'hover:text-blue-500'
-//             }`}
-//           >
-//             Articles
-//           </Link>
-//           <Link
-//             href="/authors"
-//             className={`${
-//               pathname === '/authors' ? 'text-blue-500' : 'hover:text-blue-500'
-//             }`}
-//           >
-//             Authors
-//           </Link>
-//           <Link href="#" className="hover:text-blue-500">
-//             Reviewers
-//           </Link>
-//         </nav>
-//         <HeaderDropdown names={names} session={session} />
-//       </header>
-//     </>
-//   );
-// }
-
-// 'use client';
-
-// import Image from 'next/image';
-// import { usePathname } from 'next/navigation';
-// import HeaderDropdown from './headerDropdown';
-// import Link from 'next/link';
-// import { useSession } from 'next-auth/react';
-// import { useState } from 'react';
-
-// export default function Header() {
-//   const { data: session } = useSession();
-//   const names = session?.user?.name?.split(' ')?.[1]?.substring(0, 1);
-//   const pathname = usePathname();
-//   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-//   return (
-//     <>
-//       <div className="text-white text-center py-2 text-sm bg-gradient-to-r from-[#B8BCE4] to-[#737373]">
-//         Free space for journal publication
-//       </div>
-
-//       <header className="flex flex-wrap items-center justify-between px-4 md:px-8 py-4 backdrop-blur-md shadow sticky top-0 z-50">
-//         {/* Logo and Journal Name */}
-//         <div className="text-xl font-bold flex items-center gap-2">
-//           <div className="rounded-full">
-//             <Link href="/">
-//               <Image
-//                 src="/jaep-logo.jpg"
-//                 alt="JAEPH Logo"
-//                 width={32}
-//                 height={32}
-//                 className="rounded-full object-cover"
-//               />
-//             </Link>
-//           </div>
-//           <span className="hidden sm:inline">
-//             Journal of African Epidemiology and Public Health
-//           </span>
-//           <span className="sm:hidden">JAEPH</span>{' '}
-//           {/* Abbreviated name for small screens */}
-//         </div>
-
-//         {/* Hamburger Menu Button (Mobile Only) */}
-//         <button
-//           className="lg:hidden p-2 focus:outline-none"
-//           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-//         >
-//           <svg
-//             xmlns="http://www.w3.org/2000/svg"
-//             className="h-6 w-6"
-//             fill="none"
-//             viewBox="0 0 24 24"
-//             stroke="currentColor"
-//           >
-//             <path
-//               strokeLinecap="round"
-//               strokeLinejoin="round"
-//               strokeWidth={2}
-//               d="M4 6h16M4 12h16m-7 6h7"
-//             />
-//           </svg>
-//         </button>
-
-//         {/* Navigation Links and HeaderDropdown (Mobile) */}
-//         <nav
-//           className={`${
-//             isMobileMenuOpen ? 'block' : 'hidden'
-//           } lg:flex lg:items-center w-full lg:w-auto mt-4 lg:mt-0 gap-4 text-gray-700`}
-//         >
-//           <Link
-//             href="/"
-//             className={`block sm:inline-block ${
-//               pathname === '/' ? 'text-blue-500' : 'hover:text-blue-500'
-//             }`}
-//           >
-//             Home
-//           </Link>
-//           <Link
-//             href="/about"
-//             className={`block sm:inline-block ${
-//               pathname === '/about' ? 'text-blue-500' : 'hover:text-blue-500'
-//             }`}
-//           >
-//             About
-//           </Link>
-//           <Link
-//             href="/articles"
-//             className={`block sm:inline-block ${
-//               pathname === '/articles' ? 'text-blue-500' : 'hover:text-blue-500'
-//             }`}
-//           >
-//             Articles
-//           </Link>
-//           <Link
-//             href="/authors"
-//             className={`block sm:inline-block ${
-//               pathname === '/authors' ? 'text-blue-500' : 'hover:text-blue-500'
-//             }`}
-//           >
-//             Authors
-//           </Link>
-//           <Link href="#" className="block sm:inline-block hover:text-blue-500">
-//             Reviewers
-//           </Link>
-
-//           {/* HeaderDropdown inside Mobile Menu */}
-//           <div className="lg:hidden mt-4">
-//             <HeaderDropdown names={names} session={session} />
-//           </div>
-//         </nav>
-
-//         {/* Header Dropdown (Desktop) */}
-//         <div className="hidden lg:block">
-//           <HeaderDropdown names={names} session={session} />
-//         </div>
-//       </header>
-//     </>
-//   );
-// }
-
 'use client';
 
 import Image from 'next/image';
@@ -204,6 +6,14 @@ import HeaderDropdown from './headerDropdown';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
+
+const navItems = [
+  { path: '/', label: 'Home' },
+  { path: '/about', label: 'About' },
+  { path: '/articles', label: 'Articles' },
+  { path: '/authors', label: 'Authors' },
+  { path: '#', label: 'Reviewers' },
+];
 
 export default function Header() {
   const { data: session } = useSession();
@@ -273,7 +83,7 @@ export default function Header() {
         </button>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-6 text-gray-700 max-[1132px]:text-sm">
+        {/* <nav className="hidden lg:flex items-center gap-6 text-gray-700 max-[1132px]:text-sm">
           <Link
             href="/"
             className={`${
@@ -310,6 +120,20 @@ export default function Header() {
             Reviewers
           </Link>
           <HeaderDropdown names={names} session={session} />
+        </nav> */}
+        <nav className="hidden lg:flex items-center gap-6 text-gray-700 max-[1132px]:text-sm">
+          {navItems.map((item) => (
+            <Link
+              key={item.label}
+              href={item.path}
+              className={`${
+                pathname === item.path ? 'text-blue-500' : 'hover:text-blue-500'
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
+          <HeaderDropdown names={names} session={session} />
         </nav>
 
         {/* Mobile Dropdown Menu */}
@@ -319,55 +143,20 @@ export default function Header() {
           }`}
         >
           <nav className="flex flex-col gap-4 p-6 border-t bg-white backdrop-blur-md shadow z-50">
-            <Link
-              onClick={() => setIsMobileMenuOpen(false)}
-              href="/"
-              className={`${
-                pathname === '/' ? 'text-blue-500' : 'hover:text-blue-500'
-              }`}
-            >
-              Home
-            </Link>
-            <Link
-              onClick={() => setIsMobileMenuOpen(false)}
-              href="/about"
-              className={`${
-                pathname === '/about' ? 'text-blue-500' : 'hover:text-blue-500'
-              }`}
-            >
-              About
-            </Link>
-            <Link
-              onClick={() => setIsMobileMenuOpen(false)}
-              href="/articles"
-              className={`${
-                pathname === '/articles'
-                  ? 'text-blue-500'
-                  : 'hover:text-blue-500'
-              }`}
-            >
-              Articles
-            </Link>
-            <Link
-              onClick={() => setIsMobileMenuOpen(false)}
-              href="/authors"
-              className={`${
-                pathname === '/authors'
-                  ? 'text-blue-500'
-                  : 'hover:text-blue-500'
-              }`}
-            >
-              Authors
-            </Link>
-            <Link
-              onClick={() => setIsMobileMenuOpen(false)}
-              href="#"
-              className="hover:text-blue-500"
-            >
-              Reviewers
-            </Link>
-
-            {/* Mobile HeaderDropdown */}
+            {navItems.map((item) => (
+              <Link
+                key={item.label}
+                onClick={() => setIsMobileMenuOpen(false)}
+                href={item.path}
+                className={`${
+                  pathname === item.path
+                    ? 'text-blue-500'
+                    : 'hover:text-blue-500'
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
             <div className="mt-4 pt-4 border-t">
               <HeaderDropdown names={names} session={session} />
             </div>

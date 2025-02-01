@@ -11,7 +11,7 @@ export default async function AboutPage() {
         <main className="px-8 py-6">
           <section className="flex flex-col gap-8">
             <SearchBar />
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid gap-2">
               <div className="col-span-3 space-y-8">
                 <div className="w-[90%] text-gray-800">
                   <h1

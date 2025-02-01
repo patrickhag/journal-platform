@@ -12,7 +12,7 @@ export default async function Home() {
         <main className="px-8 py-6">
           <section className="flex flex-col gap-8">
             <RightSideBar />
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
               <Collections />
               <LeftSideBar />
             </div>
