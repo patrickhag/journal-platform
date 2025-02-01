@@ -17,49 +17,6 @@ const Collections = async () => {
     .limit(10);
 
   return (
-    // <>
-    // <div className="col-span-3 space-y-8">
-    //   <div className="w-[90%]">
-    //     <h1 className="text-2xl font-bold mb-4 " style={{ color: '#1A237E' }}>
-    //       Aims and scope
-    //     </h1>
-    //     <p className="text-gray-700">
-    //       Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum
-    //       dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
-    //       Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum
-    //       Lorem dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit
-    //       amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum
-    //       dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
-    //     </p>
-    //   </div>
-
-    //   <Recents />
-    //   <div className="w-[90%]">
-    //     <h2 className="text-2xl font-bold mb-8" style={{ color: '#1A237E' }}>
-    //       Our largest collections
-    //     </h2>
-    //     <div className="grid grid-cols-2 gap-3 sm:grid-col">
-    //       {fileCollections.map((collection) => (
-    //         <div key={collection.id}>
-    //           <h3 className="text-lg min-h-[50px] font-medium">
-    //             {collection.title}
-    //           </h3>
-    //           <Image
-    //             src={
-    //               'https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732723406/newss_espiuv.png'
-    //             }
-    //             width={500}
-    //             height={250}
-    //             alt={collection.title || ''}
-    //             objectFit="cover"
-    //             className="rounded-md mb-2 p-2 shadow-md hover:shadow-lg transition"
-    //           />
-    //         </div>
-    //       ))}
-    //     </div>
-    //   </div>
-    // </div>
-    // </>
     <>
       <div className="col-span-3 space-y-6 md:space-y-8 lg:space-y-10">
         {/* Aims and Scope Section */}
@@ -85,7 +42,6 @@ const Collections = async () => {
           >
             Our largest collections
           </h2>
-          {/* sm:grid-cols-1 */}
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 md:gap-6 lg:gap-8">
             {fileCollections.map((collection) => (
               <div key={collection.id} className="group">
