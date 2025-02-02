@@ -17,45 +17,58 @@ const Collections = async () => {
     .limit(10);
 
   return (
-    <div className="col-span-3 space-y-8">
-      <div className="w-[90%]">
-        <h1 className="text-2xl font-bold mb-4 " style={{ color: '#1A237E' }}>
-          Aims and scope
-        </h1>
-        <p className="text-gray-700">
-          Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum
-          dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
-          Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum
-          Lorem dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit
-          amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum
-          dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
-        </p>
-      </div>
+    <>
+      <div className="col-span-3 space-y-6 md:space-y-2 lg:space-y-10">
+        {/* Aims and Scope Section */}
+        <div className="w-">
+          <h1
+            className="text-xl font-bold mb-3 sm:text-2xl md:mb-4"
+            style={{ color: '#1A237E' }}
+          >
+            Aims and scope
+          </h1>
+          <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+            Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum
+            dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
+            Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum
+            Lorem dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor
+            sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem
+            ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor
+            sit ame
+          </p>
+        </div>
+        <Recents />
 
-      <Recents />
-      <div className="w-[70%]">
-        <h2 className="text-2xl font-bold mb-8" style={{ color: '#1A237E' }}>
-          Our largest collections
-        </h2>
-        <div className="grid grid-cols-2 gap-3">
-          {fileCollections.map((collection) => (
-            <div key={collection.id}>
-              <h3 className="text-lg font-medium">{collection.title}</h3>
-              <Image
-                src={
-                  'https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732723406/newss_espiuv.png'
-                }
-                width={500}
-                height={250}
-                alt={collection.title || ''}
-                objectFit="cover"
-                className="rounded-md mb-2 p-2 shadow-md hover:shadow-lg transition"
-              />
-            </div>
-          ))}
+        {/* Collections Section */}
+        <div className="w-full max-w-4xl">
+          <h2
+            className="text-xl font-bold mb-6 sm:text-2xl md:mb-8"
+            style={{ color: '#1A237E' }}
+          >
+            Our largest collections
+          </h2>
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 md:gap-6 lg:gap-8">
+            {fileCollections.map((collection) => (
+              <div key={collection.id} className="group">
+                <h3 className="text-base font-medium min-h-[50px] sm:text-lg md:text-xl">
+                  {collection.title}
+                </h3>
+                <div className="relative overflow-hidden rounded-md transition-all duration-300 hover:shadow-lg">
+                  <Image
+                    src="https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732723406/newss_espiuv.png"
+                    width={500}
+                    height={250}
+                    alt={collection.title || ''}
+                    className="w-full h-auto object-cover rounded-md transform transition-transform duration-300 group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
