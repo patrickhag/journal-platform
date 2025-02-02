@@ -5,12 +5,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import HeaderModal from './HeaderModal';
 import NotificationsModal from './NotificationsModal';
-import { Button } from './ui/button';
-import { Bars3Icon } from '@heroicons/react/24/outline';
+// import { Button } from './ui/button';
+// import { Bars3Icon } from '@heroicons/react/24/outline';
 
 import { TNotifications } from '@/db/schema';
 import { useState } from 'react';
-import { FaTimes } from 'react-icons/fa';
+// import { FaTimes } from 'react-icons/fa';
 
 export const HeaderElement = ({
   notifications = [],
@@ -25,15 +25,15 @@ export const HeaderElement = ({
   return (
     <>
       <div className="flex items-center gap-8">
-        <div className="lg:flex items-center gap-4">
-          <Button
+        <div className="flex items-center gap-4">
+          {/* <Button
             onClick={() => setIsOpen(!isOpen)}
             variant={'ghost'}
             className="block md:hidden"
           >
             {isOpen ? <FaTimes /> : <Bars3Icon height={36} width={36} />}
-          </Button>
-          <Link href="/" className="hidden md:block">
+          </Button> */}
+          <Link href="/" className="block">
             <Image
               src="/jaep-logo.jpg"
               alt="Logo"
@@ -43,8 +43,14 @@ export const HeaderElement = ({
             />
           </Link>
           {role !== 'ADMIN' && role !== 'CHIEF_EDITOR' && (
-            <h1 className="text-xl font-bold">
-              Journal of African Epidemiology and Public Health
+            // <h1 className="text-xl font-bold">
+            //   Journal of African Epidemiology and Public Health
+            // </h1>
+            <h1>
+              <span className="hidden sm:inline text-lg max-[1132px]:text-sm">
+                Journal of African Epidemiology and Public Health
+              </span>
+              <span className="sm:hidden">JAEPH</span>
             </h1>
           )}
         </div>

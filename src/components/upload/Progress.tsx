@@ -11,35 +11,55 @@ const journalKeys = [
   { page: 'reviewer', title: 'Reviewers' },
   { page: 'final', title: 'Final submit' },
 ];
+
 export const ProgressLine = () => {
   const pathname = usePathname();
-  const page = pathname.split('/').at(-1);
+  const page = pathname.split('/').at(-1) ?? 'start';
+  const currentStepIndex = journalKeys.findIndex((k) => k.page === page);
 
   return (
-    <div className="sticky top-14 max-w-5xl mx-auto mb-3">
+    <div className="sticky top-14 max-w-5xl mx-auto mb-3 px-4">
       <Card>
-        <div className="flex items-center space-x-4 m-3">
-          {journalKeys.map(({ page: j, title }, i) => (
-            <React.Fragment key={j}>
-              <div
-                className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                  i < journalKeys.map((k) => k.page).indexOf(page ?? 'start')
-                    ? 'bg-indigo-500'
-                    : 'bg-indigo-300'
-                } text-white`}
-              >
-                {i < journalKeys.map((k) => k.page).indexOf(page ?? '') ? (
-                  <Check size={15} />
-                ) : (
-                  i + 1
+        <div className="flex items-center justify-between m-3 gap-2 md:gap-4">
+          {journalKeys.map(({ page: j, title }, i) => {
+            const isCompleted = i < currentStepIndex;
+            const isCurrent = i === currentStepIndex;
+            const isLast = i === journalKeys.length - 1;
+
+            return (
+              <React.Fragment key={j}>
+                <div className="flex flex-col items-center gap-2 flex-1">
+                  <div
+                    className={`flex h-6 w-6 md:h-8 md:w-8 items-center justify-center rounded-full ${
+                      isCompleted ? 'bg-indigo-500' : 'bg-indigo-300'
+                    } text-white text-xs md:text-base transition-all duration-300 ${
+                      isLast ? 'mr-auto' : ''
+                    }`}
+                  >
+                    {isCompleted ? (
+                      <Check className="w-3 h-3 md:w-4 md:h-4" />
+                    ) : (
+                      i + 1
+                    )}
+                  </div>
+                  <span
+                    className={`text-[#626EEF] text-sm md:text-base ${
+                      isCurrent ? 'font-medium' : ''
+                    } hidden md:block`}
+                  >
+                    {title}
+                  </span>
+                </div>
+
+                {i < journalKeys.length - 1 && (
+                  <>
+                    <div className="hidden md:block h-px bg-[#838F9A] flex-1 min-w-[20px] mx-2" />
+                    <div className="md:hidden h-px bg-[#838F9A] flex-1 min-w-[10px]" />
+                  </>
                 )}
-              </div>
-              <div className="text-[#626EEF]">{title}</div>
-              {i < journalKeys.length - 1 && (
-                <div className="h-px w-14 bg-[#838F9A] flex-1" />
-              )}
-            </React.Fragment>
-          ))}
+              </React.Fragment>
+            );
+          })}
         </div>
       </Card>
     </div>
