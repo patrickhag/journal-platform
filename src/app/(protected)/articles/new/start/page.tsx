@@ -16,18 +16,20 @@ const Page = async ({
         <div className="space-y-8">
           <ArticleTypeSection />
           <SubmissionRequirementsSection />
-          <div className="my-4 py-3">
+          <div className="mt-4 mb-8 py-3 ">
             <h2 className="text-xl font-semibold mb-4">
               Comments for the editor
             </h2>
             <CommentForEditor />
           </div>
+        </div>
+      </CardContent>
+      <div className="my-8 max-[350px]:my-12 sm:my-6 mx-6">
           <Paginator
             nextLink="/articles/new/attach-files"
             query={query}
           ></Paginator>
-        </div>
-      </CardContent>
+          </div>
     </Card>
   );
 };
