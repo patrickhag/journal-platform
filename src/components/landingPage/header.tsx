@@ -28,23 +28,20 @@ export default function Header() {
       </div>
 
       <header className="flex flex-wrap items-center justify-between px-4 md:px-8 py-4 backdrop-blur-md shadow sticky top-0 z-50">
-        {/* Logo and Journal Name */}
-        <div className="text-xl font-bold flex items-center gap-2">
-          <div className="rounded-full">
-            <Link href="/">
-              <Image
-                src="/jaep-logo.jpg"
-                alt="JAEPH Logo"
-                width={32}
-                height={32}
-                className="rounded-full object-cover"
-              />
-            </Link>
-          </div>
-          <span className="hidden sm:inline text-lg max-[1132px]:text-sm">
-            Journal of African Epidemiology and Public Health
-          </span>
-          <span className="sm:hidden">JAEPH</span>
+        <div className="text-xl font-bold">
+          <Link href="/" className="rounded-full flex items-center gap-2">
+            <Image
+              src="/jaep-logo.jpg"
+              alt="JAEPH Logo"
+              width={32}
+              height={32}
+              className="rounded-full object-cover"
+            />
+            <span className="hidden sm:inline text-lg max-[1132px]:text-sm">
+              Journal of African Epidemiology and Public Health
+            </span>
+            <span className="sm:hidden">JAEPH</span>
+          </Link>
         </div>
 
         <button
@@ -82,45 +79,6 @@ export default function Header() {
           )}
         </button>
 
-        {/* Desktop Navigation */}
-        {/* <nav className="hidden lg:flex items-center gap-6 text-gray-700 max-[1132px]:text-sm">
-          <Link
-            href="/"
-            className={`${
-              pathname === '/' ? 'text-blue-500' : 'hover:text-blue-500'
-            }`}
-          >
-            Home
-          </Link>
-          <Link
-            href="/about"
-            className={`${
-              pathname === '/about' ? 'text-blue-500' : 'hover:text-blue-500'
-            }`}
-          >
-            About
-          </Link>
-          <Link
-            href="/articles"
-            className={`${
-              pathname === '/articles' ? 'text-blue-500' : 'hover:text-blue-500'
-            }`}
-          >
-            Articles
-          </Link>
-          <Link
-            href="/authors"
-            className={`${
-              pathname === '/authors' ? 'text-blue-500' : 'hover:text-blue-500'
-            }`}
-          >
-            Authors
-          </Link>
-          <Link href="#" className="hover:text-blue-500">
-            Reviewers
-          </Link>
-          <HeaderDropdown names={names} session={session} />
-        </nav> */}
         <nav className="hidden lg:flex items-center gap-6 text-gray-700 max-[1132px]:text-sm">
           {navItems.map((item) => (
             <Link

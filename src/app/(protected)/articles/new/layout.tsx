@@ -5,7 +5,7 @@ export default async function Layout({ children }: PropsWithChildren) {
   return (
     <>
       <ProgressLine />
-      <div className="container">{children}</div>
+      <div className="container mx-auto">{children}</div>
     </>
   );
 }
