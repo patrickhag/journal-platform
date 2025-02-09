@@ -106,7 +106,7 @@ export default async function DashboardPannel({
                       fileURI: a.fileURI || '',
                       id: a.id || '',
                       requirements: [''],
-                      section: a.section || 'Articles',
+                      section: a.section || 'Original Research',
                       title: a.title || '',
                       articleStatus: a.articleStatus || 'Submitted',
                       owner: a.owner,

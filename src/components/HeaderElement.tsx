@@ -21,7 +21,7 @@ export const HeaderElement = ({
   role?: 'NORMAL_USER' | 'CHIEF_EDITOR' | 'ADMIN' | 'REVIEWER';
   name: string;
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen] = useState(false);
   return (
     <>
       <div className="flex items-center gap-8">

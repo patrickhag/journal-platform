@@ -21,7 +21,7 @@ export type TPermissionItem =
   | 'MANAGE_REVIEWERS' // New permission: CRUD for reviews
   | 'UPDATE_REVIEW' // New permission: Update a review
   | 'DELETE_REVIEW' // New permission: Delete a review
-  | 'CREATE_REVIEW' // New permission: Create a review
+  | 'ADD_REVIEW' // New permission: Create a review
   | 'VIEW_REVIEW' // New permission: View reviews
   | 'ARCHIVE_OWN_ARTICLE';
 
@@ -70,7 +70,7 @@ export const ROLE_PERMISSIONS: TPermission = {
   ],
   REVIEWER: [
     'VIEW_PUBLIC_ARTICLES',
-    'CREATE_REVIEW',
+    'ADD_REVIEW',
     'VIEW_REVIEW',
     'ARCHIVE_OWN_ARTICLE',
     'CREATE_ARTICLE',

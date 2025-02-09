@@ -1,8 +1,10 @@
 import React from 'react';
 import { articleSubmissions, contributors, db, metadata } from '@/db/schema';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { eq } from 'drizzle-orm';
 import { USER_ROLE } from '@/lib/roles';
+import { auth } from '@/auth';
+import EditMetadata from './EditMetadata';
 
 export default async function Metadata({
   articleId,
@@ -17,7 +19,8 @@ export default async function Metadata({
     .limit(1);
 
   const meta = metas[0];
-  const contibutors = await db
+
+  const foundContributors = await db
     .select()
     .from(contributors)
     .where(eq(contributors.articleId, articleId));
@@ -34,24 +37,38 @@ export default async function Metadata({
 
   if (!meta) return undefined;
 
+  const session = await auth();
+  const userId = session?.user.id;
+
   return (
     <article>
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">
-            Article information
-          </CardTitle>
-        </CardHeader>
+        <div className="flex justify-between">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">
+              Article information
+            </CardTitle>
+          </CardHeader>
+          {userId === meta.userId && (
+            <EditMetadata
+              meta={{
+                ...meta,
+                subtitle: meta.subtitle ?? '',
+              }}
+              articleId={articleId}
+            />
+          )}
+        </div>
         <CardContent className="space-y-4">
           <div>
             <h3 className="text-sm font-medium text-muted-foreground">
-              Title of the journal
+              Title of the manuscript
             </h3>
             <p className="mt-1">{meta.title}</p>
           </div>
           <div>
             <h3 className="text-sm font-medium text-muted-foreground">
-              Subtitle of the journal
+              Subtitle of the manuscript
             </h3>
             <p className="mt-1">{meta.subtitle}</p>
           </div>
@@ -73,23 +90,20 @@ export default async function Metadata({
               dangerouslySetInnerHTML={{ __html: comment.commentsForEditor }}
             />
           </div>
-          {/* <Link href={`/meta/${articleId}`}>
-            <Button className="mt-3 bg-slate-900 text-lime-50 hover:bg-slate-900">
-              Update article information
-            </Button>
-          </Link> */}
         </CardContent>
       </Card>
-      {contibutors.length > 0 && (
+      {foundContributors.length > 0 && (
         <Card className="my-3">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">
-              Contributors
-            </CardTitle>
-          </CardHeader>
+          <div className="flex justify-between">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">
+                Contributors
+              </CardTitle>
+            </CardHeader>
+          </div>
           <CardContent>
             <div className="space-y-2">
-              {contibutors.map((c) => (
+              {foundContributors.map((c) => (
                 <div key={c.id} className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <h3 className="text-sm font-medium text-muted-foreground">

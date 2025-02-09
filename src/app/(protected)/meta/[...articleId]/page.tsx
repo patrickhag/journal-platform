@@ -10,11 +10,13 @@ const MetaUpdate = async ({
 }) => {
   const parameters = await params;
   const [articleId] = parameters.articleId;
+
   const meta = await db
     .select()
     .from(metadata)
     .where(eq(metadata.articleId, articleId))
     .limit(1);
+
   return (
     <div className="container mx-auto mt-4">
       <NewMetaForm meta={meta[0]}>

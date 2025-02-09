@@ -27,7 +27,7 @@ const Collections = async () => {
           >
             Aims and scope
           </h1>
-          <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
+          <p className="text-gray-700">
             Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum
             dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
             Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum

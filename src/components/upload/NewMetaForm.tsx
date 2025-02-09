@@ -1,4 +1,5 @@
 'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import React, {
@@ -34,6 +35,7 @@ export const NewMetaForm: FC<
   const parameters = useParams();
   const router = useRouter();
   const form = useRef<HTMLFormElement>(null);
+
   const metaValidation = safeParse({
     schema: metadataSchema,
     input: new URLSearchParams(searchParams.toString()),
@@ -49,6 +51,7 @@ export const NewMetaForm: FC<
     },
   });
   const currentForm = form.current;
+
   const [topics, setTopics] = useState<string[]>(
     metaValidation.data?.topics || []
   );
@@ -57,13 +60,14 @@ export const NewMetaForm: FC<
     currentForm?.addEventListener('focusout', () => {
       currentForm?.requestSubmit();
     });
-
     return () => {
       currentForm?.removeEventListener('focusout', () => {});
     };
   }, [currentForm]);
+
   const saveMeta = formm.handleSubmit((data) => {
     const meta = metadataSchema.safeParse(data);
+
     if (meta.error) return;
 
     if (children) {
@@ -86,6 +90,7 @@ export const NewMetaForm: FC<
     });
 
     const params = new URLSearchParams(searchParams.toString());
+
     Object.keys(data).forEach((key) => {
       params.delete(key);
     });
@@ -96,9 +101,11 @@ export const NewMetaForm: FC<
   });
 
   const topicRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     currentForm?.requestSubmit();
   }, [topics, setTopics]);
+
   return (
     <>
       <Form {...formm}>
@@ -158,13 +165,14 @@ export const NewMetaForm: FC<
                 <FormLabel htmlFor="abstract">
                   Abstract <span className="text-red-500">*</span>
                 </FormLabel>
+
                 <ReactQuill
                   theme="snow"
                   value={formm.getValues().abstract}
                   onChange={(d) => {
                     formm.setValue('abstract', d);
                   }}
-                  className="h-32 mb-4"
+                  className="h-32 mb-4 z-[1]"
                 />
                 <FormControl>
                   <Textarea

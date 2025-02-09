@@ -16,9 +16,10 @@ export default async function updateArticleMeta({
       .update(metadata)
       .set({
         abstract: meta.abstract,
-        //title: meta.title,
+        title: meta.title,
         prefix: meta.prefix,
         subtitle: meta.subtitle,
+        topics: meta.topics,
       })
       .where(eq(metadata.articleId, articleId));
   } catch (error) {

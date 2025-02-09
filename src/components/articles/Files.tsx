@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Download, FileText } from 'lucide-react';
 import ReviewModal from './Review';
-import withPermissions from '../WithPermission';
 import { USER_ROLES } from '@/lib/roles';
+import withPermissions from '../WithPermission';
 
 async function Files({
   articleId,
@@ -41,7 +41,7 @@ async function Files({
                   </p>
                 </div>
               </div>
-              <Button variant="secondary" size="sm">
+              <Button variant="outline" size="sm">
                 <Link href={file.publicId} download>
                   <span className="flex items-center">
                     <Download className="mr-2 text-gray-600" /> Download
@@ -51,7 +51,7 @@ async function Files({
 
               {/* <div className="flex space-x-1"> */}
               <UlterFile
-                requiredPermissions={['CREATE_REVIEW']}
+                requiredPermissions={['ADD_REVIEW']}
                 role={role}
                 fallback={<></>}
               />

@@ -10,16 +10,13 @@ export const SendInvitation: React.FC<{
     subTitle: string;
     content: string;
   };
-  author: {
-    name: string;
-    role: string;
-    avatar: string;
-  };
   reviewerEmail: string;
+  isAlreadyUser: boolean;
 }> = (props) => {
-  const { article, reviewer } = props;
+  const { article, reviewer, isAlreadyUser } = props;
   const nameParts = reviewer.split(' ');
   const password = nameParts.length > 2 ? nameParts[1] : nameParts[0];
+
   return (
     <Tailwind>
       <Container className="bg-white border border-gray-200 max-w-xl mx-auto my-8 p-6 text-center">
@@ -44,12 +41,15 @@ export const SendInvitation: React.FC<{
             the invitation.
           </Text>
           <Text className="text-gray-700 my-4">
-            If you’re ready to review the manuscript you can use your email and
-            <span className="font-semibold">
-              {' '}
-              &quot;@123{password}&quot;
-            </span>{' '}
-            as your password.
+            If you&apos;re ready to review the manuscript you can use your email{' '}
+            {isAlreadyUser ? (
+              <span>and password to login.</span>
+            ) : (
+              <span>
+                and <span className="font-semibold">{`@123${password}`}</span>{' '}
+                as your password.
+              </span>
+            )}
           </Text>
           <Row>
             <Column align="center">
@@ -57,7 +57,7 @@ export const SendInvitation: React.FC<{
                 <td align="center" className="w-1/2 pr-[16px]" colSpan={1}>
                   <Button
                     className="box-border w-full rounded-[8px] bg-indigo-600 px-[20px] py-[12px] text-center font-semibold text-white"
-                    href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/articles/${article.article}?accept_invite=1`}
+                    href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/accept/${article.article}?accept_invite=1`}
                   >
                     Accept invitation
                   </Button>
@@ -65,7 +65,7 @@ export const SendInvitation: React.FC<{
                 <td align="center" className="w-1/2 pl-[16px]" colSpan={1}>
                   <Button
                     className="box-border w-full rounded-[8px] border border-solid border-gray-200 bg-red-500 px-[20px] py-[12px] text-center font-semibold text-white"
-                    href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/articles/${article.article}?accept_invite=0`}
+                    href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/accept/${article.article}?accept_invite=0`}
                   >
                     Reject invitation
                   </Button>

@@ -71,9 +71,9 @@ export const notifyContibutor = async ({
 
 export const sendInvitation = async ({
   article,
-  author,
   reviewer,
   toEmail,
+  isAlreadyUser,
 }: {
   reviewer: string;
   article: {
@@ -82,25 +82,21 @@ export const sendInvitation = async ({
     subTitle: string;
     content: string;
   };
-  author: {
-    name: string;
-    role: string;
-    avatar: string;
-  };
   toEmail: string;
+  isAlreadyUser: boolean;
 }) => {
   const emailHtml = await render(
     <SendInvitation
       reviewerEmail={toEmail}
       article={article}
-      author={author}
       reviewer={reviewer}
+      isAlreadyUser={isAlreadyUser}
     />
   );
   const options = {
     from: process.env.EMAIL_USER,
     to: toEmail,
-    subject: 'You have been invited to review the following article',
+    subject: 'You have been invited to review a manuscript.',
     html: emailHtml,
   };
   await transporter.sendMail(options);

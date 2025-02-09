@@ -10,16 +10,7 @@ export async function reachOut(_: unknown, formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) return null;
 
-  const currentUserRole = await db
-    .select({ role: users.role })
-    .from(users)
-    .where(eq(users.id, session.user.id))
-    .limit(1);
-
-  if (
-    currentUserRole[0].role !== 'CHIEF_EDITOR' &&
-    currentUserRole[0].role !== 'ADMIN'
-  )
+  if (session.user.role !== 'CHIEF_EDITOR' && session.user.role !== 'ADMIN')
     return;
 
   // Extract email and reviewer name
@@ -67,8 +58,8 @@ export async function reachOut(_: unknown, formData: FormData) {
       content: formData.get('message')?.toString() || '',
     },
     reviewer,
-    author: JSON.parse(formData.get('author')?.toString() || '{}'),
     toEmail,
+    isAlreadyUser: existingUser.length > 0,
   });
 
   // Add notification

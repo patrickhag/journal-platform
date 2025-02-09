@@ -21,6 +21,7 @@ export const GET = async (request: NextRequest) => {
   const expirationTime = userRequest.expires.getTime();
   if (expirationTime < Date.now() - RESET_PASSWORD_EXPIRATION_TIME) {
     return redirect(
+      // TO-DO: add this page
       '/forgot-password?msg=token has exired please request again'
     );
   }
