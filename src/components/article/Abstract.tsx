@@ -6,7 +6,7 @@ import {
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
 
-export interface AbstractProps {
+export interface ArticleDataProps {
   articleData: {
     updatedAt: string | null | Date;
     id: string;
@@ -37,7 +37,7 @@ export interface AbstractProps {
   };
 }
 
-export async function Abstract({ articleData }: AbstractProps) {
+export async function Abstract({ articleData }: ArticleDataProps) {
   const contributors = articleData?.contributors.map((contributor) => ({
     name: contributor.name,
     affiliation: contributor.affiliation,

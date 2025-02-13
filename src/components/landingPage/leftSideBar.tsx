@@ -1,10 +1,27 @@
+'use client';
+
 import React from 'react';
 import { EyeIcon, ShareIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
-import { Album } from 'lucide-react';
+import { Album, LinkedinIcon, TwitterIcon, FacebookIcon } from 'lucide-react';
 import { DownloadIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { handleDownload } from '@/lib/handleDownload';
+import { downloadFile } from '@/lib/downloadFile';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface LeftSideBarProps {
   isAbstract?: boolean;
@@ -12,25 +29,24 @@ interface LeftSideBarProps {
     publicId: string | null;
     fileType: string | null;
   }[];
+  articleId: string;
 }
 
 const LeftSideBar = ({
   isAbstract,
   articleFiles,
-}: {
-  isAbstract?: boolean;
-  articleFiles?: LeftSideBarProps['articleFiles'];
-}) => {
-  const articleText = articleFiles?.filter(
+  articleId,
+}: LeftSideBarProps) => {
+  const articleFile = articleFiles?.filter(
     (file) => file.fileType === 'Article Text'
   );
 
   return (
-    <div>
+    <div className="sticky top-0">
       {/* Download, Cite and Share */}
       {isAbstract && (
         <div className="flex flex-col gap-2 mb-5">
-          {articleText?.map((file) => (
+          {articleFile?.map((file) => (
             <div key={file.publicId}>
               <Link href={`${file.publicId}`}>
                 <Button className="w-full" variant="outline">
@@ -42,16 +58,99 @@ const LeftSideBar = ({
             </div>
           ))}
           <div className="flex justify-between gap-2">
-            <Button variant="outline">
-              <span className="flex items-center gap-2">
-                <Album className="w-4 h-4" /> Cite this article
-              </span>
-            </Button>
-            <Button variant="outline">
-              <span className="flex items-center gap-2">
-                <ShareIcon className="w-4 h-4" /> Share this article
-              </span>
-            </Button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline">
+                  <span className="flex items-center gap-2">
+                    <Album className="w-4 h-4" /> Cite this article
+                  </span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <div className="grid gap-4">
+                  <div className="space-y-2">
+                    <h4 className="font-medium leading-none">
+                      Download citations
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      Download citations in different formats.
+                    </p>
+                  </div>
+                  <Button
+                    variant={'secondary'}
+                    onClick={async () => {
+                      const result = await handleDownload('bibtex', articleId);
+                      if (result?.success) {
+                        downloadFile(result.content, result.filename);
+                      }
+                    }}
+                  >
+                    BibTeX format
+                  </Button>
+                  <Button
+                    variant={'secondary'}
+                    onClick={async () => {
+                      const result = await handleDownload('ris', articleId);
+                      if (result?.success) {
+                        downloadFile(result.content, result.filename);
+                      }
+                    }}
+                  >
+                    RIS format
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <span className="flex items-center gap-2">
+                    <ShareIcon className="w-4 h-4" /> Share this article
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup>
+                  <DropdownMenuRadioItem
+                    value="facebook"
+                    onClick={() => {
+                      window.open(
+                        `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`,
+                        '_blank'
+                      );
+                    }}
+                  >
+                    <FacebookIcon className="w-4 h-4 text-blue-500 mr-2" />
+                    <span>Facebook</span>
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem
+                    value="twitter"
+                    onClick={() => {
+                      window.open(
+                        `https://twitter.com/intent/tweet?url=${window.location.href}`,
+                        '_blank'
+                      );
+                    }}
+                  >
+                    <TwitterIcon className="w-4 h-4 text-blue-500 mr-2  " />
+                    <span>Twitter</span>
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem
+                    value="linkedin"
+                    onClick={() => {
+                      window.open(
+                        `https://www.linkedin.com/shareArticle?url=${window.location.href}`,
+                        '_blank'
+                      );
+                    }}
+                  >
+                    <LinkedinIcon className="w-4 h-4 text-blue-500 mr-2" />
+                    <span>Linkedin</span>
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       )}

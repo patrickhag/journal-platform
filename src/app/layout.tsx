@@ -17,13 +17,27 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_FRONTEND_URL || ''),
+  keywords: [
+    'Journal of African Epidemiology and Public Health',
+    'African Epidemiology',
+    'Public Health in Africa and Epidemiology',
+    'African Public Health',
+    'Epidemiology Journal in Africa',
+    'Public Health Journal in Africa',
+    'Epidemiology Research in Africa',
+    'African Public Health Journal',
+    'Epidemiology in Public Health of Africa',
+  ],
   title: {
-    default: 'Journal of African Epidemiology and Public Health',
+    default: '  Journal of African Epidemiology and Public Health',
     template: `%s | Journal of African Epidemiology and Public Health`,
   },
   openGraph: {
     description:
       'Journal of African Epidemiology and Public Health is a leading journal in the field of epidemiology and public health in Africa.',
+  },
+  icons: {
+    icon: 'public/jaep-logo.png',
   },
 };
 
@@ -37,6 +51,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
+        <link rel="icon" href="public/jaep-logo.png" type="image/png" />
         <SessionProvider>
           <ReactQueryProvider>{children}</ReactQueryProvider>
         </SessionProvider>

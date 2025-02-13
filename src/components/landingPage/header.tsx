@@ -31,7 +31,7 @@ export default function Header() {
         <div className="text-xl font-bold">
           <Link href="/" className="rounded-full flex items-center gap-2">
             <Image
-              src="/jaep-logo.jpg"
+              src="/jaep-logo.png"
               alt="JAEPH Logo"
               width={32}
               height={32}

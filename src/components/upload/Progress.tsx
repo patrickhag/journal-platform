@@ -18,7 +18,7 @@ export const ProgressLine = () => {
   const currentStepIndex = journalKeys.findIndex((k) => k.page === page);
 
   return (
-    <div className="sticky top-14 container w-10/12 mx-auto mb-3 z-50">
+    <div className="sticky top-14 container sm:w-full md:w-10/12 mx-auto mb-3 z-50">
       <Card>
         <div className="flex items-center justify-between m-3 gap-0 sm:gap-2 md:gap-4">
           {journalKeys.map(({ page: j, title }, i) => {

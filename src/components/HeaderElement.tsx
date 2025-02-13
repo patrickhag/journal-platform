@@ -35,7 +35,7 @@ export const HeaderElement = ({
           </Button> */}
           <Link href="/" className="block">
             <Image
-              src="/jaep-logo.jpg"
+              src="/jaep-logo.png"
               alt="Logo"
               width={32}
               height={32}

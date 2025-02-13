@@ -63,6 +63,7 @@
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
     "uploadthing": "^7.4.1",
+    "winston": "^3.17.0",
     "zod": "^3.24.1",
     "zod-urlsearchparams": "^0.0.15"
   },
