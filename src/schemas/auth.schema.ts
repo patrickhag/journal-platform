@@ -20,7 +20,7 @@ export const loginSchema = z.object({
 
 export const registerSchema = z
   .object({
-    affiliation: z.string(),
+    affiliation: z.string().min(5, { message: 'Affiliation is required' }),
     firstName: z
       .string()
       .min(2, { message: 'first name are required' })

@@ -35,7 +35,7 @@ export async function generateMetadata({
     return {
       openGraph: {
         title: articleData.metadata.title,
-        keywords: articleData.metadata.topics,
+        // keywords: articleData.metadata.topics,
       },
     };
   } catch (error: unknown) {

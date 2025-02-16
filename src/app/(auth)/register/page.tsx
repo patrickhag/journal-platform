@@ -170,7 +170,7 @@ export default function Register() {
                         htmlFor="affiliation"
                         className="text-sm text-gray-700"
                       >
-                        Affiliation
+                        Affiliation <span className="text-red-700">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input

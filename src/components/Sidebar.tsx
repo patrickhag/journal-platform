@@ -41,7 +41,9 @@ export const Sidebar = () => {
         variant={'ghost'}
         className="justify-start"
         onClick={() => {
-          signOut();
+          signOut({
+            redirectTo: '/',
+          });
         }}
       >
         <LogOut strokeWidth={1.75} />

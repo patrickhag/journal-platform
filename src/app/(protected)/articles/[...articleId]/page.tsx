@@ -2,7 +2,8 @@ import { auth } from '@/auth';
 import Files from '@/components/articles/Files';
 import Metadata from '@/components/articles/Metadata';
 import Reviewer from '@/components/articles/Reviewer';
-import { articleSubmissions, db, reviewers, users } from '@/db/schema';
+import { articleSubmissions, reviewers, users } from '@/db/schema';
+import { db } from '@/db/db';
 import { eq } from 'drizzle-orm';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import GoBackButton from '@/components/articles/GoBackButton';
@@ -13,6 +14,8 @@ import { ARTICLE_STATUS } from '@/lib/consts';
 import { revalidatePath } from 'next/cache';
 import withPermissions from '@/components/WithPermission';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
   const parameters = await params;
@@ -29,7 +32,21 @@ async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
   const currentUser = session?.user;
   if (!currentUser) return <h1>Not authenticated</h1>;
 
+  // call the article and everything related to it
+  const myArticle = await db.query.articleSubmissions.findFirst({
+    where: eq(articleSubmissions.id, articleId),
+    with: {
+      files: true,
+      user: true,
+      contributors: true,
+    },
+  });
+
+  console.log('myArticle>>>', myArticle);
+
   const currentUserRole = session?.user?.role;
+
+  console.log('currentUserRole>>>', currentUserRole);
 
   const author = await db
     .select()
@@ -63,6 +80,25 @@ async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
                 </h3>
                 <p className="mt-1">
                   {author[0].firstName} {author[0].lastName}
+                </p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground">
+                  ORCID
+                </h3>
+                <p className="mt-1">
+                  <Link
+                    href={`https://orcid.org/${author[0].orcid}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cn(
+                      author[0].orcid ? 'text-blue-500 hover:underline' : ''
+                    )}
+                  >
+                    {author[0].orcid
+                      ? `https://orcid.org/${author[0].orcid}`
+                      : 'Not provided'}
+                  </Link>
                 </p>
               </div>
               <div>

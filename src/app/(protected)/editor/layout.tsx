@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import Header from '@/components/Header';
-import { db, notifications } from '@/db/schema';
-import { and, eq } from 'drizzle-orm';
+import Loader from '@/components/Loader';
+import { Suspense } from 'react';
 
 export default async function EditorLayout({
   children,
@@ -11,20 +11,18 @@ export default async function EditorLayout({
   const session = await auth();
   if (!session?.user?.id) return undefined;
 
-  const notificationsData = await db
-    .select()
-    .from(notifications)
-    .where(
-      and(
-        eq(notifications.userId, session?.user?.id),
-        eq(notifications.isRead, false)
-      )
-    );
-
   return (
     <div className="bg-gray-100 min-h-screen">
-      <Header notifications={notificationsData} />
-      <main>{children}</main>
+      <Header />
+      <Suspense
+        fallback={
+          <div className="flex justify-center items-center h-[calc(100vh-10rem)]">
+            <Loader text="Loading..." />
+          </div>
+        }
+      >
+        <main>{children}</main>
+      </Suspense>
     </div>
   );
 }

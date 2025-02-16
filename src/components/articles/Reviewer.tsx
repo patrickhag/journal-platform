@@ -7,7 +7,6 @@ import {
 import { ReachOut } from './ReachOut';
 import { eq } from 'drizzle-orm';
 import { auth } from '@/auth';
-import { Separator } from '@/components/ui/separator';
 import { Button } from '../ui/button';
 import { Send } from 'lucide-react';
 
@@ -118,7 +117,6 @@ export default async function Reviewer({
           </PopoverContent>
         </Popover>
       )}
-      <Separator className="my-1" />
     </>
   );
 }

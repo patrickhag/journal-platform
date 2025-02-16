@@ -36,8 +36,8 @@ async function Files({
                 <FileText className="h-5 w-5 text-muted-foreground mr-2" />
                 <div>
                   <p className="font-medium">{file.originalName}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {file.fileType} | 12kb
+                  <p className="text-sm text-muted-foreground my-1">
+                    {file.fileType}
                   </p>
                 </div>
               </div>

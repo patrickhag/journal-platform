@@ -48,7 +48,6 @@ export const ROLE_PERMISSIONS: TPermission = {
     'MANAGE_REVIEWERS', // Editors can manage reviews (CRUD)
     'UPDATE_REVIEW', // Editors can update reviews
     'DELETE_REVIEW', // Editors can delete reviews
-    'PUBLISH_ARTICLES', // Editors can publish articles
     'MANAGE_USERS',
   ],
   ADMIN: [
@@ -67,6 +66,7 @@ export const ROLE_PERMISSIONS: TPermission = {
     'MANAGE_REVIEWERS', // Admin can manage all reviews (CRUD for all reviews)
     'UPDATE_REVIEW', // Admin can update any review
     'DELETE_REVIEW', // Admin can delete any review
+    'PUBLISH_ARTICLES', // Editors can publish articles
   ],
   REVIEWER: [
     'VIEW_PUBLIC_ARTICLES',
