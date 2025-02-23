@@ -29,7 +29,7 @@ interface LeftSideBarProps {
     publicId: string | null;
     fileType: string | null;
   }[];
-  articleId: string;
+  articleId?: string;
 }
 
 const LeftSideBar = ({
@@ -79,7 +79,10 @@ const LeftSideBar = ({
                   <Button
                     variant={'secondary'}
                     onClick={async () => {
-                      const result = await handleDownload('bibtex', articleId);
+                      const result = await handleDownload(
+                        'bibtex',
+                        articleId ?? ''
+                      );
                       if (result?.success) {
                         downloadFile(result.content, result.filename);
                       }
@@ -90,7 +93,10 @@ const LeftSideBar = ({
                   <Button
                     variant={'secondary'}
                     onClick={async () => {
-                      const result = await handleDownload('ris', articleId);
+                      const result = await handleDownload(
+                        'ris',
+                        articleId ?? ''
+                      );
                       if (result?.success) {
                         downloadFile(result.content, result.filename);
                       }

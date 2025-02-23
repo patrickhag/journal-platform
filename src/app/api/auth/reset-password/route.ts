@@ -1,4 +1,5 @@
-import { db, passwordResets, users } from '@/db/schema';
+import { passwordResets, users } from '@/db/schema';
+import { db } from '@/db/db';
 import { RESET_PASSWORD_EXPIRATION_TIME } from '@/lib/consts';
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
@@ -8,21 +9,23 @@ export const GET = async (request: NextRequest) => {
   const url = new URL(request.url);
   const searchParams = url.searchParams;
   const token = searchParams.get('id');
+
   if (!token) redirect('/login');
 
-  const data = await db
-    .select()
-    .from(passwordResets)
-    .where(eq(passwordResets.token, token))
-    .limit(1)
-    .execute();
+  const data = await db.query.passwordResets.findFirst({
+    where: eq(passwordResets.token, token),
+  });
 
-  const userRequest = data[0];
+  const userRequest = data;
+
+  if (!userRequest) {
+    return redirect('/forgot-password?msg=Invalid or expired token');
+  }
+
   const expirationTime = userRequest.expires.getTime();
   if (expirationTime < Date.now() - RESET_PASSWORD_EXPIRATION_TIME) {
     return redirect(
-      // TO-DO: add this page
-      '/forgot-password?msg=token has exired please request again'
+      '/forgot-password?msg=Token has expired. Please request again'
     );
   }
 

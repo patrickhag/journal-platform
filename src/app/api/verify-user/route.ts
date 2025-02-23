@@ -8,13 +8,11 @@ import jwt from 'jsonwebtoken';
 export const GET = async (request: NextRequest) => {
   const url = new URL(request.url);
   const searchParams = url.searchParams;
-  console.log(searchParams);
   const token = searchParams.get('id');
   if (!token) {
     redirect('/login', RedirectType.replace);
   }
   jwt.verify(token, process.env.AUTH_SECRET!, async (err, decoded) => {
-    console.log(decoded, err);
     if (err) {
       redirect('/login', RedirectType.replace);
     }

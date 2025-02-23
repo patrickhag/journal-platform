@@ -235,7 +235,7 @@ export const fileFormats = ['.docx', '.pdf', '.doc'];
 
 export const ARTICLE_STATUS = [
   'Submitted',
-  'In Review',
+  'Under Review',
   'Approved',
   'Rejected',
   'Published',

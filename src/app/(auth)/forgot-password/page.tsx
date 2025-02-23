@@ -17,10 +17,15 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useActionState, useEffect, useState } from 'react';
 
+const initialState = {
+  message: '',
+  success: false,
+};
+
 export default function Login() {
-  const [returnedMessage, formAction, isPending] = useActionState(
+  const [prevMessage, formAction, isPending] = useActionState(
     resetPassword,
-    undefined
+    initialState
   );
 
   const [visible, setVisible] = useState<boolean>(false);
@@ -29,14 +34,14 @@ export default function Login() {
   const params = useSearchParams();
 
   useEffect(() => {
-    if (params.get('msg') || returnedMessage) {
+    if (params.get('msg') || prevMessage?.message) {
       setVisible(true);
     }
     const timeout = setTimeout(() => {
       setVisible(false);
     }, 5000);
     return () => clearTimeout(timeout);
-  }, [returnedMessage]);
+  }, [prevMessage, params]);
 
   return (
     <Card className="w-full max-w-lg mx-auto p-4 mt-32">
@@ -55,24 +60,24 @@ export default function Login() {
         {visible && (
           <div
             className={`flex p-4 items-end space-x-1 justify-center rounded-md ${
-              returnedMessage === 'Success' ? 'bg-green-100' : 'bg-red-100'
+              prevMessage?.success ? 'bg-green-100' : 'bg-red-100'
             }`}
             aria-live="polite"
             aria-atomic="true"
           >
-            {returnedMessage === 'Success' ? (
+            {prevMessage?.success ? (
               <CheckCircleIcon className="h-5 w-5 text-green-500" />
             ) : (
               <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
             )}
             <p
               className={`text-sm ${
-                returnedMessage === 'Success'
+                prevMessage?.success === true
                   ? 'text-green-500'
                   : 'text-red-500'
               }`}
             >
-              {params.get('msg') || 'Password reset sent to your email.'}
+              {params.get('msg') || prevMessage?.message}
             </p>
           </div>
         )}
@@ -139,7 +144,7 @@ export default function Login() {
       </CardContent>
 
       <div className="text-center mt-4 text-sm">
-        Alredy have an account?{' '}
+        Already have an account?{' '}
         <Link href="/login" className="text-blue-600 hover:underline">
           Login
         </Link>

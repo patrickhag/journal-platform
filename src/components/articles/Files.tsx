@@ -1,6 +1,7 @@
-import { db, files } from '@/db/schema';
+import { files, reviewers } from '@/db/schema';
+import { db } from '@/db/db';
 import { Button } from '../ui/button';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Download, FileText } from 'lucide-react';
@@ -19,6 +20,13 @@ async function Files({
     .select()
     .from(files)
     .where(eq(files.articleId, articleId));
+
+  const hasReviewerAcceptInvitation = await db.query.reviewers.findFirst({
+    where: and(
+      eq(reviewers.articleId, articleId),
+      eq(reviewers.acceptedInvitation, true)
+    ),
+  });
 
   return (
     <>
@@ -50,11 +58,13 @@ async function Files({
               </Button>
 
               {/* <div className="flex space-x-1"> */}
-              <UlterFile
-                requiredPermissions={['ADD_REVIEW']}
-                role={role}
-                fallback={<></>}
-              />
+              {hasReviewerAcceptInvitation && (
+                <UlterFile
+                  requiredPermissions={['ADD_REVIEW']}
+                  role={role}
+                  fallback={<></>}
+                />
+              )}
               {/* <Button
                   variant="link"
                   className="text-blue-500 hover:text-blue-600"

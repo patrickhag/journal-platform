@@ -10,12 +10,9 @@ import GoBackButton from '@/components/articles/GoBackButton';
 import Reviews from '@/components/articles/Reviews';
 import { Separator } from '@/components/ui/separator';
 import AddReviewerModal from '@/components/upload/AddReviewerModal';
-import { ARTICLE_STATUS } from '@/lib/consts';
-import { revalidatePath } from 'next/cache';
-import withPermissions from '@/components/WithPermission';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { AcceptOrRejectComponent } from '@/components/articles/AcceptOrReject';
 
 async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
   const parameters = await params;
@@ -29,24 +26,8 @@ async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
 
   const article = foundArticle[0];
   const session = await auth();
-  const currentUser = session?.user;
-  if (!currentUser) return <h1>Not authenticated</h1>;
-
-  // call the article and everything related to it
-  const myArticle = await db.query.articleSubmissions.findFirst({
-    where: eq(articleSubmissions.id, articleId),
-    with: {
-      files: true,
-      user: true,
-      contributors: true,
-    },
-  });
-
-  console.log('myArticle>>>', myArticle);
 
   const currentUserRole = session?.user?.role;
-
-  console.log('currentUserRole>>>', currentUserRole);
 
   const author = await db
     .select()
@@ -122,7 +103,7 @@ async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
             </div>
           </CardContent>
         </Card>
-        <Files articleId={articleId} role={currentUserRole} />
+        <Files articleId={articleId} role={currentUserRole!} />
         <Card className="my-3">
           <CardHeader>
             <CardTitle>Reviewers</CardTitle>
@@ -157,13 +138,19 @@ async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
           </CardContent>
         </Card>
         <Reviews articleId={articleId} />
-        <Publish
+        <AcceptOrRejectComponent
+          role={currentUserRole!}
+          requiredPermissions={['ACCEPT_ARTICLE', 'REJECT_ARTICLE']}
+          fallback=""
+          articleId={articleId}
+        />
+        {/* <Publish
           role={currentUserRole}
           requiredPermissions={['PUBLISH_ARTICLES']}
           fallback=""
           articleId={articleId}
           status={article.articleStatus}
-        />
+        /> */}
       </div>
     </>
   );
@@ -171,32 +158,32 @@ async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
 
 export default page;
 
-const PublishArticle = ({
-  articleId,
-  status,
-}: {
-  articleId: string;
-  status: (typeof ARTICLE_STATUS)[number] | null;
-}) => {
-  return (
-    <form
-      className="flex justify-center items-center"
-      action={async () => {
-        'use server';
-        await db
-          .update(articleSubmissions)
-          .set({
-            articleStatus: status === 'Published' ? 'Submitted' : 'Published',
-            updatedAt: new Date().toISOString(),
-          })
-          .where(eq(articleSubmissions.id, articleId));
-        revalidatePath('/articles/' + articleId);
-      }}
-    >
-      <Button className="w-4/5 mx-auto bg-green-500 hover:bg-green-600 mt-3">
-        {status === 'Published' ? 'Unpublish' : 'Publish'} this article{' '}
-      </Button>
-    </form>
-  );
-};
-const Publish = withPermissions(PublishArticle);
+// const PublishArticle = ({
+//   articleId,
+//   status,
+// }: {
+//   articleId: string;
+//   status: (typeof ARTICLE_STATUS)[number] | null;
+// }) => {
+//   return (
+//     <form
+//       className="flex justify-center items-center"
+//       action={async () => {
+//         'use server';
+//         await db
+//           .update(articleSubmissions)
+//           .set({
+//             articleStatus: status === 'Published' ? 'Submitted' : 'Published',
+//             updatedAt: new Date().toISOString(),
+//           })
+//           .where(eq(articleSubmissions.id, articleId));
+//         revalidatePath('/articles/' + articleId);
+//       }}
+//     >
+//       <Button className="w-4/5 mx-auto bg-green-500 hover:bg-green-600 mt-3">
+//         {status === 'Published' ? 'Unpublish' : 'Publish'} this manuscript{' '}
+//       </Button>
+//     </form>
+//   );
+// };
+// const Publish = withPermissions(PublishArticle);

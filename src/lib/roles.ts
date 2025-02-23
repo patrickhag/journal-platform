@@ -23,7 +23,9 @@ export type TPermissionItem =
   | 'DELETE_REVIEW' // New permission: Delete a review
   | 'ADD_REVIEW' // New permission: Create a review
   | 'VIEW_REVIEW' // New permission: View reviews
-  | 'ARCHIVE_OWN_ARTICLE';
+  | 'ARCHIVE_OWN_ARTICLE'
+  | 'ACCEPT_ARTICLE'
+  | 'REJECT_ARTICLE';
 
 type TPermission = {
   [role in (typeof USER_ROLES)[number]]: TPermissionItem[];
@@ -49,6 +51,8 @@ export const ROLE_PERMISSIONS: TPermission = {
     'UPDATE_REVIEW', // Editors can update reviews
     'DELETE_REVIEW', // Editors can delete reviews
     'MANAGE_USERS',
+    'ACCEPT_ARTICLE',
+    'REJECT_ARTICLE',
   ],
   ADMIN: [
     'VIEW_PUBLIC_ARTICLES',
@@ -67,6 +71,8 @@ export const ROLE_PERMISSIONS: TPermission = {
     'UPDATE_REVIEW', // Admin can update any review
     'DELETE_REVIEW', // Admin can delete any review
     'PUBLISH_ARTICLES', // Editors can publish articles
+    'ACCEPT_ARTICLE',
+    'REJECT_ARTICLE',
   ],
   REVIEWER: [
     'VIEW_PUBLIC_ARTICLES',

@@ -17,7 +17,13 @@ import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import Link from 'next/link';
-import { startTransition, useActionState, useState, useEffect } from 'react';
+import {
+  startTransition,
+  useActionState,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
 import { useForm } from 'react-hook-form';
 import Loader from '@/components/Loader';
 import type { z } from 'zod';
@@ -47,12 +53,25 @@ export default function Login() {
     }
     const timeout = setTimeout(() => {
       setVisible(null);
-    }, 5000);
+    }, 3000);
     return () => clearTimeout(timeout);
   }, [errorMessage]);
 
   const [passwordType, setPasswordType] = useState<'password' | 'text'>(
     'password'
+  );
+
+  const onSubmit = useCallback(
+    (data: z.infer<typeof loginSchema>) => {
+      startTransition(() => {
+        setVisible(null);
+        formAction({
+          ...data,
+          redirect: searchparams.get('redirect') || undefined,
+        });
+      });
+    },
+    [formAction, searchparams]
   );
 
   return (
@@ -85,16 +104,7 @@ export default function Login() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit((data) => {
-                startTransition(() => {
-                  formAction({
-                    ...data,
-                    redirect: searchparams.get('redirect') || undefined,
-                  });
-                });
-              })}
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="space-y-4">
                 <div>
                   <FormField

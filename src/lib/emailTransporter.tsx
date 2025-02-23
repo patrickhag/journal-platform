@@ -1,5 +1,7 @@
 import { NotifiyContributor } from '@/components/emails/notify-contributor';
 import { EmailPasswordReset } from '@/components/emails/password-reset';
+import { RejectManuscript } from '@/components/emails/reject-manuscript';
+import { AcceptManuscriptEmailTemplate } from '@/components/emails/accept-manuscript';
 import { SendInvitation } from '@/components/emails/sendInvite';
 import { SendVerifyEmail } from '@/components/emails/verify';
 import { render } from '@react-email/components';
@@ -35,6 +37,7 @@ export const sendPasswordResetEmail = async ({
     html: emailHtml,
   };
   await transporter.sendMail(options);
+  return true;
 };
 
 export const notifyContibutor = async ({
@@ -74,6 +77,7 @@ export const sendInvitation = async ({
   reviewer,
   toEmail,
   isAlreadyUser,
+  editorInChiefId,
 }: {
   reviewer: string;
   article: {
@@ -84,6 +88,7 @@ export const sendInvitation = async ({
   };
   toEmail: string;
   isAlreadyUser: boolean;
+  editorInChiefId: string;
 }) => {
   const emailHtml = await render(
     <SendInvitation
@@ -91,6 +96,7 @@ export const sendInvitation = async ({
       article={article}
       reviewer={reviewer}
       isAlreadyUser={isAlreadyUser}
+      editorInChiefId={editorInChiefId}
     />
   );
   const options = {
@@ -121,5 +127,47 @@ export const sendVerifyToken = async ({
     html: emailHtml,
   };
 
+  await transporter.sendMail(options);
+};
+
+export const rejectManuscriptEmail = async ({
+  article,
+  authorEmail,
+  names,
+}: {
+  article: string;
+  authorEmail: string;
+  names: string;
+}) => {
+  const emailHtml = await render(
+    <RejectManuscript article={article} names={names} />
+  );
+  const options = {
+    from: process.env.EMAIL_USER,
+    to: authorEmail,
+    subject: 'Your manuscript has been rejected',
+    html: emailHtml,
+  };
+  await transporter.sendMail(options);
+};
+
+export const acceptManuscriptEmail = async ({
+  nameOfArticle,
+  authorEmail,
+  names,
+}: {
+  nameOfArticle: string;
+  authorEmail: string;
+  names: string;
+}) => {
+  const emailHtml = await render(
+    <AcceptManuscriptEmailTemplate article={nameOfArticle} names={names} />
+  );
+  const options = {
+    from: process.env.EMAIL_USER,
+    to: authorEmail,
+    subject: 'Your manuscript has been accepted',
+    html: emailHtml,
+  };
   await transporter.sendMail(options);
 };

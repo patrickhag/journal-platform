@@ -8,7 +8,6 @@ import { eq } from 'drizzle-orm';
 import { AuthError } from 'next-auth';
 import type z from 'zod';
 import jwt from 'jsonwebtoken';
-import { redirect, RedirectType } from 'next/navigation';
 
 export async function register(
   _prevState:
@@ -30,7 +29,7 @@ export async function register(
       return { message: 'Email already in use.', data: register.data };
     }
 
-    const hashedPassword = bcrypt.hashSync(register.data.password);
+    const hashedPassword = await bcrypt.hash(register.data.password, 10);
 
     const user = {
       ...register.data,
@@ -42,7 +41,7 @@ export async function register(
       { email: createdUser[0].email, id: createdUser[0].id },
       process.env.AUTH_SECRET!,
       {
-        expiresIn: '1d',
+        expiresIn: '7d',
       }
     );
     if (!createdUser[0].email) return;
@@ -65,17 +64,6 @@ export async function register(
         default:
           return { message: 'Something went wrong during sign-in.' };
       }
-    }
-
-    const user = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, register.data.email))
-      .limit(1);
-    if (user[0].role === 'CHIEF_EDITOR' || user[0].role === 'ADMIN') {
-      redirect('/editor', RedirectType.replace);
-    } else {
-      redirect('/submissions', RedirectType.replace);
     }
   }
 }

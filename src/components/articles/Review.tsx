@@ -47,6 +47,7 @@ export default function ReviewModal() {
     'Major issue',
     'Minor issue',
     'Accepted',
+    'Rejected',
   ];
   const [status, setStatus] = useState('');
   return (
@@ -75,7 +76,7 @@ export default function ReviewModal() {
             <Textarea
               id="message"
               name="message"
-              placeholder="What's your thoughts on this article?"
+              placeholder="General feedback on this manuscript?"
               className="min-h-[150px] resize-none p-4 text-gray-500 bg-white rounded-lg"
             />
           </div>
@@ -95,11 +96,7 @@ export default function ReviewModal() {
             readOnly
             className="hidden"
           />
-          <input
-            type="hidden"
-            name="status"
-            defaultValue={status || reviewStatus[0]}
-          />
+          <input type="hidden" name="status" defaultValue={status} />
           <Select onValueChange={(value) => setStatus(value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select article status" />
@@ -112,12 +109,6 @@ export default function ReviewModal() {
               ))}
             </SelectContent>
           </Select>
-
-          {/* 
-          
-           
-          */}
-
           <div className="space-y-3">
             <Button
               disabled={isPending}

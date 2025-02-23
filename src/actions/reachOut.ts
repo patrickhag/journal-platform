@@ -8,7 +8,10 @@ import bcrypt from 'bcryptjs';
 
 export async function reachOut(_: unknown, formData: FormData) {
   const session = await auth();
-  if (!session?.user?.id) return null;
+
+  const editorInChiefId = session?.user?.id;
+
+  if (!editorInChiefId) return null;
 
   if (session.user.role !== 'CHIEF_EDITOR' && session.user.role !== 'ADMIN')
     return;
@@ -60,6 +63,7 @@ export async function reachOut(_: unknown, formData: FormData) {
     reviewer,
     toEmail,
     isAlreadyUser: existingUser.length > 0,
+    editorInChiefId,
   });
 
   // Add notification

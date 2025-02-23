@@ -9,11 +9,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export default function HeaderModal({ name }: { name: string }) {
   const router = useRouter();
+  const session = useSession();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -22,7 +24,9 @@ export default function HeaderModal({ name }: { name: string }) {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>
+          My Account({session.data?.user.role})
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.replace('/profile')}>
           Edit Profile
@@ -31,7 +35,6 @@ export default function HeaderModal({ name }: { name: string }) {
         <DropdownMenuItem
           onClick={async () => {
             await signOut();
-            router.replace('/');
           }}
         >
           Log out

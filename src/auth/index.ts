@@ -1,4 +1,6 @@
-import { db, users } from '@/db/schema';
+import { db } from '@/db/db';
+import { users } from '@/db/schema';
+import logger from '@/lib/logger';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import NextAuth, { type User, type NextAuthConfig } from 'next-auth';
@@ -12,34 +14,43 @@ export const authOptions: NextAuthConfig = {
     Credentials({
       name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'text', placeholder: 'jsmith' },
-        password: { label: 'Password', type: 'password' },
+        email: {},
+        password: {},
       },
       async authorize(credentials): Promise<User | null> {
-        if (!credentials?.email || !credentials.password) {
+        try {
+          if (!credentials?.email || !credentials.password) {
+            return null;
+          }
+
+          const user = await db.query.users.findFirst({
+            where: eq(users.email, String(credentials.email)),
+          });
+
+          if (!user) {
+            return null;
+          }
+          const isCorrectPassword = await bcrypt.compare(
+            String(credentials.password),
+            user.password!
+          );
+
+          if (!isCorrectPassword) {
+            return null;
+          }
+
+          return {
+            name: `${user.firstName} ${user.lastName}`,
+            email: user.isActive ? user.email : '',
+            id: user.id,
+            role: user.role ?? 'NORMAL_USER',
+          };
+        } catch (error) {
+          if (error instanceof Error) {
+            logger.error(error.message);
+          }
           return null;
         }
-
-        const usersData = await db
-          .select()
-          .from(users)
-          .limit(1)
-          .where(eq(users.email, String(credentials.email)));
-        const user = usersData[0];
-
-        if (
-          !user ||
-          !(await bcrypt.compare(String(credentials.password), user.password!))
-        ) {
-          return null;
-        }
-
-        return {
-          name: `${user.firstName} ${user.lastName}`,
-          email: user.isActive ? user.email : '',
-          id: user.id,
-          role: user.role ?? 'NORMAL_USER',
-        };
       },
     }),
   ],

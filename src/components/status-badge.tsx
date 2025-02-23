@@ -17,6 +17,8 @@ export function StatusBadge({
         'bg-green-50 text-green-600 border-green-600/20': status === 'Accepted',
         'bg-red-50 text-red-600 border-red-600/20': status === 'Rejected',
         'bg-yellow-50 text-yellow-600 border-yellow-600/20':
+          status === 'Under Review',
+        'bg-orange-50 text-orange-600 border-orange-600/20':
           status === 'Archived',
         'bg-purple-50 text-purple-600 border-purple-600/20':
           status === 'Published',
@@ -28,7 +30,8 @@ export function StatusBadge({
             'bg-blue-600': status === 'Submitted',
             'bg-green-600': status === 'Accepted',
             'bg-red-600': status === 'Rejected',
-            'bg-yellow-600': status === 'Archived',
+            'bg-yellow-600': status === 'Under Review',
+            'bg-orange-600': status === 'Archived',
             'bg-purple-600': status === 'Published',
           })}
         />

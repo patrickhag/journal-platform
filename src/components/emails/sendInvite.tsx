@@ -12,8 +12,9 @@ export const SendInvitation: React.FC<{
   };
   reviewerEmail: string;
   isAlreadyUser: boolean;
+  editorInChiefId: string;
 }> = (props) => {
-  const { article, reviewer, isAlreadyUser } = props;
+  const { article, reviewer, isAlreadyUser, editorInChiefId } = props;
   const nameParts = reviewer.split(' ');
   const password = nameParts.length > 2 ? nameParts[1] : nameParts[0];
 
@@ -57,7 +58,7 @@ export const SendInvitation: React.FC<{
                 <td align="center" className="w-1/2 pr-[16px]" colSpan={1}>
                   <Button
                     className="box-border w-full rounded-[8px] bg-indigo-600 px-[20px] py-[12px] text-center font-semibold text-white"
-                    href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/accept/${article.article}?accept_invite=1`}
+                    href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/invitation/${article.article}?accept_invite=1?editor=${editorInChiefId}`}
                   >
                     Accept invitation
                   </Button>
@@ -65,7 +66,7 @@ export const SendInvitation: React.FC<{
                 <td align="center" className="w-1/2 pl-[16px]" colSpan={1}>
                   <Button
                     className="box-border w-full rounded-[8px] border border-solid border-gray-200 bg-red-500 px-[20px] py-[12px] text-center font-semibold text-white"
-                    href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/accept/${article.article}?accept_invite=0`}
+                    href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/invitation/${article.article}?accept_invite=0?editor=${editorInChiefId}`}
                   >
                     Reject invitation
                   </Button>
