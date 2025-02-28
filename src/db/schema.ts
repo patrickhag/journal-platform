@@ -2,6 +2,7 @@ import {
   ARTICLE_STATUS,
   ARTICLE_TYPES,
   COUNTRIES,
+  REVIEW_ASSIGNMENTS_STATUS,
   SALUTATION,
 } from '@/lib/consts';
 import { USER_ROLES } from '@/lib/roles';
@@ -36,6 +37,10 @@ export const notificationsEnum = pgEnum('notication_kind', [
   'Confused',
   'Ok',
 ]);
+export const reviewAssignmentsStatusEnum = pgEnum(
+  'review_assignments_status',
+  REVIEW_ASSIGNMENTS_STATUS
+);
 
 export const users = pgTable('user', {
   id: text('id')
@@ -234,6 +239,25 @@ export const notifications = pgTable('notifications', {
   kind: notificationsEnum().$default(() => 'Info'),
   isRead: boolean('isRead').default(false),
   userId: text('userId').references(() => users.id, {
+    onDelete: 'cascade',
+  }),
+});
+
+export const reviewAssignments = pgTable('review_assignments', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  articleId: text('articleId').references(() => articleSubmissions.id, {
+    onDelete: 'cascade',
+  }),
+  reviewerId: text('reviewerId').references(() => reviewers.id, {
+    onDelete: 'cascade',
+  }),
+  status: reviewAssignmentsStatusEnum().$default(() => 'Invited'),
+  assignedDate: date('assignedDate').defaultNow(),
+  dueDate: date('dueDate'),
+  reviewedDate: date('reviewedDate'),
+  reviewedBy: text('reviewedBy').references(() => users.id, {
     onDelete: 'cascade',
   }),
 });

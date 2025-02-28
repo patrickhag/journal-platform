@@ -3,6 +3,7 @@ import { db } from '@/db/db';
 import {
   articleSubmissions,
   notifications,
+  reviewAssignments,
   reviewers,
   users,
 } from '@/db/schema';
@@ -39,9 +40,9 @@ export default async function AcceptPage({
 
   if (isAcceptingInvite && userId) {
     await db
-      .update(reviewers)
-      .set({ acceptedInvitation: Boolean(parseInt(isAcceptingInvite)) })
-      .where(eq(reviewers.articleId, articleId));
+      .update(reviewAssignments)
+      .set({ status: 'Accepted' })
+      .where(eq(reviewAssignments.articleId, articleId));
 
     await db
       .update(users)

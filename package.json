@@ -28,7 +28,7 @@
     "@radix-ui/react-scroll-area": "^1.2.1",
     "@radix-ui/react-select": "^2.1.2",
     "@radix-ui/react-separator": "^1.1.0",
-    "@radix-ui/react-slot": "^1.1.1",
+    "@radix-ui/react-slot": "^1.1.2",
     "@radix-ui/react-tabs": "^1.1.2",
     "@radix-ui/react-toast": "^1.2.6",
     "@radix-ui/react-tooltip": "^1.1.8",
@@ -55,6 +55,7 @@
     "postgres": "^3.4.5",
     "quill": "^2.0.3",
     "react": "19.0.0",
+    "react-day-picker": "8.10.1",
     "react-dom": "19.0.0",
     "react-dropzone": "^14.3.5",
     "react-dropzone-uploader": "^2.11.0",
@@ -96,10 +97,5 @@
     "os": false,
     "net": false,
     "tls": false
-  },
-  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0",
-  "optionalDependencies": {
-    "@esbuild/darwin-arm64": "latest",
-    "@esbuild/darwin-x64": "latest"
   }
 }

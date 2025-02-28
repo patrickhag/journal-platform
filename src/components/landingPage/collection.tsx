@@ -16,6 +16,7 @@ const Collections = async () => {
     .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId))
     .limit(10);
 
+  console.log('fileCollections>>>', fileCollections);
   return (
     <>
       <div className="col-span-3 space-y-6 md:space-y-2 lg:space-y-10">

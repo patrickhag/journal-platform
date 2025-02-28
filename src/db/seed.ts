@@ -31,7 +31,7 @@ import {
 async function seedDatabase() {
   // Create 10 users first since other tables reference them
   const userRecords = Array.from(
-    { length: 10 },
+    { length: 30 },
     () =>
       ({
         firstName: faker.person.firstName(),

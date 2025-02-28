@@ -1,7 +1,12 @@
 import { auth } from '@/auth';
 import { Tabs, TabsContent, TabsList } from '@/components/ui/tabs';
-import { articleSubmissions, files, metadata, reviewers } from '@/db/schema';
-import { db } from '@/db/schema';
+import {
+  articleSubmissions,
+  files,
+  metadata,
+  reviewAssignments,
+} from '@/db/schema';
+import { db } from '@/db/db';
 import { ArticleSection } from './ArticleSection';
 import { SearchArticle } from './SearchArticle';
 import { and, eq, like, inArray } from 'drizzle-orm';
@@ -40,10 +45,13 @@ export default async function DashboardPannel({
         (searchParams.f as (typeof articleFilters)[number]) ===
         'Assigned to review'
       ) {
-        const article = await db
-          .select({ articleId: reviewers.articleId })
-          .from(reviewers)
-          .where(eq(reviewers.userId, currentUser.id!));
+        const article = await db.query.reviewAssignments.findMany({
+          where: and(
+            eq(reviewAssignments.articleId, currentUser.id),
+            eq(reviewAssignments.status, 'Accepted')
+          ),
+        });
+
         const ids = article.map((a) => String(a.articleId));
         conditions.push(inArray(articleSubmissions.id, [...new Set(ids)]));
       } else {

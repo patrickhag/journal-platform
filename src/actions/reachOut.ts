@@ -1,7 +1,13 @@
 'use server';
 
 import { auth } from '@/auth';
-import { db, notifications, users } from '@/db/schema';
+import { db } from '@/db/db';
+import {
+  notifications,
+  reviewAssignments,
+  reviewers,
+  users,
+} from '@/db/schema';
 import { sendInvitation } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
@@ -13,12 +19,27 @@ export async function reachOut(_: unknown, formData: FormData) {
 
   if (!editorInChiefId) return null;
 
-  if (session.user.role !== 'CHIEF_EDITOR' && session.user.role !== 'ADMIN')
-    return;
+  if (session.user.role !== 'CHIEF_EDITOR') return;
 
-  // Extract email and reviewer name
+  // Extract email, reviewer name and date
   const toEmail = formData.get('toEmail')?.toString() || '';
   const reviewer = formData.get('reviewer')?.toString() || '';
+  const dueDate = formData.get('dueDate')?.toString() || '';
+
+  // const reviewerEmail = formData.get('reviewer')?.toString();
+
+  const { article: articleId } = JSON.parse(
+    formData.get('article')?.toString() || '{}'
+  );
+
+  const foundReviewer = await db.query.reviewers.findFirst({
+    columns: {
+      id: true,
+    },
+    where: eq(reviewers.email, toEmail),
+  });
+
+  if (!foundReviewer) return 'No reviewer found';
 
   // Split reviewer name
   const nameParts = reviewer.split(' ');
@@ -54,6 +75,12 @@ export async function reachOut(_: unknown, formData: FormData) {
     userId = existingUser[0].id;
   }
 
+  await db.insert(reviewAssignments).values({
+    articleId,
+    reviewerId: foundReviewer.id,
+    dueDate,
+  });
+
   // Send invitation
   await sendInvitation({
     article: {
@@ -64,6 +91,7 @@ export async function reachOut(_: unknown, formData: FormData) {
     toEmail,
     isAlreadyUser: existingUser.length > 0,
     editorInChiefId,
+    dueDate,
   });
 
   // Add notification

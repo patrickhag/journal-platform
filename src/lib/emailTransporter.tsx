@@ -78,6 +78,7 @@ export const sendInvitation = async ({
   toEmail,
   isAlreadyUser,
   editorInChiefId,
+  dueDate,
 }: {
   reviewer: string;
   article: {
@@ -89,6 +90,7 @@ export const sendInvitation = async ({
   toEmail: string;
   isAlreadyUser: boolean;
   editorInChiefId: string;
+  dueDate: string;
 }) => {
   const emailHtml = await render(
     <SendInvitation
@@ -97,6 +99,7 @@ export const sendInvitation = async ({
       reviewer={reviewer}
       isAlreadyUser={isAlreadyUser}
       editorInChiefId={editorInChiefId}
+      dueDate={dueDate}
     />
   );
   const options = {

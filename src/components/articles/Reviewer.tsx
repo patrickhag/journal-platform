@@ -1,14 +1,16 @@
 import { db, metadata } from '@/db/schema';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { ReachOut } from './ReachOut';
 import { eq } from 'drizzle-orm';
 import { auth } from '@/auth';
 import { Button } from '../ui/button';
 import { Send } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '../ui/dialog';
 
 export default async function Reviewer({
   reviewer: { email, names, affiliation, phone, expertise, acceptedInvitation },
@@ -81,11 +83,13 @@ export default async function Reviewer({
         </div>
         <div>
           <h4 className="text-sm text-muted-foreground mb-2">Affiliation</h4>
-          <p className="font-medium">{affiliation}</p>
+          <p className="font-medium">
+            {affiliation ? affiliation : 'Not provided'}
+          </p>
         </div>
         <div>
           <h4 className="text-sm text-muted-foreground mb-2">Phone</h4>
-          <p className="font-medium">{phone}</p>
+          <p className="font-medium">{phone ? phone : 'Not provided'}</p>
         </div>
       </div>
 
@@ -94,16 +98,19 @@ export default async function Reviewer({
         <p className="text-base">{expertise}</p>
       </div>
       {(currentUserRole === 'CHIEF_EDITOR' || currentUserRole === 'ADMIN') && (
-        <Popover>
-          <PopoverTrigger>
+        <Dialog>
+          <DialogTrigger asChild>
             <Button variant={'outline'}>
               {' '}
               <span className="flex items-center">
                 Reach out <Send className="ml-2" />
               </span>{' '}
             </Button>
-          </PopoverTrigger>
-          <PopoverContent>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Invite Reviewer</DialogTitle>
+            </DialogHeader>
             <ReachOut
               article={{ ...meta, article }}
               reviewer={names}
@@ -114,9 +121,13 @@ export default async function Reviewer({
               }}
               toEmail={email}
             />
-          </PopoverContent>
-        </Popover>
+          </DialogContent>
+        </Dialog>
       )}
     </>
   );
 }
+
+// const InviteReviewer = () => {
+//   return <div>InviteReviewer</div>;
+// };

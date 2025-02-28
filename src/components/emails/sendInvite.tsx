@@ -13,8 +13,9 @@ export const SendInvitation: React.FC<{
   reviewerEmail: string;
   isAlreadyUser: boolean;
   editorInChiefId: string;
+  dueDate: string;
 }> = (props) => {
-  const { article, reviewer, isAlreadyUser, editorInChiefId } = props;
+  const { article, reviewer, isAlreadyUser, editorInChiefId, dueDate } = props;
   const nameParts = reviewer.split(' ');
   const password = nameParts.length > 2 ? nameParts[1] : nameParts[0];
 
@@ -51,6 +52,10 @@ export const SendInvitation: React.FC<{
                 as your password.
               </span>
             )}
+          </Text>
+          <Text className="text-gray-700">
+            <span className="font-semibold">Note:</span> you&apos;ve got until{' '}
+            {dueDate} to review
           </Text>
           <Row>
             <Column align="center">

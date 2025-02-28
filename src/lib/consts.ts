@@ -246,3 +246,10 @@ export const ARTICLE_STATUS = [
 ] as const;
 
 export const articleFilters = ['My articles', 'Assigned to review'] as const;
+
+export const REVIEW_ASSIGNMENTS_STATUS = [
+  'Invited',
+  'Accepted',
+  'Declined',
+  'Completed',
+] as const;

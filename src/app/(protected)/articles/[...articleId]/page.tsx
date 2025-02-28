@@ -92,7 +92,11 @@ async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
                 <h3 className="text-sm font-medium text-muted-foreground">
                   Affiliation
                 </h3>
-                <p className="mt-1">{author[0].affiliation}</p>
+                <p className="mt-1">
+                  {author[0].affiliation
+                    ? author[0].affiliation
+                    : 'Not provided'}
+                </p>
               </div>
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground">

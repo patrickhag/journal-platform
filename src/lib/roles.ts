@@ -25,7 +25,8 @@ export type TPermissionItem =
   | 'VIEW_REVIEW' // New permission: View reviews
   | 'ARCHIVE_OWN_ARTICLE'
   | 'ACCEPT_ARTICLE'
-  | 'REJECT_ARTICLE';
+  | 'REJECT_ARTICLE'
+  | 'INVITE_REVIEWER';
 
 type TPermission = {
   [role in (typeof USER_ROLES)[number]]: TPermissionItem[];
@@ -53,6 +54,7 @@ export const ROLE_PERMISSIONS: TPermission = {
     'MANAGE_USERS',
     'ACCEPT_ARTICLE',
     'REJECT_ARTICLE',
+    'INVITE_REVIEWER',
   ],
   ADMIN: [
     'VIEW_PUBLIC_ARTICLES',

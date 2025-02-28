@@ -15,6 +15,8 @@ export const FileList = () => {
     input: new URLSearchParams(searchParams.toString()),
   });
 
+  console.log('Parsed files:', filesValidation);
+
   const files = filesValidation.data?.files || [];
 
   return (
