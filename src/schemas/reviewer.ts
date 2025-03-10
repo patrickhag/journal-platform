@@ -70,6 +70,5 @@ export type TArticle = z.infer<typeof articleSubmitionSchema> & {
   owner: string;
   id: string;
   commentsForEditor: string;
-  fileURI: string;
   title: string;
 };

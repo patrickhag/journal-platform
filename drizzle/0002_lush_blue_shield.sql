@@ -1,1 +1,0 @@
-ALTER TABLE "reviewers" ALTER COLUMN "phone" SET DATA TYPE varchar(40);

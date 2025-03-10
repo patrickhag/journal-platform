@@ -27,15 +27,12 @@ export const authOptions: NextAuthConfig = {
             where: eq(users.email, String(credentials.email)),
           });
 
-          if (!user) {
-            return null;
-          }
           const isCorrectPassword = await bcrypt.compare(
             String(credentials.password),
-            user.password!
+            user?.password ?? ''
           );
 
-          if (!isCorrectPassword) {
+          if (!user || !isCorrectPassword) {
             return null;
           }
 

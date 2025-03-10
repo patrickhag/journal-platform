@@ -41,7 +41,7 @@ export default async function AcceptPage({
   if (isAcceptingInvite && userId) {
     await db
       .update(reviewAssignments)
-      .set({ status: 'Accepted' })
+      .set({ status: 'Accepted', userId: userId })
       .where(eq(reviewAssignments.articleId, articleId));
 
     await db

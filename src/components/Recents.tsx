@@ -29,8 +29,6 @@ export const Recents = async () => {
     )
     .limit(10);
 
-  console.log('articles>>>', articles);
-
   return (
     <div className="w-full sm:px-2 md:px-0">
       <h2 className="text-xl font-bold mb-4" style={{ color: '#1A237E' }}>

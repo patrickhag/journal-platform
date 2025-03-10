@@ -57,7 +57,7 @@ export const SendInvitation: React.FC<{
             <span className="font-semibold">Note:</span> you&apos;ve got until{' '}
             {dueDate} to review
           </Text>
-          <Row>
+          <Row className="my-5">
             <Column align="center">
               <Row>
                 <td align="center" className="w-1/2 pr-[16px]" colSpan={1}>

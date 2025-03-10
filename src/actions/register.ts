@@ -1,6 +1,5 @@
 'use server';
 
-import { signIn } from '@/auth';
 import { db, users } from '@/db/schema';
 import { registerSchema } from '@/schemas/auth.schema';
 import bcrypt from 'bcryptjs';
@@ -45,11 +44,6 @@ export async function register(
       }
     );
     if (!createdUser[0].email) return;
-
-    await signIn('credentials', {
-      email: register.data.email,
-      password: register.data.password,
-    });
 
     return { message: 'Registration successful', data: register.data };
   } catch (error) {

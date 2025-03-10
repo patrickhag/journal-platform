@@ -1,1 +1,0 @@
-ALTER TABLE "metadata" ADD COLUMN "topics" text[] DEFAULT ARRAY[]::text[] NOT NULL;

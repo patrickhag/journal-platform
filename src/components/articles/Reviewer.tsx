@@ -1,4 +1,5 @@
-import { db, metadata } from '@/db/schema';
+import { metadata, reviewAssignments } from '@/db/schema';
+import { db } from '@/db/db';
 import { ReachOut } from './ReachOut';
 import { eq } from 'drizzle-orm';
 import { auth } from '@/auth';
@@ -13,7 +14,7 @@ import {
 } from '../ui/dialog';
 
 export default async function Reviewer({
-  reviewer: { email, names, affiliation, phone, expertise, acceptedInvitation },
+  reviewer: { email, names, affiliation, phone, expertise },
   index,
   article,
 }: {
@@ -23,7 +24,6 @@ export default async function Reviewer({
     email: string;
     userId: string;
     names: string;
-    acceptedInvitation: boolean | null;
     phone: string | null;
     expertise: string;
     articleId: string | null;
@@ -44,6 +44,13 @@ export default async function Reviewer({
   if (!session?.user?.id) return null;
   // get the user role from db
 
+  const hasAcceptedInvitation = await db.query.reviewAssignments.findFirst({
+    columns: {
+      status: true,
+    },
+    where: eq(reviewAssignments.articleId, article),
+  });
+
   const currentUserRole = session?.user?.role;
 
   return (
@@ -63,12 +70,12 @@ export default async function Reviewer({
           proposed reviewer{' '}
         </h3>
         <span className="text-center text-green-900 bg-slate-100 px-2 py-1 rounded-md">
-          {typeof acceptedInvitation === 'boolean'
-            ? acceptedInvitation
-              ? 'Accepted'
-              : 'Rejected'
+          Invitation{' '}
+          {typeof hasAcceptedInvitation === 'object'
+            ? hasAcceptedInvitation.status === 'Accepted'
+              ? 'accepted'
+              : 'rejected'
             : 'Pending'}{' '}
-          invitation
         </span>
       </div>
 

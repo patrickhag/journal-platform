@@ -12,12 +12,6 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { TArticle } from '@/schemas/reviewer';
 import { StatusBadge } from './status-badge';
-import { articleSubmissions, db } from '@/db/schema';
-import { eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
-import { auth } from '@/auth';
-
-import withPermissions from './WithPermission';
 
 export function ArticleSection({
   article: a,
@@ -37,7 +31,7 @@ export function ArticleSection({
           </div>
           <div className="space-y-2">
             <h3 className="font-medium uppercase">{a.section}</h3>
-            <CommentPreview html={a.commentsForEditor} />
+            <CommentPreview html={a.title} />
             <small className={cn('mt-2')}>
               <StatusBadge status={a.articleStatus || 'Submitted'} />
             </small>
@@ -54,14 +48,12 @@ export function ArticleSection({
             <DropdownMenuItem>
               <Link href={`articles/${a.id}`}>View details</Link>
             </DropdownMenuItem>
-            <ArticleArchiver
-              role="NORMAL_USER"
-              article={a}
-              requiredPermissions={['ARCHIVE_OWN_ARTICLE']}
-              fallback={''}
-            />
             <DropdownMenuItem>
-              <Link href={a.fileURI || '#'}>Download PDF</Link>
+              <Link href={`articles/${a.id}`}>Update article</Link>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem>
+              <Link href={`articles/${a.id}`}>Delete article</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -69,30 +61,3 @@ export function ArticleSection({
     </Card>
   );
 }
-
-const ArchiveArticle = async ({ article }: { article: TArticle }) => {
-  return (
-    <DropdownMenuItem>
-      <form
-        action={async () => {
-          'use server';
-          const session = await auth();
-          if (!session?.user?.id) return;
-
-          if (article.owner !== session.user.id) return;
-          await db
-            .update(articleSubmissions)
-            .set({
-              articleStatus: 'Archived',
-            })
-            .where(eq(articleSubmissions.id, article.id));
-
-          revalidatePath('/submissions');
-        }}
-      >
-        <button>Move to archive</button>
-      </form>
-    </DropdownMenuItem>
-  );
-};
-const ArticleArchiver = withPermissions(ArchiveArticle);

@@ -136,7 +136,9 @@ export default function AddReviewerModal({
                 name="affiliation"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Affiliation</FormLabel>
+                    <FormLabel>
+                      Affiliation <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="e.g: Organisation" {...field} />
                     </FormControl>

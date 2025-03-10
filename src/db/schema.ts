@@ -204,7 +204,7 @@ export const articleSubmissions = pgTable('article_submissions', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  section: articleTypeEnum().$default(() => 'Original Research'),
+  section: text('section').notNull(),
   requirements: text('requirements').array().notNull(),
   commentsForEditor: text('comments_for_editor').notNull(),
   articleStatus: articleStatusEnum().$default(() => 'Submitted'),
@@ -253,13 +253,13 @@ export const reviewAssignments = pgTable('review_assignments', {
   reviewerId: text('reviewerId').references(() => reviewers.id, {
     onDelete: 'cascade',
   }),
+  userId: text('userId').references(() => users.id, {
+    onDelete: 'cascade',
+  }),
   status: reviewAssignmentsStatusEnum().$default(() => 'Invited'),
   assignedDate: date('assignedDate').defaultNow(),
   dueDate: date('dueDate'),
   reviewedDate: date('reviewedDate'),
-  reviewedBy: text('reviewedBy').references(() => users.id, {
-    onDelete: 'cascade',
-  }),
 });
 
 /*** RELATIONS ***/
@@ -280,6 +280,30 @@ export const articleSubmissionsRelations = relations(
     }),
     contributors: many(contributors, {
       relationName: 'contributors',
+    }),
+    reviewers: many(reviewers, {
+      relationName: 'reviewers',
+    }),
+    reviewAssignments: many(reviewAssignments, {
+      relationName: 'reviewAssignments',
+    }),
+  })
+);
+
+export const reviewAssignmentsRelations = relations(
+  reviewAssignments,
+  ({ one }) => ({
+    article: one(articleSubmissions, {
+      fields: [reviewAssignments.articleId],
+      references: [articleSubmissions.id],
+    }),
+    reviewer: one(reviewers, {
+      fields: [reviewAssignments.reviewerId],
+      references: [reviewers.id],
+    }),
+    user: one(users, {
+      fields: [reviewAssignments.userId],
+      references: [users.id],
     }),
   })
 );

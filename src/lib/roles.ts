@@ -73,8 +73,6 @@ export const ROLE_PERMISSIONS: TPermission = {
     'UPDATE_REVIEW', // Admin can update any review
     'DELETE_REVIEW', // Admin can delete any review
     'PUBLISH_ARTICLES', // Editors can publish articles
-    'ACCEPT_ARTICLE',
-    'REJECT_ARTICLE',
   ],
   REVIEWER: [
     'VIEW_PUBLIC_ARTICLES',

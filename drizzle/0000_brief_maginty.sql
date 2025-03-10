@@ -1,20 +1,22 @@
-CREATE TYPE "public"."article_status" AS ENUM('Submitted', 'In Review', 'Approved', 'Rejected', 'Published', 'Archived', 'Accepted', 'Minor issue', 'Major issue');--> statement-breakpoint
-CREATE TYPE "public"."article-type" AS ENUM('Articles', 'Editorial Information', 'Editorial', 'Original Research', 'Review Articles', 'Short reports', 'Commentaries', 'Letters to the editor');--> statement-breakpoint
+CREATE TYPE "public"."article_status" AS ENUM('Submitted', 'Under Review', 'Approved', 'Rejected', 'Published', 'Archived', 'Accepted', 'Minor issue', 'Major issue');--> statement-breakpoint
+CREATE TYPE "public"."article-type" AS ENUM('Narative Review', 'Case study', 'Case Report', 'Original Research', 'Systematic Review', 'Meta Analysis');--> statement-breakpoint
 CREATE TYPE "public"."countries" AS ENUM('Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bhutan', 'Bolivia', 'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cabo Verde', 'Cambodia', 'Cameroon', 'Canada', 'Central African Republic', 'Chad', 'Chile', 'China', 'Colombia', 'Comoros', 'Costa Rica', 'Croatia', 'Cuba', 'Cyprus', 'Czech Republic', 'Democratic Republic of the Congo', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'East Timor', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia', 'Eswatini', 'Ethiopia', 'Fiji', 'Finland', 'France', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Greece', 'Grenada', 'Guatemala', 'Guinea', 'Guinea-Bissau', 'Guyana', 'Haiti', 'Honduras', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Israel', 'Italy', 'Ivory Coast', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya', 'Kiribati', 'Kosovo', 'Kuwait', 'Kyrgyzstan', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands', 'Mauritania', 'Mauritius', 'Mexico', 'Micronesia', 'Moldova', 'Monaco', 'Mongolia', 'Montenegro', 'Morocco', 'Mozambique', 'Myanmar', 'Namibia', 'Nauru', 'Nepal', 'Netherlands', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'North Korea', 'North Macedonia', 'Norway', 'Oman', 'Pakistan', 'Palau', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Qatar', 'Romania', 'Russia', 'Rwanda', 'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Vincent and the Grenadines', 'Samoa', 'San Marino', 'São Tomé and Príncipe', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore', 'Slovakia', 'Slovenia', 'Solomon Islands', 'Somalia', 'South Africa', 'South Korea', 'South Sudan', 'Spain', 'Sri Lanka', 'Sudan', 'Suriname', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', 'Togo', 'Tonga', 'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Tuvalu', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Vatican City', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe');--> statement-breakpoint
 CREATE TYPE "public"."notication_kind" AS ENUM('Warning', 'Info', 'Hint', 'Error', 'Confused', 'Ok');--> statement-breakpoint
-CREATE TYPE "public"."role" AS ENUM('NORMAL_USER', 'CHIEF_EDITOR', 'ADMIN');--> statement-breakpoint
+CREATE TYPE "public"."review_assignments_status" AS ENUM('Invited', 'Accepted', 'Declined', 'Completed');--> statement-breakpoint
+CREATE TYPE "public"."role" AS ENUM('NORMAL_USER', 'CHIEF_EDITOR', 'REVIEWER', 'ADMIN');--> statement-breakpoint
 CREATE TYPE "public"."salutation" AS ENUM('Mr', 'Mrs', 'Ms', 'Dr', 'Prof', 'Rev');--> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "article_submissions" (
+CREATE TABLE "article_submissions" (
 	"id" text PRIMARY KEY NOT NULL,
-	"section" "article-type",
+	"section" text NOT NULL,
 	"requirements" text[] NOT NULL,
 	"comments_for_editor" text NOT NULL,
 	"articleStatus" "article_status",
 	"userId" text NOT NULL,
-	"createdAt" date DEFAULT now()
+	"createdAt" date DEFAULT now(),
+	"updatedAt" date DEFAULT now()
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "authenticator" (
+CREATE TABLE "authenticator" (
 	"credentialID" text NOT NULL,
 	"userId" text NOT NULL,
 	"providerAccountId" text NOT NULL,
@@ -27,10 +29,11 @@ CREATE TABLE IF NOT EXISTS "authenticator" (
 	CONSTRAINT "authenticator_credentialID_unique" UNIQUE("credentialID")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "contributor" (
+CREATE TABLE "contributor" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"salutation" "salutation",
+	"email" text NOT NULL,
 	"country" "countries",
 	"orcid" text,
 	"affiliation" text NOT NULL,
@@ -40,7 +43,7 @@ CREATE TABLE IF NOT EXISTS "contributor" (
 	"articleId" text
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "files" (
+CREATE TABLE "files" (
 	"id" text PRIMARY KEY NOT NULL,
 	"publicId" text NOT NULL,
 	"resourceType" text NOT NULL,
@@ -51,7 +54,7 @@ CREATE TABLE IF NOT EXISTS "files" (
 	CONSTRAINT "files_publicId_unique" UNIQUE("publicId")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "final_submissions" (
+CREATE TABLE "final_submissions" (
 	"id" text PRIMARY KEY NOT NULL,
 	"funded" boolean NOT NULL,
 	"ethical" boolean NOT NULL,
@@ -62,18 +65,19 @@ CREATE TABLE IF NOT EXISTS "final_submissions" (
 	"articleId" text
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "metadata" (
+CREATE TABLE "metadata" (
 	"id" text PRIMARY KEY NOT NULL,
 	"title" text NOT NULL,
 	"prefix" text NOT NULL,
-	"subtitle" text NOT NULL,
+	"subtitle" text,
 	"abstract" text NOT NULL,
+	"topics" text[] DEFAULT ARRAY[]::text[] NOT NULL,
 	"userId" text NOT NULL,
 	"articleId" text,
 	CONSTRAINT "metadata_title_unique" UNIQUE("title")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "notifications" (
+CREATE TABLE "notifications" (
 	"id" text PRIMARY KEY NOT NULL,
 	"message" text NOT NULL,
 	"createdAt" date DEFAULT now(),
@@ -82,7 +86,7 @@ CREATE TABLE IF NOT EXISTS "notifications" (
 	"userId" text
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "passwordResets" (
+CREATE TABLE "passwordResets" (
 	"identifier" text NOT NULL,
 	"token" text NOT NULL,
 	"password" text NOT NULL,
@@ -90,19 +94,30 @@ CREATE TABLE IF NOT EXISTS "passwordResets" (
 	CONSTRAINT "passwordResets_identifier_token_pk" PRIMARY KEY("identifier","token")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "reviewers" (
+CREATE TABLE "review_assignments" (
+	"id" text PRIMARY KEY NOT NULL,
+	"articleId" text,
+	"reviewerId" text,
+	"userId" text,
+	"status" "review_assignments_status",
+	"assignedDate" date DEFAULT now(),
+	"dueDate" date,
+	"reviewedDate" date
+);
+--> statement-breakpoint
+CREATE TABLE "reviewers" (
 	"id" text PRIMARY KEY NOT NULL,
 	"names" varchar(255) NOT NULL,
 	"affiliation" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
-	"phone" varchar(20),
+	"phone" varchar(40),
 	"expertise" text NOT NULL,
 	"acceptedInvitation" boolean,
 	"userId" text NOT NULL,
 	"articleId" text
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "reviews" (
+CREATE TABLE "reviews" (
 	"id" text PRIMARY KEY NOT NULL,
 	"message" text NOT NULL,
 	"userId" text NOT NULL,
@@ -111,108 +126,43 @@ CREATE TABLE IF NOT EXISTS "reviews" (
 	"status" "article_status"
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "user" (
+CREATE TABLE "user" (
 	"id" text PRIMARY KEY NOT NULL,
 	"firstName" text,
 	"lastName" text,
 	"affiliation" text,
-	"country" text NOT NULL,
+	"country" "countries",
 	"role" "role",
 	"email" text,
 	"emailVerified" timestamp,
 	"is_active" boolean DEFAULT true,
 	"password" text,
 	"avatar" text,
+	"orcid" text,
 	CONSTRAINT "user_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "verificationToken" (
+CREATE TABLE "verificationToken" (
 	"identifier" text NOT NULL,
 	"token" text NOT NULL,
 	"expires" timestamp NOT NULL,
 	CONSTRAINT "verificationToken_identifier_token_pk" PRIMARY KEY("identifier","token")
 );
 --> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "article_submissions" ADD CONSTRAINT "article_submissions_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "authenticator" ADD CONSTRAINT "authenticator_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "contributor" ADD CONSTRAINT "contributor_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "contributor" ADD CONSTRAINT "contributor_articleId_article_submissions_id_fk" FOREIGN KEY ("articleId") REFERENCES "public"."article_submissions"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "files" ADD CONSTRAINT "files_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "files" ADD CONSTRAINT "files_articleId_article_submissions_id_fk" FOREIGN KEY ("articleId") REFERENCES "public"."article_submissions"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "final_submissions" ADD CONSTRAINT "final_submissions_articleId_article_submissions_id_fk" FOREIGN KEY ("articleId") REFERENCES "public"."article_submissions"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "metadata" ADD CONSTRAINT "metadata_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "metadata" ADD CONSTRAINT "metadata_articleId_article_submissions_id_fk" FOREIGN KEY ("articleId") REFERENCES "public"."article_submissions"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "notifications" ADD CONSTRAINT "notifications_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "reviewers" ADD CONSTRAINT "reviewers_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "reviewers" ADD CONSTRAINT "reviewers_articleId_article_submissions_id_fk" FOREIGN KEY ("articleId") REFERENCES "public"."article_submissions"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "reviews" ADD CONSTRAINT "reviews_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "reviews" ADD CONSTRAINT "reviews_articleId_article_submissions_id_fk" FOREIGN KEY ("articleId") REFERENCES "public"."article_submissions"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
+ALTER TABLE "article_submissions" ADD CONSTRAINT "article_submissions_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "authenticator" ADD CONSTRAINT "authenticator_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "contributor" ADD CONSTRAINT "contributor_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "contributor" ADD CONSTRAINT "contributor_articleId_article_submissions_id_fk" FOREIGN KEY ("articleId") REFERENCES "public"."article_submissions"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "files" ADD CONSTRAINT "files_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "files" ADD CONSTRAINT "files_articleId_article_submissions_id_fk" FOREIGN KEY ("articleId") REFERENCES "public"."article_submissions"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "final_submissions" ADD CONSTRAINT "final_submissions_articleId_article_submissions_id_fk" FOREIGN KEY ("articleId") REFERENCES "public"."article_submissions"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "metadata" ADD CONSTRAINT "metadata_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "metadata" ADD CONSTRAINT "metadata_articleId_article_submissions_id_fk" FOREIGN KEY ("articleId") REFERENCES "public"."article_submissions"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "notifications" ADD CONSTRAINT "notifications_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "review_assignments" ADD CONSTRAINT "review_assignments_articleId_article_submissions_id_fk" FOREIGN KEY ("articleId") REFERENCES "public"."article_submissions"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "review_assignments" ADD CONSTRAINT "review_assignments_reviewerId_reviewers_id_fk" FOREIGN KEY ("reviewerId") REFERENCES "public"."reviewers"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "review_assignments" ADD CONSTRAINT "review_assignments_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "reviewers" ADD CONSTRAINT "reviewers_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "reviewers" ADD CONSTRAINT "reviewers_articleId_article_submissions_id_fk" FOREIGN KEY ("articleId") REFERENCES "public"."article_submissions"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "reviews" ADD CONSTRAINT "reviews_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "reviews" ADD CONSTRAINT "reviews_articleId_article_submissions_id_fk" FOREIGN KEY ("articleId") REFERENCES "public"."article_submissions"("id") ON DELETE cascade ON UPDATE no action;

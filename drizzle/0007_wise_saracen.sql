@@ -1,1 +1,0 @@
-ALTER TABLE "article_submissions" ADD COLUMN "updatedAt" date DEFAULT now();

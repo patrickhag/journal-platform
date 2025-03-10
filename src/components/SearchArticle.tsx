@@ -1,20 +1,24 @@
 import { Search } from 'lucide-react';
 import { Input } from './ui/input';
-import { redirect } from 'next/navigation';
+import { Dispatch, SetStateAction } from 'react';
 
-export const SearchArticle = async () => {
+export const SearchArticle = ({
+  searchQuery,
+  setSearchQuery,
+}: {
+  searchQuery: string;
+  setSearchQuery: Dispatch<SetStateAction<string>>;
+}) => {
   return (
-    <form
-      className="flex items-center justify-end"
-      action={async (formData) => {
-        'use server';
-        redirect(`/submissions?q=${formData.get('q')}`);
-      }}
-    >
-      <div className="relative w-72">
-        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input placeholder="Search an article..." className="pl-8" name="q" />
-      </div>
-    </form>
+    <div className="relative w-72">
+      <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+      <Input
+        type="text"
+        placeholder="Search articles..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="pl-8"
+      />
+    </div>
   );
 };

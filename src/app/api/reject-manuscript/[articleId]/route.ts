@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
 import { db } from '@/db/db';
 import { articleSubmissions } from '@/db/schema';
 import { eq } from 'drizzle-orm';
@@ -28,6 +27,11 @@ export async function PUT(
             title: true,
           },
         },
+        contributors: {
+          columns: {
+            email: true,
+          },
+        },
       },
       where: eq(articleSubmissions.id, articleId),
     });
@@ -48,12 +52,15 @@ export async function PUT(
     if (updatedArticle[0]) {
       await rejectManuscriptEmail({
         article: article.metadata.title,
-        authorEmail: article.user.email!,
+        authorEmails: [
+          article.user.email!,
+          ...article.contributors.map((c) => c.email!),
+        ],
         names: `${article.user.firstName} ${article.user.lastName}`,
       });
     }
 
-    revalidatePath('/articles/' + articleId);
+    // revalidatePath('/articles/' + articleId);
 
     return NextResponse.json({
       status: 200,

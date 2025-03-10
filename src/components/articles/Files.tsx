@@ -1,4 +1,4 @@
-import { files, reviewers } from '@/db/schema';
+import { files, reviewAssignments } from '@/db/schema';
 import { db } from '@/db/db';
 import { Button } from '../ui/button';
 import { and, eq } from 'drizzle-orm';
@@ -12,7 +12,9 @@ import withPermissions from '../WithPermission';
 async function Files({
   articleId,
   role,
+  userId,
 }: {
+  userId: string;
   articleId: string;
   role: (typeof USER_ROLES)[number];
 }) {
@@ -21,12 +23,14 @@ async function Files({
     .from(files)
     .where(eq(files.articleId, articleId));
 
-  const hasReviewerAcceptInvitation = await db.query.reviewers.findFirst({
-    where: and(
-      eq(reviewers.articleId, articleId),
-      eq(reviewers.acceptedInvitation, true)
-    ),
-  });
+  const hasReviewerAcceptInvitation =
+    await db.query.reviewAssignments.findFirst({
+      where: and(
+        eq(reviewAssignments.status, 'Accepted'),
+        eq(reviewAssignments.articleId, articleId),
+        eq(reviewAssignments.userId, userId)
+      ),
+    });
 
   return (
     <>
@@ -57,15 +61,15 @@ async function Files({
                 </Link>
               </Button>
 
-              {/* <div className="flex space-x-1"> */}
-              {hasReviewerAcceptInvitation && (
-                <UlterFile
-                  requiredPermissions={['ADD_REVIEW']}
-                  role={role}
-                  fallback={<></>}
-                />
-              )}
-              {/* <Button
+              <div className="flex space-x-1">
+                {hasReviewerAcceptInvitation && (
+                  <UlterFile
+                    requiredPermissions={['ADD_REVIEW']}
+                    role={role}
+                    fallback={<></>}
+                  />
+                )}
+                {/* <Button
                   variant="link"
                   className="text-blue-500 hover:text-blue-600"
                 >
@@ -77,7 +81,7 @@ async function Files({
                 >
                   Delete
                 </Button> */}
-              {/* </div> */}
+              </div>
             </div>
           ))}
         </CardContent>

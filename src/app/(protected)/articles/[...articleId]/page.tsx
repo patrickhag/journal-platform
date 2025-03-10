@@ -13,10 +13,12 @@ import AddReviewerModal from '@/components/upload/AddReviewerModal';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { AcceptOrRejectComponent } from '@/components/articles/AcceptOrReject';
+import { Publish } from '@/components/articles/PublishArticle';
 
 async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
   const parameters = await params;
   const [articleId] = parameters.articleId;
+  const userId = (await auth())?.user?.id;
 
   const foundArticle = await db
     .select()
@@ -39,6 +41,27 @@ async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
     .select()
     .from(reviewers)
     .where(eq(reviewers.articleId, articleId));
+
+  // const myarticle = await db.query.articleSubmissions.findFirst({
+  //   with: {
+  //     user: {
+  //       columns: {
+  //         id: true,
+  //         email: true,
+  //         firstName: true,
+  //         lastName: true,
+  //         orcid: true,
+  //         affiliation: true,
+  //         country: true,
+  //       },
+  //     },
+  //     files: true,
+  //     reviewers: true,
+  //   },
+  //   where: eq(articleSubmissions.id, articleId),
+  // });
+
+  // console.log('myarticle>>>', myarticle);
 
   return (
     <>
@@ -107,7 +130,7 @@ async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
             </div>
           </CardContent>
         </Card>
-        <Files articleId={articleId} role={currentUserRole!} />
+        <Files articleId={articleId} role={currentUserRole!} userId={userId!} />
         <Card className="my-3">
           <CardHeader>
             <CardTitle>Reviewers</CardTitle>
@@ -143,51 +166,21 @@ async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
         </Card>
         <Reviews articleId={articleId} />
         <AcceptOrRejectComponent
-          role={currentUserRole!}
+          role={currentUserRole ?? 'NORMAL_USER'}
           requiredPermissions={['ACCEPT_ARTICLE', 'REJECT_ARTICLE']}
           fallback=""
           articleId={articleId}
         />
-        {/* <Publish
-          role={currentUserRole}
+        <Publish
+          role={currentUserRole ?? 'NORMAL_USER'}
           requiredPermissions={['PUBLISH_ARTICLES']}
           fallback=""
           articleId={articleId}
           status={article.articleStatus}
-        /> */}
+        />
       </div>
     </>
   );
 }
 
 export default page;
-
-// const PublishArticle = ({
-//   articleId,
-//   status,
-// }: {
-//   articleId: string;
-//   status: (typeof ARTICLE_STATUS)[number] | null;
-// }) => {
-//   return (
-//     <form
-//       className="flex justify-center items-center"
-//       action={async () => {
-//         'use server';
-//         await db
-//           .update(articleSubmissions)
-//           .set({
-//             articleStatus: status === 'Published' ? 'Submitted' : 'Published',
-//             updatedAt: new Date().toISOString(),
-//           })
-//           .where(eq(articleSubmissions.id, articleId));
-//         revalidatePath('/articles/' + articleId);
-//       }}
-//     >
-//       <Button className="w-4/5 mx-auto bg-green-500 hover:bg-green-600 mt-3">
-//         {status === 'Published' ? 'Unpublish' : 'Publish'} this manuscript{' '}
-//       </Button>
-//     </form>
-//   );
-// };
-// const Publish = withPermissions(PublishArticle);

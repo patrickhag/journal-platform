@@ -1,5 +1,5 @@
 {
-  "id": "1015f996-f3ec-42c3-9f43-4fe8468a012a",
+  "id": "b53aa9bf-e43e-46b6-adff-7ddaf6ba3e30",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -16,10 +16,9 @@
         },
         "section": {
           "name": "section",
-          "type": "article-type",
-          "typeSchema": "public",
+          "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "requirements": {
           "name": "requirements",
@@ -48,6 +47,13 @@
         },
         "createdAt": {
           "name": "createdAt",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
           "type": "date",
           "primaryKey": false,
           "notNull": false,
@@ -176,6 +182,12 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
         },
         "country": {
           "name": "country",
@@ -425,13 +437,20 @@
           "name": "subtitle",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "abstract": {
           "name": "abstract",
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "topics": {
+          "name": "topics",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "ARRAY[]::text[]"
         },
         "userId": {
           "name": "userId",
@@ -583,6 +602,97 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.review_assignments": {
+      "name": "review_assignments",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "articleId": {
+          "name": "articleId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reviewerId": {
+          "name": "reviewerId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "review_assignments_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "assignedDate": {
+          "name": "assignedDate",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "dueDate": {
+          "name": "dueDate",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reviewedDate": {
+          "name": "reviewedDate",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "review_assignments_articleId_article_submissions_id_fk": {
+          "name": "review_assignments_articleId_article_submissions_id_fk",
+          "tableFrom": "review_assignments",
+          "tableTo": "article_submissions",
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "review_assignments_reviewerId_reviewers_id_fk": {
+          "name": "review_assignments_reviewerId_reviewers_id_fk",
+          "tableFrom": "review_assignments",
+          "tableTo": "reviewers",
+          "columnsFrom": ["reviewerId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "review_assignments_userId_user_id_fk": {
+          "name": "review_assignments_userId_user_id_fk",
+          "tableFrom": "review_assignments",
+          "tableTo": "user",
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.reviewers": {
       "name": "reviewers",
       "schema": "",
@@ -613,7 +723,7 @@
         },
         "phone": {
           "name": "phone",
-          "type": "varchar(20)",
+          "type": "varchar(40)",
           "primaryKey": false,
           "notNull": false
         },
@@ -769,9 +879,10 @@
         },
         "country": {
           "name": "country",
-          "type": "text",
+          "type": "countries",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "role": {
           "name": "role",
@@ -807,6 +918,12 @@
         },
         "avatar": {
           "name": "avatar",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "orcid": {
+          "name": "orcid",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -869,7 +986,7 @@
       "schema": "public",
       "values": [
         "Submitted",
-        "In Review",
+        "Under Review",
         "Approved",
         "Rejected",
         "Published",
@@ -883,14 +1000,12 @@
       "name": "article-type",
       "schema": "public",
       "values": [
-        "Articles",
-        "Editorial Information",
-        "Editorial",
+        "Narative Review",
+        "Case study",
+        "Case Report",
         "Original Research",
-        "Review Articles",
-        "Short reports",
-        "Commentaries",
-        "Letters to the editor"
+        "Systematic Review",
+        "Meta Analysis"
       ]
     },
     "public.countries": {
@@ -1099,10 +1214,15 @@
       "schema": "public",
       "values": ["Warning", "Info", "Hint", "Error", "Confused", "Ok"]
     },
+    "public.review_assignments_status": {
+      "name": "review_assignments_status",
+      "schema": "public",
+      "values": ["Invited", "Accepted", "Declined", "Completed"]
+    },
     "public.role": {
       "name": "role",
       "schema": "public",
-      "values": ["NORMAL_USER", "CHIEF_EDITOR", "ADMIN"]
+      "values": ["NORMAL_USER", "CHIEF_EDITOR", "REVIEWER", "ADMIN"]
     },
     "public.salutation": {
       "name": "salutation",

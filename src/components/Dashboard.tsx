@@ -1,80 +1,31 @@
-import { auth } from '@/auth';
+'use client';
+
 import { Tabs, TabsContent, TabsList } from '@/components/ui/tabs';
-import {
-  articleSubmissions,
-  files,
-  metadata,
-  reviewAssignments,
-} from '@/db/schema';
-import { db } from '@/db/db';
 import { ArticleSection } from './ArticleSection';
 import { SearchArticle } from './SearchArticle';
-import { and, eq, like, inArray } from 'drizzle-orm';
 import { PlusCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { ArticleFilters } from './ArticleFilters';
-import { ARTICLE_STATUS, articleFilters } from '@/lib/consts';
+import { useGetArticles } from '@/hooks/useGetArticles';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
+import { useDebounce } from '@/hooks/useDebounce';
+import Loader from './Loader';
 
-export default async function DashboardPannel({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-  const session = await auth();
+export default function DashboardPannel() {
+  const { data: session } = useSession();
   const currentUser = session?.user;
+  const userId = currentUser?.id as string;
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const [selectedValue, setSelectedValue] = useState('');
 
-  const where = async () => {
-    const conditions = [];
-
-    if (searchParams.q) {
-      conditions.push(
-        like(articleSubmissions.commentsForEditor, `%${searchParams.q}%`)
-      );
-    }
-    if (currentUser?.id) {
-      if (searchParams.status) {
-        conditions.push(
-          eq(
-            articleSubmissions.articleStatus,
-            searchParams.status as (typeof ARTICLE_STATUS)[number]
-          )
-        );
-      }
-      if (
-        (searchParams.f as (typeof articleFilters)[number]) ===
-        'Assigned to review'
-      ) {
-        const article = await db.query.reviewAssignments.findMany({
-          where: and(
-            eq(reviewAssignments.articleId, currentUser.id),
-            eq(reviewAssignments.status, 'Accepted')
-          ),
-        });
-
-        const ids = article.map((a) => String(a.articleId));
-        conditions.push(inArray(articleSubmissions.id, [...new Set(ids)]));
-      } else {
-        conditions.push(eq(articleSubmissions.userId, currentUser.id));
-      }
-    }
-    return conditions.length > 0 ? and(...conditions) : undefined;
-  };
-
-  const articles = await db
-    .select({
-      id: articleSubmissions.id,
-      commentsForEditor: articleSubmissions.commentsForEditor,
-      fileURI: files.publicId,
-      section: articleSubmissions.section,
-      articleStatus: articleSubmissions.articleStatus,
-      title: metadata.title, // Adding title from metadata
-      owner: articleSubmissions.userId,
-    })
-    .from(articleSubmissions)
-    .where(await where())
-    .leftJoin(files, eq(articleSubmissions.id, files.articleId))
-    .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId));
+  const { data: articles, isPending } = useGetArticles(
+    userId,
+    debouncedSearchQuery,
+    selectedValue
+  );
 
   return (
     <main className="max-w-5xl mx-auto">
@@ -84,16 +35,22 @@ export default async function DashboardPannel({
             Welcome back, {currentUser?.name}
           </h2>
           <p className="text-muted-foreground">
-            You&apos;ve got {articles.length} submissions.
+            You&apos;ve got {articles?.length} submissions.
           </p>
         </div>
 
         <Tabs defaultValue="articles">
           <div className="flex justify-between">
             <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
-              <ArticleFilters />
+              <ArticleFilters
+                selectedValue={selectedValue}
+                setSelectedValue={setSelectedValue}
+              />
             </TabsList>
-            <SearchArticle />
+            <SearchArticle
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
             <Button className="mx-5 bg-[#141A26]">
               <Link href="/articles/new/start">
                 <span className="flex items-center gap-2">
@@ -105,13 +62,16 @@ export default async function DashboardPannel({
           </div>
           <TabsContent value="articles" className="mt-6">
             <div className="grid gap-4">
-              {articles.length > 0 ? (
+              {isPending ? (
+                <div className="text-center text-muted-foreground">
+                  <Loader text="Loading articles..." />
+                </div>
+              ) : articles && articles.length > 0 ? (
                 articles.map((a, i) => (
                   <ArticleSection
                     article={{
                       'Comments for the editor': a.commentsForEditor || '',
                       commentsForEditor: a.commentsForEditor || '',
-                      fileURI: a.fileURI || '',
                       id: a.id || '',
                       requirements: [''],
                       section: a.section || 'Original Research',

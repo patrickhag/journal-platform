@@ -68,8 +68,12 @@ export const notifyContibutor = async ({
     subject,
     html: emailHtml,
   };
-  await transporter.sendMail(options);
-  return true;
+  const result = await transporter.sendMail(options);
+  if (result.accepted.length === 0) {
+    return false;
+  } else {
+    return true;
+  }
 };
 
 export const sendInvitation = async ({
@@ -135,11 +139,11 @@ export const sendVerifyToken = async ({
 
 export const rejectManuscriptEmail = async ({
   article,
-  authorEmail,
+  authorEmails,
   names,
 }: {
   article: string;
-  authorEmail: string;
+  authorEmails: string[];
   names: string;
 }) => {
   const emailHtml = await render(
@@ -147,7 +151,7 @@ export const rejectManuscriptEmail = async ({
   );
   const options = {
     from: process.env.EMAIL_USER,
-    to: authorEmail,
+    to: authorEmails.map((email) => email),
     subject: 'Your manuscript has been rejected',
     html: emailHtml,
   };
