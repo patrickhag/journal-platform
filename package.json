@@ -44,7 +44,7 @@
     "cmdk": "1.0.0",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
-    "drizzle-orm": "^0.38.4",
+    "drizzle-orm": "^0.41.0",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.468.0",
     "mailgen": "^2.0.28",
