@@ -1,13 +1,10 @@
 import bcrypt from 'bcryptjs';
-import { exit } from 'process';
 const PASSWORD = 'whyoneAt@1';
 
 const hashedPassword = bcrypt.hashSync(PASSWORD);
 import {
   db,
   users,
-  verificationTokens,
-  authenticators,
   files,
   metadata,
   contributors,
@@ -55,34 +52,34 @@ async function seedDatabase() {
   await db.insert(users).values(userRecords);
 
   // Verification tokens
-  const verificationTokenRecords = Array.from({ length: 10 }, () => ({
-    identifier: faker.string.uuid(),
-    token: faker.string.alphanumeric(32),
-    expires: faker.date.future(),
-  }));
+  // const verificationTokenRecords = Array.from({ length: 10 }, () => ({
+  //   identifier: faker.string.uuid(),
+  //   token: faker.string.alphanumeric(32),
+  //   expires: faker.date.future(),
+  // }));
 
-  await db.insert(verificationTokens).values(verificationTokenRecords);
+  // await db.insert(verificationTokens).values(verificationTokenRecords);
 
   // Authenticators
-  const authenticatorRecords = Array.from({ length: 10 }, () => ({
-    credentialID: faker.string.uuid(),
-    userId: faker.helpers.arrayElement(userRecords).id,
-    providerAccountId: faker.string.uuid(),
-    credentialPublicKey: faker.string.alphanumeric(64),
-    counter: faker.number.int({ min: 1, max: 1000 }),
-    credentialDeviceType: faker.helpers.arrayElement([
-      'platform',
-      'cross-platform',
-    ]),
-    credentialBackedUp: faker.datatype.boolean(),
-    transports: faker.helpers.arrayElement(['usb', 'nfc', 'ble']),
-  }));
+  // const authenticatorRecords = Array.from({ length: 10 }, () => ({
+  //   credentialID: faker.string.uuid(),
+  //   userId: faker.helpers.arrayElement(userRecords).id,
+  //   providerAccountId: faker.string.uuid(),
+  //   credentialPublicKey: faker.string.alphanumeric(64),
+  //   counter: faker.number.int({ min: 1, max: 1000 }),
+  //   credentialDeviceType: faker.helpers.arrayElement([
+  //     'platform',
+  //     'cross-platform',
+  //   ]),
+  //   credentialBackedUp: faker.datatype.boolean(),
+  //   transports: faker.helpers.arrayElement(['usb', 'nfc', 'ble']),
+  // }));
 
-  await db.insert(authenticators).values(authenticatorRecords);
+  // await db.insert(authenticators).values(authenticatorRecords);
 
   // Create article submissions first since they're referenced by other tables
   const articleSubmissionRecords = Array.from(
-    { length: 500 },
+    { length: 12 },
     () =>
       ({
         id: crypto.randomUUID(),
@@ -97,7 +94,7 @@ async function seedDatabase() {
   await db.insert(articleSubmissions).values(articleSubmissionRecords);
 
   // Files
-  const fileRecords = Array.from({ length: 500 }, () => ({
+  const fileRecords = Array.from({ length: 12 }, () => ({
     id: crypto.randomUUID(),
     publicId: faker.string.uuid(),
     resourceType: faker.helpers.arrayElement(['image', 'document', 'video']),
@@ -110,7 +107,7 @@ async function seedDatabase() {
   await db.insert(files).values(fileRecords);
 
   // Metadata
-  const metadataRecords = Array.from({ length: 500 }, () => ({
+  const metadataRecords = Array.from({ length: 12 }, () => ({
     id: crypto.randomUUID(),
     title: faker.lorem.sentence(),
     prefix: faker.helpers.arrayElement(['Dr', 'Prof', 'Mr', 'Mrs']),
@@ -123,7 +120,7 @@ async function seedDatabase() {
   await db.insert(metadata).values(metadataRecords);
 
   // Contributors
-  const contributorRecords = Array.from({ length: 500 }, () => ({
+  const contributorRecords = Array.from({ length: 12 }, () => ({
     id: crypto.randomUUID(),
     name: faker.person.fullName(),
     salutation: faker.helpers.arrayElement(SALUTATION),
@@ -143,7 +140,7 @@ async function seedDatabase() {
   await db.insert(contributors).values(contributorRecords);
 
   // Reviewers
-  const reviewerRecords = Array.from({ length: 500 }, () => ({
+  const reviewerRecords = Array.from({ length: 12 }, () => ({
     id: crypto.randomUUID(),
     names: faker.person.fullName(),
     affiliation: faker.company.name(),
@@ -158,7 +155,7 @@ async function seedDatabase() {
   await db.insert(reviewers).values(reviewerRecords);
 
   // Reviews
-  const reviewRecords = Array.from({ length: 500 }, () => ({
+  const reviewRecords = Array.from({ length: 12 }, () => ({
     id: crypto.randomUUID(),
     message: faker.lorem.paragraphs(2),
     userId: faker.helpers.arrayElement(userRecords).id,
@@ -173,7 +170,7 @@ async function seedDatabase() {
   await db.insert(reviews).values(reviewRecords);
 
   // Final Submissions
-  const finalSubmissionRecords = Array.from({ length: 500 }, () => ({
+  const finalSubmissionRecords = Array.from({ length: 12 }, () => ({
     id: crypto.randomUUID(),
     funded: faker.datatype.boolean(),
     ethical: faker.datatype.boolean(),
@@ -212,12 +209,6 @@ async function seedDatabase() {
 }
 
 export default seedDatabase;
-const main = async () => {
+export const main = async () => {
   await seedDatabase();
 };
-
-main()
-  .catch(console.log)
-  .finally(() => {
-    exit();
-  });

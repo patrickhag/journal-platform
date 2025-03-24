@@ -41,6 +41,12 @@ export const reviewAssignmentsStatusEnum = pgEnum(
   'review_assignments_status',
   REVIEW_ASSIGNMENTS_STATUS
 );
+export const volumeStatusEnum = pgEnum('volume_status', ['Active', 'Archived']);
+export const issueStatusEnum = pgEnum('issue_status', [
+  'Draft',
+  'Published',
+  'Archived',
+]);
 
 export const users = pgTable('user', {
   id: text('id')
@@ -211,6 +217,7 @@ export const articleSubmissions = pgTable('article_submissions', {
   userId: text('userId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
+  issueId: text('issueId').references(() => issues.id, { onDelete: 'cascade' }),
   createdAt: date('createdAt').defaultNow(),
   updatedAt: date('updatedAt').defaultNow(),
 });
@@ -262,6 +269,35 @@ export const reviewAssignments = pgTable('review_assignments', {
   reviewedDate: date('reviewedDate'),
 });
 
+export const volumes = pgTable('volumes', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  volumeNumber: integer('volume_number').notNull(),
+  year: integer('year').notNull(),
+  title: text('title'),
+  description: text('description'),
+  status: volumeStatusEnum('status').default('Active'),
+  createdAt: date('created_at').defaultNow().notNull(),
+  updatedAt: date('updated_at').defaultNow().notNull(),
+});
+
+export const issues = pgTable('issues', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  issueNumber: integer('issue_number').notNull(),
+  volumeId: text('volume_id')
+    .references(() => volumes.id, { onDelete: 'cascade' })
+    .notNull(),
+  title: text('title'),
+  description: text('description'),
+  publicationDate: date('publication_date'),
+  status: issueStatusEnum('status').default('Draft'),
+  createdAt: date('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 /*** RELATIONS ***/
 
 export const articleSubmissionsRelations = relations(
@@ -270,6 +306,10 @@ export const articleSubmissionsRelations = relations(
     user: one(users, {
       fields: [articleSubmissions.userId],
       references: [users.id],
+    }),
+    issue: one(issues, {
+      fields: [articleSubmissions.issueId],
+      references: [issues.id],
     }),
     metadata: one(metadata, {
       fields: [articleSubmissions.id],
@@ -289,6 +329,18 @@ export const articleSubmissionsRelations = relations(
     }),
   })
 );
+
+export const issuesRelations = relations(issues, ({ one, many }) => ({
+  volume: one(volumes, {
+    fields: [issues.volumeId],
+    references: [volumes.id],
+  }),
+  articles: many(articleSubmissions),
+}));
+
+export const volumeRelations = relations(volumes, ({ many }) => ({
+  issues: many(issues),
+}));
 
 export const reviewAssignmentsRelations = relations(
   reviewAssignments,
@@ -348,3 +400,4 @@ export type TUsers = typeof users.$inferSelect;
 export type Users = typeof users.$inferInsert;
 export type TNotifications = typeof notifications.$inferSelect;
 export type Notifications = typeof notifications.$inferInsert;
+export type Issues = typeof issues.$inferInsert;

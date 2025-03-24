@@ -34,7 +34,7 @@ async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
   const author = await db
     .select()
     .from(users)
-    .where(eq(users.id, article.userId))
+    .where(eq(users.id, article.userId ?? ''))
     .limit(1);
 
   const reviewrs = await db

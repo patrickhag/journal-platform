@@ -28,6 +28,9 @@ export default function HeaderModal({ name }: { name: string }) {
           My Account({session.data?.user.role})
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => router.replace('/submissions')}>
+          My Dashboard
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={() => router.replace('/profile')}>
           Edit Profile
         </DropdownMenuItem>

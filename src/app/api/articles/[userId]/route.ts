@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
 import { articleSubmissions, metadata, reviewAssignments } from '@/db/schema';
-import { and, eq, like } from 'drizzle-orm';
+import { and, eq, ilike } from 'drizzle-orm';
 import { ARTICLE_STATUS } from '@/lib/consts';
 import { auth } from '@/auth';
 
@@ -27,7 +27,6 @@ export async function GET(
       ? (rawStatus as (typeof ARTICLE_STATUS)[number])
       : undefined;
 
-    // Validate searchQuery
     const validatedSearchQuery =
       typeof searchQuery === 'string' && searchQuery.trim()
         ? searchQuery.trim()
@@ -53,7 +52,7 @@ export async function GET(
     }
 
     if (validatedSearchQuery) {
-      whereConditions.push(like(metadata.title, `%${validatedSearchQuery}%`));
+      whereConditions.push(ilike(metadata.title, `%${validatedSearchQuery}%`));
     }
 
     if (articleStatus) {
@@ -70,7 +69,7 @@ export async function GET(
         owner: articleSubmissions.userId,
       })
       .from(articleSubmissions)
-      .where(whereConditions as any)
+      .where(whereConditions.length ? and(...whereConditions) : undefined)
       .leftJoin(
         reviewAssignments,
         eq(articleSubmissions.id, reviewAssignments.articleId)

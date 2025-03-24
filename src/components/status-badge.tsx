@@ -1,12 +1,12 @@
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { type ARTICLE_STATUS } from '@/lib/consts';
+import { ArticleStatus } from '@/lib/consts';
 
 export function StatusBadge({
   status,
   className,
 }: {
-  status: (typeof ARTICLE_STATUS)[number];
+  status: ArticleStatus;
   className?: string;
 }) {
   return (
@@ -22,6 +22,7 @@ export function StatusBadge({
           status === 'Archived',
         'bg-purple-50 text-purple-600 border-purple-600/20':
           status === 'Published',
+        'bg-teal-50 text-teal-600 border-teal-600/20': status === 'Approved',
       })}
     >
       {!className && (
@@ -33,6 +34,7 @@ export function StatusBadge({
             'bg-yellow-600': status === 'Under Review',
             'bg-orange-600': status === 'Archived',
             'bg-purple-600': status === 'Published',
+            'bg-teal-600': status === 'Approved',
           })}
         />
       )}
