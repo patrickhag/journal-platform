@@ -7,29 +7,37 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { db } from '@/db/schema';
-import { users, articleSubmissions, metadata } from '@/db/schema';
-import { desc, eq } from 'drizzle-orm';
+import { db } from '@/db/db';
+import { articleSubmissions } from '@/db/schema';
+import { desc } from 'drizzle-orm';
 
 export default async function ArticlesPage() {
-  const articles = await db
-    .select({
-      section: articleSubmissions.section,
-      status: articleSubmissions.articleStatus,
-      ownerFirstName: users.firstName,
-      ownerLastName: users.lastName,
-      createdAt: articleSubmissions.createdAt,
-      title: metadata.title,
-      id: articleSubmissions.id,
-    })
-    .from(articleSubmissions)
-    .leftJoin(users, eq(articleSubmissions.userId, users.id))
-    .leftJoin(metadata, eq(metadata.articleId, articleSubmissions.id))
-    .orderBy(desc(articleSubmissions.createdAt));
+  const articles = await db.query.articleSubmissions.findMany({
+    columns: {
+      section: true,
+      articleStatus: true,
+      id: true,
+      createdAt: true,
+    },
+    with: {
+      user: {
+        columns: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+      metadata: {
+        columns: {
+          title: true,
+        },
+      },
+    },
+    orderBy: [desc(articleSubmissions.createdAt)],
+  });
 
   return (
     <Protected allowedRoles={['ADMIN', 'CHIEF_EDITOR']}>
-      <div className="container mx-auto py-10">
+      <div>
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl font-bold">Articles</CardTitle>
@@ -40,8 +48,12 @@ export default async function ArticlesPage() {
           <CardContent>
             <ArticlesTable
               data={articles.map((article) => ({
-                ...article,
-                owner: article.ownerFirstName + ' ' + article.ownerLastName,
+                id: article.id,
+                section: article.section,
+                status: article.articleStatus,
+                createdAt: article.createdAt,
+                title: article.metadata.title,
+                owner: article.user.firstName + ' ' + article.user.lastName,
               }))}
             />
           </CardContent>

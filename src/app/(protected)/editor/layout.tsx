@@ -1,6 +1,7 @@
 import { auth } from '@/auth';
 import Header from '@/components/Header';
 import Loader from '@/components/Loader';
+import { Toaster } from 'sonner';
 import { Suspense } from 'react';
 
 export default async function EditorLayout({
@@ -21,7 +22,14 @@ export default async function EditorLayout({
           </div>
         }
       >
-        <main>{children}</main>
+        <main className="container mx-auto py-7">
+          <Toaster
+            position="bottom-right"
+            className="bg-green-200"
+            richColors
+          />
+          {children}
+        </main>
       </Suspense>
     </div>
   );

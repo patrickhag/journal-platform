@@ -245,6 +245,8 @@ export const ARTICLE_STATUS = [
   'Major issue',
 ] as const;
 
+export type ArticleStatus = (typeof ARTICLE_STATUS)[number];
+
 export const articleFilters = ['My articles', 'Assigned to review'] as const;
 
 export const REVIEW_ASSIGNMENTS_STATUS = [
