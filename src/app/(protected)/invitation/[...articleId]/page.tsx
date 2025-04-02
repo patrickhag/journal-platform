@@ -10,18 +10,23 @@ import {
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 
-export default async function AcceptPage({
-  params,
-  searchParams,
-}: {
-  params: { articleId: string[] };
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-  const articleId = params.articleId[0];
+type PageProps = {
+  params: Promise<{
+    article: string[];
+  }>;
+  searchParams: Promise<{
+    [key: string]: string | string[] | undefined;
+  }>;
+};
+
+export default async function AcceptPage({ params, searchParams }: PageProps) {
+  const { article } = await params;
+  const articleId = article[0];
 
   const userId = (await auth())?.user?.id;
-  const isAcceptingInvite = searchParams.accept_invite?.toString();
-  const editorInChiefId = searchParams.editor?.toString();
+  const search = await searchParams;
+  const isAcceptingInvite = search.accept_invite?.toString();
+  const editorInChiefId = search.editor?.toString();
 
   const toEmail = (
     await db

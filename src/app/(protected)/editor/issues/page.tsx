@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { BookOpenIcon, BookIcon, PlusIcon } from 'lucide-react';
-import type { VolumeType, IssueType } from '@/lib/schemas';
+import { VolumeType, IssueType } from '@/lib/schemas';
 import { VolumeList } from '@/components/issues/VolumeLIst';
 import { IssueList } from '@/components/issues/IssueList';
 import { IssueModal } from '@/components/issues/IssueModal';

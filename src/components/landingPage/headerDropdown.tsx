@@ -13,7 +13,7 @@ import { Session } from 'next-auth';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { signOut } from 'next-auth/react';
+import { doLogout } from '@/actions/logout';
 
 export default function HeaderDropdown({
   names,
@@ -53,9 +53,8 @@ export default function HeaderDropdown({
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => {
-                signOut();
-                router.replace('/');
+              onClick={async () => {
+                await doLogout();
               }}
             >
               Log out

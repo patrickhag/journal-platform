@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { volumeSchema, type VolumeFormValues } from '@/lib/schemas';
+import { volumeSchema, VolumeType } from '@/lib/schemas';
 import {
   Form,
   FormControl,
@@ -29,7 +29,7 @@ import {
 interface VolumeModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: VolumeFormValues) => void;
+  onSubmit: (data: VolumeType) => void;
 }
 
 export function VolumeModal({
@@ -37,7 +37,7 @@ export function VolumeModal({
   onOpenChange,
   onSubmit,
 }: VolumeModalProps) {
-  const form = useForm<VolumeFormValues>({
+  const form = useForm<VolumeType>({
     resolver: zodResolver(volumeSchema),
     defaultValues: {
       volumeNumber: 1,

@@ -1,19 +1,20 @@
 import { Abstract } from '@/components/article/Abstract';
-import Footer from '@/components/landingPage/footer';
-import Header from '@/components/landingPage/header';
 import LeftSideBar from '@/components/landingPage/leftSideBar';
 import { articleSubmissions } from '@/db/schema';
 import { db } from '@/db/db';
 import { eq } from 'drizzle-orm';
 import logger from '@/lib/logger';
 
+type PageProps = { articleId: string[] };
+
 export async function generateMetadata({
   params,
 }: {
-  params: { articleId: string[] };
+  params: Promise<PageProps>;
 }) {
   try {
-    const [articleId] = params.articleId;
+    const parameters = await params;
+    const [articleId] = parameters.articleId;
     const articleData = await db.query.articleSubmissions.findFirst({
       with: {
         metadata: {
@@ -106,30 +107,26 @@ export default async function ArticlePage({
     }
   }
 
+  console.log('articleData>>>', articleData);
+
   return (
-    <main>
-      <div className="font-sans">
-        <Header />
-        <main className="px-8 py-6">
-          <section className="flex flex-col gap-8">
-            <div className="grid grid-cols-4 gap-2">
-              {articleData ? (
-                <>
-                  <Abstract articleData={articleData} />
-                  <LeftSideBar
-                    isAbstract={true}
-                    articleFiles={articleData.files}
-                    articleId={articleId}
-                  />
-                </>
-              ) : (
-                <div>Article not found</div>
-              )}
-            </div>
-            <Footer />
-          </section>
-        </main>
-      </div>
+    <main className="px-8 py-6">
+      <section className="flex flex-col gap-8">
+        <div className="grid grid-cols-4 gap-2">
+          {articleData ? (
+            <>
+              <Abstract articleData={articleData} />
+              <LeftSideBar
+                isAbstract={true}
+                articleFiles={articleData.files}
+                articleId={articleId}
+              />
+            </>
+          ) : (
+            <div>Article not found</div>
+          )}
+        </div>
+      </section>
     </main>
   );
 }

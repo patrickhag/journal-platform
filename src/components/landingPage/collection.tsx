@@ -48,23 +48,23 @@ const Collections = async () => {
             Our largest collections
           </h2>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 md:gap-6 lg:gap-8">
-            {fileCollections.map((collection) => (
-              <div key={collection.id} className="group">
-                <h3 className="text-base font-medium min-h-[50px] sm:text-lg md:text-xl">
-                  {collection.title}
-                </h3>
-                <div className="relative overflow-hidden rounded-md transition-all duration-300 hover:shadow-lg">
-                  <Image
-                    src="https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732723406/newss_espiuv.png"
-                    width={500}
-                    height={250}
-                    alt={collection.title || ''}
-                    className="w-full h-auto object-cover rounded-md transform transition-transform duration-300 group-hover:scale-105"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
-                </div>
+            {/* {fileCollections.map((collection) => ( */}
+            <div /* key={collection.id} */ className="group">
+              <h3 className="text-base font-medium min-h-[50px] sm:text-lg md:text-xl">
+                title
+              </h3>
+              <div className="relative overflow-hidden rounded-md transition-all duration-300 hover:shadow-lg">
+                <Image
+                  src="https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732723406/newss_espiuv.png"
+                  width={500}
+                  height={250}
+                  alt="title"
+                  className="w-full h-auto object-cover rounded-md transform transition-transform duration-300 group-hover:scale-105"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                />
               </div>
-            ))}
+            </div>
+            {/* ))} */}
           </div>
         </div>
       </div>

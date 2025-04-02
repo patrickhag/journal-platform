@@ -6,20 +6,37 @@ import HeaderDropdown from './headerDropdown';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 const navItems = [
   { path: '/', label: 'Home' },
   { path: '/about', label: 'About' },
-  { path: '/articles', label: 'Articles' },
+  { path: '/articles/issues', label: 'Articles' },
   { path: '/authors', label: 'Authors' },
-  { path: '#', label: 'Reviewers' },
+  { path: '#', label: 'Search' },
 ];
 
 export default function Header() {
   const { data: session } = useSession();
   const names = session?.user?.name?.split(' ')?.[1]?.substring(0, 1);
   const pathname = usePathname();
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const isActiveLink = (itemPath: string, currentPath: string) => {
+    if (itemPath === '/') {
+      return currentPath === '/';
+    }
+
+    if (
+      itemPath === '/articles' &&
+      currentPath.includes('/articles/article/')
+    ) {
+      return true;
+    }
+
+    return currentPath.startsWith(itemPath) && itemPath !== '/';
+  };
 
   return (
     <>
@@ -84,9 +101,11 @@ export default function Header() {
             <Link
               key={item.label}
               href={item.path}
-              className={`${
-                pathname === item.path ? 'text-blue-500' : 'hover:text-blue-500'
-              }`}
+              className={cn(
+                isActiveLink(item.path, pathname)
+                  ? 'text-blue-500'
+                  : 'hover:text-blue-500'
+              )}
             >
               {item.label}
             </Link>
@@ -106,11 +125,12 @@ export default function Header() {
                 key={item.label}
                 onClick={() => setIsMobileMenuOpen(false)}
                 href={item.path}
-                className={`${
-                  pathname === item.path
+                className={cn(
+                  (pathname.startsWith(item.path) && item.path !== '/') ||
+                    (pathname === item.path && item.path === '/')
                     ? 'text-blue-500'
                     : 'hover:text-blue-500'
-                }`}
+                )}
               >
                 {item.label}
               </Link>

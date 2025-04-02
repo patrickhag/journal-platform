@@ -1,4 +1,5 @@
 'use client';
+
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';

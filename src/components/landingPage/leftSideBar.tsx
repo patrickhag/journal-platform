@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { EyeIcon, ShareIcon } from '@heroicons/react/24/outline';
+import { ShareIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import { Album, LinkedinIcon, TwitterIcon, FacebookIcon } from 'lucide-react';
 import { DownloadIcon } from 'lucide-react';
@@ -22,6 +22,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useGetPublishedVolumes } from '@/hooks/useVolumes';
 
 interface LeftSideBarProps {
   isAbstract?: boolean;
@@ -41,9 +42,10 @@ const LeftSideBar = ({
     (file) => file.fileType === 'Article Text'
   );
 
+  const { data: volumes } = useGetPublishedVolumes();
+
   return (
     <div className="sticky top-0">
-      {/* Download, Cite and Share */}
       {isAbstract && (
         <div className="flex flex-col gap-2 mb-5">
           {articleFile?.map((file) => (
@@ -250,12 +252,6 @@ const LeftSideBar = ({
                   Lorem ipsum article has been posted has been posted has been
                   posted
                 </a>
-                <div className="text-xs text-gray-500 flex items-center space-x-1">
-                  <span className="material-icons text-base text-gray-400">
-                    <EyeIcon className="h-6 w-6 text-gray-600" />
-                  </span>
-                  <span>2023 views</span>
-                </div>
               </li>
             ))}
           </ul>
@@ -286,16 +282,19 @@ const LeftSideBar = ({
             className="text-lg font-semibold text-gray-700"
             style={{ color: '#1A237E' }}
           >
-            Archives
+            Volumes
           </h2>
           <ul className="mt-2 space-y-2 text-sm text-gray-600">
-            {[4, 3, 2, 1].map((year) => (
-              <li key={year}>
-                <a href="#" className="hover:text-blue-600">
-                  Volume {year}-2024 (20)
-                </a>
-              </li>
-            ))}
+            {Array.isArray(volumes) &&
+              volumes.map((vol) => (
+                <Link
+                  key={vol.id}
+                  href={'/articles/issues'}
+                  className="hover:text-blue-600"
+                >
+                  Volume {vol.year} ({vol.issues.length})
+                </Link>
+              ))}
           </ul>
         </div>
 

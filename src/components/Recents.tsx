@@ -40,7 +40,7 @@ export const Recents = async () => {
             <div>
               <div className="flex items-center justify-between">
                 <Link
-                  href={`/article/${article.id}`}
+                  href={`/articles/article/${article.id}`}
                   className="text-lg text-blue-500 hover:text-blue-600"
                 >
                   {article.title}

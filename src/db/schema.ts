@@ -41,7 +41,7 @@ export const reviewAssignmentsStatusEnum = pgEnum(
   'review_assignments_status',
   REVIEW_ASSIGNMENTS_STATUS
 );
-export const volumeStatusEnum = pgEnum('volume_status', ['Active', 'Archived']);
+export const volumeStatusEnum = pgEnum('volume_status', ['Active', 'Inactive']);
 export const issueStatusEnum = pgEnum('issue_status', [
   'Draft',
   'Published',
@@ -277,7 +277,7 @@ export const volumes = pgTable('volumes', {
   year: integer('year').notNull(),
   title: text('title'),
   description: text('description'),
-  status: volumeStatusEnum('status').default('Active'),
+  status: volumeStatusEnum('status').default('Inactive'),
   createdAt: date('created_at').defaultNow().notNull(),
   updatedAt: date('updated_at').defaultNow().notNull(),
 });

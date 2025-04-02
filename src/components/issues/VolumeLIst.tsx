@@ -20,7 +20,7 @@ import { useState, useEffect } from 'react';
 import { DeleteVolumeDialog } from './DeleteVolumeDialog';
 import { useDeleteVolume } from '@/hooks/useVolumes';
 interface VolumeLIstProps {
-  volumes: { id: string } & VolumeType;
+  volumes: VolumeType;
 }
 
 export function VolumeList({ volumes }: VolumeLIstProps) {

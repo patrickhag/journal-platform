@@ -8,11 +8,13 @@ type ParamType = {
   id: string;
 };
 
-export async function PUT(req: NextRequest, { params }: { params: ParamType }) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: Promise<ParamType> }
+) {
   try {
     const session = await auth();
-    const { id } = params;
-    console.log('id>>>', id);
+    const { id } = await params;
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

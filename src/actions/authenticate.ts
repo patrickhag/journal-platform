@@ -14,8 +14,8 @@ export async function authenticate(
   formData: z.infer<typeof loginSchema> & { redirect?: string }
 ) {
   const login = loginSchema.safeParse(formData);
+  if (login.error) return login.error.errors[0].message;
   try {
-    if (login.error) return login.error.errors[0].message;
     await signIn('credentials', {
       redirect: false,
       ...login.data,
@@ -36,7 +36,7 @@ export async function authenticate(
   });
 
   if (user?.role === 'CHIEF_EDITOR' || user?.role === 'ADMIN') {
-    return redirect('/editor/articles', RedirectType.replace);
+    return redirect('/editor', RedirectType.replace);
   } else {
     return redirect('/submissions', RedirectType.replace);
   }

@@ -1,3 +1,5 @@
+'use client';
+
 import { CommentPreview } from './CommentPreview';
 import { Card, CardContent } from './ui/card';
 import {
@@ -7,11 +9,14 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { Button } from './ui/button';
-import { MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal, FileText, Eye, Archive, Trash } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { TArticle } from '@/schemas/reviewer';
 import { StatusBadge } from './status-badge';
+import { useEffect, useState } from 'react';
+import { DeleteaArticleDialog } from './articles/DeleteArticleDialog';
+import { useDeleteArticle } from '@/hooks/useArticles';
 
 export function ArticleSection({
   article: a,
@@ -20,44 +25,78 @@ export function ArticleSection({
   article: TArticle;
   index: number;
 }) {
-  return (
-    <Card key={a.id}>
-      <CardContent className="flex items-center justify-between p-6">
-        <div className="flex gap-6">
-          <div className="flex items-center">
-            <span className="text-xl font-medium text-muted-foreground">
-              {(i + 1).toString().padStart(4, '0')}
-            </span>
-          </div>
-          <div className="space-y-2">
-            <h3 className="font-medium uppercase">{a.section}</h3>
-            <CommentPreview html={a.title} />
-            <small className={cn('mt-2')}>
-              <StatusBadge status={a.articleStatus || 'Submitted'} />
-            </small>
-          </div>
-        </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <MoreHorizontal className="h-4 w-4" />
-              <span className="sr-only">Open menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <Link href={`articles/${a.id}`}>View details</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link href={`articles/${a.id}`}>Update article</Link>
-            </DropdownMenuItem>
+  const [openDeleteArticleDialog, setOpenDeleteArticleDialog] = useState(false);
+  const [allowArticleDeletion, setAllowArticleDeletion] = useState(false);
 
-            <DropdownMenuItem>
-              <Link href={`articles/${a.id}`}>Delete article</Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </CardContent>
-    </Card>
+  const { mutate: deleteArticle, isPending: isDeletingArticle } =
+    useDeleteArticle(setOpenDeleteArticleDialog);
+
+  useEffect(() => {
+    if (allowArticleDeletion) {
+      deleteArticle(a.id);
+      setAllowArticleDeletion(false);
+    }
+  }, [allowArticleDeletion]);
+
+  return (
+    <>
+      <Card key={a.id}>
+        <CardContent className="flex items-center justify-between p-6">
+          <div className="flex gap-6">
+            <div className="flex items-center">
+              <span className="text-xl font-medium text-muted-foreground">
+                {(i + 1).toString().padStart(4, '0')}
+              </span>
+            </div>
+            <div className="space-y-2">
+              <h3 className="flex items-center gap-2 font-medium uppercase">
+                <FileText className="h-4 w-4 text-muted-foreground" />
+                {a.section}
+              </h3>
+              <CommentPreview html={a.title} />
+              <small className={cn('mt-2')}>
+                <StatusBadge status={a.articleStatus || 'Submitted'} />
+              </small>
+            </div>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link
+                  href={`articles/${a.id}`}
+                  className="flex items-center gap-2"
+                >
+                  <Eye className="h-4 w-4" />
+                  View details
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="flex items-center gap-2">
+                <Archive className="h-4 w-4" />
+                Archive article
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="flex items-center gap-2 text-red-500"
+                onClick={() => setOpenDeleteArticleDialog(true)}
+              >
+                <Trash className="h-4 w-4" />
+                Delete article
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </CardContent>
+      </Card>
+      <DeleteaArticleDialog
+        open={openDeleteArticleDialog}
+        onOpenChange={setOpenDeleteArticleDialog}
+        setAllowArticleDeletion={setAllowArticleDeletion}
+        isDeletingArticlePending={isDeletingArticle}
+      />
+    </>
   );
 }

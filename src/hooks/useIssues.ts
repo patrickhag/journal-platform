@@ -152,3 +152,14 @@ export const useEditIssue = () => {
     },
   });
 };
+
+export const useGetIssue = (issueId: string) => {
+  return useQuery({
+    queryKey: ['issues', issueId],
+    queryFn: async () => {
+      const { data } = await axios.get<Issue>(`/api/issues/${issueId}`);
+      return data;
+    },
+    enabled: !!issueId,
+  });
+};

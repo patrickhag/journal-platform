@@ -1,4 +1,5 @@
 'use client';
+
 import { requirementsCheckboxGroup } from '@/lib/consts';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { z } from 'zod';

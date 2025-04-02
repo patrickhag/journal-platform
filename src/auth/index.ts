@@ -4,7 +4,6 @@ import logger from '@/lib/logger';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import NextAuth, { type User, type NextAuthConfig } from 'next-auth';
-import type { AdapterUser } from 'next-auth/adapters';
 import Credentials from 'next-auth/providers/credentials';
 
 export const BASE_PATH = '/api/auth';
@@ -27,12 +26,15 @@ export const authOptions: NextAuthConfig = {
             where: eq(users.email, String(credentials.email)),
           });
 
+          if (!user) {
+            return null;
+          }
+
           const isCorrectPassword = await bcrypt.compare(
             String(credentials.password),
-            user?.password ?? ''
+            user.password ?? ''
           );
-
-          if (!user || !isCorrectPassword) {
+          if (!isCorrectPassword) {
             return null;
           }
 
@@ -46,11 +48,16 @@ export const authOptions: NextAuthConfig = {
           if (error instanceof Error) {
             logger.error(error.message);
           }
-          return null;
+          throw error;
         }
       },
     }),
   ],
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+    updateAge: 24 * 60 * 60, // 24 hours
+  },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
@@ -68,32 +75,35 @@ export const authOptions: NextAuthConfig = {
     },
     jwt: ({ token, user }) => {
       if (user) {
-        const u = user as (User | AdapterUser) & { randomKey: string };
         return {
           ...token,
-          id: u.id as string,
-          randomKey: u.randomKey,
-          role: u.role,
-          email: u.email,
+          id: user.id as string,
+          role: user.role,
+          email: user.email,
         };
       }
       return token;
     },
-    session(params) {
+
+    session: ({ session, token }) => {
       return {
-        ...params.session,
+        ...session,
         user: {
-          ...params.session.user,
-          id: params.token.id as string,
-          randomKey: params.token.randomKey,
-          role: params.token.role,
-          email: params.token.email,
+          ...session.user,
+          id: token.id as string,
+          role: token.role,
+          email: token.email,
         },
       };
     },
+  },
+  pages: {
+    signIn: '/login',
+    signOut: '/login',
+    error: '/login',
   },
   basePath: BASE_PATH,
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-export const { handlers, auth, signIn } = NextAuth(authOptions);
+export const { handlers, auth, signIn, signOut } = NextAuth(authOptions);

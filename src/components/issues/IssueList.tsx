@@ -166,7 +166,10 @@ export function IssueList() {
                           <div key={article.id} className="space-y-3">
                             <div className="bg-muted/50 rounded-lg p-4">
                               <h4 className="font-medium mb-2">
-                                <Link href={`/articles/${article.id}`}>
+                                <Link
+                                  href={`/articles/${article.id}`}
+                                  className="hover:text-blue-900"
+                                >
                                   {article.metadata.title}
                                 </Link>
                               </h4>
@@ -212,7 +215,10 @@ export function IssueList() {
                     <Button
                       className="flex-1"
                       variant="default"
-                      disabled={issue.status === 'Published'}
+                      disabled={
+                        issue.status === 'Published' ||
+                        issue.articles.length === 0
+                      }
                       onClick={() => {
                         const articleIds = issue.articles.map(
                           (article) => article.id

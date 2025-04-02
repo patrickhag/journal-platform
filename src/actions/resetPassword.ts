@@ -25,8 +25,9 @@ export async function resetPassword(
 
     if (!user[0]) return { message: 'User not found', success: false };
 
+    const salt = bcrypt.genSaltSync(10);
     const token = Math.random().toString(36).substring(2, 15);
-    const hashedPassword = bcrypt.hashSync(login.data.password);
+    const hashedPassword = bcrypt.hashSync(login.data.password, salt);
 
     await db.insert(passwordResets).values({
       expires: new Date(Date.now() + RESET_PASSWORD_EXPIRATION_TIME),

@@ -3,6 +3,7 @@ import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import { Dispatch, SetStateAction } from 'react';
 import { MessageResponse, VolumeType } from '@/types';
+import { VolumeType as VolumeFormValues } from '@/lib/schemas';
 
 export const useGetVolumes = () => {
   return useQuery({
@@ -20,8 +21,7 @@ export const useCreateVolume = (
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: VolumeType) => {
-      console.log('to be sent data>>>', data);
+    mutationFn: async (data: VolumeFormValues) => {
       return axios.post(`/api/volumes/`, data);
     },
     onSuccess: ({ data }) => {
@@ -64,6 +64,16 @@ export const useDeleteVolume = (
         : error.message;
 
       toast.error(message || 'Failed to delete volume');
+    },
+  });
+};
+
+export const useGetPublishedVolumes = () => {
+  return useQuery({
+    queryKey: ['publishedVolumes'],
+    queryFn: async () => {
+      const { data } = await axios.get<VolumeType>(`/api/volumes/published`);
+      return Array.isArray(data) ? data : [];
     },
   });
 };

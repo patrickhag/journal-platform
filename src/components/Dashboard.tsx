@@ -7,11 +7,11 @@ import { PlusCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { ArticleFilters } from './ArticleFilters';
-import { useGetArticles } from '@/hooks/useGetArticles';
+import { useGetArticles } from '@/hooks/useArticles';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useDebounce } from '@/hooks/useDebounce';
-import Loader from './Loader';
+import { ArticleSkeleton } from './articles/ArticleSkeleton';
 
 export default function DashboardPannel() {
   const { data: session } = useSession();
@@ -63,9 +63,13 @@ export default function DashboardPannel() {
           <TabsContent value="articles" className="mt-6">
             <div className="grid gap-4">
               {isPending ? (
-                <div className="text-center text-muted-foreground">
-                  <Loader text="Loading articles..." />
-                </div>
+                <>
+                  {[1, 2, 3].map((_, i) => (
+                    <div className="mb-3" key={i}>
+                      <ArticleSkeleton />
+                    </div>
+                  ))}
+                </>
               ) : articles && articles.length > 0 ? (
                 articles.map((a, i) => (
                   <ArticleSection

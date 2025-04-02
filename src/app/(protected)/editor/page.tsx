@@ -1,6 +1,6 @@
-import ChartSection from './Charts';
-import RecentArticles from './Recents';
-import SummaryCard from './SummaryCard';
+import ChartSection from './dashboard/Charts';
+import RecentArticles from './dashboard/Recents';
+import SummaryCard from './dashboard/SummaryCard';
 
 export default function Dashboard() {
   return (

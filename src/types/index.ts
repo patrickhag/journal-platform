@@ -30,11 +30,15 @@ export type Issue = {
     section: string;
     metadata: {
       title: string;
+      topics: string[];
     };
     user: {
       firstName: string;
       lastName: string;
     };
+    contributors: {
+      name: string;
+    }[];
   }[];
 };
 
@@ -45,6 +49,7 @@ export type PublshIssueType = {
 
 export interface MessageResponse {
   message: string;
+  error?: string;
 }
 
 export type VolumeType = {
@@ -60,5 +65,9 @@ export type VolumeType = {
     description: string;
     status: 'Draft' | 'Published';
     issueNumber: number;
+    publicationDate: string;
+    articles: {
+      id: string;
+    }[];
   }[];
 }[];

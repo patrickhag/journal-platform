@@ -29,6 +29,14 @@ export async function GET(_req: NextRequest) {
             description: true,
             status: true,
             issueNumber: true,
+            publicationDate: true,
+          },
+          with: {
+            articles: {
+              columns: {
+                id: true,
+              },
+            },
           },
         },
       },
