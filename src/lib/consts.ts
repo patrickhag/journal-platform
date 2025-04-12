@@ -255,3 +255,10 @@ export const REVIEW_ASSIGNMENTS_STATUS = [
   'Declined',
   'Completed',
 ] as const;
+
+export const REVIEW_STATUS: (typeof ARTICLE_STATUS)[number][] = [
+  'Major issue',
+  'Minor issue',
+  'Accepted',
+  'Rejected',
+];

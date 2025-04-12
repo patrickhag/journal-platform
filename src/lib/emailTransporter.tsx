@@ -4,6 +4,7 @@ import { RejectManuscript } from '@/components/emails/reject-manuscript';
 import { AcceptManuscriptEmailTemplate } from '@/components/emails/accept-manuscript';
 import { SendInvitation } from '@/components/emails/sendInvite';
 import { SendVerifyEmail } from '@/components/emails/verify';
+import { NotifyAdminEmail } from '@/components/emails/notify-admin';
 import { render } from '@react-email/components';
 import nodemailer from 'nodemailer';
 
@@ -177,4 +178,47 @@ export const acceptManuscriptEmail = async ({
     html: emailHtml,
   };
   await transporter.sendMail(options);
+};
+
+export const notifyAdmin = async ({
+  article,
+  authorName,
+  subject,
+  articleId,
+  participant,
+}: {
+  article: string;
+  authorName: string;
+  subject: string;
+  articleId: string;
+  participant: 'REVIEWER' | 'AUTHOR';
+}) => {
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL;
+    if (!adminEmail) {
+      throw new Error('Admin email not configured');
+    }
+
+    const emailHtml = await render(
+      <NotifyAdminEmail
+        articleId={articleId}
+        article={article}
+        authorName={authorName}
+        participant={participant}
+        title={subject}
+      />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: adminEmail,
+      subject: subject,
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending admin notification:', error);
+    return { success: false, error };
+  }
 };

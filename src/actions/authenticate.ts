@@ -36,7 +36,7 @@ export async function authenticate(
   });
 
   if (user?.role === 'CHIEF_EDITOR' || user?.role === 'ADMIN') {
-    return redirect('/editor', RedirectType.replace);
+    return redirect('/editor/dashboard', RedirectType.replace);
   } else {
     return redirect('/submissions', RedirectType.replace);
   }

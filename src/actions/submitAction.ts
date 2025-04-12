@@ -1,4 +1,5 @@
 'use server';
+
 import { auth } from '@/auth';
 import type { metadataSchema } from '@/components/upload/ContributorsForm';
 import {
@@ -10,7 +11,7 @@ import {
   metadata,
   reviewers,
 } from '@/db/schema';
-import { notifyContibutor } from '@/lib/emailTransporter';
+import { notifyContibutor, notifyAdmin } from '@/lib/emailTransporter';
 
 import {
   type articleSubmitionSchema,
@@ -51,16 +52,21 @@ export async function submitAction(_: unknown, formData: FormData) {
   let isError = false;
 
   try {
+    const session = await auth();
+    if (!session) {
+      return { message: 'Unauthorized' };
+    }
+
     await db.transaction(async (trx) => {
-      const session = await auth();
       const userId = session?.user?.id || '';
 
       const articleSubmissionIds = await trx
         .insert(articleSubmissions)
         .values({
           ...articleSubmitionValidations,
-          commentsForEditor:
-            articleSubmitionValidations['Comments for the editor'],
+          commentsForEditor: articleSubmitionValidations[
+            'Comments for the editor'
+          ] as string,
           userId: userId,
         })
         .returning({ id: articleSubmissions.id });
@@ -90,6 +96,7 @@ export async function submitAction(_: unknown, formData: FormData) {
         articleId: articleSubmissionIds[0].id,
         userId: userId,
       });
+
       await trx.insert(finalSubmissions).values({
         articleId: articleSubmissionIds[0].id,
         funded: result.data.funded === 'yes',
@@ -98,6 +105,14 @@ export async function submitAction(_: unknown, formData: FormData) {
         consent: result.data.consent === 'yes',
         founders: result.data.founders,
         ethicalReference: result.data.ethicalReference,
+      });
+
+      await notifyAdmin({
+        article: metadataValidations.title,
+        authorName: session.user.name || session.user.email || 'Unknown Author',
+        subject: 'New Article Submission',
+        articleId: articleSubmissionIds[0].id,
+        participant: 'AUTHOR',
       });
     });
 
@@ -113,6 +128,7 @@ export async function submitAction(_: unknown, formData: FormData) {
         contributor: contributor.name,
       });
     }
+
     isError = true;
   } catch (error) {
     console.error('Weeerror', error);

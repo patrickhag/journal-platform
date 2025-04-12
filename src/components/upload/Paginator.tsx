@@ -27,6 +27,7 @@ export const Paginator: FC<
   const page = pathname.split('/').at(-1);
 
   const searchParams = useSearchParams();
+
   const articleSubmitionValidations = safeParse({
     input: new URLSearchParams(searchParams),
     schema: articleSubmitionSchema,

@@ -12,7 +12,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import ReactQuill from 'react-quill-new';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { metadataSchema } from '../upload/ContributorsForm';
 import * as z from 'zod';
@@ -29,6 +28,7 @@ import { useRouter } from 'next/navigation';
 import { useUpdateMetadata } from '@/hooks/useUpdateMetadata';
 import Loader from '../Loader';
 import { useState } from 'react';
+import { RichTextEditor } from '../RichTextEditor';
 
 export default function EditMetadata({
   articleId,
@@ -128,10 +128,11 @@ export default function EditMetadata({
                 <FormItem>
                   <FormLabel htmlFor="abstract">Abstract</FormLabel>
                   <FormControl>
-                    <ReactQuill
-                      theme="snow"
-                      value={form.getValues().abstract}
-                      onChange={(value) => form.setValue('abstract', value)}
+                    <RichTextEditor
+                      description={form.getValues().abstract}
+                      onChange={(d) => {
+                        form.setValue('abstract', d);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

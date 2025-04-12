@@ -12,7 +12,8 @@ export default function GoBackButton() {
   return (
     <div className="mb-4">
       <Button
-        variant="outline"
+        variant="ghost"
+        size="sm"
         onClick={() =>
           session.data?.user?.role === 'ADMIN' ||
           session.data?.user?.role === 'CHIEF_EDITOR'

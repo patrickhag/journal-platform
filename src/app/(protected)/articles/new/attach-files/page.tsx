@@ -1,8 +1,7 @@
 import { Card } from '@/components/ui/card';
+import { DragAndDropFileInput } from '@/components/upload/FileInput';
 import { FileList } from '@/components/upload/FileList';
 import { Paginator } from '@/components/upload/Paginator';
-import { Uploadbanner } from '@/components/upload/Uploadbanner';
-import { fileFormats } from '@/lib/consts';
 
 const Page = async ({
   searchParams,
@@ -16,7 +15,7 @@ const Page = async ({
       <Card className="mb-6 p-6">
         <h1 className="mb-6 text-3xl font-bold">Upload files</h1>
         <p className="text-sm">Please select type for each file.</p>
-        <Uploadbanner fileFormats={fileFormats} />
+        <DragAndDropFileInput />
         <div className="space-y-4">
           <FileList />
         </div>

@@ -2,7 +2,6 @@
 
 import { Tabs, TabsContent, TabsList } from '@/components/ui/tabs';
 import { ArticleSection } from './ArticleSection';
-import { SearchArticle } from './SearchArticle';
 import { PlusCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
@@ -12,6 +11,8 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useDebounce } from '@/hooks/useDebounce';
 import { ArticleSkeleton } from './articles/ArticleSkeleton';
+import { Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 
 export default function DashboardPannel() {
   const { data: session } = useSession();
@@ -20,11 +21,17 @@ export default function DashboardPannel() {
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const [selectedValue, setSelectedValue] = useState('');
+  const [selectedType, setSelectedType] = useState(
+    currentUser?.role === 'REVIEWER' || currentUser?.role === 'CHIEF_EDITOR'
+      ? 'Assigned to review'
+      : 'My articles'
+  );
 
   const { data: articles, isPending } = useGetArticles(
     userId,
     debouncedSearchQuery,
-    selectedValue
+    selectedValue,
+    selectedType
   );
 
   return (
@@ -35,7 +42,17 @@ export default function DashboardPannel() {
             Welcome back, {currentUser?.name}
           </h2>
           <p className="text-muted-foreground">
-            You&apos;ve got {articles?.length} submissions.
+            You&apos;ve got{' '}
+            {selectedType === 'My articles' ? (
+              <span>
+                {articles?.length} submission{articles?.length === 1 ? '' : 's'}
+              </span>
+            ) : (
+              <span>
+                {articles?.length} article{articles?.length === 1 ? '' : 's'}{' '}
+                assigned to you
+              </span>
+            )}
           </p>
         </div>
 
@@ -45,12 +62,23 @@ export default function DashboardPannel() {
               <ArticleFilters
                 selectedValue={selectedValue}
                 setSelectedValue={setSelectedValue}
+                selectedType={selectedType}
+                setSelectedType={setSelectedType}
               />
             </TabsList>
-            <SearchArticle
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-            />
+
+            <div className="relative w-72">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search articles..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-8"
+                disabled={articles?.length === 0}
+              />
+            </div>
+
             <Button className="mx-5 bg-[#141A26]">
               <Link href="/articles/new/start">
                 <span className="flex items-center gap-2">
@@ -89,8 +117,11 @@ export default function DashboardPannel() {
                 ))
               ) : (
                 <div className="text-center text-muted-foreground">
-                  No articles submitted yet. Click &apos;New Article&apos; to
-                  get started
+                  No articles{' '}
+                  {selectedType === 'My articles'
+                    ? 'submitted'
+                    : 'assigned to you'}{' '}
+                  yet. Click &apos;New Article&apos; to get started
                 </div>
               )}
             </div>

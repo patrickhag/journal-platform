@@ -122,7 +122,7 @@ const columns: ColumnDef<Article>[] = [
     id: 'actions',
     cell: ({ row }) => (
       <Button variant={'outline'}>
-        <Link href={'/articles/' + String(row.id)}>View</Link>
+        <Link href={'/articles/' + String(row.original.id)}>View</Link>
       </Button>
     ),
   },

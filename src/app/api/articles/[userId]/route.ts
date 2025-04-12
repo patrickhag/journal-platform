@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
 import { articleSubmissions, metadata, reviewAssignments } from '@/db/schema';
 import { and, eq, ilike } from 'drizzle-orm';
-import { ARTICLE_STATUS } from '@/lib/consts';
+import { ARTICLE_STATUS, articleFilters } from '@/lib/consts';
 import { auth } from '@/auth';
 
 type Params = { userId: string };
@@ -23,8 +23,12 @@ export async function GET(
 
     const searchQuery = searchParams.get('searchQuery');
     const rawStatus = searchParams.get('articleStatus');
+    const rawType = searchParams.get('articleType');
     const articleStatus = ARTICLE_STATUS.includes(rawStatus as any)
       ? (rawStatus as (typeof ARTICLE_STATUS)[number])
+      : undefined;
+    const articleType = articleFilters.includes(rawType as any)
+      ? (rawType as (typeof articleFilters)[number])
       : undefined;
 
     const validatedSearchQuery =
@@ -34,14 +38,13 @@ export async function GET(
 
     const whereConditions = [];
 
-    if (
-      currentUserRole === 'NORMAL_USER' ||
-      currentUserRole === 'CHIEF_EDITOR'
-    ) {
+    // Handle article type filtering based on user role
+    if (articleType === 'My articles') {
       whereConditions.push(eq(articleSubmissions.userId, userId));
-    }
-
-    if (currentUserRole === 'REVIEWER') {
+    } else if (
+      articleType === 'Assigned to review' &&
+      currentUserRole === 'REVIEWER'
+    ) {
       whereConditions.push(
         and(
           eq(reviewAssignments.articleId, articleSubmissions.id),
@@ -49,6 +52,22 @@ export async function GET(
           eq(reviewAssignments.userId, userId)
         )
       );
+    } else if (!articleType) {
+      // Default behavior when no type is selected
+      if (
+        currentUserRole === 'NORMAL_USER' ||
+        currentUserRole === 'CHIEF_EDITOR'
+      ) {
+        whereConditions.push(eq(articleSubmissions.userId, userId));
+      } else if (currentUserRole === 'REVIEWER') {
+        whereConditions.push(
+          and(
+            eq(reviewAssignments.articleId, articleSubmissions.id),
+            eq(reviewAssignments.status, 'Accepted'),
+            eq(reviewAssignments.userId, userId)
+          )
+        );
+      }
     }
 
     if (validatedSearchQuery) {

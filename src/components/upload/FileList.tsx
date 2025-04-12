@@ -1,6 +1,6 @@
 'use client';
 import { filesSchema } from '@/schemas/reviewer';
-import { Pencil, Trash2 } from 'lucide-react';
+import { FileText, Pencil, Trash2 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { safeParse, serialize } from 'zod-urlsearchparams';
 import { Button } from '../ui/button';
@@ -15,8 +15,6 @@ export const FileList = () => {
     input: new URLSearchParams(searchParams.toString()),
   });
 
-  console.log('Parsed files:', filesValidation);
-
   const files = filesValidation.data?.files || [];
 
   return (
@@ -27,25 +25,13 @@ export const FileList = () => {
           className="flex items-center justify-between rounded-lg border p-4"
         >
           <div className="flex items-center space-x-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-10 w-10 text-gray-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-              />
-            </svg>
+            <FileText />
             <div>
-              <p className="font-medium">{file.originalName}</p>
+              <p className="font-medium">
+                {file.originalName.slice(0, file.originalName.lastIndexOf('.'))}
+              </p>
               <p className="text-sm text-gray-500">
-                {file.originalName.slice(file.originalName.lastIndexOf('.'))} |{' '}
-                {Math.floor(Number.parseInt(file.bytes!) / 1024)} Kb
+                {file.originalName.slice(file.originalName.lastIndexOf('.'))}
               </p>
             </div>
           </div>

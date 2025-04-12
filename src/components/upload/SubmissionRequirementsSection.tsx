@@ -20,7 +20,9 @@ export const SubmissionRequirementsSection = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-4">Submission requirements</h2>
+      <h2 className="mb-4">
+        Submission requirements <span className="text-red-500">*</span>
+      </h2>
       <p className="text-gray-600 mb-4">
         You must read and acknowledge that you&apos;ve completed the
         requirements below before proceeding.

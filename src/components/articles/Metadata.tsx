@@ -17,8 +17,23 @@ export default async function Metadata({
   role: USER_ROLE;
 }) {
   const meta = await db.query.metadata.findFirst({
+    columns: {
+      title: true,
+      subtitle: true,
+      abstract: true,
+      userId: true,
+      prefix: true,
+      topics: true,
+    },
     with: {
-      article: true,
+      article: {
+        columns: {
+          articleStatus: true,
+          section: true,
+          commentsForEditor: true,
+          createdAt: true,
+        },
+      },
     },
     where: eq(metadata.articleId, articleId),
   });
@@ -27,16 +42,6 @@ export default async function Metadata({
     .select()
     .from(contributors)
     .where(eq(contributors.articleId, articleId));
-
-  const comments = await db
-    .select({
-      commentsForEditor: articleSubmissions.commentsForEditor,
-    })
-    .from(articleSubmissions)
-    .where(eq(articleSubmissions.id, articleId))
-    .limit(1);
-
-  const comment = comments[0];
 
   if (!meta) return undefined;
 
@@ -89,19 +94,29 @@ export default async function Metadata({
                 </h3>
                 <div
                   className="mt-1"
-                  dangerouslySetInnerHTML={{ __html: meta.abstract }}
+                  dangerouslySetInnerHTML={{
+                    __html: meta.abstract
+                      .replace(/<pre>/g, '<p>')
+                      .replace(/<\/pre>/g, '</p>'),
+                  }}
                 />
               </div>
               <div className="mb-4">
                 <h3 className="text-sm font-medium text-muted-foreground text-gray-600">
                   Comments for the editor
                 </h3>
-                <div
-                  className="mt-1"
-                  dangerouslySetInnerHTML={{
-                    __html: comment.commentsForEditor,
-                  }}
-                />
+                {meta.article?.commentsForEditor ? (
+                  <div
+                    className="mt-1"
+                    dangerouslySetInnerHTML={{
+                      __html: meta.article?.commentsForEditor
+                        .replace(/<pre>/g, '<p>')
+                        .replace(/<\/pre>/g, '</p>'),
+                    }}
+                  />
+                ) : (
+                  <p className="mt-1">Not provided</p>
+                )}
               </div>
             </div>
             <div>
@@ -122,7 +137,7 @@ export default async function Metadata({
                   Keywords
                 </h3>
                 <p className="mt-1">
-                  {meta.topics.join(', ') || 'No keywords provided.'}
+                  {meta.topics.join(', ') || 'No keywords provided'}
                 </p>
               </div>
             </div>
@@ -172,18 +187,22 @@ export default async function Metadata({
                         ORCID
                       </h3>
                       <p className="my-1">
-                        <Link
-                          href={`https://orcid.org/${c.orcid}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={cn(
-                            c.orcid ? 'text-blue-500 hover:underline' : ''
-                          )}
-                        >
-                          {c.orcid
-                            ? `https://orcid.org/${c.orcid}`
-                            : 'Not provided'}
-                        </Link>
+                        {c.orcid ? (
+                          <Link
+                            href={`https://orcid.org/${c.orcid}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={cn(
+                              c.orcid
+                                ? 'text-blue-500 hover:underline'
+                                : 'text-muted-foreground'
+                            )}
+                          >
+                            https://orcid.org/{c.orcid}
+                          </Link>
+                        ) : (
+                          'Not provided'
+                        )}
                       </p>
                     </div>
                     <div className="mb-4">

@@ -285,7 +285,7 @@ const LeftSideBar = ({
             Volumes
           </h2>
           <ul className="mt-2 space-y-2 text-sm text-gray-600">
-            {Array.isArray(volumes) &&
+            {Array.isArray(volumes) && volumes.length > 0 ? (
               volumes.map((vol) => (
                 <Link
                   key={vol.id}
@@ -294,7 +294,10 @@ const LeftSideBar = ({
                 >
                   Volume {vol.year} ({vol.issues.length})
                 </Link>
-              ))}
+              ))
+            ) : (
+              <p>No volumes found</p>
+            )}
           </ul>
         </div>
 

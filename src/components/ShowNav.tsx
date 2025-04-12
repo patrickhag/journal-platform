@@ -14,9 +14,9 @@ export default function ShowNav({ isOpen = false }: { isOpen: boolean }) {
       )}
     >
       <Link
-        href="/editor"
+        href="/editor/dashboard"
         className={cn(
-          pathname.toLowerCase().split('/').includes('editor')
+          pathname.toLowerCase().split('/').includes('dashboard')
             ? 'text-gray-600 bg-gray-100 rounded-md px-2.5 py-1.5'
             : 'text-muted-foreground hover:text-gray-700'
         )}

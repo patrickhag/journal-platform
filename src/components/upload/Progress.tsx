@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 const journalKeys = [
   { page: 'start', title: 'Start' },
   { page: 'attach-files', title: 'Attach files' },
-  { page: 'meta', title: 'Enter meta data' },
+  { page: 'meta', title: 'Meta data' },
   { page: 'reviewer', title: 'Reviewers' },
   { page: 'final', title: 'Final submit' },
 ];

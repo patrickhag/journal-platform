@@ -42,27 +42,6 @@ async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
     .from(reviewers)
     .where(eq(reviewers.articleId, articleId));
 
-  // const myarticle = await db.query.articleSubmissions.findFirst({
-  //   with: {
-  //     user: {
-  //       columns: {
-  //         id: true,
-  //         email: true,
-  //         firstName: true,
-  //         lastName: true,
-  //         orcid: true,
-  //         affiliation: true,
-  //         country: true,
-  //       },
-  //     },
-  //     files: true,
-  //     reviewers: true,
-  //   },
-  //   where: eq(articleSubmissions.id, articleId),
-  // });
-
-  // console.log('myarticle>>>', myarticle);
-
   return (
     <>
       <div className="container mx-auto p-6">
@@ -91,18 +70,20 @@ async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
                   ORCID
                 </h3>
                 <p className="mt-1">
-                  <Link
-                    href={`https://orcid.org/${author[0].orcid}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={cn(
-                      author[0].orcid ? 'text-blue-500 hover:underline' : ''
-                    )}
-                  >
-                    {author[0].orcid
-                      ? `https://orcid.org/${author[0].orcid}`
-                      : 'Not provided'}
-                  </Link>
+                  {author[0].orcid ? (
+                    <Link
+                      href={`https://orcid.org/${author[0].orcid}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(
+                        author[0].orcid ? 'text-blue-500 hover:underline' : ''
+                      )}
+                    >
+                      https://orcid.org/{author[0].orcid}
+                    </Link>
+                  ) : (
+                    'Not provided'
+                  )}
                 </p>
               </div>
               <div>
@@ -166,13 +147,13 @@ async function page({ params }: { params: Promise<{ articleId: string[] }> }) {
         </Card>
         <Reviews articleId={articleId} />
         <AcceptOrRejectComponent
-          role={currentUserRole ?? 'NORMAL_USER'}
+          role={currentUserRole ?? 'ADMIN'}
           requiredPermissions={['ACCEPT_ARTICLE', 'REJECT_ARTICLE']}
           fallback=""
           articleId={articleId}
         />
         <Publish
-          role={currentUserRole ?? 'NORMAL_USER'}
+          role={currentUserRole ?? 'ADMIN'}
           requiredPermissions={['PUBLISH_ARTICLES']}
           fallback=""
           articleId={articleId}

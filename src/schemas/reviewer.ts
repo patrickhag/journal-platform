@@ -24,7 +24,7 @@ export const reviewerSchema = z.object({
 export const articleSubmitionSchema = z.object({
   section: z.enum(ARTICLE_TYPES, { message: 'Please select a section' }),
   requirements: z.array(z.string()).length(requirementsCheckboxGroup.length),
-  'Comments for the editor': z.string(),
+  'Comments for the editor': z.string().optional(),
   articleStatus: z
     .enum(ARTICLE_STATUS, { message: 'Please select an article status' })
     .optional(),
@@ -37,6 +37,7 @@ export const fileSchema = z.object({
   resourceType: z.string(),
   originalName: z.string(),
 });
+
 export const filesSchema = z.object({
   files: z.array(fileSchema),
 });

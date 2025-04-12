@@ -1,10 +1,10 @@
-import { files, reviewAssignments } from '@/db/schema';
+import { articleSubmissions, files, reviewAssignments } from '@/db/schema';
 import { db } from '@/db/db';
 import { Button } from '../ui/button';
 import { and, eq } from 'drizzle-orm';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Download, FileText } from 'lucide-react';
+import { FileText, EyeIcon } from 'lucide-react';
 import ReviewModal from './Review';
 import { USER_ROLES } from '@/lib/roles';
 import withPermissions from '../WithPermission';
@@ -32,6 +32,13 @@ async function Files({
       ),
     });
 
+  const isArticlePublished = await db.query.articleSubmissions.findFirst({
+    columns: {
+      articleStatus: true,
+    },
+    where: eq(articleSubmissions.id, articleId),
+  });
+
   return (
     <>
       <Card>
@@ -53,35 +60,27 @@ async function Files({
                   </p>
                 </div>
               </div>
-              <Button variant="outline" size="sm">
-                <Link href={file.publicId} download>
+              <Button variant="secondary" size="sm">
+                <Link
+                  href={file.publicId}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <span className="flex items-center">
-                    <Download className="mr-2 text-gray-600" /> Download
+                    <EyeIcon className="mr-2 text-gray-600" /> View
                   </span>
                 </Link>
               </Button>
-
-              <div className="flex space-x-1">
-                {hasReviewerAcceptInvitation && (
-                  <UlterFile
-                    requiredPermissions={['ADD_REVIEW']}
-                    role={role}
-                    fallback={<></>}
-                  />
+              {hasReviewerAcceptInvitation &&
+                !isArticlePublished?.articleStatus && (
+                  <div className="flex space-x-1">
+                    <UlterFile
+                      requiredPermissions={['ADD_REVIEW']}
+                      role={role}
+                      fallback={<></>}
+                    />
+                  </div>
                 )}
-                {/* <Button
-                  variant="link"
-                  className="text-blue-500 hover:text-blue-600"
-                >
-                  Update
-                </Button>
-                <Button
-                  variant="link"
-                  className="text-red-500 hover:text-red-600"
-                >
-                  Delete
-                </Button> */}
-              </div>
             </div>
           ))}
         </CardContent>

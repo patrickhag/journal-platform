@@ -1,15 +1,17 @@
 'use server';
 import { auth } from '@/auth';
-import { articleSubmissions, db, reviews, users } from '@/db/schema';
+import { db } from '@/db/db';
+import { articleSubmissions, notifications, reviews, users } from '@/db/schema';
 import { transporter } from '@/lib/emailTransporter';
 
 import { reviewSchema } from '@/schemas/reviewer';
 import { eq } from 'drizzle-orm';
-
 import { RedirectType, redirect } from 'next/navigation';
+import { notifyAdmin } from '@/lib/emailTransporter';
 
 export async function submitReviewAction(_: unknown, formData: FormData) {
   const data = Object.fromEntries(formData.entries());
+
   const result = reviewSchema.safeParse(data);
 
   if (!result.success) {
@@ -27,20 +29,42 @@ export async function submitReviewAction(_: unknown, formData: FormData) {
       status: result.data.status,
     });
 
-    const articl = await db
-      .select({ email: users.email })
+    const adminUser = await db
+      .select({ id: users.id, email: users.email })
       .from(users)
-      .leftJoin(articleSubmissions, eq(users.id, articleSubmissions.userId))
-      .where(eq(articleSubmissions.id, result.data.articleId))
-      .limit(1);
-    if (articl[0].email) {
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: articl[0].email,
-        subject: 'You have received a review',
-        text: result.data.message,
-      });
-    }
+      .where(eq(users.role, 'ADMIN'));
+
+    const article = await db.query.articleSubmissions.findFirst({
+      columns: {
+        id: true,
+      },
+      with: {
+        metadata: {
+          columns: {
+            title: true,
+          },
+        },
+      },
+      where: eq(articleSubmissions.id, result.data.articleId),
+    });
+
+    const articleTitle = article?.metadata.title;
+
+    // send email to admin
+    await notifyAdmin({
+      article: articleTitle as string,
+      authorName: session?.user?.name as string,
+      subject: 'New Review Submitted',
+      participant: 'REVIEWER',
+      articleId: article?.id as string,
+    });
+
+    // send in-app notification for admin
+    await db.insert(notifications).values({
+      message: `New review submitted for article ${articleTitle}`,
+      userId: adminUser[0].id as string,
+      kind: 'Info',
+    });
   } catch (error) {
     if (error instanceof Error) return { message: error.message };
   }

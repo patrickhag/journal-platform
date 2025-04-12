@@ -7,13 +7,15 @@ import { toast } from 'sonner';
 export const useGetArticles = (
   userId: string,
   debouncedSearchQuery: string,
-  selectedStatus: string
+  selectedStatus: string,
+  selectedType: string
 ) => {
   const fetchArticles = async (): Promise<TArticle[]> => {
     const response = await axios.get<TArticle[]>(`/api/articles/${userId}`, {
       params: {
         searchQuery: debouncedSearchQuery,
         articleStatus: selectedStatus,
+        articleType: selectedType,
       },
     });
 
@@ -24,7 +26,13 @@ export const useGetArticles = (
     return response.data;
   };
   return useQuery<TArticle[], Error>({
-    queryKey: ['manuscripts', userId, debouncedSearchQuery, selectedStatus],
+    queryKey: [
+      'manuscripts',
+      userId,
+      debouncedSearchQuery,
+      selectedStatus,
+      selectedType,
+    ],
     queryFn: fetchArticles,
     refetchOnWindowFocus: false,
     enabled: !!userId,

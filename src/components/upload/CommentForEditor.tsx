@@ -1,27 +1,39 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import ReactQuill from 'react-quill-new';
-import 'react-quill-new/dist/quill.snow.css';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import { RichTextEditor } from '../RichTextEditor';
+import { useCallback, useEffect, useState } from 'react';
 
 export const CommentForEditor = () => {
   const params = useSearchParams();
-  const newParams = new URLSearchParams(params);
   const pathname = usePathname();
   const router = useRouter();
-
-  return (
-    <ReactQuill
-      theme="snow"
-      className="h-32 mb-4 rounded-md"
-      value={newParams.get('Comments for the editor') || ''}
-      onBlur={() => {
-        router.replace(`${pathname}?${newParams?.toString()}`);
-      }}
-      onChange={(e) => {
-        newParams.delete('Comments for the editor');
-        newParams.set('Comments for the editor', e);
-      }}
-    />
+  const [content, setContent] = useState(
+    params.get('Comments for the editor') || ''
   );
+
+  useEffect(() => {
+    setContent(params.get('Comments for the editor') || '');
+  }, [params]);
+
+  const debouncedUpdateURL = useCallback(
+    (value: string) => {
+      const newParams = new URLSearchParams(params);
+      newParams.delete('Comments for the editor');
+      newParams.set('Comments for the editor', value);
+      router.replace(`${pathname}?${newParams.toString()}`, { scroll: false });
+    },
+    [params, pathname, router]
+  );
+
+  const handleChange = (value: string) => {
+    setContent(value);
+    const timeoutId = setTimeout(() => {
+      debouncedUpdateURL(value);
+    }, 3000);
+
+    return () => clearTimeout(timeoutId);
+  };
+
+  return <RichTextEditor description={content} onChange={handleChange} />;
 };

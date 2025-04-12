@@ -14,9 +14,13 @@ import { Dispatch, SetStateAction } from 'react';
 export const ArticleFilters = ({
   selectedValue,
   setSelectedValue,
+  selectedType,
+  setSelectedType,
 }: {
   selectedValue: string;
+  selectedType: string;
   setSelectedValue: Dispatch<SetStateAction<string>>;
+  setSelectedType: Dispatch<SetStateAction<string>>;
 }) => {
   const session = useSession();
   const userRole = session?.data?.user.role;
@@ -25,14 +29,15 @@ export const ArticleFilters = ({
     <>
       <Select
         onValueChange={(e) => {
-          console.log(e);
+          setSelectedType(e);
         }}
+        value={selectedType}
       >
         <SelectTrigger className="w-[180px]">
           <SelectValue
             placeholder={
               userRole === 'NORMAL_USER' || userRole === 'CHIEF_EDITOR'
-                ? 'My Articles'
+                ? 'My articles'
                 : 'Assigned to review'
             }
           />

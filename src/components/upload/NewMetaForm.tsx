@@ -23,10 +23,10 @@ import {
   FormMessage,
 } from '../ui/form';
 import { Input } from '../ui/input';
-import { Textarea } from '../ui/textarea';
 import { metadataSchema } from './ContributorsForm';
 import updateArticleMeta from '@/actions/updateArticleMeta';
 import { FaTimes } from 'react-icons/fa';
+import { RichTextEditor } from '../RichTextEditor';
 
 export const NewMetaForm: FC<
   { meta?: z.infer<typeof metadataSchema> } & PropsWithChildren
@@ -165,23 +165,12 @@ export const NewMetaForm: FC<
                 <FormLabel htmlFor="abstract">
                   Abstract <span className="text-red-500">*</span>
                 </FormLabel>
-
-                <ReactQuill
-                  theme="snow"
-                  value={formm.getValues().abstract}
+                <RichTextEditor
+                  description={field.value}
                   onChange={(d) => {
                     formm.setValue('abstract', d);
                   }}
-                  className="h-32 mb-4 z-[1]"
                 />
-                <FormControl>
-                  <Textarea
-                    className="hidden"
-                    placeholder="Abstract of the journal"
-                    rows={4}
-                    {...field}
-                  />
-                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

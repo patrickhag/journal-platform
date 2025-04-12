@@ -10,13 +10,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Uploadbanner } from '../upload/Uploadbanner';
-import { fileFormats } from '@/lib/consts';
 import { FileList } from '../upload/FileList';
 import { useParams, useSearchParams } from 'next/navigation';
 import { safeParse } from 'zod-urlsearchparams';
 import { filesSchema } from '@/schemas/reviewer';
-import Spinner from '../Spinner';
 import { submitReviewAction } from '@/actions/submitReviewAction';
 import { ARTICLE_STATUS } from '@/lib/consts';
 
@@ -27,6 +24,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
+import { DragAndDropFileInput } from '../upload/FileInput';
+import Loader from '../Loader';
 
 export default function ReviewModal() {
   const [open, setOpen] = useState(false);
@@ -50,6 +49,7 @@ export default function ReviewModal() {
     'Rejected',
   ];
   const [status, setStatus] = useState('');
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -60,24 +60,22 @@ export default function ReviewModal() {
           Add a review
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-[#1a237e]">
             Write a review
           </DialogTitle>
         </DialogHeader>
-        <Uploadbanner fileFormats={fileFormats} />
+        <div className="text-sm font-semibold">Annotate file(s)</div>
+        <DragAndDropFileInput />
         <FileList />
         <form action={formAction} className="mt-6 space-y-6">
           <div className="space-y-2">
-            <label htmlFor="message" className="text-xl font-medium">
-              Leave a message
-            </label>
             <Textarea
               id="message"
               name="message"
               placeholder="General feedback on this manuscript?"
-              className="min-h-[150px] resize-none p-4 text-gray-500 bg-white rounded-lg"
+              className="min-h-[150px] resize-none p-4 bg-white rounded-lg"
             />
           </div>
           <input
@@ -111,10 +109,10 @@ export default function ReviewModal() {
           </Select>
           <div className="space-y-3">
             <Button
-              disabled={isPending}
+              disabled={isPending || status === ''}
               className="bg-indigo-500 hover:bg-indigo-600 block w-full"
             >
-              Submit {isPending && <Spinner />}
+              {isPending ? <Loader text="Submitting..." /> : 'Submit Review'}
             </Button>
           </div>
         </form>

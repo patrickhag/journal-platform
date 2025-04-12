@@ -89,155 +89,159 @@ export function IssueList() {
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {isIssuePending
-          ? [1, 2].map((_, index) => <IssueCardSkeleton key={index} />)
-          : issues?.map((issue) => (
-              <Card key={issue.id} className="overflow-hidden">
-                <CardHeader className="space-y-1">
-                  <div className="flex items-center justify-between">
+        {isIssuePending ? (
+          [1, 2].map((_, index) => <IssueCardSkeleton key={index} />)
+        ) : (issues?.length ?? 0) > 0 ? (
+          issues?.map((issue) => (
+            <Card key={issue.id} className="overflow-hidden">
+              <CardHeader className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
                     <div className="flex items-center">
-                      <div className="flex items-center">
-                        <CardTitle className="text-2xl">
-                          Issue {issue.issueNumber}
-                        </CardTitle>
-                        <Dot />
-                      </div>
-                      <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                          issue.status === 'Published'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}
-                      >
-                        {issue.status}
-                      </span>
+                      <CardTitle className="text-2xl">
+                        Issue {issue.issueNumber}
+                      </CardTitle>
+                      <Dot />
                     </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <Ellipsis className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onSelect={() => setEditingIssue(issue)}
-                        >
-                          Edit Issue
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-destructive"
-                          onClick={() => handleDeleteIssue(issue.id)}
-                        >
-                          {isDeletingIssuePending ? (
-                            <Loader text="Deleting..." />
-                          ) : (
-                            'Delete Issue'
-                          )}
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                  <div className="flex items-center text-muted-foreground">
-                    <BookOpenIcon className="w-4 h-4 mr-2" />
-                    <span>
-                      Volume{' '}
-                      {
-                        volumes?.find((v) => v.id === issue.volumeId)
-                          ?.volumeNumber
-                      }
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                        issue.status === 'Published'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-yellow-100 text-yellow-800'
+                      }`}
+                    >
+                      {issue.status}
                     </span>
                   </div>
-                  <CardDescription className="text-base">
-                    {issue.title}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-lg">Articles</h3>
-                      <span className="text-sm text-muted-foreground">
-                        {issue.articles?.length || 0} articles
-                      </span>
-                    </div>
-                    <Separator />
-                    <ScrollArea className="h-[300px] pr-4">
-                      <div className="space-y-4">
-                        {issue.articles?.map((article) => (
-                          <div key={article.id} className="space-y-3">
-                            <div className="bg-muted/50 rounded-lg p-4">
-                              <h4 className="font-medium mb-2">
-                                <Link
-                                  href={`/articles/${article.id}`}
-                                  className="hover:text-blue-900"
-                                >
-                                  {article.metadata.title}
-                                </Link>
-                              </h4>
-                              <div className="flex items-center justify-between text-sm">
-                                <div className="flex items-center space-x-4">
-                                  <div className="flex items-center text-muted-foreground">
-                                    <FolderIcon className="w-4 h-4 mr-1" />
-                                    <span>{article.section}</span>
-                                  </div>
-                                  <Separator
-                                    orientation="vertical"
-                                    className="h-4"
-                                  />
-                                  <div className="flex items-center">
-                                    <UserCircle2Icon className="w-4 h-4 mr-1 text-muted-foreground" />
-                                    <span>
-                                      {`${article.user.firstName} ${article.user.lastName}`}
-                                    </span>
-                                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Ellipsis className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onSelect={() => setEditingIssue(issue)}>
+                        Edit Issue
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-destructive"
+                        onClick={() => handleDeleteIssue(issue.id)}
+                      >
+                        {isDeletingIssuePending ? (
+                          <Loader text="Deleting..." />
+                        ) : (
+                          'Delete Issue'
+                        )}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+                <div className="flex items-center text-muted-foreground">
+                  <BookOpenIcon className="w-4 h-4 mr-2" />
+                  <span>
+                    Volume{' '}
+                    {
+                      volumes?.find((v) => v.id === issue.volumeId)
+                        ?.volumeNumber
+                    }
+                  </span>
+                </div>
+                <CardDescription className="text-base">
+                  {issue.title}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-lg">Articles</h3>
+                    <span className="text-sm text-muted-foreground">
+                      {issue.articles?.length || 0} articles
+                    </span>
+                  </div>
+                  <Separator />
+                  <ScrollArea className="h-[300px] pr-4">
+                    <div className="space-y-4">
+                      {issue.articles?.map((article) => (
+                        <div key={article.id} className="space-y-3">
+                          <div className="bg-muted/50 rounded-lg p-4">
+                            <h4 className="font-medium mb-2">
+                              <Link
+                                href={`/articles/${article.id}`}
+                                className="hover:text-blue-900"
+                              >
+                                {article.metadata.title}
+                              </Link>
+                            </h4>
+                            <div className="flex items-center justify-between text-sm">
+                              <div className="flex items-center space-x-4">
+                                <div className="flex items-center text-muted-foreground">
+                                  <FolderIcon className="w-4 h-4 mr-1" />
+                                  <span>{article.section}</span>
+                                </div>
+                                <Separator
+                                  orientation="vertical"
+                                  className="h-4"
+                                />
+                                <div className="flex items-center">
+                                  <UserCircle2Icon className="w-4 h-4 mr-1 text-muted-foreground" />
+                                  <span>
+                                    {`${article.user.firstName} ${article.user.lastName}`}
+                                  </span>
                                 </div>
                               </div>
                             </div>
                           </div>
-                        ))}
-                        {(!issue.articles || issue.articles.length === 0) && (
-                          <div className="text-center py-8 text-muted-foreground">
-                            No articles in this issue yet.
-                          </div>
-                        )}
-                      </div>
-                    </ScrollArea>
-                  </div>
-                  <div className="flex gap-4">
-                    <Button
-                      className="flex-1"
-                      variant="outline"
-                      disabled={issue.status === 'Published'}
-                      onClick={() => router.push('/editor/articles')}
-                    >
-                      <PlusIcon className="w-4 h-4 mr-2" />
-                      Assign Articles
-                    </Button>
-                    <Button
-                      className="flex-1"
-                      variant="default"
-                      disabled={
-                        issue.status === 'Published' ||
-                        issue.articles.length === 0
-                      }
-                      onClick={() => {
-                        const articleIds = issue.articles.map(
-                          (article) => article.id
-                        );
-                        handlePublishIssue({ issueId: issue.id, articleIds });
-                      }}
-                    >
-                      {isPending ? (
-                        <Loader text="Publishing..." />
-                      ) : (
-                        <>
-                          <SendIcon className="w-4 h-4 mr-2" /> Publish Issue
-                        </>
+                        </div>
+                      ))}
+                      {(!issue.articles || issue.articles.length === 0) && (
+                        <div className="text-center py-8 text-muted-foreground">
+                          No articles in this issue yet.
+                        </div>
                       )}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                    </div>
+                  </ScrollArea>
+                </div>
+                <div className="flex gap-4">
+                  <Button
+                    className="flex-1"
+                    variant="outline"
+                    disabled={issue.status === 'Published'}
+                    onClick={() => router.push('/editor/articles')}
+                  >
+                    <PlusIcon className="w-4 h-4 mr-2" />
+                    Assign Articles
+                  </Button>
+                  <Button
+                    className="flex-1"
+                    variant="default"
+                    disabled={
+                      issue.status === 'Published' ||
+                      issue.articles.length === 0
+                    }
+                    onClick={() => {
+                      const articleIds = issue.articles.map(
+                        (article) => article.id
+                      );
+                      handlePublishIssue({ issueId: issue.id, articleIds });
+                    }}
+                  >
+                    {isPending ? (
+                      <Loader text="Publishing..." />
+                    ) : (
+                      <>
+                        <SendIcon className="w-4 h-4 mr-2" /> Publish Issue
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <div className="py-8 text-muted-foreground">
+            No issues found. Create a new issue.
+          </div>
+        )}
       </div>
       {openDeleteIssueDialog && (
         <DeleteIssueDialog
