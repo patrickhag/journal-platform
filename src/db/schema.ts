@@ -55,14 +55,15 @@ export const users = pgTable('user', {
   firstName: text('firstName'),
   lastName: text('lastName'),
   affiliation: text('affiliation'),
-  country: countryEnum().$defaultFn(() => 'Rwanda'),
-  role: roleEnum().$default(() => 'NORMAL_USER'),
+  country: varchar('country', { length: 50 }),
+  role: varchar('role', { length: 50 }).notNull().default('NORMAL_USER'),
   email: text('email').unique(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
   isActive: boolean('is_active').default(true),
   password: text('password'),
   avatar: text('avatar'),
   orcid: text('orcid'),
+  createdAt: date('createdAt').defaultNow(),
 });
 
 export const verificationTokens = pgTable(
@@ -78,6 +79,7 @@ export const verificationTokens = pgTable(
     }),
   })
 );
+
 export const passwordResets = pgTable(
   'passwordResets',
   {
@@ -155,9 +157,9 @@ export const contributors = pgTable('contributor', {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: text('name').notNull(),
-  salutation: salutationEnum().$defaultFn(() => 'Mr'),
+  salutation: varchar('salutation', { length: 50 }),
   email: text('email').notNull(),
-  country: countryEnum().$defaultFn(() => 'Rwanda'),
+  country: varchar('country', { length: 50 }),
   orcid: text('orcid'),
   affiliation: text('affiliation').notNull(),
   bio: text('bio').notNull(),
@@ -203,7 +205,8 @@ export const reviews = pgTable('reviews', {
     .array()
     .notNull()
     .default(sql`'{}'::text[]`),
-  status: articleStatusEnum().$default(() => 'Minor issue'),
+  status: varchar('status', { length: 50 }),
+  createdAt: date('createdAt').defaultNow(),
 });
 
 export const articleSubmissions = pgTable('article_submissions', {
@@ -213,11 +216,18 @@ export const articleSubmissions = pgTable('article_submissions', {
   section: text('section').notNull(),
   requirements: text('requirements').array().notNull(),
   commentsForEditor: text('comments_for_editor'),
-  articleStatus: articleStatusEnum().$default(() => 'Submitted'),
+  articleStatus: varchar('article_status', { length: 50 }).default('SUBMITTED'),
   userId: text('userId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   issueId: text('issueId').references(() => issues.id, { onDelete: 'cascade' }),
+  proofFileUrl: text('proof_file_url')
+    .array()
+    .default(sql`'{}'::text[]`),
+  proofStatus: text('proof_status').default('none'),
+  proofNote: text('proof_note'),
+  publishedFile: text('publishedFile'),
+  doi: text('doi'),
   createdAt: date('createdAt').defaultNow(),
   updatedAt: date('updatedAt').defaultNow(),
 });
@@ -243,7 +253,7 @@ export const notifications = pgTable('notifications', {
     .$defaultFn(() => crypto.randomUUID()),
   message: text('message').notNull(),
   createdAt: date('createdAt').defaultNow(),
-  kind: notificationsEnum().$default(() => 'Info'),
+  kind: varchar('status', { length: 50 }),
   isRead: boolean('isRead').default(false),
   userId: text('userId').references(() => users.id, {
     onDelete: 'cascade',
@@ -263,7 +273,9 @@ export const reviewAssignments = pgTable('review_assignments', {
   userId: text('userId').references(() => users.id, {
     onDelete: 'cascade',
   }),
-  status: reviewAssignmentsStatusEnum().$default(() => 'Invited'),
+  status: varchar('review_assignments_status', { length: 50 }).default(
+    'INVITED'
+  ),
   assignedDate: date('assignedDate').defaultNow(),
   dueDate: date('dueDate'),
   reviewedDate: date('reviewedDate'),
@@ -277,7 +289,7 @@ export const volumes = pgTable('volumes', {
   year: integer('year').notNull(),
   title: text('title'),
   description: text('description'),
-  status: volumeStatusEnum('status').default('Inactive'),
+  status: varchar('status', { length: 50 }).default('INACTIVE'),
   createdAt: date('created_at').defaultNow().notNull(),
   updatedAt: date('updated_at').defaultNow().notNull(),
 });
@@ -293,7 +305,7 @@ export const issues = pgTable('issues', {
   title: text('title'),
   description: text('description'),
   publicationDate: date('publication_date'),
-  status: issueStatusEnum('status').default('Draft'),
+  status: varchar('status', { length: 50 }).default('DRAFT'),
   createdAt: date('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

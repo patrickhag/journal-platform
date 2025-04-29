@@ -61,15 +61,18 @@ export const finalSubmissionSchema = z.object({
 
 export const reviewSchema = z.object({
   id: z.string().uuid().optional(),
-  message: z.string(),
+  message: z.string().min(10, 'Message must be at least 10 characters'),
   articleId: z.string(),
-  fileIds: z.string(),
-  status: z.enum(ARTICLE_STATUS),
+  fileIds: z.array(z.string()),
+  status: z.enum(['MAJOR ISSUE', 'MINOR ISSUE', 'ACCEPTED', 'REJECTED']),
 });
 
-export type TArticle = z.infer<typeof articleSubmitionSchema> & {
-  owner: string;
+export type TArticle = {
   id: string;
-  commentsForEditor: string;
+  articleStatus: string;
+  section: string;
   title: string;
+  proofStatus: string;
 };
+
+export type ReviewFormData = z.infer<typeof reviewSchema>;

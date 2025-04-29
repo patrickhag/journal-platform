@@ -81,11 +81,11 @@ export async function GET(
     const manuscript = await db
       .select({
         id: articleSubmissions.id,
-        commentsForEditor: articleSubmissions.commentsForEditor,
         section: articleSubmissions.section,
         articleStatus: articleSubmissions.articleStatus,
         title: metadata.title,
         owner: articleSubmissions.userId,
+        proofStatus: articleSubmissions.proofStatus,
       })
       .from(articleSubmissions)
       .where(whereConditions.length ? and(...whereConditions) : undefined)

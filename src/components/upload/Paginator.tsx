@@ -84,7 +84,7 @@ export const Paginator: FC<
   return (
     <div className="flex justify-between">
       <Button
-        className="hover:border-red-500 hover:text-red-500"
+        className="hover:border-red-500 hover:text-red-500 hover:bg-white"
         variant={'outline'}
         onClick={() => router.push('/submissions')}
       >

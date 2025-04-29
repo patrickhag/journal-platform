@@ -1,6 +1,5 @@
 'use client';
 
-import { CommentPreview } from './CommentPreview';
 import { Card, CardContent } from './ui/card';
 import {
   DropdownMenu,
@@ -9,7 +8,14 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { Button } from './ui/button';
-import { MoreHorizontal, FileText, Eye, Archive, Trash } from 'lucide-react';
+import {
+  MoreHorizontal,
+  FileText,
+  Eye,
+  Archive,
+  Trash,
+  FileCheck,
+} from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { TArticle } from '@/schemas/reviewer';
@@ -49,14 +55,20 @@ export function ArticleSection({
               </span>
             </div>
             <div className="space-y-2">
-              <h3 className="flex items-center gap-2 font-medium uppercase">
+              <h3 className="flex items-center gap-1 font-medium">
                 <FileText className="h-4 w-4 text-muted-foreground" />
                 {a.section}
               </h3>
-              <CommentPreview html={a.title} />
-              <small className={cn('mt-2')}>
+              <div className="text-mdm">{a.title}</div>
+              <div className={`flex ${cn('mt-2')}`}>
                 <StatusBadge status={a.articleStatus || 'Submitted'} />
-              </small>
+                {a.proofStatus && (
+                  <button className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-indigo-50 text-indigo-900 hover:bg-indigo-100 transition-colors duration-150 ml-3">
+                    <FileCheck size={16} className="mr-1" />
+                    View Proofs
+                  </button>
+                )}
+              </div>
             </div>
           </div>
           <DropdownMenu>

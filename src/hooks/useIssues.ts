@@ -132,7 +132,6 @@ export const useEditIssue = () => {
       issueId: string;
       data: IssueType & { articles: string[] };
     }) => {
-      console.log('dataMutation>>>', data);
       const response = await axios.put<MessageResponse>(
         `/api/issues/${issueId}`,
         data

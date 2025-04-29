@@ -71,3 +71,28 @@ export type VolumeType = {
     }[];
   }[];
 }[];
+
+export type IArticle = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  proofStatus:
+    | 'AwaitingProof'
+    | 'ProofUploaded'
+    | 'AuthorResponded'
+    | 'Finalized';
+  proofNote?: string;
+  proofFileUrl?: string[];
+  user: {
+    firstName: string;
+    lastName: string;
+    affiliation: string;
+  };
+  metadata: {
+    title: string;
+    prefix: string;
+  };
+  files: {
+    publicId: string;
+  }[];
+};

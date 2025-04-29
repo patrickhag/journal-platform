@@ -43,7 +43,9 @@ async function Files({
     <>
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-semibold">Article Files</CardTitle>
+          <CardTitle className="text-lg font-semibold text-[#1a237e]">
+            Article Files
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {filesData.map((file) => (
@@ -71,16 +73,15 @@ async function Files({
                   </span>
                 </Link>
               </Button>
-              {hasReviewerAcceptInvitation &&
-                !isArticlePublished?.articleStatus && (
-                  <div className="flex space-x-1">
-                    <UlterFile
-                      requiredPermissions={['ADD_REVIEW']}
-                      role={role}
-                      fallback={<></>}
-                    />
-                  </div>
-                )}
+              {hasReviewerAcceptInvitation?.status === 'Accepted' && (
+                <div className="flex space-x-1">
+                  <UlterFile
+                    requiredPermissions={['ADD_REVIEW']}
+                    role={role}
+                    fallback={<></>}
+                  />
+                </div>
+              )}
             </div>
           ))}
         </CardContent>

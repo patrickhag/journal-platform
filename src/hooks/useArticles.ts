@@ -4,13 +4,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
-export const useGetArticles = (
+export const useGetUserArticles = (
   userId: string,
   debouncedSearchQuery: string,
   selectedStatus: string,
   selectedType: string
 ) => {
-  const fetchArticles = async (): Promise<TArticle[]> => {
+  const fetchArticles = async () => {
     const response = await axios.get<TArticle[]>(`/api/articles/${userId}`, {
       params: {
         searchQuery: debouncedSearchQuery,
@@ -63,5 +63,22 @@ export const useDeleteArticle = (
 
       toast.error(message || 'Failed to delete article');
     },
+  });
+};
+
+export const useGetAcceptedArticles = () => {
+  const fetchArticles = async (): Promise<TArticle[]> => {
+    const response = await axios.get<TArticle[]>(`/api/articles`);
+
+    if (response.status !== 200) {
+      throw new Error('Error occurred while fetching articles');
+    }
+
+    return response.data;
+  };
+  return useQuery<TArticle[], Error>({
+    queryKey: ['acceptedArticles'],
+    queryFn: fetchArticles,
+    refetchOnWindowFocus: false,
   });
 };

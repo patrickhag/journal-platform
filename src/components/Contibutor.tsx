@@ -303,6 +303,9 @@ export default function NewContibutorForm({
           Add contributor
         </Button>
       )}
+      <p className="text-sm text-muted-foreground mt-5">
+        <span className="text-red-500">*</span> Denotes a required field
+      </p>
     </div>
   );
 }

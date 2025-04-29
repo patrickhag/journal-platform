@@ -1,5 +1,5 @@
 import React from 'react';
-import { articleSubmissions, contributors, metadata } from '@/db/schema';
+import { contributors, metadata } from '@/db/schema';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { eq } from 'drizzle-orm';
 import { USER_ROLE } from '@/lib/roles';
@@ -54,11 +54,11 @@ export default async function Metadata({
         <div className="flex justify-between">
           <CardHeader>
             <div className="flex items-center">
-              <CardTitle className="text-lg font-semibold">
+              <CardTitle className="text-lg font-semibold text-[#1a237e]">
                 Article information{' '}
               </CardTitle>
               <StatusBadge
-                status={meta.article?.articleStatus || 'Submitted'}
+                status={meta.article?.articleStatus as string}
                 className="ml-2"
               />
             </div>

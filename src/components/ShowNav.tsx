@@ -1,6 +1,12 @@
 'use client';
 import Link from 'next/link';
-import { Calendar, FileText, LayoutDashboard, Users } from 'lucide-react';
+import {
+  Calendar,
+  FilePenLine,
+  FileText,
+  LayoutDashboard,
+  Users,
+} from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -14,7 +20,7 @@ export default function ShowNav({ isOpen = false }: { isOpen: boolean }) {
       )}
     >
       <Link
-        href="/editor/dashboard"
+        href="/editor"
         className={cn(
           pathname.toLowerCase().split('/').includes('dashboard')
             ? 'text-gray-600 bg-gray-100 rounded-md px-2.5 py-1.5'
@@ -65,6 +71,19 @@ export default function ShowNav({ isOpen = false }: { isOpen: boolean }) {
         <span className="flex items-center gap-2">
           <Calendar className="h-4 w-4" />
           Issues
+        </span>
+      </Link>
+      <Link
+        href="/editor/proof"
+        className={cn(
+          pathname.toLowerCase().split('/').includes('proof')
+            ? 'text-gray-700 bg-gray-100 rounded-md px-2.5 py-1.5'
+            : 'text-muted-foreground hover:text-gray-700'
+        )}
+      >
+        <span className="flex items-center gap-2">
+          <FilePenLine className="h-4 w-4" />
+          Proofs
         </span>
       </Link>
     </nav>

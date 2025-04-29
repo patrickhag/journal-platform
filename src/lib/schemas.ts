@@ -25,3 +25,11 @@ export type IssueType = z.infer<typeof issueSchema>;
 export type VolumeTypeExtended = VolumeType & {
   id: string;
 };
+
+export const proofSchema = z.object({
+  message: z.string().min(3, 'Message is required'),
+  fileIds: z.array(z.string()).optional(),
+  status: z.string(),
+});
+
+export type ProofFormValues = z.infer<typeof proofSchema>;

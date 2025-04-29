@@ -238,8 +238,8 @@ export function IssueList() {
             </Card>
           ))
         ) : (
-          <div className="py-8 text-muted-foreground">
-            No issues found. Create a new issue.
+          <div className="py-5 text-muted-foreground">
+            No issues found. Create one instead!
           </div>
         )}
       </div>

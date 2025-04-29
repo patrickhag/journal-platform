@@ -11,7 +11,9 @@ export default async function Layout({ children }: PropsWithChildren) {
     <SessionProvider basePath={BASE_PATH} session={session}>
       <Header />
       <div className="flex bg-gray-100 min-h-screen">
-        <div className="flex-1 overflow-auto p-8">{children}</div>
+        <div className="flex-1 overflow-auto p-8">
+          <div className="max-w-5xl mx-auto">{children}</div>
+        </div>
       </div>
     </SessionProvider>
   );

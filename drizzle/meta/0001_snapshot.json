@@ -1,6 +1,6 @@
 {
-  "id": "b743c612-0d83-4edd-a312-1c3f511e70e7",
-  "prevId": "b53aa9bf-e43e-46b6-adff-7ddaf6ba3e30",
+  "id": "7cceb182-90a7-43a0-8eb8-767a6dbdbbac",
+  "prevId": "7004b874-3de1-4037-994a-7e8c7758ccbd",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -30,14 +30,14 @@
           "name": "comments_for_editor",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
-        },
-        "articleStatus": {
-          "name": "articleStatus",
-          "type": "article_status",
-          "typeSchema": "public",
-          "primaryKey": false,
           "notNull": false
+        },
+        "article_status": {
+          "name": "article_status",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'SUBMITTED'"
         },
         "userId": {
           "name": "userId",
@@ -193,8 +193,7 @@
         },
         "salutation": {
           "name": "salutation",
-          "type": "salutation",
-          "typeSchema": "public",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": false
         },
@@ -206,8 +205,7 @@
         },
         "country": {
           "name": "country",
-          "type": "countries",
-          "typeSchema": "public",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": false
         },
@@ -468,11 +466,10 @@
         },
         "status": {
           "name": "status",
-          "type": "issue_status",
-          "typeSchema": "public",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": false,
-          "default": "'Draft'"
+          "default": "'DRAFT'"
         },
         "created_at": {
           "name": "created_at",
@@ -617,10 +614,9 @@
           "notNull": false,
           "default": "now()"
         },
-        "kind": {
-          "name": "kind",
-          "type": "notication_kind",
-          "typeSchema": "public",
+        "status": {
+          "name": "status",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": false
         },
@@ -726,12 +722,12 @@
           "primaryKey": false,
           "notNull": false
         },
-        "status": {
-          "name": "status",
-          "type": "review_assignments_status",
-          "typeSchema": "public",
+        "review_assignments_status": {
+          "name": "review_assignments_status",
+          "type": "varchar(50)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "'INVITED'"
         },
         "assignedDate": {
           "name": "assignedDate",
@@ -912,10 +908,16 @@
         },
         "status": {
           "name": "status",
-          "type": "article_status",
-          "typeSchema": "public",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -975,17 +977,16 @@
         },
         "country": {
           "name": "country",
-          "type": "countries",
-          "typeSchema": "public",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": false
         },
         "role": {
           "name": "role",
-          "type": "role",
-          "typeSchema": "public",
+          "type": "varchar(50)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true,
+          "default": "'NORMAL_USER'"
         },
         "email": {
           "name": "email",
@@ -1023,6 +1024,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -1111,11 +1119,10 @@
         },
         "status": {
           "name": "status",
-          "type": "volume_status",
-          "typeSchema": "public",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": false,
-          "default": "'Inactive'"
+          "default": "'INACTIVE'"
         },
         "created_at": {
           "name": "created_at",

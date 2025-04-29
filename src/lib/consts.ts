@@ -234,15 +234,15 @@ export const SALUTATION = ['Mr', 'Mrs', 'Ms', 'Dr', 'Prof', 'Rev'] as const;
 export const fileFormats = ['.docx', '.pdf', '.doc'];
 
 export const ARTICLE_STATUS = [
-  'Submitted',
-  'Under Review',
-  'Approved',
-  'Rejected',
-  'Published',
-  'Archived',
-  'Accepted',
-  'Minor issue',
-  'Major issue',
+  'SUBMITTED',
+  'UNDER REVIEW',
+  'APPROVED',
+  'REJECTED',
+  'PUBLISHED',
+  'ARCHIVED',
+  'ACCEPTED',
+  'MINOR ISSUE',
+  'MAJOR ISSUE',
 ] as const;
 
 export type ArticleStatus = (typeof ARTICLE_STATUS)[number];
@@ -257,8 +257,10 @@ export const REVIEW_ASSIGNMENTS_STATUS = [
 ] as const;
 
 export const REVIEW_STATUS: (typeof ARTICLE_STATUS)[number][] = [
-  'Major issue',
-  'Minor issue',
-  'Accepted',
-  'Rejected',
+  'MAJOR ISSUE',
+  'MINOR ISSUE',
+  'ACCEPTED',
+  'REJECTED',
 ];
+
+export const PROOF_STATUS = ['ProofUploaded', 'AuthorResponded'];

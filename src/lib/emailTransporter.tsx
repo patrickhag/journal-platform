@@ -7,6 +7,9 @@ import { SendVerifyEmail } from '@/components/emails/verify';
 import { NotifyAdminEmail } from '@/components/emails/notify-admin';
 import { render } from '@react-email/components';
 import nodemailer from 'nodemailer';
+import ReviewSubmittedEmailTemplate from '@/components/emails/notify-author';
+import ProofSubmittedAdminEmailTemplate from '@/components/emails/notify-admin-proof';
+import ArticleNotificationEmail from '@/components/emails/notify-user-proof';
 
 export const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -213,6 +216,108 @@ export const notifyAdmin = async ({
       from: process.env.EMAIL_USER,
       to: adminEmail,
       subject: subject,
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending admin notification:', error);
+    return { success: false, error };
+  }
+};
+
+export const notifyUser = async ({
+  articleTitle,
+  authorName,
+  authorEmail,
+  articleLink,
+  subject,
+  type,
+}: {
+  articleTitle: string;
+  authorName: string;
+  authorEmail: string;
+  articleLink: string;
+  subject: string;
+  type: 'proof' | 'published';
+}) => {
+  try {
+    const emailHtml = await render(
+      <ArticleNotificationEmail
+        authorName={authorName}
+        articleTitle={articleTitle}
+        articleLink={articleLink}
+        type={type}
+      />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: authorEmail,
+      subject: subject,
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending admin notification:', error);
+    return { success: false, error };
+  }
+};
+
+export const notifyAdminAboutProof = async ({
+  article,
+  authorName,
+}: {
+  article: string;
+  authorName: string;
+}) => {
+  try {
+    const emailHtml = await render(
+      <ProofSubmittedAdminEmailTemplate
+        authorName={authorName}
+        articleTitle={article}
+      />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: process.env.ADMIN_EMAIL,
+      subject: 'Author Submitted Updated Proof for Review',
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending admin notification:', error);
+    return { success: false, error };
+  }
+};
+
+export const notifyUserAboutReview = async ({
+  article,
+  authorName,
+  authorEmail,
+  articleLink,
+}: {
+  article: string;
+  authorName: string;
+  authorEmail: string;
+  articleLink: string;
+}) => {
+  try {
+    const emailHtml = await render(
+      <ReviewSubmittedEmailTemplate
+        authorName={authorName}
+        articleTitle={article}
+        articleLink={articleLink}
+      />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: authorEmail,
+      subject: 'A review has been submitted for your manuscript',
       html: emailHtml,
     });
 

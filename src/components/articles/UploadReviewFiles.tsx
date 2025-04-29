@@ -25,8 +25,6 @@ export default function UploadReviewFiles() {
 
   const { mutate, isPending } = useUploadReviewerFiles();
 
-  console.log('files>>>', files);
-
   function onSubmit() {
     mutate(files!);
   }
@@ -35,7 +33,7 @@ export default function UploadReviewFiles() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit as any)}
-        className="space-y-8 max-w-3xl mx-auto py-5"
+        className="space-y-8 max-w-3xl mx-auto"
       >
         <FormField
           control={form.control}

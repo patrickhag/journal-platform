@@ -14,7 +14,10 @@ const Page = async ({
     <>
       <Card className="mb-6 p-6">
         <h1 className="mb-6 text-3xl font-bold">Upload files</h1>
-        <p className="text-sm">Please select type for each file.</p>
+        <p className="text-sm my-5">
+          Please select type for each file{' '}
+          <span className="text-red-500">*</span>
+        </p>
         <DragAndDropFileInput />
         <div className="space-y-4">
           <FileList />

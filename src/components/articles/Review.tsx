@@ -1,6 +1,8 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -14,9 +16,7 @@ import { FileList } from '../upload/FileList';
 import { useParams, useSearchParams } from 'next/navigation';
 import { safeParse } from 'zod-urlsearchparams';
 import { filesSchema } from '@/schemas/reviewer';
-import { submitReviewAction } from '@/actions/submitReviewAction';
 import { ARTICLE_STATUS } from '@/lib/consts';
-
 import {
   Select,
   SelectContent,
@@ -25,30 +25,54 @@ import {
   SelectValue,
 } from '../ui/select';
 import { DragAndDropFileInput } from '../upload/FileInput';
-import Loader from '../Loader';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { reviewSchema, ReviewFormData } from '@/schemas/reviewer';
+import { useCreateReview } from '@/hooks/useReviews';
 
 export default function ReviewModal() {
   const [open, setOpen] = useState(false);
-  const [, formAction, isPending] = useActionState(
-    submitReviewAction,
-    undefined
-  );
   const searchParams = useSearchParams();
   const { articleId } = useParams();
+
   const filesValidation = safeParse({
     schema: filesSchema,
     input: new URLSearchParams(searchParams.toString()),
   });
 
   const files = filesValidation.data?.files || [];
+  const fileIds = files.map((f) => f.publicId);
 
   const reviewStatus: (typeof ARTICLE_STATUS)[number][] = [
-    'Major issue',
-    'Minor issue',
-    'Accepted',
-    'Rejected',
+    'MAJOR ISSUE',
+    'MINOR ISSUE',
+    'ACCEPTED',
+    'REJECTED',
   ];
-  const [status, setStatus] = useState('');
+
+  const form = useForm<ReviewFormData>({
+    resolver: zodResolver(reviewSchema),
+    defaultValues: {
+      message: '',
+      articleId: articleId as string,
+      fileIds,
+      status: undefined,
+    },
+  });
+
+  const { handleSubmit } = form;
+
+  const { mutate: createReviewMutation, isPending } = useCreateReview(setOpen);
+
+  const onSubmit = (data: ReviewFormData) => {
+    createReviewMutation(data);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -68,54 +92,79 @@ export default function ReviewModal() {
         </DialogHeader>
         <div className="text-sm font-semibold">Annotate file(s)</div>
         <DragAndDropFileInput />
-        <FileList />
-        <form action={formAction} className="mt-6 space-y-6">
-          <div className="space-y-2">
-            <Textarea
-              id="message"
+        <FileList isEditNeeded={true} />
+
+        <Form {...form}>
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-6">
+            <FormField
+              control={form.control}
               name="message"
-              placeholder="General feedback on this manuscript?"
-              className="min-h-[150px] resize-none p-4 bg-white rounded-lg"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Feedback</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="General feedback on this manuscript?"
+                      className="min-h-[100px] resize-none p-4 bg-white rounded-lg"
+                      {...field}
+                      hidden
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <input
-            type="text"
-            name="fileIds"
-            id="fileIds"
-            value={JSON.stringify(files.map((f) => f.publicId))}
-            readOnly
-            className="hidden"
-          />
-          <input
-            type="text"
-            name="articleId"
-            id="articleId"
-            value={articleId}
-            readOnly
-            className="hidden"
-          />
-          <input type="hidden" name="status" defaultValue={status} />
-          <Select onValueChange={(value) => setStatus(value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select article status" />
-            </SelectTrigger>
-            <SelectContent>
-              {reviewStatus.map((status) => (
-                <SelectItem key={status} value={status}>
-                  {status}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <div className="space-y-3">
-            <Button
-              disabled={isPending || status === ''}
-              className="bg-indigo-500 hover:bg-indigo-600 block w-full"
-            >
-              {isPending ? <Loader text="Submitting..." /> : 'Submit Review'}
-            </Button>
-          </div>
-        </form>
+
+            <input
+              type="hidden"
+              value={articleId}
+              {...form.register('articleId')}
+            />
+            <input
+              type="hidden"
+              value={JSON.stringify(fileIds)}
+              {...form.register('fileIds')}
+            />
+
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select article status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {reviewStatus.map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {status}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="space-y-3">
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="bg-indigo-500 hover:bg-indigo-600 w-full"
+              >
+                Submit Review
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

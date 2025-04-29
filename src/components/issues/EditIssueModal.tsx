@@ -20,7 +20,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { XIcon, CalendarIcon, UndoIcon } from 'lucide-react';
-import { issueSchema, VolumeTypeExtended, type IssueType } from '@/lib/schemas';
+import { issueSchema, type IssueType } from '@/lib/schemas';
 import {
   Form,
   FormControl,

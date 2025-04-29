@@ -60,7 +60,7 @@ export const ArticleFilters = ({
           <SelectTrigger className="w-[180px]">
             <SelectValue
               placeholder={
-                selectedValue || ARTICLE_STATUS.find((a) => a === 'Submitted')
+                selectedValue || ARTICLE_STATUS.find((a) => a === 'SUBMITTED')
               }
             />
           </SelectTrigger>

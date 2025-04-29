@@ -12,7 +12,7 @@ import { redirect } from 'next/navigation';
 
 type PageProps = {
   params: Promise<{
-    article: string[];
+    articleId: string;
   }>;
   searchParams: Promise<{
     [key: string]: string | string[] | undefined;
@@ -20,8 +20,7 @@ type PageProps = {
 };
 
 export default async function AcceptPage({ params, searchParams }: PageProps) {
-  const { article } = await params;
-  const articleId = article[0];
+  const { articleId } = await params;
 
   const userId = (await auth())?.user?.id;
   const search = await searchParams;
@@ -57,7 +56,7 @@ export default async function AcceptPage({ params, searchParams }: PageProps) {
     await db
       .update(articleSubmissions)
       .set({
-        articleStatus: 'Under Review',
+        articleStatus: 'UNDER REVIEW',
         updatedAt: new Date().toISOString(),
       })
       .where(eq(articleSubmissions.id, articleId));
