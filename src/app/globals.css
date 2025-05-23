@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -78,4 +82,12 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: #9ea5ab;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }

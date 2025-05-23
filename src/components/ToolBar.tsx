@@ -13,6 +13,7 @@ import {
   Highlighter,
 } from 'lucide-react';
 import { Toggle } from '@/components/ui/toggle';
+import { LinkPopover } from './tiptap-ui/link-popover';
 
 export function ToolBar({ editor }: { editor: Editor | null }) {
   if (!editor) {
@@ -68,7 +69,7 @@ export function ToolBar({ editor }: { editor: Editor | null }) {
   ];
 
   return (
-    <div className="border rounded-md p-1 mb-1 space-x-2 z-50">
+    <>
       {options.map((option, index) => (
         <Toggle
           key={index}
@@ -78,6 +79,6 @@ export function ToolBar({ editor }: { editor: Editor | null }) {
           {option.icon}
         </Toggle>
       ))}
-    </div>
+    </>
   );
 }

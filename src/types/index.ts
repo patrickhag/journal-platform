@@ -96,3 +96,16 @@ export type IArticle = {
     publicId: string;
   }[];
 };
+
+export type EditorsPicks = {
+  id: string;
+  section: string;
+  updatedAt: string;
+  user: {
+    firstName: string | null;
+    lastName: string | null;
+  };
+  metadata: {
+    title: string;
+  };
+}[];

@@ -110,19 +110,6 @@ export async function PUT(
 
     const { id: issueId } = await params;
 
-    /* 
-    {
-    "issueNumber": 1,
-    "volumeId": "2692056a-1f4a-45d7-bf53-7b25dfc788ce",
-    "title": "Issue 1 - Special Edition",
-    "description": "This issue focuses on global health trends.",
-    "publicationDate": "2025-06-15T00:00:00.000Z",
-    "status": "Draft",
-    "removedArticles": []
-}
-    
-    */
-
     const {
       issueNumber,
       volumeId,

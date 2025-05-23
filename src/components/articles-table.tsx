@@ -34,6 +34,7 @@ import {
   ChevronRight,
   ArrowUpDown,
   FolderPlus,
+  FileHeart,
 } from 'lucide-react';
 import { StatusBadge } from './status-badge';
 import Link from 'next/link';
@@ -48,6 +49,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAssignIssues, useGetIssues } from '@/hooks/useIssues';
 import Loader from './Loader';
+import { useEditorsPick } from '@/hooks/useSettings';
 
 type Article = {
   id: string | null;
@@ -160,14 +162,23 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
     },
   });
 
-  const { mutate, isPending } = useAssignIssues();
+  const { mutate: assignIssuesMutation, isPending } = useAssignIssues();
+  const {
+    mutate: pickArticlesMutation,
+    isPending: isPickArticlesMutationPending,
+  } = useEditorsPick();
+
+  const selectedRows = table.getSelectedRowModel().rows;
+  const selectedRowIds = selectedRows
+    .map((row) => row.original.id)
+    .filter((id): id is string => id !== null);
+
+  const handlePickArticle = () => {
+    pickArticlesMutation({ articleIds: selectedRowIds });
+  };
 
   const handleIssueAssertion = (issueId: string) => {
-    const selectedRows = table.getSelectedRowModel().rows;
-    const selectedRowIds = selectedRows
-      .map((row) => row.original.id)
-      .filter((id): id is string => id !== null);
-    mutate({ articleIds: selectedRowIds, issueId });
+    assignIssuesMutation({ articleIds: selectedRowIds, issueId });
   };
 
   return (
@@ -221,8 +232,7 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
         </Button>
 
         {/* Assign Articles Button */}
-        {(table.getIsSomePageRowsSelected() ||
-          table.getIsAllPageRowsSelected()) && (
+        {table.getIsSomePageRowsSelected() && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">
@@ -241,6 +251,24 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+        {table.getIsSomePageRowsSelected() && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                onClick={handlePickArticle}
+                disabled={isPickArticlesMutationPending}
+              >
+                <FileHeart />
+                {isPickArticlesMutationPending ? (
+                  <Loader text="Loading..." />
+                ) : (
+                  'Pick article'
+                )}
+              </Button>
+            </DropdownMenuTrigger>
           </DropdownMenu>
         )}
       </div>

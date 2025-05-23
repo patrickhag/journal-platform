@@ -7,17 +7,17 @@ async function getArticlesCount() {
 
   const counts = {
     newSubmissions: articles.filter(
-      (article) => article.articleStatus === 'Published'
+      (article) => article.articleStatus === 'PUBLISHED'
     ).length,
     published: articles.filter(
-      (article) => article.articleStatus === 'Submitted'
+      (article) => article.articleStatus === 'SUBMITTED'
     ).length,
     underReview: articles.filter(
-      (article) => article.articleStatus === 'Under Review'
+      (article) => article.articleStatus === 'UNDER REVIEW'
     ).length,
-    accepted: articles.filter((article) => article.articleStatus === 'Accepted')
+    accepted: articles.filter((article) => article.articleStatus === 'ACCEPTED')
       .length,
-    rejected: articles.filter((article) => article.articleStatus === 'Rejected')
+    rejected: articles.filter((article) => article.articleStatus === 'REJECTED')
       .length,
   };
 

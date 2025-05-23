@@ -58,7 +58,7 @@ export default function NewContibutorForm({
       homepage: '',
       affiliation: '',
       bio: '',
-      role: 'author',
+      role: 'Author',
       email: '',
     },
   });
@@ -261,13 +261,13 @@ export default function NewContibutorForm({
                       >
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
-                            <RadioGroupItem value="author" />
+                            <RadioGroupItem value="Author" />
                           </FormControl>
                           <FormLabel className="font-normal">Author</FormLabel>
                         </FormItem>
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
-                            <RadioGroupItem value="translator" />
+                            <RadioGroupItem value="Translator" />
                           </FormControl>
                           <FormLabel className="font-normal">
                             Translator

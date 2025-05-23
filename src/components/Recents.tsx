@@ -1,33 +1,32 @@
-import {
-  articleSubmissions,
-  contributors,
-  db,
-  files,
-  metadata,
-} from '@/db/schema';
-import { and, eq } from 'drizzle-orm';
-import { FileText } from 'lucide-react';
+import { articleSubmissions, contributors } from '@/db/schema';
+import { db } from '@/db/db';
+import { eq } from 'drizzle-orm';
+import { Separator } from './ui/separator';
 import Link from 'next/link';
 
 export const Recents = async () => {
-  const articles = await db
-    .select({
-      id: articleSubmissions.id,
-      createdAt: articleSubmissions.createdAt,
-      title: metadata.title,
-      file: files.publicId,
-      fileName: files.originalName,
-    })
-    .from(articleSubmissions)
-    .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId))
-    .leftJoin(files, eq(articleSubmissions.id, files.articleId))
-    .where(
-      and(
-        eq(articleSubmissions.articleStatus, 'Published'),
-        eq(files.fileType, 'Article Text')
-      )
-    )
-    .limit(10);
+  const articles = await db.query.articleSubmissions.findMany({
+    columns: {
+      id: true,
+      section: true,
+      updatedAt: true,
+    },
+    with: {
+      metadata: {
+        columns: {
+          title: true,
+          subtitle: true,
+        },
+      },
+      user: {
+        columns: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+    where: eq(articleSubmissions.articleStatus, 'PUBLISHED'),
+  });
 
   return (
     <div className="w-full sm:px-2 md:px-0">
@@ -37,44 +36,27 @@ export const Recents = async () => {
       {articles.map((article) => {
         return (
           <div key={article.id} className="my-6 w-[90%]">
-            <div>
-              <div className="flex items-center justify-between">
-                <Link
-                  href={`/articles/article/${article.id}`}
-                  className="text-lg text-blue-500 hover:text-blue-600"
-                >
-                  {article.title}
+            <div className="space-y-1">
+              <h2 className="text-xl font-medium hover:text-blue-500 cursor-pointer leading-snug">
+                <Link href={`/articles/article/${article.id}`}>
+                  {article.metadata.title}
                 </Link>
+              </h2>
+              <p className="text-gray-800 font-medium">
+                by {article.user.firstName + ' ' + article.user.lastName}
+              </p>
+              <p className="text-gray-700">{article.metadata.subtitle}</p>
 
-                <p className="text-sm text-gray-500">{article.createdAt}</p>
+              <div className="text-sm text-gray-500 flex space-x-2">
+                <span>{article.section}</span>
+                <span>•</span>
+                <span>{article.updatedAt}</span>
               </div>
-              <ContributorList articleId={article.id} />
             </div>
-            <div className="text-gray-600 cursor-pointer">
-              <Link href={article.file as string}>
-                <span className="flex items-center gap-2 hover:text-blue-500">
-                  <FileText size={20} />
-                  {article.fileName}
-                </span>
-              </Link>
-            </div>
-            <div className="border-b pb-4"></div>
+            <Separator className="mt-2" />
           </div>
         );
       })}
     </div>
-  );
-};
-const ContributorList = async ({ articleId }: { articleId: string }) => {
-  const contributorList = await db
-    .select()
-    .from(contributors)
-    .where(eq(contributors.articleId, articleId));
-  return (
-    <p className="text-sm text-gray-600 my-1">
-      {contributorList.map((c) => (
-        <span key={c.id}>{c.name}</span>
-      ))}
-    </p>
   );
 };

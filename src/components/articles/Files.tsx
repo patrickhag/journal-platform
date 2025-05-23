@@ -16,7 +16,7 @@ async function Files({
 }: {
   userId: string;
   articleId: string;
-  role: (typeof USER_ROLES)[number];
+  role: string;
 }) {
   const filesData = await db
     .select()

@@ -11,7 +11,6 @@ import React, {
   useState,
 } from 'react';
 import { useForm } from 'react-hook-form';
-import ReactQuill from 'react-quill-new';
 import type { z } from 'zod';
 import { safeParse, serialize } from 'zod-urlsearchparams';
 import {
@@ -185,34 +184,40 @@ export const NewMetaForm: FC<
           setTopics((prevTopics) => [...new Set([...prevTopics, topic])]);
         }}
       >
+        <div>
+          SEO Tags/Topics <span className="text-red-500">*</span>
+        </div>
         <label
           htmlFor="topics"
-          className="mt-5 flex gap-2 items-center ring-1 ring-gray-400 has-[:focus]:ring-gray-600 rounded-sm flex-wrap p-2"
+          className="mt-5 flex flex-wrap items-center gap-2 border border-gray-300 rounded-md px-3 py-2"
         >
+          {topics.map((topic) => (
+            <span
+              key={topic}
+              className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full"
+            >
+              {topic}
+              <button
+                type="button"
+                className="text-gray-500 hover:text-black text-sm"
+                onClick={() => {
+                  setTopics((prev) => prev.filter((t) => t !== topic));
+                }}
+              >
+                ×
+              </button>
+            </span>
+          ))}
+
           <input
             id="topics"
             placeholder="Add seo tags/topics"
             name="topic"
             ref={topicRef}
-            className="outline-none px-2 border-none ring-0"
+            className="outline-none border-none placeholder-gray-400 text-sm"
           />
-          {topics.map((topic) => (
-            <span
-              key={topic}
-              className="flex items-center gap-1 bg-blue-300 rounded-full pl-4"
-            >
-              {topic}{' '}
-              <span
-                className="bg-blue-500 p-2 rounded-full cursor-pointer text-white"
-                onClick={() => {
-                  setTopics(() => topics.filter((t) => t !== topic));
-                }}
-              >
-                <FaTimes />
-              </span>
-            </span>
-          ))}
         </label>
+
         <button
           onFocus={(e) => {
             e.currentTarget.closest('form')?.requestSubmit();

@@ -33,7 +33,7 @@ export default function HeaderDropdown({
             : router.replace('/login')
         }
       >
-        Submit a manuscript
+        Submit your research
       </Button>
       {session?.user && (
         <DropdownMenu>

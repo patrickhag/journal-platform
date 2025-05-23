@@ -1,4 +1,3 @@
-import { ArticleCardProof } from '@/components/article/ArticleCardProof';
 import { PropsWithChildren } from 'react';
 
 export default function Layout({ children }: PropsWithChildren) {

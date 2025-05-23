@@ -35,5 +35,11 @@ export const CommentForEditor = () => {
     return () => clearTimeout(timeoutId);
   };
 
-  return <RichTextEditor description={content} onChange={handleChange} />;
+  return (
+    <RichTextEditor
+      description={content}
+      onChange={handleChange}
+      placeholder="Add any specific comments or notes for the editor here..."
+    />
+  );
 };

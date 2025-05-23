@@ -12,7 +12,7 @@ export const contributorFormSchema = z.object({
   homepage: z.string().optional(),
   affiliation: z.string(),
   bio: z.string(),
-  role: z.enum(['author', 'translator'], {
+  role: z.enum(['Author', 'Translator'], {
     required_error: 'Please select a role.',
   }),
 });

@@ -1,20 +1,10 @@
 import React from 'react';
 import Image from 'next/image';
 import { Recents } from '../Recents';
-import { articleSubmissions, db, files, metadata } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { db } from '@/db/db';
 
 const Collections = async () => {
-  const fileCollections = await db
-    .select({
-      id: files.id,
-      fileURI: files.publicId,
-      title: metadata.title,
-    })
-    .from(articleSubmissions)
-    .leftJoin(files, eq(articleSubmissions.id, files.articleId))
-    .leftJoin(metadata, eq(articleSubmissions.id, metadata.articleId))
-    .limit(10);
+  const foundManual = await db.query.manuals.findFirst();
 
   return (
     <>
@@ -27,15 +17,12 @@ const Collections = async () => {
           >
             Aims and scope
           </h1>
-          <p className="text-gray-700">
-            Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum
-            dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet
-            Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum
-            Lorem dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor
-            sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem
-            ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor
-            sit ame
-          </p>
+          <div
+            className="prose max-w-none"
+            dangerouslySetInnerHTML={{
+              __html: foundManual?.aimsNscope?.content as string,
+            }}
+          />
         </div>
         <Recents />
 
@@ -48,8 +35,7 @@ const Collections = async () => {
             Our largest collections
           </h2>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 md:gap-6 lg:gap-8">
-            {/* {fileCollections.map((collection) => ( */}
-            <div /* key={collection.id} */ className="group">
+            <div className="group">
               <h3 className="text-base font-medium min-h-[50px] sm:text-lg md:text-xl">
                 title
               </h3>

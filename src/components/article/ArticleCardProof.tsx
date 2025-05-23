@@ -34,6 +34,8 @@ export function ArticleCardProof() {
     null
   );
 
+  console.log('articleProofs>>>', articleProofs);
+
   const handleProof = (articleId: string) => {
     setSelectedArticleId(articleId);
     setIsProofCardOpen(true);
@@ -128,16 +130,20 @@ export function ArticleCardProof() {
                   </div>
                 )}
 
-              {/* Editor's Comments section - full width */}
               {article.proofNote && (
                 <div className="mt-4 w-full">
                   <p className="text-sm font-medium text-foreground mb-2">
                     Editor&apos;s Comments
                   </p>
                   <div className="border border-muted rounded-md p-4 shadow-sm bg-muted/50 w-full">
-                    <p className="text-sm text-muted-foreground">
-                      {article.proofNote}
-                    </p>
+                    <div
+                      className="mt-1 text-muted-foreground"
+                      dangerouslySetInnerHTML={{
+                        __html: article.proofNote
+                          .replace(/<pre>/g, '<p>')
+                          .replace(/<\/pre>/g, '</p>'),
+                      }}
+                    />
                   </div>
                 </div>
               )}
@@ -146,7 +152,6 @@ export function ArticleCardProof() {
                 <div className="flex justify-start mt-6">
                   <Button
                     variant="default"
-                    size="sm"
                     className="bg-green-500 hover:bg-green-600 text-white"
                     onClick={() => handlePublish(article.id)}
                   >

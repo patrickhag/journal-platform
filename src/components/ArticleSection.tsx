@@ -63,10 +63,12 @@ export function ArticleSection({
               <div className={`flex ${cn('mt-2')}`}>
                 <StatusBadge status={a.articleStatus || 'Submitted'} />
                 {a.proofStatus && (
-                  <button className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-indigo-50 text-indigo-900 hover:bg-indigo-100 transition-colors duration-150 ml-3">
-                    <FileCheck size={16} className="mr-1" />
-                    View Proofs
-                  </button>
+                  <Link href={'/submissions/proof'}>
+                    <button className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-indigo-50 text-indigo-900 hover:bg-indigo-100 transition-colors duration-150 ml-3">
+                      <FileCheck size={16} className="mr-1" />
+                      View Proofs
+                    </button>
+                  </Link>
                 )}
               </div>
             </div>

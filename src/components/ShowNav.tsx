@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import {
   Calendar,
+  FileCog,
   FilePenLine,
   FileText,
   LayoutDashboard,
@@ -84,6 +85,19 @@ export default function ShowNav({ isOpen = false }: { isOpen: boolean }) {
         <span className="flex items-center gap-2">
           <FilePenLine className="h-4 w-4" />
           Proofs
+        </span>
+      </Link>
+      <Link
+        href="/editor/manage"
+        className={cn(
+          pathname.toLowerCase().split('/').includes('manage')
+            ? 'text-gray-700 bg-gray-100 rounded-md px-2.5 py-1.5'
+            : 'text-muted-foreground hover:text-gray-700'
+        )}
+      >
+        <span className="flex items-center gap-2">
+          <FileCog className="h-4 w-4" />
+          Manage
         </span>
       </Link>
     </nav>

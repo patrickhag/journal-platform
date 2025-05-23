@@ -11,6 +11,7 @@ import {
   boolean,
   date,
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   primaryKey,
@@ -152,7 +153,7 @@ export const metadata = pgTable('metadata', {
   }),
 });
 
-export const contributors = pgTable('contributor', {
+export const contributors = pgTable('contributors', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
@@ -224,10 +225,11 @@ export const articleSubmissions = pgTable('article_submissions', {
   proofFileUrl: text('proof_file_url')
     .array()
     .default(sql`'{}'::text[]`),
-  proofStatus: text('proof_status').default('none'),
+  proofStatus: text('proof_status'),
   proofNote: text('proof_note'),
   publishedFile: text('publishedFile'),
   doi: text('doi'),
+  isEditorsPick: boolean('isEditorsPick'),
   createdAt: date('createdAt').defaultNow(),
   updatedAt: date('updatedAt').defaultNow(),
 });
@@ -308,6 +310,32 @@ export const issues = pgTable('issues', {
   status: varchar('status', { length: 50 }).default('DRAFT'),
   createdAt: date('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const metrics = pgTable('metrics', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  views: integer('views').default(0),
+  downloads: integer('downloads').default(0),
+  articleId: text('articleId')
+    .references(() => articleSubmissions.id, { onDelete: 'cascade' })
+    .notNull(),
+  citations: integer('citations').default(0),
+  createdAt: date('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const manuals = pgTable('manuals', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  guidelines: jsonb('guidelines').$type<{ content: string }>(),
+  policies: jsonb('policies').$type<{ privacyPolicy: string }>(),
+  instructionToAuthors: jsonb('instruction_to_authors'),
+  generalSettings: jsonb('general_settings'),
+  aboutUs: jsonb('aboutUs').$type<{ content: string }>(),
+  aimsNscope: jsonb('aimsNscope').$type<{ content: string }>(),
 });
 
 /*** RELATIONS ***/
@@ -413,3 +441,4 @@ export type Users = typeof users.$inferInsert;
 export type TNotifications = typeof notifications.$inferSelect;
 export type Notifications = typeof notifications.$inferInsert;
 export type Issues = typeof issues.$inferInsert;
+export type TManuals = typeof manuals.$inferInsert;

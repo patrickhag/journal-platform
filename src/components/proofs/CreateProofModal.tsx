@@ -35,6 +35,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { PROOF_STATUS } from '@/lib/consts';
+import { RichTextEditor } from '../RichTextEditor';
 
 interface ProofModalProps {
   open: boolean;
@@ -98,10 +99,17 @@ export function CreateProofModal({
                 <FormItem>
                   <FormLabel>Message to Author</FormLabel>
                   <FormControl>
-                    <Textarea
+                    {/* <Textarea
                       className="h-24"
                       placeholder="Add comments, revision requests, or context for the author..."
                       {...field}
+                    /> */}
+                    <RichTextEditor
+                      description={field.value}
+                      onChange={(d) => {
+                        form.setValue('message', d);
+                      }}
+                      placeholder="Add comments, revision requests, or context for the author..."
                     />
                   </FormControl>
                   <FormMessage />

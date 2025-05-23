@@ -7,17 +7,16 @@ import logger from '@/lib/logger';
 import { grabYear } from './formateDate';
 
 export const handleDownload = async (
-  format: 'bibtex' | 'ris',
+  format: 'bibtex' | 'ris' | 'apa',
   articleId: string
 ) => {
-  let articleData;
-
   try {
-    articleData = await db.query.articleSubmissions.findFirst({
+    const articleData = await db.query.articleSubmissions.findFirst({
       columns: {
         id: true,
         updatedAt: true,
         section: true,
+        doi: true,
       },
       with: {
         metadata: {
@@ -36,12 +35,6 @@ export const handleDownload = async (
             orcid: true,
           },
         },
-        files: {
-          columns: {
-            publicId: true,
-            fileType: true,
-          },
-        },
         contributors: {
           columns: {
             name: true,
@@ -49,6 +42,18 @@ export const handleDownload = async (
             affiliation: true,
             orcid: true,
             email: true,
+          },
+        },
+        issue: {
+          columns: {
+            issueNumber: true,
+          },
+          with: {
+            volume: {
+              columns: {
+                volumeNumber: true,
+              },
+            },
           },
         },
       },
@@ -71,6 +76,24 @@ export const handleDownload = async (
         content: risContent,
         filename: `citation-${articleId}.ris`,
       };
+    }
+
+    if (format === 'apa') {
+      const apaContent = generateAPA(articleData);
+
+      try {
+        await navigator.clipboard.writeText(apaContent);
+        return {
+          success: true,
+          content: apaContent,
+        };
+      } catch (clipboardError) {
+        console.error('Failed to copy to clipboard:', clipboardError);
+        return {
+          success: false,
+          error: 'Failed to copy to clipboard',
+        };
+      }
     }
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -106,9 +129,20 @@ function generateRIS(article: any) {
   ER  -`;
 }
 
+function generateAPA(article: any) {
+  const authors = formatAuthors(article.user, article.contributors);
+  const year = grabYear(article.updatedAt);
+  const title = article.metadata.title;
+  const doi = article.doi;
+  const issueNumber = article.issue.issueNumber;
+  const volumeNumber = article.issue.volume.volumeNumber;
+
+  return `${authors}. (${year}). ${title}. Journal of Epidemiology and Public Health, ${volumeNumber}(${issueNumber}) ${doi}`;
+}
+
 function formatAuthors(mainAuthor: any, contributors: any[]) {
   const authors = [
-    `${mainAuthor.lastName || ''}, ${mainAuthor.firstName || ''}`,
+    `${mainAuthor.firstName || ''}, ${mainAuthor.lastName || ''}`,
     ...contributors.map(
       (c) =>
         `${c.name.split(' ').slice(-1)}, ${c.name.split(' ').slice(0, -1).join(' ')}`

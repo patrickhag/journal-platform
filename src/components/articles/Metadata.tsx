@@ -14,7 +14,7 @@ export default async function Metadata({
   articleId,
 }: {
   articleId: string;
-  role: USER_ROLE;
+  role: string;
 }) {
   const meta = await db.query.metadata.findFirst({
     columns: {
@@ -73,7 +73,7 @@ export default async function Metadata({
             />
           )}
         </div>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-2">
           <div className="grid gap-8 sm:grid-cols-2">
             <div>
               <div className="mb-4">
@@ -87,19 +87,6 @@ export default async function Metadata({
                   Subtitle of the manuscript
                 </h3>
                 <p className="mt-1">{meta.subtitle}</p>
-              </div>
-              <div className="mb-4">
-                <h3 className="text-sm font-medium text-muted-foreground">
-                  Abstract
-                </h3>
-                <div
-                  className="mt-1"
-                  dangerouslySetInnerHTML={{
-                    __html: meta.abstract
-                      .replace(/<pre>/g, '<p>')
-                      .replace(/<\/pre>/g, '</p>'),
-                  }}
-                />
               </div>
               <div className="mb-4">
                 <h3 className="text-sm font-medium text-muted-foreground text-gray-600">
@@ -142,12 +129,23 @@ export default async function Metadata({
               </div>
             </div>
           </div>
+          <div className="mb-4">
+            <h3 className="text-sm font-medium text-muted-foreground">
+              Abstract
+            </h3>
+            <div
+              className="mt-1"
+              dangerouslySetInnerHTML={{
+                __html: meta.abstract,
+              }}
+            ></div>
+          </div>
         </CardContent>
       </Card>
       {foundContributors.length > 0 && (
         <Card className="my-3">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold">
+            <CardTitle className="text-lg font-semibold text-[#1a237e]">
               Contributors
             </CardTitle>
           </CardHeader>

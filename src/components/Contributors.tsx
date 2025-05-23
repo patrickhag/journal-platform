@@ -39,30 +39,6 @@ export const Contributors = () => {
             <td className="py-2 pr-4">{c.name}</td>
             <td className="py-2 pr-4">{c.role}</td>
             <td className="py-2 pr-4">{c.email}</td>
-            <td className="py-2 pr-4">
-              <Button
-                variant={'outline'}
-                onClick={() => {
-                  const contributors = validation.data.contributors.filter(
-                    (contributor) => contributor.email !== contributor.email
-                  );
-                  const serializedData = serialize({
-                    data: { contributors },
-                    schema: z.object({
-                      contributors: z.array(contributorFormSchema),
-                    }),
-                  });
-                  const params = new URLSearchParams(searchParams.toString());
-
-                  params.delete('contributors');
-                  router.replace(
-                    `?${params.toString()}&${serializedData.toString()}`
-                  );
-                }}
-              >
-                Delete
-              </Button>
-            </td>
           </tr>
         ))}
       </tbody>

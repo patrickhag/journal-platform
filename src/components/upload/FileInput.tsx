@@ -13,6 +13,7 @@ import {
 import { CloudUpload } from 'lucide-react';
 import { FileInput, FileUploader } from '@/components/ui/file-upload';
 import { useUploadArticleFiles } from '@/hooks/useUploadFiles';
+import Loader from '../Loader';
 
 export function DragAndDropFileInput() {
   const [files, setFiles] = useState<File[] | null>(null);
@@ -77,11 +78,13 @@ export function DragAndDropFileInput() {
               className="bg-blue-500 hover:bg-blue-700 text-white"
               disabled={isPending}
             >
-              {isPending
-                ? 'Uploading...'
-                : files
-                  ? `Upload ${files.length} file(s)`
-                  : 'Upload'}
+              {isPending ? (
+                <Loader text="Uploading..." />
+              ) : files ? (
+                `Upload ${files.length} file(s)`
+              ) : (
+                'Upload'
+              )}
             </Button>
           </div>
         )}

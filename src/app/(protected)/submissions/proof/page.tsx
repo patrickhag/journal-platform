@@ -3,7 +3,7 @@
 import { Card, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useSession } from 'next-auth/react';
-import { useGetProof, useGetProofs } from '@/hooks/useProofs';
+import { useGetProof } from '@/hooks/useProofs';
 import {
   DropdownMenu,
   DropdownMenuItem,
@@ -86,9 +86,14 @@ function ProofPage() {
                         <p className="text-sm font-medium text-foreground mb-1">
                           Comments
                         </p>
-                        <p className="text-sm text-muted-foreground">
-                          {article.proofNote}
-                        </p>
+                        <div
+                          className="mt-1 text-muted-foreground"
+                          dangerouslySetInnerHTML={{
+                            __html: article.proofNote
+                              .replace(/<pre>/g, '<p>')
+                              .replace(/<\/pre>/g, '</p>'),
+                          }}
+                        />
                       </div>
                     )}
                   </CardDescription>

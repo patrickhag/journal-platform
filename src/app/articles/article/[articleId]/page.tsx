@@ -4,8 +4,10 @@ import { articleSubmissions } from '@/db/schema';
 import { db } from '@/db/db';
 import { eq } from 'drizzle-orm';
 import logger from '@/lib/logger';
+// import fs from 'fs';
+// import pdf from 'pdf-parse';
 
-type PageProps = { articleId: string[] };
+type PageProps = { articleId: string };
 
 export async function generateMetadata({
   params,
@@ -13,8 +15,7 @@ export async function generateMetadata({
   params: Promise<PageProps>;
 }) {
   try {
-    const parameters = await params;
-    const [articleId] = parameters.articleId;
+    const { articleId } = await params;
     const articleData = await db.query.articleSubmissions.findFirst({
       with: {
         metadata: {
@@ -51,10 +52,11 @@ export async function generateMetadata({
 export default async function ArticlePage({
   params,
 }: {
-  params: Promise<{ articleId: string[] }>;
+  params: Promise<{ articleId: string }>;
 }) {
-  const param = await params;
-  const [articleId] = param.articleId;
+  const { articleId } = await params;
+
+  console.log('articleId>>>', articleId);
   let articleData;
 
   try {
@@ -63,6 +65,7 @@ export default async function ArticlePage({
         id: true,
         updatedAt: true,
         section: true,
+        publishedFile: true,
       },
       with: {
         metadata: {
@@ -79,12 +82,6 @@ export default async function ArticlePage({
             affiliation: true,
             email: true,
             orcid: true,
-          },
-        },
-        files: {
-          columns: {
-            publicId: true,
-            fileType: true,
           },
         },
         contributors: {
@@ -107,8 +104,6 @@ export default async function ArticlePage({
     }
   }
 
-  console.log('articleData>>>', articleData);
-
   return (
     <main className="px-8 py-6">
       <section className="flex flex-col gap-8">
@@ -118,7 +113,7 @@ export default async function ArticlePage({
               <Abstract articleData={articleData} />
               <LeftSideBar
                 isAbstract={true}
-                articleFiles={articleData.files}
+                articleFile={articleData.publishedFile}
                 articleId={articleId}
               />
             </>

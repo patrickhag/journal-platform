@@ -74,6 +74,7 @@ export async function PATCH(
         publishedFile: toBePublishedFile,
         proofStatus: 'Finalized',
         articleStatus: 'PUBLISHED',
+        updatedAt: new Date().toISOString(),
         doi: '10.5678/jaeph.2025.00101',
       })
       .where(eq(articleSubmissions.id, articleId))

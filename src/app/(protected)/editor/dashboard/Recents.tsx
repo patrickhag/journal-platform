@@ -62,6 +62,7 @@ export default async function RecentArticles() {
                 <TableCell>{submission.title}</TableCell>
                 <TableCell>
                   {(submission.ownerFirstName as string) +
+                    ' ' +
                     submission.ownerLastName}
                 </TableCell>
                 <TableCell>

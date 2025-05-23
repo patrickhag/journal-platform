@@ -50,17 +50,13 @@ export default function EditMetadata({
     },
   });
 
-  const {
-    mutate: updateMetadata,
-    isPending,
-    isSuccess,
-  } = useUpdateMetadata(setIsOpen);
+  const { mutate: updateMetadata, isPending } = useUpdateMetadata(setIsOpen);
 
   const onSubmit = (data: z.infer<typeof metadataSchema>) => {
-    updateMetadata({ id: articleId, data });
-    if (isSuccess) {
-      router.refresh();
-    }
+    updateMetadata(
+      { id: articleId, data },
+      { onSettled: () => router.refresh() }
+    );
   };
 
   return (

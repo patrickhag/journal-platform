@@ -1,16 +1,23 @@
 'use client';
 
-import { EditorContent, useEditor } from '@tiptap/react';
+import { EditorContent, useEditor, EditorContext } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { ToolBar } from './ToolBar';
 import Highlight from '@tiptap/extension-highlight';
+import Placeholder from '@tiptap/extension-placeholder';
+import Link from './tiptap-extension/link-extension';
+
+import '@/components/tiptap-node/paragraph-node/paragraph-node.scss';
+import { LinkPopover } from './tiptap-ui/link-popover';
 
 export function RichTextEditor({
   description,
   onChange,
+  placeholder,
 }: {
-  description: string;
+  description?: string;
   onChange?: (value: string) => void;
+  placeholder?: string;
 }) {
   const editor = useEditor({
     extensions: [
@@ -26,9 +33,14 @@ export function RichTextEditor({
           },
         },
       }),
+      Placeholder.configure({
+        placeholder: placeholder,
+      }),
       Highlight,
+      Link.configure({ openOnClick: false }),
     ],
     content: description,
+    immediatelyRender: false,
     editorProps: {
       attributes: {
         class: 'min-h-[156px] border rounded-md py-2 px-3 text-sm',
@@ -41,9 +53,15 @@ export function RichTextEditor({
   });
 
   return (
-    <div>
-      <ToolBar editor={editor} />
+    <EditorContext.Provider value={{ editor }}>
+      <div
+        className="tiptap-button-group border rounded-md p-1 mb-1 space-x-2 z-50"
+        data-orientation="horizontal"
+      >
+        <ToolBar editor={editor} />
+        <LinkPopover />
+      </div>
       <EditorContent editor={editor} />
-    </div>
+    </EditorContext.Provider>
   );
 }

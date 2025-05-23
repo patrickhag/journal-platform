@@ -45,7 +45,7 @@ export async function GET(
         },
       },
       where: and(
-        eq(articleSubmissions.articleStatus, 'ACCEPTED'),
+        eq(articleSubmissions.articleStatus, 'PUBLISHED'),
         eq(articleSubmissions.userId, userId)
       ),
     });

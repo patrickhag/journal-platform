@@ -33,7 +33,6 @@ export async function GET(req: NextRequest) {
           columns: {
             publicId: true,
           },
-          where: eq(files.fileType, 'Article Text'),
         },
       },
       where: or(
