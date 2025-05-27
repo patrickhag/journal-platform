@@ -1,34 +1,43 @@
-import { db, users } from '@/db/schema';
-import { UsersTable } from './UserTable';
+'use client';
+
+import Loader from '@/components/Loader';
+import { UserTable } from './UserTable';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from '@/components/ui/card';
+import { useGetUsers } from '@/hooks/useUsers';
+import { Users } from 'lucide-react';
 
-const UsersPage = async () => {
-  const userList = await db.select().from(users);
+const UsersPage = () => {
+  const { data, isPending } = useGetUsers();
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-7">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Users</CardTitle>
+          <div className="flex items-center gap-2">
+            <Users className="h-6 w-6 text-blue-800" />
+            <h2 className="text-2xl font-bold text-gray-900">
+              Users Management
+            </h2>
+          </div>
           <CardDescription>
-            Manage users and get to deactivate accounts
+            View all users, assign roles, and manage account statuses
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <UsersTable
-            data={userList}
-            role="CHIEF_EDITOR"
-            requiredPermissions={['PUBLISH_ARTICLES']}
-          />
+          {isPending ? (
+            <Loader text="Loading..." />
+          ) : (
+            <UserTable data={data.users} />
+          )}
         </CardContent>
       </Card>
     </div>
   );
 };
+
 export default UsersPage;

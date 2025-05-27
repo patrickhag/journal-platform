@@ -3,6 +3,7 @@ import { db } from '@/db/db';
 import { manuals } from '@/db/schema';
 
 export async function POST(req: NextRequest) {
+  const body = await req.json();
   const {
     guidelines,
     policies,
@@ -10,9 +11,8 @@ export async function POST(req: NextRequest) {
     generalSettings,
     aboutUs,
     aimsNscope,
-  } = await req.json();
-
-  console.log('aimsNscope>>>', aimsNscope);
+    termsNconditions,
+  } = body;
 
   try {
     const existingManual = await db.select().from(manuals).limit(1);
@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
         policies,
         aboutUs,
         aimsNscope,
+        termsNconditions,
       });
 
       return NextResponse.json(
@@ -41,6 +42,7 @@ export async function POST(req: NextRequest) {
           policies,
           aboutUs,
           aimsNscope,
+          termsNconditions,
         })
         .returning();
 

@@ -16,12 +16,14 @@ import {
   FileQuestion,
   BookMarked,
   Goal,
+  ShieldAlert,
 } from 'lucide-react';
 import EditorsPick from '../components/EditorsPick';
 import Guidelines from '../components/Guidelines';
 import AboutUs from '../components/AboutUs';
 import Policies from '../components/Policies';
 import AimsNScope from '../components/AimsNScope';
+import TermsAndConditions from '../components/TermsNConditions';
 
 function ManagePage() {
   return (
@@ -59,16 +61,24 @@ function ManagePage() {
               <Goal className="h-4 w-4" />
               Aims & Scope
             </TabsTrigger>
+            <TabsTrigger
+              value="termsNconditions"
+              className="flex items-center gap-2"
+            >
+              <ShieldAlert className="h-4 w-4" />
+              Terms and conditions
+            </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               Settings
             </TabsTrigger>
           </TabsList>
+          {/* Tab Components */}
           <EditorsPick />
           <Guidelines />
           <AboutUs />
-
           <Policies />
+          <TermsAndConditions />
           <AimsNScope />
           <TabsContent value="settings" className="space-y-6">
             <Card>

@@ -9,17 +9,12 @@ export default async function GuidelinesPage() {
 
   return (
     <div>
-      {/* Header */}
       <Header />
 
-      {/* Content */}
       <div className="px-4 md:px-8 py-6">
-        <div className="flex flex-col lg:flex-row gap-12 px-4 py-6">
-          {/* Sidebar */}
+        <div className="flex flex-col lg:flex-row gap-12 px-4 py-6 mb-9">
           <GuidelineSidebar manuals={manuals || {}} />
-          {/* Main Section */}
           <div className="lg:w-10/12">
-            {/* Render each manual section if it exists */}
             {manuals?.guidelines && (
               <GuidelineSection
                 id="guidelines"
@@ -74,12 +69,24 @@ export default async function GuidelinesPage() {
                 />
               </GuidelineSection>
             )}
+            {manuals?.termsNconditions && (
+              <GuidelineSection
+                id="termsNconditions"
+                title="Terms and conditions"
+                description="Terms and conditions of the journal"
+              >
+                <div
+                  className="prose max-w-none"
+                  dangerouslySetInnerHTML={{
+                    __html: manuals?.termsNconditions.content,
+                  }}
+                />
+              </GuidelineSection>
+            )}
           </div>
         </div>
+        <Footer />
       </div>
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }

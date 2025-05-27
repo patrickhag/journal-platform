@@ -18,6 +18,8 @@ const formatTitle = (key: string) => {
       return 'About Us';
     case 'aimsNscope':
       return 'Aims and Scope';
+    case 'termsNconditions':
+      return 'Terms and conditions';
     default:
       return key;
   }
@@ -60,7 +62,7 @@ const LeftSideBar: React.FC<Props> = ({ manuals }) => {
     };
 
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial run
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, [sections]);
 

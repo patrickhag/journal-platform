@@ -147,7 +147,13 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
           </CardContent>
         </Card>
         <AcceptOrRejectComponent
-          role={currentUserRole ?? 'ADMIN'}
+          role={
+            (currentUserRole ?? 'ADMIN') as
+              | 'NORMAL_USER'
+              | 'CHIEF_EDITOR'
+              | 'ADMIN'
+              | 'REVIEWER'
+          }
           requiredPermissions={['ACCEPT_ARTICLE', 'REJECT_ARTICLE']}
           fallback=""
           articleId={articleId}

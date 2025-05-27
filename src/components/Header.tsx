@@ -24,7 +24,7 @@ export default async function Header() {
       <div className="flex items-center justify-between h-full mx-3">
         <HeaderElement
           notifications={notificationsData}
-          role={role!}
+          role={role as 'NORMAL_USER' | 'CHIEF_EDITOR' | 'ADMIN' | 'REVIEWER'}
           name={name}
         />
       </div>

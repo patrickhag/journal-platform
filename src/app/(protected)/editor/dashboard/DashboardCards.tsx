@@ -13,7 +13,7 @@ export function DashboardCards() {
 
   const { data, isPending: isUserPending } = useGetUsers();
 
-  const allUsers = data?.allUsers ?? 0;
+  const allUsers = data?.users.length ?? 0;
 
   return (
     <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-3">

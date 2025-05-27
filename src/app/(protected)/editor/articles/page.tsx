@@ -10,6 +10,7 @@ import {
 import { db } from '@/db/db';
 import { articleSubmissions } from '@/db/schema';
 import { desc } from 'drizzle-orm';
+import { FileText } from 'lucide-react';
 
 export default async function ArticlesPage() {
   const articles = await db.query.articleSubmissions.findMany({
@@ -40,7 +41,12 @@ export default async function ArticlesPage() {
       <div>
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl font-bold">Articles</CardTitle>
+            <div className="flex items-center gap-3">
+              <FileText className="h-6 w-6 text-blue-800" />
+              <h2 className="text-2xl font-bold text-gray-900">
+                Articles Management
+              </h2>
+            </div>
             <CardDescription className="mb-6">
               Manage articles and view their statuses
             </CardDescription>

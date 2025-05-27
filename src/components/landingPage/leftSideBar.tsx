@@ -230,7 +230,7 @@ const LeftSideBar = ({
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-600">
+              <a href="/manuals/#guidelines" className="hover:text-blue-600">
                 Submission guidelines
               </a>
             </li>

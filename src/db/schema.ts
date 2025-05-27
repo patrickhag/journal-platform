@@ -331,11 +331,14 @@ export const manuals = pgTable('manuals', {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   guidelines: jsonb('guidelines').$type<{ content: string }>(),
-  policies: jsonb('policies').$type<{ privacyPolicy: string }>(),
+  policies: jsonb('policies').$type<{
+    privacyPolicy: string;
+  }>(),
   instructionToAuthors: jsonb('instruction_to_authors'),
   generalSettings: jsonb('general_settings'),
   aboutUs: jsonb('aboutUs').$type<{ content: string }>(),
   aimsNscope: jsonb('aimsNscope').$type<{ content: string }>(),
+  termsNconditions: jsonb('termsNconditions').$type<{ content: string }>(),
 });
 
 /*** RELATIONS ***/

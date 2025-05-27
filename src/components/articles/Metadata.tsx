@@ -2,7 +2,6 @@ import React from 'react';
 import { contributors, metadata } from '@/db/schema';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { eq } from 'drizzle-orm';
-import { USER_ROLE } from '@/lib/roles';
 import { auth } from '@/auth';
 import EditMetadata from './EditMetadata';
 import { db } from '@/db/db';
@@ -94,11 +93,9 @@ export default async function Metadata({
                 </h3>
                 {meta.article?.commentsForEditor ? (
                   <div
-                    className="mt-1"
+                    className="prose max-w-none"
                     dangerouslySetInnerHTML={{
-                      __html: meta.article?.commentsForEditor
-                        .replace(/<pre>/g, '<p>')
-                        .replace(/<\/pre>/g, '</p>'),
+                      __html: meta.article?.commentsForEditor,
                     }}
                   />
                 ) : (
@@ -134,7 +131,7 @@ export default async function Metadata({
               Abstract
             </h3>
             <div
-              className="mt-1"
+              className="prose max-w-none"
               dangerouslySetInnerHTML={{
                 __html: meta.abstract,
               }}

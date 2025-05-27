@@ -55,7 +55,7 @@ const Footer = () => {
             <h4 className="font-semibold text-lg text-gray-800">About JAEPH</h4>
             <ul className="text-sm mt-2 space-y-1">
               <li>
-                <a href="#" className="hover:text-blue-600">
+                <a href="/manuals#aboutUs" className="hover:text-blue-600">
                   About us
                 </a>
               </li>
@@ -106,9 +106,23 @@ const Footer = () => {
         </div>
 
         {/* Middle Section */}
-        <div className="mt-8 text-center text-sm text-gray-600 ">
-          By using this website, you agree to our terms and conditions, Privacy
-          statement, and cookies policy.
+        <div className="mt-8 text-center text-sm text-gray-600">
+          By using this website, you agree to our{' '}
+          <a
+            href="/manuals#termsNconditions"
+            className="hover:text-blue-600 hover:underline"
+          >
+            terms and conditions
+          </a>
+          ,{' '}
+          <a href="/privacy" className="hover:text-blue-600 hover:underline">
+            Privacy statement
+          </a>
+          , and{' '}
+          <a href="/cookies" className="hover:text-blue-600 hover:underline">
+            cookies policy
+          </a>
+          .
         </div>
         <hr className="mt-6" />
         {/* Bottom Section */}

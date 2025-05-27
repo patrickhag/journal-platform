@@ -64,7 +64,7 @@ export const useAssignIssues = () => {
         ? error.response?.data.message
         : error.message;
 
-      toast.error(message || "Failed to modify article's issues");
+      toast.error(message || "Failed to modify users's status");
     },
   });
 };

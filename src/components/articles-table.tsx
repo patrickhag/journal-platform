@@ -35,6 +35,12 @@ import {
   ArrowUpDown,
   FolderPlus,
   FileHeart,
+  ChevronDown,
+  FileText,
+  CheckCircle,
+  RotateCcw,
+  Search,
+  Eye,
 } from 'lucide-react';
 import { StatusBadge } from './status-badge';
 import Link from 'next/link';
@@ -71,6 +77,7 @@ const columns: ColumnDef<Article>[] = [
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
+        className="border-2 border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
       />
     ),
     cell: ({ row }) => (
@@ -78,6 +85,7 @@ const columns: ColumnDef<Article>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
+        className="border-2 border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
       />
     ),
     enableSorting: false,
@@ -87,44 +95,122 @@ const columns: ColumnDef<Article>[] = [
     accessorKey: 'title',
     header: ({ column }) => (
       <div
-        className="flex items-center"
+        className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
         Title
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </div>
     ),
+    cell: ({ row }) => (
+      <div className="max-w-md">
+        <div
+          className="font-semibold text-gray-900 truncate"
+          title={row.getValue('title')}
+        >
+          {row.getValue('title') || (
+            <span className="text-red-600 text-sm italic">Not specified</span>
+          )}
+        </div>
+      </div>
+    ),
   },
   {
     accessorKey: 'section',
-    header: 'Section',
+    header: ({ column }) => (
+      <div
+        className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Section
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="text-gray-700 font-medium">
+        {row.getValue('section') || (
+          <span className="text-red-600 text-sm italic">Not specified</span>
+        )}
+      </div>
+    ),
   },
   {
     accessorKey: 'status',
-    header: 'Status',
+    header: ({ column }) => (
+      <div
+        className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Status
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </div>
+    ),
     cell: ({ row }) => <StatusBadge status={row.getValue('status')} />,
   },
   {
     accessorKey: 'owner',
-    header: 'Owner',
+    header: ({ column }) => (
+      <div
+        className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Owner
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="text-gray-700">
+        {row.getValue('owner') || (
+          <span className="text-red-600 text-sm italic">Not specified</span>
+        )}
+      </div>
+    ),
   },
   {
     accessorKey: 'createdAt',
     header: ({ column }) => (
       <div
-        className="flex items-center"
+        className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
-        Created at
+        Created At
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </div>
     ),
+    cell: ({ row }) => {
+      const createdDate = row.getValue('createdAt');
+      if (!createdDate) {
+        return (
+          <span className="text-red-600 text-sm italic">Not specified</span>
+        );
+      }
+      const formattedDate = new Date(createdDate as string).toLocaleDateString(
+        'en-US',
+        {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        }
+      );
+      return <div className="text-gray-600 text-sm">{formattedDate}</div>;
+    },
   },
   {
     id: 'actions',
+    header: 'Actions',
     cell: ({ row }) => (
-      <Button variant={'outline'}>
-        <Link href={'/articles/' + String(row.original.id)}>View</Link>
+      <Button
+        variant="outline"
+        size="sm"
+        className="hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-colors"
+      >
+        <Link
+          href={'/articles/' + String(row.original.id)}
+          className="flex items-center gap-2"
+        >
+          <Eye className="h-4 w-4" />
+          View
+        </Link>
       </Button>
     ),
   },
@@ -181,106 +267,149 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
     assignIssuesMutation({ articleIds: selectedRowIds, issueId });
   };
 
+  const selectedCount = selectedRows.length;
+  const hasSelected = selectedCount > 0;
+
   return (
-    <div className="space-y-4">
-      {/* Search and Assign Button Row */}
-      <div className="flex items-center gap-4">
-        <Input
-          placeholder="Search article..."
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="max-w-sm"
-        />
+    <div className="space-y-6">
+      {/* Controls Section */}
+      <div className="bg-gray-50 rounded-lg border p-4 space-y-4">
+        <div className="flex justify-between items-center">
+          {/* Search and Filter Row */}
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="relative flex-1 max-w-sm">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Search articles by title, section, or owner..."
+                value={globalFilter}
+                onChange={(e) => setGlobalFilter(e.target.value)}
+                className="pl-10 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
 
-        {/* Filter by Status Dropdown */}
-        <Select
-          value={
-            (columnFilters.find((filter) => filter.id === 'status')
-              ?.value as string) ?? ''
-          }
-          onValueChange={(value) => {
-            setColumnFilters((prev) =>
-              value
-                ? [
-                    ...prev.filter((f) => f.id !== 'status'),
-                    { id: 'status', value },
-                  ]
-                : prev.filter((f) => f.id !== 'status')
-            );
-          }}
-        >
-          <SelectTrigger className="w-[150px]">
-            <SelectValue placeholder="Filter by status" />
-          </SelectTrigger>
-          <SelectContent>
-            {ARTICLE_STATUS.map((article) => (
-              <SelectItem key={article} value={article}>
-                {article}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+            <Select
+              value={
+                (columnFilters.find((filter) => filter.id === 'status')
+                  ?.value as string) ?? ''
+              }
+              onValueChange={(value) => {
+                setColumnFilters((prev) =>
+                  value
+                    ? [
+                        ...prev.filter((f) => f.id !== 'status'),
+                        { id: 'status', value },
+                      ]
+                    : prev.filter((f) => f.id !== 'status')
+                );
+              }}
+            >
+              <SelectTrigger className="w-[180px] bg-white border-gray-200">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                {ARTICLE_STATUS.map((article) => (
+                  <SelectItem key={article} value={article}>
+                    {article}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-        <Button
-          variant="outline"
-          onClick={() => {
-            table.resetColumnFilters();
-            table.toggleAllPageRowsSelected(false);
-          }}
-        >
-          Reset Filters
-        </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                table.resetColumnFilters();
+                table.toggleAllPageRowsSelected(false);
+                setGlobalFilter('');
+              }}
+              className="border-gray-300 text-gray-700 hover:bg-gray-100"
+            >
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Reset All
+            </Button>
+          </div>
 
-        {/* Assign Articles Button */}
-        {table.getIsSomePageRowsSelected() && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                <FolderPlus />
-                {isPending ? <Loader text="Assigning..." /> : 'Assign Issues'}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuSeparator />
-              {issues?.map((issue, index) => (
-                <DropdownMenuItem
-                  key={index}
-                  onClick={() => handleIssueAssertion(issue.id)}
-                >
-                  Issue {issue.issueNumber}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
-        {table.getIsSomePageRowsSelected() && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+          <div className="text-sm text-gray-500">
+            Total articles: {table.getFilteredRowModel().rows.length}
+          </div>
+        </div>
+        {/* Action Buttons Row */}
+
+        {hasSelected && (
+          <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="flex items-center gap-2 text-blue-700">
+              <CheckCircle className="h-4 w-4" />
+              <span className="text-sm font-medium">
+                {selectedCount} article{selectedCount !== 1 ? 's' : ''} selected
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 ml-auto">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={isPending}
+                    className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50"
+                  >
+                    <FolderPlus className="h-4 w-4 mr-2" />
+                    {isPending ? (
+                      <Loader text="Assigning..." />
+                    ) : (
+                      'Assign Issues'
+                    )}
+                    <ChevronDown className="h-4 w-4 ml-2" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-48">
+                  <DropdownMenuSeparator />
+                  {issues?.map((issue, index) => (
+                    <DropdownMenuItem
+                      key={index}
+                      onClick={() => handleIssueAssertion(issue.id)}
+                      className="hover:bg-blue-50"
+                    >
+                      <FileText className="h-4 w-4 mr-2" />
+                      Issue {issue.issueNumber}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
               <Button
                 variant="outline"
+                size="sm"
                 onClick={handlePickArticle}
                 disabled={isPickArticlesMutationPending}
+                className="bg-white border-green-300 text-green-700 hover:bg-green-50"
               >
-                <FileHeart />
+                <FileHeart className="h-4 w-4 mr-2" />
                 {isPickArticlesMutationPending ? (
-                  <Loader text="Loading..." />
+                  <Loader text="Picking..." />
                 ) : (
-                  'Pick article'
+                  'Pick Articles'
                 )}
               </Button>
-            </DropdownMenuTrigger>
-          </DropdownMenu>
+            </div>
+          </div>
         )}
       </div>
 
-      {/* Table */}
-      <div className="rounded-md border">
+      {/* Table Section */}
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-gray-50">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow
+                key={headerGroup.id}
+                className="border-b border-gray-200"
+              >
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    className="font-semibold text-gray-700 py-4 px-6"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -294,14 +423,18 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className="py-5 border-b w-10 h-10"
+                  className={`
+                    hover:bg-gray-50 transition-colors border-b border-gray-100
+                    ${row.getIsSelected() ? 'bg-blue-50 border-blue-200' : ''}
+                    ${index % 2 === 0 ? 'bg-white' : 'bg-gray-25'}
+                  `}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="py-4 px-6">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -314,64 +447,80 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-32 text-center"
                 >
-                  No articles found.
+                  <div className="flex flex-col items-center gap-2 text-gray-500">
+                    <FileText className="h-8 w-8" />
+                    <p className="text-lg font-medium">No articles found</p>
+                    <p className="text-sm">
+                      Try adjusting your search criteria or filters
+                    </p>
+                  </div>
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
-      </div>
 
-      {/* Pagination Controls */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <p className="text-sm font-medium">
-            Total: {table.getFilteredRowModel().rows.length}
-          </p>
-          <div className="flex items-center gap-2">
-            <p className="text-sm font-medium">Rows per page</p>
-            <Select
-              value={`${table.getState().pagination.pageSize}`}
-              onValueChange={(value) => {
-                table.setPageSize(Number(value));
-              }}
-            >
-              <SelectTrigger className="h-8 w-[70px]">
-                <SelectValue
-                  placeholder={table.getState().pagination.pageSize}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {[10, 15, 20, 25, 30].map((pageSize) => (
-                  <SelectItem key={pageSize} value={`${pageSize}`}>
-                    {pageSize}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        {/* Pagination Section */}
+        <div className="flex items-center justify-between p-6 bg-gray-50 border-t border-gray-200">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-gray-700">
+                Showing {table.getRowModel().rows.length} of{' '}
+                {table.getFilteredRowModel().rows.length} articles
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-gray-700">
+                Rows per page:
+              </span>
+              <Select
+                value={`${table.getState().pagination.pageSize}`}
+                onValueChange={(value) => {
+                  table.setPageSize(Number(value));
+                }}
+              >
+                <SelectTrigger className="h-8 w-[70px] bg-white border-gray-300">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[10, 15, 20, 25, 30].map((pageSize) => (
+                    <SelectItem key={pageSize} value={`${pageSize}`}>
+                      {pageSize}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Prev
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+              className="border-gray-300 text-gray-700 hover:bg-gray-100"
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
+            </Button>
+            <div className="px-3 py-1 text-sm text-gray-600 bg-white border border-gray-300 rounded">
+              Page {table.getState().pagination.pageIndex + 1} of{' '}
+              {table.getPageCount()}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+              className="border-gray-300 text-gray-700 hover:bg-gray-100"
+            >
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

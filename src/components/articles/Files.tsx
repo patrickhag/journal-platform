@@ -1,4 +1,4 @@
-import { articleSubmissions, files, reviewAssignments } from '@/db/schema';
+import { files, reviewAssignments } from '@/db/schema';
 import { db } from '@/db/db';
 import { Button } from '../ui/button';
 import { and, eq } from 'drizzle-orm';
@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { FileText, EyeIcon } from 'lucide-react';
 import ReviewModal from './Review';
-import { USER_ROLES } from '@/lib/roles';
 import withPermissions from '../WithPermission';
 
 async function Files({
@@ -31,13 +30,6 @@ async function Files({
         eq(reviewAssignments.userId, userId)
       ),
     });
-
-  const isArticlePublished = await db.query.articleSubmissions.findFirst({
-    columns: {
-      articleStatus: true,
-    },
-    where: eq(articleSubmissions.id, articleId),
-  });
 
   return (
     <>
@@ -77,7 +69,13 @@ async function Files({
                 <div className="flex space-x-1">
                   <UlterFile
                     requiredPermissions={['ADD_REVIEW']}
-                    role={role}
+                    role={
+                      role as
+                        | 'NORMAL_USER'
+                        | 'CHIEF_EDITOR'
+                        | 'ADMIN'
+                        | 'REVIEWER'
+                    }
                     fallback={<></>}
                   />
                 </div>

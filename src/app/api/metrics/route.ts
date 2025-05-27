@@ -1,8 +1,7 @@
 import { db } from '@/db/db';
 import { metrics } from '@/db/schema';
 import { NextRequest, NextResponse } from 'next/server';
-import { sql, eq, gte, lte, and } from 'drizzle-orm';
-import { subMonths, subYears, startOfMonth, endOfMonth } from 'date-fns';
+import { sql, eq } from 'drizzle-orm';
 import { auth } from '@/auth';
 
 export async function POST(req: NextRequest) {
@@ -68,15 +67,15 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(res: NextResponse, req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
     const session = await auth();
 
-    // if (
-    //   !(session?.user.role === 'ADMIN' || session?.user.role === 'CHIEF_EDITOR')
-    // ) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
+    if (
+      !(session?.user.role === 'ADMIN' || session?.user.role === 'CHIEF_EDITOR')
+    ) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const currentData = await db.query.metrics.findMany();
 
