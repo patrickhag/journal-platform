@@ -206,7 +206,7 @@ export default function NewContibutorForm({
                       <FormItem>
                         <FormLabel>Homepage</FormLabel>
                         <FormControl>
-                          <Input placeholder="https://..." {...field} />
+                          <Input placeholder="Website page" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

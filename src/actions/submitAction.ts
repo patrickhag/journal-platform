@@ -35,20 +35,23 @@ export async function submitAction(_: unknown, formData: FormData) {
   const metadataValidations = JSON.parse(
     data.metadataValidations.toString()
   ) as z.infer<typeof metadataSchema>;
+
   const reviewerValidations = JSON.parse(
     data.reviewerValidations.toString()
   ) as z.infer<typeof reviewerSchema>[];
+
   const articleSubmitionValidations = JSON.parse(
     data.articleSubmitionValidations.toString()
   ) as z.infer<typeof articleSubmitionSchema>;
+
   const filesValidations = JSON.parse(
     data.filesValidations.toString()
   ) as z.infer<typeof fileSchema>[];
+
   const contributorValidations = JSON.parse(
     data.contributorValidations.toString()
   ) as z.infer<typeof contributorFormSchema>[];
 
-  const session = await auth();
   let isError = false;
 
   try {

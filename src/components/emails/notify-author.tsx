@@ -42,7 +42,7 @@ const ReviewSubmittedEmailTemplate = ({
           </Text>
 
           <a
-            href={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/articles/${articleLink}`}
+            href={`${process.env.NEXT_PUBLIC_URL}/articles/${articleLink}`}
             className="inline-block my-4 bg-blue-600 text-white font-semibold px-5 py-2 rounded-md hover:bg-blue-700 transition"
             target="_blank"
             rel="noopener noreferrer"

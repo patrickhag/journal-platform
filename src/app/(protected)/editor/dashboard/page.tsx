@@ -1,6 +1,6 @@
-import { DashboardCards } from './dashboard/DashboardCards';
-import RecentArticles from './dashboard/Recents';
-import SummaryCard from './dashboard/SummaryCard';
+import { DashboardCards } from './DashboardCards';
+import RecentArticles from './Recents';
+import SummaryCard from './SummaryCard';
 
 export default function Dashboard() {
   return (

@@ -1,4 +1,5 @@
 'use client';
+
 import { ParsedUrlQueryInput } from 'querystring';
 import { cn } from '@/lib/utils';
 import {
@@ -94,10 +95,7 @@ export const Paginator: FC<
       <div className="flex justify-between gap-4 items-center">
         {backLink && (
           <Button variant={'outline'}>
-            <Link
-              href={query ? { pathname: backLink, query } : backLink}
-              // className="px-4 py-1 ring-2 ring-gray-100 bg-white rounded-md"
-            >
+            <Link href={query ? { pathname: backLink, query } : backLink}>
               Go back
             </Link>
           </Button>

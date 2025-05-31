@@ -40,9 +40,9 @@ export default async function Reviewer({
     .from(metadata)
     .where(eq(metadata.articleId, article))
     .limit(1);
+
   const session = await auth();
   if (!session?.user?.id) return null;
-  // get the user role from db
 
   const hasAcceptedInvitation = await db.query.reviewAssignments.findFirst({
     columns: {
@@ -71,11 +71,9 @@ export default async function Reviewer({
         </h3>
         <span className="text-center text-green-900 bg-slate-100 px-2 py-1 rounded-md">
           Invitation{' '}
-          {typeof hasAcceptedInvitation === 'object'
-            ? hasAcceptedInvitation.status === 'Accepted'
-              ? 'accepted'
-              : 'rejected'
-            : 'Pending'}{' '}
+          {hasAcceptedInvitation?.status === 'INVITED'
+            ? 'Pending'
+            : hasAcceptedInvitation?.status}{' '}
         </span>
       </div>
 
@@ -134,7 +132,3 @@ export default async function Reviewer({
     </>
   );
 }
-
-// const InviteReviewer = () => {
-//   return <div>InviteReviewer</div>;
-// };

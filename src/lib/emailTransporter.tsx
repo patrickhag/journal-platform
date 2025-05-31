@@ -128,7 +128,7 @@ export const sendVerifyToken = async ({
 }) => {
   const emailHtml = await render(
     <SendVerifyEmail
-      link={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/verify-user?id=${token}`}
+      link={`${process.env.NEXT_PUBLIC_URL}/api/verify-user?id=${token}`}
     />
   );
   const options = {

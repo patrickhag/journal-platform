@@ -62,15 +62,16 @@ export default async function Metadata({
               />
             </div>
           </CardHeader>
-          {userId === meta.userId && (
-            <EditMetadata
-              meta={{
-                ...meta,
-                subtitle: meta.subtitle ?? '',
-              }}
-              articleId={articleId}
-            />
-          )}
+          {userId === meta.userId &&
+            meta.article?.articleStatus !== 'PUBLISHED' && (
+              <EditMetadata
+                meta={{
+                  ...meta,
+                  subtitle: meta.subtitle ?? '',
+                }}
+                articleId={articleId}
+              />
+            )}
         </div>
         <CardContent className="space-y-2">
           <div className="grid gap-8 sm:grid-cols-2">
@@ -85,7 +86,7 @@ export default async function Metadata({
                 <h3 className="text-sm font-medium text-muted-foreground">
                   Subtitle of the manuscript
                 </h3>
-                <p className="mt-1">{meta.subtitle}</p>
+                <p className="mt-1">{meta.subtitle || 'Not provided'}</p>
               </div>
               <div className="mb-4">
                 <h3 className="text-sm font-medium text-muted-foreground text-gray-600">

@@ -121,7 +121,7 @@ export const files = pgTable('files', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  publicId: text('publicId').notNull().unique(),
+  publicId: text('publicId').notNull(),
   resourceType: text('resourceType').notNull(),
   originalName: text('originalName').notNull(),
   fileType: text('fileType'),

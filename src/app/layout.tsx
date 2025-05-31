@@ -17,7 +17,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_FRONTEND_URL || ''),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_URL || ''),
   keywords: [
     'Journal of African Epidemiology and Public Health',
     'African Epidemiology',

@@ -21,7 +21,6 @@ export async function reachOut(_: unknown, formData: FormData) {
 
   if (session.user.role !== 'CHIEF_EDITOR') return;
 
-  // Extract email, reviewer name and date
   const toEmail = formData.get('toEmail')?.toString() || '';
   const reviewer = formData.get('reviewer')?.toString() || '';
   const dueDate = formData.get('dueDate')?.toString() || '';
@@ -55,7 +54,6 @@ export async function reachOut(_: unknown, formData: FormData) {
 
   let userId;
   if (existingUser.length === 0) {
-    // Generate cryptic password
     const password = `@123${firstName}`;
 
     // Insert new user

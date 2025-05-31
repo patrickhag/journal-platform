@@ -9,14 +9,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .where(eq(articleSubmissions.articleStatus, 'Published'));
 
   const articlesUrls = articles.map((article) => ({
-    url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/articles/${article.id}`,
+    url: `${process.env.NEXT_PUBLIC_URL}/articles/${article.id}`,
     lastModified: article.createdAt ? new Date(article.createdAt) : new Date(),
     priority: 1,
   }));
 
   return [
     {
-      url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}`,
+      url: `${process.env.NEXT_PUBLIC_URL}`,
       lastModified: new Date(),
       priority: 1,
     },

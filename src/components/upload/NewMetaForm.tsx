@@ -146,9 +146,7 @@ export const NewMetaForm: FC<
             control={formm.control}
             render={({ field }) => (
               <FormItem className="mb-4">
-                <FormLabel htmlFor="subtitle">
-                  Subtitle <span className="text-red-500">*</span>
-                </FormLabel>
+                <FormLabel htmlFor="subtitle">Subtitle</FormLabel>
                 <FormControl>
                   <Input placeholder="Subtitle of the journal" {...field} />
                 </FormControl>
@@ -166,6 +164,7 @@ export const NewMetaForm: FC<
                 </FormLabel>
                 <RichTextEditor
                   description={field.value}
+                  placeholder="Please write a brief summary of your article"
                   onChange={(d) => {
                     formm.setValue('abstract', d);
                   }}
@@ -185,7 +184,7 @@ export const NewMetaForm: FC<
         }}
       >
         <div>
-          SEO Tags/Topics <span className="text-red-500">*</span>
+          SEO Tags/Keywords <span className="text-red-500">*</span>
         </div>
         <label
           htmlFor="topics"
@@ -211,7 +210,7 @@ export const NewMetaForm: FC<
 
           <input
             id="topics"
-            placeholder="Add seo tags/topics"
+            placeholder="Add seo tags/keywords"
             name="topic"
             ref={topicRef}
             className="outline-none border-none placeholder-gray-400 text-sm"

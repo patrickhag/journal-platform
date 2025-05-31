@@ -13,10 +13,12 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { ArticleSkeleton } from './articles/ArticleSkeleton';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import withPermissions from './WithPermission';
 
 export default function DashboardPannel() {
   const { data: session } = useSession();
   const currentUser = session?.user;
+  const currentUserRole = session?.user.role;
   const userId = currentUser?.id as string;
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
@@ -78,14 +80,17 @@ export default function DashboardPannel() {
             />
           </div>
 
-          <Button className="mx-5 bg-[#141A26]">
-            <Link href="/articles/new/start">
-              <span className="flex items-center gap-2">
-                <PlusCircle className="w-4 h-4" />
-                New article
-              </span>
-            </Link>
-          </Button>
+          <CreateArticleButtonWithPermission
+            requiredPermissions={['CREATE_ARTICLE']}
+            role={
+              currentUserRole as
+                | 'NORMAL_USER'
+                | 'CHIEF_EDITOR'
+                | 'ADMIN'
+                | 'REVIEWER'
+            }
+            fallback={<></>}
+          />
         </div>
         <TabsContent value="articles" className="mt-6">
           <div className="grid gap-4">
@@ -131,3 +136,16 @@ export default function DashboardPannel() {
     </div>
   );
 }
+
+const CreateArticleButton = () => (
+  <Button className="mx-5 bg-[#141A26]">
+    <Link href="/articles/new/start">
+      <span className="flex items-center gap-2">
+        <PlusCircle className="w-4 h-4" />
+        New article
+      </span>
+    </Link>
+  </Button>
+);
+
+const CreateArticleButtonWithPermission = withPermissions(CreateArticleButton);

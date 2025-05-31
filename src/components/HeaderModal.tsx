@@ -9,9 +9,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { doLogout } from '@/actions/logout';
 
 export default function HeaderModal({ name }: { name: string }) {
   const router = useRouter();
@@ -37,9 +36,7 @@ export default function HeaderModal({ name }: { name: string }) {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
-          onClick={async () => {
-            await doLogout();
-          }}
+          onClick={() => signOut({ redirect: true, callbackUrl: '/' })}
         >
           Log out
         </DropdownMenuItem>
@@ -47,13 +44,3 @@ export default function HeaderModal({ name }: { name: string }) {
     </DropdownMenu>
   );
 }
-
-// const Logout = () => {
-//   return (
-//     <form action={doLogout}>
-//       <button className="bg-blue-400 my-2 text-white p-1 rounded" type="submit">
-//         Logout
-//       </button>
-//     </form>
-//   );
-// };

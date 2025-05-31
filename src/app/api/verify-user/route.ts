@@ -12,7 +12,7 @@ export const GET = async (request: NextRequest) => {
   if (!token) {
     redirect('/login', RedirectType.replace);
   }
-  jwt.verify(token, process.env.AUTH_SECRET!, async (err, decoded) => {
+  jwt.verify(token, process.env.NEXTAUTH_SECRET!, async (err, decoded) => {
     if (err) {
       redirect('/login', RedirectType.replace);
     }

@@ -4,8 +4,6 @@ import { articleSubmissions } from '@/db/schema';
 import { db } from '@/db/db';
 import { eq } from 'drizzle-orm';
 import logger from '@/lib/logger';
-// import fs from 'fs';
-// import pdf from 'pdf-parse';
 
 type PageProps = { articleId: string };
 

@@ -35,6 +35,7 @@ import {
 } from '@/components/ui/form';
 import { reviewSchema, ReviewFormData } from '@/schemas/reviewer';
 import { useCreateReview } from '@/hooks/useReviews';
+import Loader from '../Loader';
 
 export default function ReviewModal() {
   const [open, setOpen] = useState(false);
@@ -160,7 +161,7 @@ export default function ReviewModal() {
                 disabled={isPending}
                 className="bg-indigo-500 hover:bg-indigo-600 w-full"
               >
-                Submit Review
+                {isPending ? <Loader text="Submitting..." /> : 'Submit Review'}
               </Button>
             </div>
           </form>

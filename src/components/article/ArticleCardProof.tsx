@@ -137,11 +137,9 @@ export function ArticleCardProof() {
                   </p>
                   <div className="border border-muted rounded-md p-4 shadow-sm bg-muted/50 w-full">
                     <div
-                      className="mt-1 text-muted-foreground"
+                      className="mt-1 text-muted-foreground prose max-w-none prose-base"
                       dangerouslySetInnerHTML={{
-                        __html: article.proofNote
-                          .replace(/<pre>/g, '<p>')
-                          .replace(/<\/pre>/g, '</p>'),
+                        __html: article.proofNote,
                       }}
                     />
                   </div>

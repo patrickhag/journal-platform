@@ -25,11 +25,13 @@ import {
   useCallback,
 } from 'react';
 import { useForm } from 'react-hook-form';
-import Loader from '@/components/Loader';
 import type { z } from 'zod';
 import { useSearchParams } from 'next/navigation';
 import { authenticate } from '@/actions/authenticate';
 import { EyeClosedIcon, EyeIcon } from 'lucide-react';
+import Loader from '@/components/Loader';
+import { signIn } from 'next-auth/react';
+import { AuthError } from 'next-auth';
 
 export default function Login() {
   const [errorMessage, formAction, isPending] = useActionState(
@@ -73,6 +75,41 @@ export default function Login() {
     },
     [formAction, searchparams]
   );
+
+  // const onSubmit = async (data: z.infer<typeof loginSchema>) => {
+  // setVisible(null);
+  // formAction({
+  //   ...data,
+  //   redirect: searchparams.get('redirect') || undefined,
+  // });
+  //   try {
+  //     const response = await signIn('credentials', {
+  //       redirect: false,
+  //       ...data,
+  //     });
+  //     if (!response?.error) {
+  //       console.log('yo we gotta an error');
+  //     }
+
+  //     if (!response?.ok) {
+  //       throw new Error('Network response was not ok');
+  //     }
+
+  //     console.log('Login Successful', response);
+  //   } catch (error) {
+  //     if (error instanceof AuthError) {
+  //       switch (error.type) {
+  //         case 'CredentialsSignin':
+  //           return error.cause?.err?.message || 'Invalid email or password';
+  //         default:
+  //           return 'Something went wrong during sign-in.';
+  //       }
+  //     }
+  //     return error instanceof Error
+  //       ? error.message
+  //       : 'An unexpected error occurred. Please try again.';
+  //   }
+  // };
 
   return (
     <>

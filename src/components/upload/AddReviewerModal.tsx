@@ -46,6 +46,7 @@ export default function AddReviewerModal({
       expertise: '',
     },
   });
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -65,8 +66,8 @@ export default function AddReviewerModal({
   function handleSubmit(data: ReviewerFormValues) {
     if (autoSave) {
       startTransition(() => {
-        if (articleId?.[0]) {
-          formAction({ ...data, articleId: articleId[0] });
+        if (articleId) {
+          formAction({ ...data, articleId: articleId as string });
         }
       });
       return;

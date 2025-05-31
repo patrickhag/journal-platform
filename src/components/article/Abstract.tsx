@@ -208,7 +208,7 @@ export function Abstract({ articleData }: ArticleDataProps) {
             Abstract
           </h2>
           <div
-            className="text-gray-700"
+            className="prose max-w-none"
             dangerouslySetInnerHTML={{
               __html: sanitizeHtml(articleData?.metadata?.abstract || ''),
             }}

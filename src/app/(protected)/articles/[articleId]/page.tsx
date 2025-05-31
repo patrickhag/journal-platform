@@ -14,10 +14,12 @@ import { cn } from '@/lib/utils';
 import { AcceptOrRejectComponent } from '@/components/articles/AcceptOrReject';
 import { Button } from '@/components/ui/button';
 import { ArrowUpRight } from 'lucide-react';
+import withPermissions from '@/components/WithPermission';
 
 async function page({ params }: { params: Promise<{ articleId: string }> }) {
   const session = await auth();
-  const userId = session?.user?.id ?? null;
+  const userId = session?.user?.id;
+
   const { articleId } = await params;
 
   const article = await db.query.articleSubmissions.findFirst({
@@ -39,13 +41,23 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
       <div className="container mx-auto p-6">
         <div className="flex justify-between">
           <GoBackButton />
-          <Button variant="link" size="sm" className="gap-1 flex items-center">
-            <Link href={`/articles/reviews/${article?.id}`}> Reviews</Link>
-            <ArrowUpRight className="w-2 h-2" />
-          </Button>
+          <ReveiwArticleLinkPermission
+            articleId={articleId}
+            role={
+              currentUserRole as
+                | 'NORMAL_USER'
+                | 'CHIEF_EDITOR'
+                | 'ADMIN'
+                | 'REVIEWER'
+            }
+            requiredPermissions={['VIEW_REVIEW']}
+            fallback={<></>}
+          />
         </div>
+        {/* metadata */}
         <Metadata articleId={articleId} role={currentUserRole!} />
 
+        {/* author info */}
         <Card className="my-3">
           <CardHeader>
             <CardTitle className="text-lg font-semibold text-[#1a237e]">
@@ -112,19 +124,23 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
             </div>
           </CardContent>
         </Card>
+
+        {/* files */}
         <Files articleId={articleId} role={currentUserRole!} userId={userId!} />
-        <Card className="my-3">
-          <CardHeader>
-            <CardTitle className="text-[#1a237e]">Reviewers</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {currentUserRole === 'CHIEF_EDITOR' ? (
-              <>
+
+        {/* reviewers */}
+        {currentUserRole === 'CHIEF_EDITOR' || currentUserRole === 'ADMIN' ? (
+          <>
+            <Card className="my-3">
+              <CardHeader>
+                <CardTitle className="text-[#1a237e]">Reviewers</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
                 <div className="flex justify-between">
                   {reviewrs.length === 0 ? (
                     <>
                       <p className="text-sm">
-                        This user has not proposed any reviewer. Add one
+                        This author has not proposed any reviewer. Add one
                         instead!
                       </p>
                     </>
@@ -133,19 +149,19 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
                   )}
                   <AddReviewerModal typeOfPage="review" autoSave />
                 </div>
-              </>
-            ) : null}
-            <Separator />
-            {reviewrs.map((r, index) => (
-              <Reviewer
-                reviewer={r}
-                index={index}
-                key={r.id}
-                article={article?.id as string}
-              />
-            ))}
-          </CardContent>
-        </Card>
+                <Separator />
+                {reviewrs.map((r, index) => (
+                  <Reviewer
+                    reviewer={r}
+                    index={index}
+                    key={r.id}
+                    article={article?.id as string}
+                  />
+                ))}
+              </CardContent>
+            </Card>
+          </>
+        ) : null}
         <AcceptOrRejectComponent
           role={
             (currentUserRole ?? 'ADMIN') as
@@ -162,5 +178,14 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
     </>
   );
 }
+
+const ReveiwArticleLink = ({ articleId }: { articleId: string }) => (
+  <Button variant="link" size="sm" className="gap-1 flex items-center">
+    <Link href={`/articles/reviews/${articleId}`}> Reviews</Link>
+    <ArrowUpRight className="w-2 h-2" />
+  </Button>
+);
+
+const ReveiwArticleLinkPermission = withPermissions(ReveiwArticleLink);
 
 export default page;

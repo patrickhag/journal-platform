@@ -1,47 +1,63 @@
 'use client';
 
-import { resetPassword } from '@/actions/resetPassword';
-import Loader from '@/components/Loader';
+import { useResetPassword } from '@/hooks/useResetPassword';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
-  CheckCircleIcon,
-  ExclamationCircleIcon,
-  EyeIcon,
-} from '@heroicons/react/24/outline';
-import { EyeClosedIcon } from 'lucide-react';
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { ExclamationCircleIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon, EyeClosedIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import Loader from '@/components/Loader';
+import { loginSchema } from '@/schemas/auth.schema';
 import { useSearchParams } from 'next/navigation';
-import { useActionState, useEffect, useState } from 'react';
 
-const initialState = {
-  message: '',
-  success: false,
-};
-
-export default function Login() {
-  const [prevMessage, formAction, isPending] = useActionState(
-    resetPassword,
-    initialState
+export default function ResetPasswordPage() {
+  const [passwordType, setPasswordType] = useState<'password' | 'text'>(
+    'password'
   );
 
-  const [visible, setVisible] = useState<boolean>(false);
-  const [passwordType, setPasswordType] = useState<string>('password');
-
+  const [showMessage, setShowMessage] = useState(false);
+  const [message, setMessage] = useState<{
+    text: string;
+    success: boolean;
+  } | null>(null);
   const params = useSearchParams();
 
+  const { mutate: resetPassword, isPending } = useResetPassword();
+
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const onSubmit = (data: z.infer<typeof loginSchema>) => {
+    resetPassword(data);
+  };
+
   useEffect(() => {
-    if (params.get('msg') || prevMessage?.message) {
-      setVisible(true);
+    const msg = params.get('msg');
+    if (msg) {
+      setMessage({ text: msg, success: false });
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 5000);
     }
-    const timeout = setTimeout(() => {
-      setVisible(false);
-    }, 5000);
-    return () => clearTimeout(timeout);
-  }, [prevMessage, params]);
+  }, [params]);
 
   return (
     <Card className="w-full max-w-lg mx-auto p-4 mt-32">
@@ -56,76 +72,78 @@ export default function Login() {
           />
         </div>
         <h2 className="text-2xl font-semibold">Reset your password</h2>
-
-        {visible && (
+        {showMessage && message && (
           <div
             className={`flex p-4 items-end space-x-1 justify-center rounded-md ${
-              prevMessage?.success ? 'bg-green-100' : 'bg-red-100'
+              message.success ? 'bg-green-100' : 'bg-red-100'
             }`}
             aria-live="polite"
             aria-atomic="true"
           >
-            {prevMessage?.success ? (
+            {message.success ? (
               <CheckCircleIcon className="h-5 w-5 text-green-500" />
             ) : (
               <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
             )}
             <p
-              className={`text-sm ${
-                prevMessage?.success === true
-                  ? 'text-green-500'
-                  : 'text-red-500'
-              }`}
+              className={`text-sm ${message.success ? 'text-green-500' : 'text-red-500'}`}
             >
-              {params.get('msg') || prevMessage?.message}
+              {message.text}
             </p>
           </div>
         )}
       </CardHeader>
       <CardContent>
-        <form action={formAction}>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                placeholder="enter email..."
-                type="email"
-                name="email"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">New password</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  placeholder="enter new password..."
-                  type={passwordType}
-                  name="password"
-                  required
-                />
-                <button
-                  type="button"
-                  className="-translate-x-2 absolute right-0 top-[50%] -translate-y-[50%]"
-                  onClick={() =>
-                    setPasswordType(
-                      passwordType === 'password' ? 'text' : 'password'
-                    )
-                  }
-                >
-                  {passwordType === 'password' ? (
-                    <EyeIcon width={18} height={18} className="text-gray-600" />
-                  ) : (
-                    <EyeClosedIcon
-                      width={18}
-                      height={24}
-                      className="text-gray-600"
-                    />
-                  )}
-                </button>
-              </div>
-            </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter your email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>New Password</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        placeholder="Enter new password"
+                        type={passwordType}
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-2 top-1/2 -translate-y-1/2"
+                        onClick={() =>
+                          setPasswordType(
+                            passwordType === 'password' ? 'text' : 'password'
+                          )
+                        }
+                      >
+                        {passwordType === 'password' ? (
+                          <EyeIcon className="h-5 w-5 text-gray-600" />
+                        ) : (
+                          <EyeClosedIcon className="h-5 w-5 text-gray-600" />
+                        )}
+                      </button>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <Button
               className="w-full bg-gray-800 hover:bg-gray-700 text-white"
@@ -136,15 +154,15 @@ export default function Login() {
               {isPending ? (
                 <Loader text="Resetting password..." />
               ) : (
-                'Sending reset link'
+                'Send Reset Link'
               )}
             </Button>
-          </div>
-        </form>
+          </form>
+        </Form>
       </CardContent>
 
       <div className="text-center mt-4 text-sm">
-        Already have an account?{' '}
+        Remember your password?{' '}
         <Link href="/login" className="text-blue-600 hover:underline">
           Login
         </Link>

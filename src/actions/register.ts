@@ -38,7 +38,7 @@ export async function register(
     const createdUser = await db.insert(users).values(user).returning();
     jwt.sign(
       { email: createdUser[0].email, id: createdUser[0].id },
-      process.env.AUTH_SECRET!,
+      process.env.NEXTAUTH_SECRET!,
       {
         expiresIn: '7d',
       }

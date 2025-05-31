@@ -15,6 +15,6 @@ export default function robot(): MetadataRoute.Robots {
         '/reset-password',
       ],
     },
-    sitemap: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/sitemap.xml`,
+    sitemap: `${process.env.NEXT_PUBLIC_URL}/sitemap.xml`,
   };
 }

@@ -36,29 +36,27 @@ type TPermission = {
 export const ROLE_PERMISSIONS: TPermission = {
   NORMAL_USER: [
     'VIEW_PUBLIC_ARTICLES',
-    'VIEW_REVIEW', // Normal users might have permission to view reviews of public articles
     'VIEW_PUBLIC_ARTICLES',
-    'VIEW_REVIEW', // Reviewers can view reviews
-    'ARCHIVE_OWN_ARTICLE', // Reviewers can view reviews
+    'ARCHIVE_OWN_ARTICLE',
+    'CREATE_ARTICLE',
   ],
   CHIEF_EDITOR: [
     'VIEW_PUBLIC_ARTICLES',
-    'CREATE_ARTICLE',
     'EDIT_OWN_ARTICLES',
     'DELETE_OWN_ARTICLES',
-    'UPDATE_JOURNAL', // Editors can update journal content
-    'DELETE_JOURNAL', // Editors can delete journals (maybe their own?)
-    'MANAGE_REVIEWERS', // Editors can manage reviews (CRUD)
-    'UPDATE_REVIEW', // Editors can update reviews
-    'DELETE_REVIEW', // Editors can delete reviews
+    'UPDATE_JOURNAL',
+    'DELETE_JOURNAL',
+    'MANAGE_REVIEWERS',
+    'UPDATE_REVIEW',
+    'DELETE_REVIEW',
     'MANAGE_USERS',
     'ACCEPT_ARTICLE',
     'REJECT_ARTICLE',
     'INVITE_REVIEWER',
+    'VIEW_REVIEW',
   ],
   ADMIN: [
     'VIEW_PUBLIC_ARTICLES',
-    'CREATE_ARTICLE',
     'EDIT_OWN_ARTICLES',
     'EDIT_OTHERS_ARTICLES',
     'DELETE_OWN_ARTICLES',
@@ -73,13 +71,13 @@ export const ROLE_PERMISSIONS: TPermission = {
     'UPDATE_REVIEW', // Admin can update any review
     'DELETE_REVIEW', // Admin can delete any review
     'PUBLISH_ARTICLES', // Editors can publish articles
+    'VIEW_REVIEW',
   ],
   REVIEWER: [
     'VIEW_PUBLIC_ARTICLES',
     'ADD_REVIEW',
     'VIEW_REVIEW',
     'ARCHIVE_OWN_ARTICLE',
-    'CREATE_ARTICLE',
     'EDIT_OWN_ARTICLES',
     'DELETE_OWN_ARTICLES',
   ],

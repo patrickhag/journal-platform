@@ -18,8 +18,7 @@ const UsersPage = () => {
     <div className="container mx-auto py-7">
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-2">
-            <Users className="h-6 w-6 text-blue-800" />
+          <div>
             <h2 className="text-2xl font-bold text-gray-900">
               Users Management
             </h2>

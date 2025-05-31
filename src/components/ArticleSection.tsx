@@ -15,6 +15,7 @@ import {
   Archive,
   Trash,
   FileCheck,
+  SquareArrowOutUpRight,
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -62,10 +63,10 @@ export function ArticleSection({
               <div className="text-mdm">{a.title}</div>
               <div className={`flex ${cn('mt-2')}`}>
                 <StatusBadge status={a.articleStatus || 'Submitted'} />
-                {a.proofStatus && (
+                {a.proofStatus === 'Finalized' && (
                   <Link href={'/submissions/proof'}>
                     <button className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-indigo-50 text-indigo-900 hover:bg-indigo-100 transition-colors duration-150 ml-3">
-                      <FileCheck size={16} className="mr-1" />
+                      <SquareArrowOutUpRight size={16} className="mr-1" />
                       View Proofs
                     </button>
                   </Link>

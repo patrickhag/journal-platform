@@ -1,4 +1,5 @@
 'use client';
+
 import Link from 'next/link';
 import {
   Calendar,
@@ -21,7 +22,7 @@ export default function ShowNav({ isOpen = false }: { isOpen: boolean }) {
       )}
     >
       <Link
-        href="/editor"
+        href="/editor/dashboard"
         className={cn(
           pathname.toLowerCase().split('/').includes('dashboard')
             ? 'text-gray-600 bg-gray-100 rounded-md px-2.5 py-1.5'

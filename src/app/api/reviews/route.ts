@@ -111,14 +111,6 @@ export async function POST(req: Request) {
       articleId: article?.id as string,
     });
 
-    // send email to author
-    await notifyUserAboutReview({
-      article: articleTitle as string,
-      authorName: authorName,
-      authorEmail: authorEmail,
-      articleLink: articleLink,
-    });
-
     // send in-app notification for admin
     await db.insert(notifications).values({
       message: `New review submitted for article named "${articleTitle}"`,

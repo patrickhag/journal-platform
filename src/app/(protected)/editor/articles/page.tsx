@@ -41,8 +41,7 @@ export default async function ArticlesPage() {
       <div>
         <Card>
           <CardHeader>
-            <div className="flex items-center gap-3">
-              <FileText className="h-6 w-6 text-blue-800" />
+            <div>
               <h2 className="text-2xl font-bold text-gray-900">
                 Articles Management
               </h2>

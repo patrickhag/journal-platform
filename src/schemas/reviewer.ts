@@ -24,7 +24,7 @@ export const reviewerSchema = z.object({
 export const articleSubmitionSchema = z.object({
   section: z.enum(ARTICLE_TYPES, { message: 'Please select a section' }),
   requirements: z.array(z.string()).length(requirementsCheckboxGroup.length),
-  'Comments for the editor': z.string().optional(),
+  'Comments for the editor': z.string(),
   articleStatus: z
     .enum(ARTICLE_STATUS, { message: 'Please select an article status' })
     .optional(),
