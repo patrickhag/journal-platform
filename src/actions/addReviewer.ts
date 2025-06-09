@@ -11,11 +11,11 @@ export async function addReviewerAction(
   formData: z.infer<typeof reviewerSchema> & { articleId: string }
 ) {
   const session = await auth();
-  const userId = session?.user?.id || '';
+  const editorUserId = session?.user?.id || '';
 
   await db
     .insert(reviewers)
-    .values({ ...formData, userId })
+    .values({ ...formData, editorUserId })
     .execute();
   revalidatePath('/articles/' + formData.articleId);
 }

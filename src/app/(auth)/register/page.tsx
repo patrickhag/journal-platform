@@ -265,7 +265,7 @@ export default function Register() {
                         </FormControl>
                         <button
                           type="button"
-                          className="-translate-x-2 absolute right-0 top-[50%] -translate-y-[50%]"
+                          className="-translate-x-2 absolute right-0 top-[50%] -translate-y-[50%] text-gray-400 hover:text-gray-600"
                           onClick={() =>
                             setPasswordType(
                               passwordType === 'password' ? 'text' : 'password'
@@ -315,7 +315,7 @@ export default function Register() {
                         </FormControl>
                         <button
                           type="button"
-                          className="-translate-x-2 absolute right-0 top-[50%] -translate-y-[50%]"
+                          className="-translate-x-2 absolute right-0 top-[50%] -translate-y-[50%] text-gray-400 hover:text-gray-600"
                           onClick={() =>
                             setPasswordType(
                               passwordType === 'password' ? 'text' : 'password'

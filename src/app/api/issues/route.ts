@@ -107,11 +107,15 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error creating issue:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    if (error instanceof Error) {
+      console.error('Error creating issue:', error.message);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    } else {
+      return NextResponse.json(
+        { error: 'Internal server error' },
+        { status: 500 }
+      );
+    }
   }
 }
 
@@ -139,7 +143,12 @@ export async function PUT(req: NextRequest) {
         where: eq(articleSubmissions.id, articleId),
       });
 
-      if (!articles.every((a) => a.articleStatus === 'Accepted')) {
+      if (
+        !articles.every(
+          (a) =>
+            a.articleStatus === 'ACCEPTED' || a.articleStatus === 'PUBLISHED'
+        )
+      ) {
         return NextResponse.json(
           { message: 'All articles must have Accepted status' },
           { status: 400 }

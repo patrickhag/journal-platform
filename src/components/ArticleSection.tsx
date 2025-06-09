@@ -24,6 +24,7 @@ import { StatusBadge } from './status-badge';
 import { useEffect, useState } from 'react';
 import { DeleteaArticleDialog } from './articles/DeleteArticleDialog';
 import { useDeleteArticle } from '@/hooks/useArticles';
+import { useRouter } from 'next/navigation';
 
 export function ArticleSection({
   article: a,
@@ -34,6 +35,8 @@ export function ArticleSection({
 }) {
   const [openDeleteArticleDialog, setOpenDeleteArticleDialog] = useState(false);
   const [allowArticleDeletion, setAllowArticleDeletion] = useState(false);
+
+  const router = useRouter();
 
   const { mutate: deleteArticle, isPending: isDeletingArticle } =
     useDeleteArticle(setOpenDeleteArticleDialog);
@@ -82,14 +85,9 @@ export function ArticleSection({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem asChild>
-                <Link
-                  href={`articles/${a.id}`}
-                  className="flex items-center gap-2"
-                >
-                  <Eye className="h-4 w-4" />
-                  View details
-                </Link>
+              <DropdownMenuItem onClick={() => router.push(`articles/${a.id}`)}>
+                <Eye className="h-4 w-4" />
+                View details
               </DropdownMenuItem>
               <DropdownMenuItem className="flex items-center gap-2">
                 <Archive className="h-4 w-4" />

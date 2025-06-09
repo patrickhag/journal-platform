@@ -247,7 +247,7 @@ export const ARTICLE_STATUS = [
 
 export type ArticleStatus = (typeof ARTICLE_STATUS)[number];
 
-export const articleFilters = ['My articles', 'Assigned to review'] as const;
+export const articleFilters = ['My articles'] as const;
 
 export const REVIEW_ASSIGNMENTS_STATUS = [
   'Invited',

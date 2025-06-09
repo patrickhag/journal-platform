@@ -26,7 +26,7 @@ export type TPermissionItem =
   | 'ARCHIVE_OWN_ARTICLE'
   | 'ACCEPT_ARTICLE'
   | 'REJECT_ARTICLE'
-  | 'INVITE_REVIEWER';
+  | 'INVITE_REVIEWERS';
 
 type TPermission = {
   [role in (typeof USER_ROLES)[number]]: TPermissionItem[];
@@ -42,8 +42,6 @@ export const ROLE_PERMISSIONS: TPermission = {
   ],
   CHIEF_EDITOR: [
     'VIEW_PUBLIC_ARTICLES',
-    'EDIT_OWN_ARTICLES',
-    'DELETE_OWN_ARTICLES',
     'UPDATE_JOURNAL',
     'DELETE_JOURNAL',
     'MANAGE_REVIEWERS',
@@ -52,7 +50,7 @@ export const ROLE_PERMISSIONS: TPermission = {
     'MANAGE_USERS',
     'ACCEPT_ARTICLE',
     'REJECT_ARTICLE',
-    'INVITE_REVIEWER',
+    'INVITE_REVIEWERS',
     'VIEW_REVIEW',
   ],
   ADMIN: [
@@ -66,7 +64,6 @@ export const ROLE_PERMISSIONS: TPermission = {
     'DELETE_JOURNAL', // Admin can delete any journal
     'UPDATE_JOURNAL', // Admin can update any journal
     'DELETE_CONTRIBUTOR', // Admin can delete contributors
-    'INVITE_CONTRIBUTOR', // Admin can invite contributors
     'MANAGE_REVIEWERS', // Admin can manage all reviews (CRUD for all reviews)
     'UPDATE_REVIEW', // Admin can update any review
     'DELETE_REVIEW', // Admin can delete any review

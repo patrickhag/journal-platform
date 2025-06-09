@@ -25,7 +25,7 @@ async function Files({
   const hasReviewerAcceptInvitation =
     await db.query.reviewAssignments.findFirst({
       where: and(
-        eq(reviewAssignments.status, 'Accepted'),
+        eq(reviewAssignments.status, 'ACCEPTED'),
         eq(reviewAssignments.articleId, articleId),
         eq(reviewAssignments.userId, userId)
       ),

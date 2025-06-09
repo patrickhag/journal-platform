@@ -1,8 +1,11 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Eye, EyeOff } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -11,41 +14,37 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { loginSchema } from '@/schemas/auth.schema';
-import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Image from 'next/image';
-import Link from 'next/link';
+import RoleSelector from '@/components/RoleSelector';
 import {
   startTransition,
   useActionState,
-  useState,
-  useEffect,
   useCallback,
+  useEffect,
+  useState,
 } from 'react';
-import { useForm } from 'react-hook-form';
-import type { z } from 'zod';
-import { useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { loginSchema } from '@/schemas/auth.schema';
+import { z } from 'zod';
 import { authenticate } from '@/actions/authenticate';
-import { EyeClosedIcon, EyeIcon } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import Loader from '@/components/Loader';
-import { signIn } from 'next-auth/react';
-import { AuthError } from 'next-auth';
+import Link from 'next/link';
 
-export default function Login() {
+const LoginComponent = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, formAction, isPending] = useActionState(
     authenticate,
     undefined
   );
-
   const [visible, setVisible] = useState<string | null>(null);
-  const searchparams = useSearchParams();
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
+      role: '',
     },
   });
 
@@ -59,9 +58,7 @@ export default function Login() {
     return () => clearTimeout(timeout);
   }, [errorMessage]);
 
-  const [passwordType, setPasswordType] = useState<'password' | 'text'>(
-    'password'
-  );
+  const searchparams = useSearchParams();
 
   const onSubmit = useCallback(
     (data: z.infer<typeof loginSchema>) => {
@@ -76,43 +73,8 @@ export default function Login() {
     [formAction, searchparams]
   );
 
-  // const onSubmit = async (data: z.infer<typeof loginSchema>) => {
-  // setVisible(null);
-  // formAction({
-  //   ...data,
-  //   redirect: searchparams.get('redirect') || undefined,
-  // });
-  //   try {
-  //     const response = await signIn('credentials', {
-  //       redirect: false,
-  //       ...data,
-  //     });
-  //     if (!response?.error) {
-  //       console.log('yo we gotta an error');
-  //     }
-
-  //     if (!response?.ok) {
-  //       throw new Error('Network response was not ok');
-  //     }
-
-  //     console.log('Login Successful', response);
-  //   } catch (error) {
-  //     if (error instanceof AuthError) {
-  //       switch (error.type) {
-  //         case 'CredentialsSignin':
-  //           return error.cause?.err?.message || 'Invalid email or password';
-  //         default:
-  //           return 'Something went wrong during sign-in.';
-  //       }
-  //     }
-  //     return error instanceof Error
-  //       ? error.message
-  //       : 'An unexpected error occurred. Please try again.';
-  //   }
-  // };
-
   return (
-    <>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl mx-auto p-4 mt-24">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
@@ -139,108 +101,113 @@ export default function Login() {
             </div>
           )}
         </CardHeader>
-        <CardContent>
+
+        <CardContent className="space-y-6">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="space-y-4">
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel htmlFor="email">Email</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="johndoe@email.example.com"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <RoleSelector
+                      selectedRole={field.value}
+                      onRoleSelect={field.onChange}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="email">Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        id="email"
+                        type="email"
+                        className="bg-blue-50 border-blue-200"
+                        {...field}
+                        placeholder="johndoe@gmail.com"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="password">Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          type={showPassword ? 'text' : 'password'}
+                          className="bg-blue-50 border-blue-200 pr-10"
+                          placeholder="••••••••••"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                          {showPassword ? (
+                            <EyeOff size={20} />
+                          ) : (
+                            <Eye size={20} />
+                          )}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-1 leading-none">
+                  <FormLabel className="text-sm">Keep me logged in</FormLabel>
                 </div>
-                <div>
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel htmlFor="password">Password</FormLabel>
-                        <div className="relative">
-                          <FormControl>
-                            <Input
-                              type={passwordType}
-                              placeholder="********"
-                              {...field}
-                            />
-                          </FormControl>
-                          <button
-                            type="button"
-                            className="-translate-x-2 absolute right-0 top-[50%] -translate-y-[50%]"
-                            onClick={() =>
-                              setPasswordType(
-                                passwordType === 'password'
-                                  ? 'text'
-                                  : 'password'
-                              )
-                            }
-                          >
-                            {passwordType === 'password' ? (
-                              <EyeIcon
-                                width={18}
-                                height={18}
-                                className="text-gray-600"
-                              />
-                            ) : (
-                              <EyeClosedIcon
-                                width={18}
-                                height={24}
-                                className="text-gray-600"
-                              />
-                            )}
-                          </button>
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-              <div className="flex items-center justify-between my-7">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="remember" />
-                  <label
-                    htmlFor="remember"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                <Link href="/forgot-password">
+                  <button
+                    type="button"
+                    className="text-sm text-blue-600 hover:underline"
                   >
-                    Keep me logged in
-                  </label>
-                </div>
-                <Link
-                  href="/forgot-password"
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  Forgot password?
+                    Forgot password?
+                  </button>
                 </Link>
               </div>
+
               <Button
-                className="w-full bg-gray-800 hover:bg-gray-700 text-white"
+                type="submit"
+                className="w-full bg-gray-900 hover:bg-gray-800"
                 disabled={isPending}
               >
                 {isPending ? <Loader text="Logging in..." /> : 'Login'}
               </Button>
             </form>
           </Form>
+
+          <div className="text-center text-sm text-gray-600">
+            Don't have an account yet?{' '}
+            <Link href={'/register'}>
+              <button className="text-blue-600 hover:underline">
+                Register
+              </button>
+            </Link>
+          </div>
         </CardContent>
-        <div className="text-center mt-4 text-sm">
-          Don&apos;t have an account yet?{' '}
-          <Link href="/register" className="text-blue-600 hover:underline">
-            Register
-          </Link>
-        </div>
       </Card>
-    </>
+    </div>
   );
-}
+};
+
+export default LoginComponent;

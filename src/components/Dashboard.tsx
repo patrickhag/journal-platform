@@ -32,8 +32,7 @@ export default function DashboardPannel() {
   const { data: articles, isPending } = useGetUserArticles(
     userId,
     debouncedSearchQuery,
-    selectedValue,
-    selectedType
+    selectedValue
   );
 
   return (
@@ -44,16 +43,9 @@ export default function DashboardPannel() {
         </h2>
         <p className="text-muted-foreground">
           You&apos;ve got{' '}
-          {selectedType === 'My articles' ? (
-            <span>
-              {articles?.length} submission{articles?.length === 1 ? '' : 's'}
-            </span>
-          ) : (
-            <span>
-              {articles?.length} article{articles?.length === 1 ? '' : 's'}{' '}
-              assigned to you
-            </span>
-          )}
+          <span>
+            {articles?.length} submission{articles?.length === 1 ? '' : 's'}
+          </span>
         </p>
       </div>
 
@@ -63,8 +55,6 @@ export default function DashboardPannel() {
             <ArticleFilters
               selectedValue={selectedValue}
               setSelectedValue={setSelectedValue}
-              selectedType={selectedType}
-              setSelectedType={setSelectedType}
             />
           </TabsList>
 
@@ -76,7 +66,6 @@ export default function DashboardPannel() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-8"
-              disabled={articles?.length === 0}
             />
           </div>
 
@@ -138,7 +127,7 @@ export default function DashboardPannel() {
 }
 
 const CreateArticleButton = () => (
-  <Button className="mx-5 bg-[#141A26]">
+  <Button className="mx-5 bg-[#212c9e] hover:bg-[#1A237E]">
     <Link href="/articles/new/start">
       <span className="flex items-center gap-2">
         <PlusCircle className="w-4 h-4" />

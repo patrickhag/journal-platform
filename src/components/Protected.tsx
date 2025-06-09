@@ -1,12 +1,35 @@
 import { auth } from '@/auth';
-import { db, users } from '@/db/schema';
 import { USER_ROLE } from '@/lib/roles';
-import { eq } from 'drizzle-orm';
+import Link from 'next/link';
 import { ReactNode } from 'react';
 
 interface ProtectedProps {
   allowedRoles: string[];
   children: ReactNode;
+}
+
+// Role-based route mapping
+const ROLE_ROUTES: Record<USER_ROLE, string> = {
+  NORMAL_USER: '/submissions',
+  REVIEWER: '/reviewer',
+  CHIEF_EDITOR: '/editor',
+  ADMIN: '/editor',
+} as const;
+
+// Helper function to get appropriate redirect route for user role
+function getRedirectRoute(role: USER_ROLE): string {
+  return ROLE_ROUTES[role] || '/';
+}
+
+// Helper function to get role display name
+function getRoleDisplayName(role: USER_ROLE): string {
+  const roleNames: Record<USER_ROLE, string> = {
+    NORMAL_USER: 'User',
+    REVIEWER: 'Reviewer',
+    CHIEF_EDITOR: 'Chief Editor',
+    ADMIN: 'Administrator',
+  };
+  return roleNames[role] || 'User';
 }
 
 export default async function Protected({
@@ -15,20 +38,73 @@ export default async function Protected({
 }: ProtectedProps) {
   const session = await auth();
 
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, session?.user?.email as string));
-
-  const role = user?.role as USER_ROLE;
-
-  if (!allowedRoles.includes(role)) {
+  // Handle unauthenticated users
+  if (!session?.user) {
     return (
       <div className="grid place-items-center h-[calc(100vh-4rem)]">
-        <div className="flex">
-          <h1 className="text-2xl font-bold">401</h1>
-          <div className="border-r-2 mx-4"></div>
-          <p className="mt-1">You are not authorized to view this page.</p>
+        <div className="text-center space-y-4">
+          <div className="flex items-center justify-center">
+            <h1 className="text-2xl font-bold text-red-600">401</h1>
+            <div className="border-r-2 border-gray-300 mx-4 h-8"></div>
+            <p className="text-lg">Authentication Required</p>
+          </div>
+          <p className="text-gray-600">
+            You need to be logged in to access this page.
+          </p>
+          <Link
+            href="/login"
+            className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Sign In
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const role = session.user.role as USER_ROLE;
+
+  // Check if user has required permissions
+  if (!allowedRoles.includes(role)) {
+    const redirectRoute = getRedirectRoute(role);
+    const roleDisplayName = getRoleDisplayName(role);
+
+    return (
+      <div className="grid place-items-center h-[calc(100vh-4rem)]">
+        <div className="text-center space-y-6 max-w-md mx-auto p-6">
+          <div className="flex items-center justify-center">
+            <h1 className="text-2xl font-bold text-red-600">403</h1>
+            <div className="border-r-2 border-gray-300 mx-4 h-8"></div>
+            <p className="text-lg">Access Forbidden</p>
+          </div>
+
+          <div className="space-y-3">
+            <p className="text-gray-600">
+              You don't have permission to access this page.
+            </p>
+            <p className="text-sm text-gray-500">
+              Your current role:{' '}
+              <span className="font-medium">{roleDisplayName}</span>
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <Link
+              href={redirectRoute}
+              className="inline-block bg-[#212c9e] text-white px-6 py-3 rounded-lg hover:bg-[#1A237E] transition-colors font-medium"
+            >
+              Go to Your Dashboard
+            </Link>
+
+            <div className="text-sm">
+              <Link
+                href="/"
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
+                Return to Home
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     );

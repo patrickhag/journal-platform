@@ -35,9 +35,15 @@ export async function authenticate(
     where: eq(users.email, login?.data?.email as string),
   });
 
-  if (user?.role === 'CHIEF_EDITOR' || user?.role === 'ADMIN') {
-    return redirect('/editor/dashboard', RedirectType.replace);
-  } else {
-    return redirect('/submissions', RedirectType.replace);
+  switch (user?.role) {
+    case 'NORMAL_USER':
+      return redirect('/submissions', RedirectType.replace);
+    case 'REVIEWER':
+      return redirect('/reviewer', RedirectType.replace);
+    case 'CHIEF_EDITOR':
+    case 'ADMIN':
+      return redirect('/editor/dashboard', RedirectType.replace);
+    default:
+      return redirect('/submissions', RedirectType.replace);
   }
 }

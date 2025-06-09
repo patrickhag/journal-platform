@@ -8,12 +8,12 @@ export const SendInvitation: React.FC<{
     article: string;
     title: string;
     subTitle: string;
-    content: string;
+    content?: string;
   };
   reviewerEmail: string;
   isAlreadyUser: boolean;
   editorInChiefId: string;
-  dueDate: string;
+  dueDate?: string;
 }> = (props) => {
   const { article, reviewer, isAlreadyUser, editorInChiefId, dueDate } = props;
   const nameParts = reviewer.split(' ');
@@ -36,12 +36,16 @@ export const SendInvitation: React.FC<{
             to review the manuscript titled{' '}
             <span className="font-semibold">“{article.title}”</span>.
           </Text>
-          <Text className="text-gray-700 my-4">
-            Editor-in-chief has left a message{' '}
-            <span className="font-semibold">&quot;{article.content}&quot;</span>{' '}
-            and you might want to visit the manuscript page to accept or reject
-            the invitation.
-          </Text>
+          {article.content && (
+            <Text className="text-gray-700 my-4">
+              Editor-in-chief has left a message{' '}
+              <span className="font-semibold">
+                &quot;{article.content}&quot;
+              </span>{' '}
+              and you might want to visit the manuscript page to accept or
+              reject the invitation.
+            </Text>
+          )}
           <Text className="text-gray-700 my-4">
             If you&apos;re ready to review the manuscript you can use your email{' '}
             {isAlreadyUser ? (
@@ -53,10 +57,13 @@ export const SendInvitation: React.FC<{
               </span>
             )}
           </Text>
-          <Text className="text-gray-700">
-            <span className="font-semibold">Note:</span> you&apos;ve got until{' '}
-            {dueDate} to review
-          </Text>
+
+          {dueDate && (
+            <Text className="text-gray-700">
+              <span className="font-semibold">Note:</span> you&apos;ve got until{' '}
+              {dueDate} to review
+            </Text>
+          )}
           <Row className="my-5">
             <Column align="center">
               <Row>

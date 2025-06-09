@@ -14,22 +14,21 @@ import {
 } from '../ui/dialog';
 
 export default async function Reviewer({
-  reviewer: { email, names, affiliation, phone, expertise },
+  reviewer: { id: reviewerId, email, names, affiliation, phone, expertise },
   index,
-  article,
+  articleId,
 }: {
   reviewer: {
     id: string;
     affiliation: string;
     email: string;
-    userId: string;
     names: string;
     phone: string | null;
     expertise: string;
     articleId: string | null;
   };
   index: number;
-  article: string;
+  articleId: string;
 }) {
   const [meta] = await db
     .select({
@@ -38,18 +37,24 @@ export default async function Reviewer({
       content: metadata.abstract,
     })
     .from(metadata)
-    .where(eq(metadata.articleId, article))
+    .where(eq(metadata.articleId, articleId))
     .limit(1);
 
   const session = await auth();
   if (!session?.user?.id) return null;
 
-  const hasAcceptedInvitation = await db.query.reviewAssignments.findFirst({
+  const hasUserAcceptedInvitation = await db.query.reviewAssignments.findMany({
     columns: {
       status: true,
+      reviewerId: true,
     },
-    where: eq(reviewAssignments.articleId, article),
+    where: eq(reviewAssignments.articleId, articleId),
   });
+
+  // Find the invitation status for this specific reviewer
+  const reviewerStatus = hasUserAcceptedInvitation.find(
+    (invitation) => invitation.reviewerId === reviewerId
+  )?.status;
 
   const currentUserRole = session?.user?.role;
 
@@ -69,12 +74,21 @@ export default async function Reviewer({
           </sup>{' '}
           proposed reviewer{' '}
         </h3>
-        <span className="text-center text-green-900 bg-slate-100 px-2 py-1 rounded-md">
-          Invitation{' '}
-          {hasAcceptedInvitation?.status === 'INVITED'
-            ? 'Pending'
-            : hasAcceptedInvitation?.status}{' '}
-        </span>
+        {reviewerStatus && (
+          <span
+            className="text-center px-2 py-1 rounded-md capitalize 
+            bg-slate-100 
+            text-sm
+            ${reviewerStatus === 'ACCEPTED' 
+              ? 'text-green-900 bg-green-100' 
+              : reviewerStatus === 'DECLINED' 
+                ? 'text-red-900 bg-red-100' 
+                : 'text-yellow-900 bg-yellow-100'
+            }"
+          >
+            {reviewerStatus.toLowerCase()}
+          </span>
+        )}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -117,7 +131,7 @@ export default async function Reviewer({
               <DialogTitle>Invite Reviewer</DialogTitle>
             </DialogHeader>
             <ReachOut
-              article={{ ...meta, article }}
+              article={{ ...meta, article: articleId }}
               reviewer={names}
               author={{
                 avatar: '',

@@ -98,9 +98,6 @@ export async function POST(req: Request) {
     });
 
     const articleTitle = article?.metadata.title;
-    const authorName = `${article?.user.firstName as string} ${article?.user.lastName as string}`;
-    const authorEmail = article?.user.email as string;
-    const articleLink = article?.id as string;
 
     // send email to admin
     await notifyAdmin({

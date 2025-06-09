@@ -17,6 +17,10 @@ export async function reachOut(_: unknown, formData: FormData) {
 
   const editorInChiefId = session?.user?.id;
 
+  // Convert FormData entries to an object for better logging
+  const formDataObject = Object.fromEntries(formData.entries());
+  console.log('formData >>>', formDataObject);
+
   if (!editorInChiefId) return null;
 
   if (session.user.role !== 'CHIEF_EDITOR') return;
@@ -24,8 +28,6 @@ export async function reachOut(_: unknown, formData: FormData) {
   const toEmail = formData.get('toEmail')?.toString() || '';
   const reviewer = formData.get('reviewer')?.toString() || '';
   const dueDate = formData.get('dueDate')?.toString() || '';
-
-  // const reviewerEmail = formData.get('reviewer')?.toString();
 
   const { article: articleId } = JSON.parse(
     formData.get('article')?.toString() || '{}'

@@ -97,11 +97,6 @@ export const authOptions: NextAuthConfig = {
       };
     },
   },
-  pages: {
-    signIn: '/login',
-    signOut: '/login',
-    error: '/login',
-  },
   basePath: BASE_PATH,
   secret: process.env.NEXTAUTH_SECRET,
 };

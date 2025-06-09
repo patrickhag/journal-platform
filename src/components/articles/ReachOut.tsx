@@ -35,14 +35,26 @@ export const ReachOut: FC<{
     undefined
   );
   const [date, setDate] = useState<Date>();
+  const [warning, setWarning] = useState<string>('');
+
+  const handleSubmit = (formData: FormData) => {
+    if (!date) {
+      setWarning('Please select a due date before submitting');
+      return;
+    }
+    setWarning('');
+    return formAction(formData);
+  };
 
   return (
-    <form className="grid gap-3" action={formAction}>
+    <form className="grid gap-3" action={handleSubmit}>
       {returnedMessage && <p className="text-green-500">{returnedMessage}</p>}
+      {warning && <p className="text-yellow-500">{warning}</p>}
       <div className="mb-3">
         <p>
-          Set a Review Deadline and Message for{' '}
-          <span className="font-bold">{reviewer}.</span>
+          Please set a review deadline and add an optional message for{' '}
+          <span className="font-bold">{reviewer}</span>. You can also proceed
+          directly with the invitation by clicking the invite button below.
         </p>
       </div>
       <input
@@ -105,9 +117,9 @@ export const ReachOut: FC<{
         </Popover>
       </div>
 
-      <Textarea placeholder="Message" name="message" className="h-32" />
+      <Textarea placeholder="Add a message" name="message" className="h-32" />
       <Button className="mt-2" disabled={isPending}>
-        {isPending ? <Loader text="Sending..." /> : 'Send'}
+        {isPending ? <Loader text="Inviting..." /> : 'Invite'}
       </Button>
     </form>
   );

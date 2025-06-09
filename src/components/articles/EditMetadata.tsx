@@ -66,7 +66,7 @@ export default function EditMetadata({
           <Pencil size={25} />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-3xl">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit article info</DialogTitle>
           <DialogDescription>

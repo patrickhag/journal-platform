@@ -36,6 +36,8 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
     .from(reviewers)
     .where(eq(reviewers.articleId, articleId));
 
+  console.log('reviewrs>>>', reviewrs);
+
   return (
     <>
       <div className="container mx-auto p-6">
@@ -140,14 +142,23 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
                   {reviewrs.length === 0 ? (
                     <>
                       <p className="text-sm">
-                        This author has not proposed any reviewer. Add one
-                        instead!
+                        This author has not proposed any reviewer.
                       </p>
                     </>
                   ) : (
                     <p className="text-sm">Add new reviewers</p>
                   )}
-                  <AddReviewerModal typeOfPage="review" autoSave />
+                  <AddReviewersLinkPermission
+                    requiredPermissions={['INVITE_REVIEWERS']}
+                    role={
+                      currentUserRole as
+                        | 'NORMAL_USER'
+                        | 'CHIEF_EDITOR'
+                        | 'ADMIN'
+                        | 'REVIEWER'
+                    }
+                    fallback={<></>}
+                  />
                 </div>
                 <Separator />
                 {reviewrs.map((r, index) => (
@@ -155,7 +166,7 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
                     reviewer={r}
                     index={index}
                     key={r.id}
-                    article={article?.id as string}
+                    articleId={article?.id as string}
                   />
                 ))}
               </CardContent>
@@ -187,5 +198,11 @@ const ReveiwArticleLink = ({ articleId }: { articleId: string }) => (
 );
 
 const ReveiwArticleLinkPermission = withPermissions(ReveiwArticleLink);
+
+const AddReviewersLink = () => (
+  <AddReviewerModal typeOfPage="review" autoSave />
+);
+
+const AddReviewersLinkPermission = withPermissions(AddReviewersLink);
 
 export default page;

@@ -53,7 +53,6 @@ export async function GET(
         )
       );
     } else if (!articleType) {
-      // Default behavior when no type is selected
       if (
         currentUserRole === 'NORMAL_USER' ||
         currentUserRole === 'CHIEF_EDITOR'

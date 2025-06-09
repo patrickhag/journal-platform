@@ -15,10 +15,11 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-  const isPublicRoute = publicRoutes.some((route) => {
-    const dynamicRoute = route.replace(/:\w+/g, '.*');
-    return new RegExp(`^${dynamicRoute}$`).test(nextUrl.pathname);
-  });
+  const isPublicRoute =
+    publicRoutes.some((route) => {
+      const dynamicRoute = route.replace(/:\w+/g, '.*');
+      return new RegExp(`^${dynamicRoute}$`).test(nextUrl.pathname);
+    }) || nextUrl.pathname.startsWith('/manuals');
 
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 

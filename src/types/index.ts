@@ -6,6 +6,11 @@ export type CustomUser = User & {
   role: string;
 };
 
+export type SessionPayload = {
+  userId: string | number;
+  expiresAt: Date;
+};
+
 export type Metadata = z.infer<typeof metadataSchema>;
 
 export type UpdateMetadataResponse = {
