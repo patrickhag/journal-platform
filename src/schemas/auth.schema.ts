@@ -16,6 +16,24 @@ export const loginSchema = z.object({
         ),
       'Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character'
     ),
+  role: z.string().min(3, { message: 'Role is required' }),
+});
+
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .min(5, { message: 'Email is invalid' })
+    .max(50, { message: 'Email is too long' })
+    .email({ message: 'Invalid email' }),
+  password: z
+    .string()
+    .refine(
+      (val) =>
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+          val ?? ''
+        ),
+      'Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character'
+    ),
 });
 
 export const registerSchema = z

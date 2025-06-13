@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog';
+import { formatStatus } from '@/lib/utils';
 
 export default async function Reviewer({
   reviewer: { id: reviewerId, email, names, affiliation, phone, expertise },
@@ -51,10 +52,9 @@ export default async function Reviewer({
     where: eq(reviewAssignments.articleId, articleId),
   });
 
-  // Find the invitation status for this specific reviewer
   const reviewerStatus = hasUserAcceptedInvitation.find(
     (invitation) => invitation.reviewerId === reviewerId
-  )?.status;
+  );
 
   const currentUserRole = session?.user?.role;
 
@@ -74,21 +74,14 @@ export default async function Reviewer({
           </sup>{' '}
           proposed reviewer{' '}
         </h3>
-        {reviewerStatus && (
-          <span
-            className="text-center px-2 py-1 rounded-md capitalize 
-            bg-slate-100 
-            text-sm
-            ${reviewerStatus === 'ACCEPTED' 
-              ? 'text-green-900 bg-green-100' 
-              : reviewerStatus === 'DECLINED' 
-                ? 'text-red-900 bg-red-100' 
-                : 'text-yellow-900 bg-yellow-100'
-            }"
-          >
-            {reviewerStatus.toLowerCase()}
-          </span>
-        )}
+        <span className="text-center text-green-900 bg-slate-100 px-2 py-1 rounded-md">
+          Invitation{' '}
+          {reviewerStatus
+            ? reviewerStatus.status === 'INVITED'
+              ? 'Sent'
+              : formatStatus(reviewerStatus.status as string)
+            : 'Pending'}
+        </span>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

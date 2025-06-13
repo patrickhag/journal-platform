@@ -4,7 +4,7 @@ import { RESET_PASSWORD_EXPIRATION_TIME } from '@/lib/consts';
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { NextResponse, NextRequest } from 'next/server';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import { sendPasswordResetEmail } from '@/lib/emailTransporter';
 import { AuthError } from 'next-auth';
 
@@ -26,9 +26,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const salt = bcrypt.genSaltSync(10);
     const token = Math.random().toString(36).substring(2, 15);
-    const hashedPassword = bcrypt.hashSync(password, salt);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     await db.insert(passwordResets).values({
       expires: new Date(Date.now() + RESET_PASSWORD_EXPIRATION_TIME),

@@ -10,7 +10,7 @@ import {
 } from '@/db/schema';
 import { sendInvitation } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 
 export async function reachOut(_: unknown, formData: FormData) {
   const session = await auth();
@@ -65,7 +65,7 @@ export async function reachOut(_: unknown, formData: FormData) {
         firstName: firstName,
         lastName: lastName,
         email: toEmail,
-        password: bcrypt.hashSync(password),
+        password: await bcrypt.hash(password, 10),
         role: 'REVIEWER',
       })
       .returning({ id: users.id });

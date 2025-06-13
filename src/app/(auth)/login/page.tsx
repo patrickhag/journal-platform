@@ -197,7 +197,7 @@ const LoginComponent = () => {
           </Form>
 
           <div className="text-center text-sm text-gray-600">
-            Don't have an account yet?{' '}
+            Don&apos;t have an account yet?{' '}
             <Link href={'/register'}>
               <button className="text-blue-600 hover:underline">
                 Register

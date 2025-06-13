@@ -13,7 +13,6 @@ import {
   Highlighter,
 } from 'lucide-react';
 import { Toggle } from '@/components/ui/toggle';
-import { LinkPopover } from './tiptap-ui/link-popover';
 
 export function ToolBar({ editor }: { editor: Editor | null }) {
   if (!editor) {

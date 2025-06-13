@@ -18,12 +18,12 @@ import {
   Goal,
   ShieldAlert,
 } from 'lucide-react';
-import EditorsPick from '../components/EditorsPick';
-import Guidelines from '../components/Guidelines';
-import AboutUs from '../components/AboutUs';
-import Policies from '../components/Policies';
-import AimsNScope from '../components/AimsNScope';
-import TermsAndConditions from '../components/TermsNConditions';
+import EditorsPick from './components/EditorsPick';
+import Guidelines from './components/Guidelines';
+import AboutUs from './components/AboutUs';
+import Policies from './components/Policies';
+import AimsNScope from './components/AimsNScope';
+import TermsAndConditions from './components/TermsNConditions';
 
 function ManagePage() {
   return (

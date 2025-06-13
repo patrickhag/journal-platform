@@ -1,6 +1,3 @@
-'use client';
-
-import Loader from '@/components/Loader';
 import { UserTable } from './UserTable';
 import {
   Card,
@@ -8,11 +5,12 @@ import {
   CardDescription,
   CardHeader,
 } from '@/components/ui/card';
-import { useGetUsers } from '@/hooks/useUsers';
-import { Users } from 'lucide-react';
+import { db } from '@/db/db';
 
-const UsersPage = () => {
-  const { data, isPending } = useGetUsers();
+const UsersPage = async () => {
+  // const { data, isPending } = useGetUsers();
+
+  const users = await db.query.users.findMany();
 
   return (
     <div className="container mx-auto py-7">
@@ -28,11 +26,7 @@ const UsersPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {isPending ? (
-            <Loader text="Loading..." />
-          ) : (
-            <UserTable data={data.users} />
-          )}
+          <UserTable data={users} />
         </CardContent>
       </Card>
     </div>

@@ -36,7 +36,7 @@ export default async function Dashboard() {
           Welcome back, {session?.user.name}
         </h1>
         <p className="text-muted-foreground mt-1">
-          You've got {assignedArticles.length} manuscripts assigned to you.
+          You&apos;ve got {assignedArticles.length} manuscripts assigned to you.
         </p>
       </div>
 

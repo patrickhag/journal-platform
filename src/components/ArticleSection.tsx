@@ -89,10 +89,6 @@ export function ArticleSection({
                 <Eye className="h-4 w-4" />
                 View details
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex items-center gap-2">
-                <Archive className="h-4 w-4" />
-                Archive article
-              </DropdownMenuItem>
               <DropdownMenuItem
                 className="flex items-center gap-2 text-red-500"
                 onClick={() => setOpenDeleteArticleDialog(true)}

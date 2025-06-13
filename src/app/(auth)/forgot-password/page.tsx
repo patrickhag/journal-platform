@@ -13,15 +13,15 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { ExclamationCircleIcon, EyeIcon } from '@heroicons/react/24/outline';
-import { CheckCircleIcon, EyeClosedIcon } from 'lucide-react';
+import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon, EyeClosedIcon, EyeOff } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import Loader from '@/components/Loader';
-import { loginSchema } from '@/schemas/auth.schema';
+import { forgotPasswordSchema } from '@/schemas/auth.schema';
 import { useSearchParams } from 'next/navigation';
 
 export default function ResetPasswordPage() {
@@ -38,15 +38,16 @@ export default function ResetPasswordPage() {
 
   const { mutate: resetPassword, isPending } = useResetPassword();
 
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<z.infer<typeof forgotPasswordSchema>>({
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   });
 
-  const onSubmit = (data: z.infer<typeof loginSchema>) => {
+  const onSubmit = (data: z.infer<typeof forgotPasswordSchema>) => {
+    console.log('data>>>', data);
     resetPassword(data);
   };
 
@@ -125,7 +126,7 @@ export default function ResetPasswordPage() {
                       />
                       <button
                         type="button"
-                        className="absolute right-2 top-1/2 -translate-y-1/2"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                         onClick={() =>
                           setPasswordType(
                             passwordType === 'password' ? 'text' : 'password'
@@ -133,9 +134,9 @@ export default function ResetPasswordPage() {
                         }
                       >
                         {passwordType === 'password' ? (
-                          <EyeIcon className="h-5 w-5 text-gray-600" />
+                          <EyeOff size={20} />
                         ) : (
-                          <EyeClosedIcon className="h-5 w-5 text-gray-600" />
+                          <EyeClosedIcon size={20} />
                         )}
                       </button>
                     </div>

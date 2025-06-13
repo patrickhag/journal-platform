@@ -30,3 +30,10 @@ export const getSectionImage = (section: string): string => {
       return 'https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732708303/old-books-wooden-table-library-vintage-style-ai-generated-content-design-background-instagram-facebook-wall-323974717_kbravu.webp';
   }
 };
+
+export const formatStatus = (status: string) => {
+  return status
+    .toLowerCase()
+    .replace(/_/g, ' ') // Replace _ with space
+    .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter
+};

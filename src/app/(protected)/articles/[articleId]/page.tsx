@@ -36,8 +36,6 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
     .from(reviewers)
     .where(eq(reviewers.articleId, articleId));
 
-  console.log('reviewrs>>>', reviewrs);
-
   return (
     <>
       <div className="container mx-auto p-6">
