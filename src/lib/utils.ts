@@ -37,3 +37,18 @@ export const formatStatus = (status: string) => {
     .replace(/_/g, ' ') // Replace _ with space
     .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter
 };
+
+export const getReviewAssignmentsStatusStyle = (status: string) => {
+  switch (status) {
+    case 'INVITED':
+      return 'text-blue-900 bg-blue-100'; // Sent/Pending
+    case 'ACCEPTED':
+      return 'text-green-900 bg-green-100'; // Accepted
+    case 'REJECTED':
+      return 'text-red-900 bg-red-100'; // Rejected
+    case 'REJECTED_BY_USER':
+      return 'text-yellow-900 bg-yellow-100'; // User Rejected
+    default:
+      return 'text-gray-900 bg-gray-100'; // Unknown/Pending
+  }
+};

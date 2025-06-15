@@ -64,6 +64,7 @@ export const users = pgTable('user', {
   password: text('password'),
   avatar: text('avatar'),
   orcid: text('orcid'),
+  bio: text('bio'),
   createdAt: date('createdAt').defaultNow(),
 });
 
@@ -206,7 +207,7 @@ export const reviews = pgTable('reviews', {
     .notNull()
     .default(sql`'{}'::text[]`),
   status: varchar('status', { length: 50 }),
-  createdAt: date('createdAt').defaultNow(),
+  reviewedAt: date('reviewedAt').defaultNow(),
 });
 
 export const articleSubmissions = pgTable('article_submissions', {
@@ -338,6 +339,36 @@ export const manuals = pgTable('manuals', {
   aboutUs: jsonb('aboutUs').$type<{ content: string }>(),
   aimsNscope: jsonb('aimsNscope').$type<{ content: string }>(),
   termsNconditions: jsonb('termsNconditions').$type<{ content: string }>(),
+});
+
+export const editorialBoardMembers = pgTable('editorial_board_members', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+
+  fullName: varchar('fullname', { length: 255 }).notNull(),
+
+  affiliation: text('affiliation').notNull(),
+
+  country: varchar('country', { length: 100 }).notNull(),
+
+  role: varchar('role', { length: 100 }).notNull(),
+
+  areasOfExpertise: text('areas_of_expertise'),
+
+  photoUrl: text('photo_url'),
+
+  orcidOrProfileUrl: text('orcid_or_profile_url'),
+
+  isVisible: boolean('is_visible').default(true).notNull(),
+
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
 });
 
 /*** RELATIONS ***/

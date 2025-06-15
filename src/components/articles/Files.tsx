@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 import { and, eq } from 'drizzle-orm';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { FileText, EyeIcon } from 'lucide-react';
+import { EyeIcon, File } from 'lucide-react';
 import ReviewModal from './Review';
 import withPermissions from '../WithPermission';
 
@@ -46,7 +46,7 @@ async function Files({
               className="flex items-center justify-between p-2 border rounded-lg"
             >
               <div className="flex items-center">
-                <FileText className="h-5 w-5 text-muted-foreground mr-2" />
+                <File className="h-5 w-5 text-muted-foreground mr-2 text-blue-500" />
                 <div>
                   <p className="font-medium">{file.originalName}</p>
                   <p className="text-sm text-muted-foreground my-1">

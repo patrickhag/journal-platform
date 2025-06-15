@@ -43,7 +43,7 @@ import {
   Eye,
 } from 'lucide-react';
 import { StatusBadge } from './status-badge';
-import Link from 'next/link';
+
 import { Checkbox } from './ui/checkbox';
 import { ARTICLE_STATUS } from '@/lib/consts';
 import {
@@ -56,6 +56,7 @@ import {
 import { useAssignIssues, useGetIssues } from '@/hooks/useIssues';
 import Loader from './Loader';
 import { useEditorsPick } from '@/hooks/useSettings';
+import { useRouter } from 'next/navigation';
 
 type Article = {
   id: string | null;
@@ -66,156 +67,6 @@ type Article = {
   title: string | null;
 };
 
-const columns: ColumnDef<Article>[] = [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="border-2 border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="border-2 border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: 'title',
-    header: ({ column }) => (
-      <div
-        className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Title
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="max-w-md">
-        <div
-          className="font-semibold text-gray-900 truncate"
-          title={row.getValue('title')}
-        >
-          {row.getValue('title') || (
-            <span className="text-red-600 text-sm italic">Not specified</span>
-          )}
-        </div>
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'section',
-    header: ({ column }) => (
-      <div
-        className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Section
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="text-gray-700 font-medium">
-        {row.getValue('section') || (
-          <span className="text-red-600 text-sm italic">Not specified</span>
-        )}
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'status',
-    header: ({ column }) => (
-      <div
-        className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Status
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </div>
-    ),
-    cell: ({ row }) => <StatusBadge status={row.getValue('status')} />,
-  },
-  {
-    accessorKey: 'owner',
-    header: ({ column }) => (
-      <div
-        className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Owner
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="text-gray-700">
-        {row.getValue('owner') || (
-          <span className="text-red-600 text-sm italic">Not specified</span>
-        )}
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'createdAt',
-    header: ({ column }) => (
-      <div
-        className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Created At
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </div>
-    ),
-    cell: ({ row }) => {
-      const createdDate = row.getValue('createdAt');
-      if (!createdDate) {
-        return (
-          <span className="text-red-600 text-sm italic">Not specified</span>
-        );
-      }
-      const formattedDate = new Date(createdDate as string).toLocaleDateString(
-        'en-US',
-        {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-        }
-      );
-      return <div className="text-gray-600 text-sm">{formattedDate}</div>;
-    },
-  },
-  {
-    id: 'actions',
-    header: 'Actions',
-    cell: ({ row }) => (
-      <Button
-        variant="outline"
-        size="sm"
-        className="hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-colors"
-      >
-        <Link
-          href={'/articles/' + String(row.original.id)}
-          className="flex items-center gap-2"
-        >
-          <Eye className="h-4 w-4" />
-          View
-        </Link>
-      </Button>
-    ),
-  },
-];
-
 interface ArticlesTableProps {
   data: Article[];
 }
@@ -225,6 +76,152 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
   const [globalFilter, setGlobalFilter] = useState('');
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const { data: issues } = useGetIssues();
+  const router = useRouter();
+
+  const columns: ColumnDef<Article>[] = [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+          className="border-2 border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+          className="border-2 border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: 'title',
+      header: ({ column }) => (
+        <div
+          className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Title
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="max-w-md">
+          <div
+            className="font-semibold text-gray-900 truncate"
+            title={row.getValue('title')}
+          >
+            {row.getValue('title') || (
+              <span className="text-red-600 text-sm italic">Not specified</span>
+            )}
+          </div>
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'section',
+      header: ({ column }) => (
+        <div
+          className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Section
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="text-gray-700 font-medium">
+          {row.getValue('section') || (
+            <span className="text-red-600 text-sm italic">Not specified</span>
+          )}
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'status',
+      header: ({ column }) => (
+        <div
+          className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
+      ),
+      cell: ({ row }) => <StatusBadge status={row.getValue('status')} />,
+    },
+    {
+      accessorKey: 'owner',
+      header: ({ column }) => (
+        <div
+          className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Owner
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="text-gray-700">
+          {row.getValue('owner') || (
+            <span className="text-red-600 text-sm italic">Not specified</span>
+          )}
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'createdAt',
+      header: ({ column }) => (
+        <div
+          className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Created At
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
+      ),
+      cell: ({ row }) => {
+        const createdDate = row.getValue('createdAt');
+        if (!createdDate) {
+          return (
+            <span className="text-red-600 text-sm italic">Not specified</span>
+          );
+        }
+        const formattedDate = new Date(
+          createdDate as string
+        ).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        });
+        return <div className="text-gray-600 text-sm">{formattedDate}</div>;
+      },
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => (
+        <Button
+          variant="outline"
+          size="sm"
+          className="hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-colors"
+          onClick={() => router.push('/articles/' + String(row.original.id))}
+        >
+          <Eye className="h-4 w-4" />
+          View
+        </Button>
+      ),
+    },
+  ];
 
   const table = useReactTable({
     data,

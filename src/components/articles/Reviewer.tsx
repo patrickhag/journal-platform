@@ -12,7 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog';
-import { formatStatus } from '@/lib/utils';
+import { formatStatus, getReviewAssignmentsStatusStyle } from '@/lib/utils';
 
 export default async function Reviewer({
   reviewer: { id: reviewerId, email, names, affiliation, phone, expertise },
@@ -58,6 +58,10 @@ export default async function Reviewer({
 
   const currentUserRole = session?.user?.role;
 
+  const statusStyle = getReviewAssignmentsStatusStyle(
+    reviewerStatus?.status || 'PENDING'
+  );
+
   return (
     <>
       <div className="flex justify-between items-center">
@@ -74,7 +78,7 @@ export default async function Reviewer({
           </sup>{' '}
           proposed reviewer{' '}
         </h3>
-        <span className="text-center text-green-900 bg-slate-100 px-2 py-1 rounded-md">
+        <span className={`text-center px-2 py-1 rounded-md ${statusStyle}`}>
           Invitation{' '}
           {reviewerStatus
             ? reviewerStatus.status === 'INVITED'

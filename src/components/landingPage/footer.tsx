@@ -4,7 +4,7 @@ import React from 'react';
 const Footer = () => {
   return (
     <footer className="text-gray-700">
-      <div className="w-[98%] mx-auto border-t py-5">
+      <div className="w-[98%] mx-auto border-t my-5 pt-5">
         {/* Top Section */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* JAEPH Address Section */}

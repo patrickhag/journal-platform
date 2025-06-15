@@ -19,7 +19,9 @@ export default auth((req) => {
     publicRoutes.some((route) => {
       const dynamicRoute = route.replace(/:\w+/g, '.*');
       return new RegExp(`^${dynamicRoute}$`).test(nextUrl.pathname);
-    }) || nextUrl.pathname.startsWith('/manuals');
+    }) ||
+    nextUrl.pathname.startsWith('/manuals') ||
+    nextUrl.pathname.startsWith('/editorial-board');
 
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 

@@ -5,12 +5,10 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from '@/components/ui/card';
 import { db } from '@/db/db';
 import { articleSubmissions } from '@/db/schema';
 import { desc } from 'drizzle-orm';
-import { FileText } from 'lucide-react';
 
 export default async function ArticlesPage() {
   const articles = await db.query.articleSubmissions.findMany({
