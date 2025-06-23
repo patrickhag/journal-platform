@@ -33,3 +33,12 @@ export const proofSchema = z.object({
 });
 
 export type ProofFormValues = z.infer<typeof proofSchema>;
+
+export const decisionSchema = z.object({
+  action: z.enum(['ACCEPT', 'REJECT', 'REVISION']),
+  message: z
+    .string()
+    .min(20, 'Decision message must be at least 20 characters'),
+});
+
+export type DecisionFormData = z.infer<typeof decisionSchema>;

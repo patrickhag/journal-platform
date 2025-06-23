@@ -171,7 +171,7 @@ const ActionsButton = ({ row }: { row: Row<Users> }) => {
   };
 
   const { mutate, isPending } = useDeactivateUser();
-  const roles = ['EDITOR', 'REVIEWER', 'NORMAL_USER'];
+  const roles = ['ASSOCIATE_EDITOR', 'REVIEWER', 'NORMAL_USER'];
 
   const handleChangeRole = (role: string) => {
     setSelectedRole(role);

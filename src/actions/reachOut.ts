@@ -19,7 +19,6 @@ export async function reachOut(_: unknown, formData: FormData) {
 
   // Convert FormData entries to an object for better logging
   const formDataObject = Object.fromEntries(formData.entries());
-  console.log('formData >>>', formDataObject);
 
   if (!editorInChiefId) return null;
 

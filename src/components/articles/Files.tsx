@@ -31,6 +31,8 @@ async function Files({
       ),
     });
 
+  console.log('hasReviewerAcceptInvitation>>>', hasReviewerAcceptInvitation);
+
   return (
     <>
       <Card>
@@ -65,7 +67,7 @@ async function Files({
                   </span>
                 </Link>
               </Button>
-              {hasReviewerAcceptInvitation?.status === 'Accepted' && (
+              {hasReviewerAcceptInvitation?.status === 'ACCEPTED' && (
                 <div className="flex space-x-1">
                   <UlterFile
                     requiredPermissions={['ADD_REVIEW']}

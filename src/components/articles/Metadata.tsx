@@ -7,6 +7,7 @@ import EditMetadata from './EditMetadata';
 import { db } from '@/db/db';
 import { StatusBadge } from '../status-badge';
 import Link from 'next/link';
+import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 
 export default async function Metadata({
@@ -96,7 +97,9 @@ export default async function Metadata({
                   <div
                     className="prose max-w-none"
                     dangerouslySetInnerHTML={{
-                      __html: meta.article?.commentsForEditor,
+                      __html: meta.article?.commentsForEditor
+                        .replace(/<pre>/g, '<p>')
+                        .replace(/<\/pre>/g, '</p>'),
                     }}
                   />
                 ) : (
@@ -140,6 +143,7 @@ export default async function Metadata({
           </div>
         </CardContent>
       </Card>
+
       {foundContributors.length > 0 && (
         <Card className="my-3">
           <CardHeader>
@@ -149,71 +153,78 @@ export default async function Metadata({
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {foundContributors.map((c) => (
-                <div key={c.id} className="grid gap-4 sm:grid-cols-2 mb-5">
-                  <div>
-                    <div className="mb-4">
-                      <h3 className="text-sm font-medium text-muted-foreground">
-                        Names
-                      </h3>
-                      <p className="my-1">{c.name}</p>
-                    </div>
-                    <div className="mb-4">
-                      <h3 className="text-sm font-medium text-muted-foreground">
-                        Contributor&apos;s role
-                      </h3>
-                      <p className="my-1 uppercase">{c.role}</p>
-                    </div>
-                    <div className="mb-4">
-                      <h3 className="text-sm font-medium text-muted-foreground">
-                        Biography
-                      </h3>
-                      <p className="my-1">{c.bio || 'Not provided'}</p>
+              {foundContributors.map((c, index) => (
+                <div key={c.id}>
+                  <div className="grid gap-4 sm:grid-cols-2 mb-5">
+                    <div>
+                      <div className="mb-4">
+                        <h3 className="text-sm font-medium text-muted-foreground">
+                          Names
+                        </h3>
+                        <p className="my-1">{c.name}</p>
+                      </div>
+                      <div className="mb-4">
+                        <h3 className="text-sm font-medium text-muted-foreground">
+                          Contributor&apos;s role
+                        </h3>
+                        <p className="my-1 uppercase">{c.role}</p>
+                      </div>
+                      <div className="mb-4">
+                        <h3 className="text-sm font-medium text-muted-foreground">
+                          Biography
+                        </h3>
+                        <p className="my-1">{c.bio || 'Not provided'}</p>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium text-muted-foreground">
+                          Country
+                        </h3>
+                        <p className="my-1">{c.country || 'Not provided'}</p>
+                      </div>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-muted-foreground">
-                        Country
-                      </h3>
-                      <p className="my-1">{c.country || 'Not provided'}</p>
+                      <div className="mb-4">
+                        <h3 className="text-sm font-medium text-muted-foreground">
+                          ORCID
+                        </h3>
+                        <p className="my-1">
+                          {c.orcid ? (
+                            <Link
+                              href={c.orcid}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={cn(
+                                c.orcid
+                                  ? 'text-blue-500 hover:underline'
+                                  : 'text-muted-foreground'
+                              )}
+                            >
+                              {c.orcid}
+                            </Link>
+                          ) : (
+                            'Not provided'
+                          )}
+                        </p>
+                      </div>
+                      <div className="mb-4">
+                        <h3 className="text-sm font-medium text-muted-foreground">
+                          Email
+                        </h3>
+                        <p className="my-1">{c.email || 'Not provided'}</p>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium text-muted-foreground">
+                          Affiliation
+                        </h3>
+                        <p className="my-1">
+                          {c.affiliation || 'Not provided'}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                  <div>
-                    <div className="mb-4">
-                      <h3 className="text-sm font-medium text-muted-foreground">
-                        ORCID
-                      </h3>
-                      <p className="my-1">
-                        {c.orcid ? (
-                          <Link
-                            href={`https://orcid.org/${c.orcid}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={cn(
-                              c.orcid
-                                ? 'text-blue-500 hover:underline'
-                                : 'text-muted-foreground'
-                            )}
-                          >
-                            https://orcid.org/{c.orcid}
-                          </Link>
-                        ) : (
-                          'Not provided'
-                        )}
-                      </p>
-                    </div>
-                    <div className="mb-4">
-                      <h3 className="text-sm font-medium text-muted-foreground">
-                        Email
-                      </h3>
-                      <p className="my-1">{c.email || 'Not provided'}</p>
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-medium text-muted-foreground">
-                        Affiliation
-                      </h3>
-                      <p className="my-1">{c.affiliation || 'Not provided'}</p>
-                    </div>
-                  </div>
+                  {index < foundContributors.length - 1 && (
+                    <Separator className="my-4" />
+                  )}
                 </div>
               ))}
             </div>

@@ -6,46 +6,7 @@ import { auth } from '@/auth';
 import { articleSubmissions, notifications, users } from '@/db/schema';
 
 import { eq } from 'drizzle-orm';
-import { notifyAdmin, notifyUserAboutReview } from '@/lib/emailTransporter';
-
-// export async function GET(request: Request) {
-//     try {
-//         const { searchParams } = new URL(request.url);
-//         const articleId = searchParams.get('articleId');
-
-//         if (!articleId) {
-//             return NextResponse.json(
-//                 { error: 'Article ID is required' },
-//                 { status: 400 }
-//             );
-//         }
-
-//         const reviews = await db.query.reviews.findMany({
-//             where: {
-//                 articleId: articleId,
-//             },
-//             include: {
-//                 user: {
-//                     select: {
-//                         name: true,
-//                         email: true,
-//                     },
-//                 },
-//             },
-//             orderBy: {
-//                 createdAt: 'desc',
-//             },
-//         });
-
-//         return NextResponse.json(reviews);
-//     } catch (error) {
-//         console.error('Error fetching reviews:', error);
-//         return NextResponse.json(
-//             { error: 'Internal Server Error' },
-//             { status: 500 }
-//         );
-//     }
-// }
+import { notifyAdmin } from '@/lib/emailTransporter';
 
 // your reviews schema
 

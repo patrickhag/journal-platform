@@ -114,3 +114,29 @@ export type EditorsPicks = {
     title: string;
   };
 }[];
+
+export type TReview =
+  | {
+      articleStatus: string | null;
+      metadata: {
+        title: string;
+      };
+      user: {
+        firstName: true;
+        lastName: true;
+      };
+      reviews: {
+        message: string;
+        status: string | null;
+        articleId: string | null;
+        id: string;
+        userId: string;
+        fileIds: string[];
+        reviewedAt: string | null;
+        user: {
+          firstName: string;
+          lastName: string;
+        };
+      }[];
+    }
+  | undefined;

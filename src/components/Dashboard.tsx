@@ -35,6 +35,7 @@ export default function DashboardPannel() {
     selectedValue
   );
 
+  console.log('articles>>>', articles);
   return (
     <div>
       <div className="mb-10">
@@ -92,19 +93,8 @@ export default function DashboardPannel() {
                 ))}
               </>
             ) : articles && articles.length > 0 ? (
-              articles.map((a, i) => (
-                <ArticleSection
-                  article={{
-                    id: a.id || '',
-                    section: a.section || 'Original Research',
-                    title: a.title || '',
-                    articleStatus: a.articleStatus || 'SUBMITTED',
-                    proofStatus: a.proofStatus,
-                  }}
-                  key={i}
-                  index={i}
-                />
-              ))
+              // Pass the entire articles array to ArticleSection
+              <ArticleSection articles={articles} />
             ) : (
               <div className="text-center text-muted-foreground">
                 No articles{' '}

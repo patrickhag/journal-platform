@@ -91,7 +91,7 @@ export default function ReviewModal() {
             Write a review
           </DialogTitle>
         </DialogHeader>
-        <div className="text-sm font-semibold">Annotate file(s)</div>
+        <div className="text-sm">Annotate file(s)</div>
         <DragAndDropFileInput />
         <FileList isEditNeeded={true} />
 

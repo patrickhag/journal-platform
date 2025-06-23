@@ -68,11 +68,21 @@ export const reviewSchema = z.object({
 });
 
 export type TArticle = {
-  id: string;
-  articleStatus: string;
   section: string;
-  title: string;
-  proofStatus: string;
+  id: string;
+  createdAt: string | null;
+  userId: string;
+  updatedAt: string | null;
+  proofFileUrl: string[] | null;
+  articleStatus: string;
+  metadata: {
+    title: string;
+  };
+  editorActions: {
+    message: string;
+    decision: string;
+    editorfileId: string | null;
+  }[];
 };
 
 export type ReviewFormData = z.infer<typeof reviewSchema>;

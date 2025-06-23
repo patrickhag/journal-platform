@@ -24,7 +24,6 @@ import {
 import { Input } from '../ui/input';
 import { metadataSchema } from './ContributorsForm';
 import updateArticleMeta from '@/actions/updateArticleMeta';
-import { FaTimes } from 'react-icons/fa';
 import { RichTextEditor } from '../RichTextEditor';
 
 export const NewMetaForm: FC<
@@ -111,6 +110,21 @@ export const NewMetaForm: FC<
         <form ref={form} onSubmit={saveMeta}>
           <div className="mb-4 grid grid-cols-2 gap-4">
             <FormField
+              name="title"
+              control={formm.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="title">
+                    Title <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="Title of the manuscript" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
               name="prefix"
               control={formm.control}
               render={({ field }) => (
@@ -120,21 +134,6 @@ export const NewMetaForm: FC<
                   </FormLabel>
                   <FormControl>
                     <Input placeholder="Dr, Mr, Mrs..." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="title"
-              control={formm.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="title">
-                    Title <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="Title of the journal" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

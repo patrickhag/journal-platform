@@ -7,9 +7,14 @@ import { SendVerifyEmail } from '@/components/emails/verify';
 import { NotifyAdminEmail } from '@/components/emails/notify-admin';
 import { render } from '@react-email/components';
 import nodemailer from 'nodemailer';
-import ReviewSubmittedEmailTemplate from '@/components/emails/notify-author';
+import {
+  ArticleAcceptedEmailTemplate,
+  ArticleRejectedEmailTemplate,
+  ArticleRevisionEmailTemplate,
+} from '@/components/emails/notify-author';
 import ProofSubmittedAdminEmailTemplate from '@/components/emails/notify-admin-proof';
 import ArticleNotificationEmail from '@/components/emails/notify-user-proof';
+import { AuthorRevisedManuscriptEmailTemplate } from '@/components/emails/author-revised-manuscript';
 
 export const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -294,36 +299,99 @@ export const notifyAdminAboutProof = async ({
   }
 };
 
-export const notifyUserAboutReview = async ({
+export const notifyUserAboutEditorDecision = async ({
   article,
   authorName,
   authorEmail,
   articleLink,
+  decision,
+  fileIds,
 }: {
   article: string;
   authorName: string;
   authorEmail: string;
   articleLink: string;
+  decision: 'ACCEPT' | 'REVISION' | 'REJECT';
+  fileIds?: string;
 }) => {
   try {
-    const emailHtml = await render(
-      <ReviewSubmittedEmailTemplate
-        authorName={authorName}
-        articleTitle={article}
-        articleLink={articleLink}
-      />
-    );
+    let subject = '';
+    let emailHtml;
+
+    switch (decision) {
+      case 'ACCEPT':
+        subject = 'Your article has been accepted!';
+        emailHtml = await render(
+          <ArticleAcceptedEmailTemplate
+            authorName={authorName}
+            articleTitle={article}
+            fileIds={fileIds}
+          />
+        );
+        break;
+      case 'REVISION':
+        subject = 'Revision requested for your article';
+        emailHtml = await render(
+          <ArticleRevisionEmailTemplate
+            authorName={authorName}
+            articleTitle={article}
+            articleLink={articleLink}
+            fileIds={fileIds}
+          />
+        );
+        break;
+      case 'REJECT':
+        subject = 'Your article has been rejected';
+        emailHtml = await render(
+          <ArticleRejectedEmailTemplate
+            authorName={authorName}
+            articleTitle={article}
+            fileIds={fileIds}
+          />
+        );
+        break;
+      default:
+        throw new Error('Invalid decision type');
+    }
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: authorEmail,
-      subject: 'A review has been submitted for your manuscript',
+      subject,
       html: emailHtml,
     });
 
     return { success: true };
   } catch (error) {
-    console.error('Error sending admin notification:', error);
+    console.error('Error sending editor decision notification:', error);
     return { success: false, error };
   }
+};
+
+export const notifyEditorAboutAuthorRevision = async ({
+  editorName = 'Patrick HAGENIMANA',
+  authorName,
+  articleLink,
+  articleTitle,
+}: {
+  editorName?: string;
+  authorName: string;
+  articleLink: string;
+  articleTitle: string;
+}) => {
+  const emailHtml = await render(
+    <AuthorRevisedManuscriptEmailTemplate
+      editorName={editorName}
+      authorName={authorName}
+      articleLink={articleLink}
+      articleTitle={articleTitle}
+    />
+  );
+  const options = {
+    from: process.env.EMAIL_USER,
+    to: 'patrickhag09@gmail.com',
+    subject: 'Revised Manuscript Ready for Re-evaluation',
+    html: emailHtml,
+  };
+  await transporter.sendMail(options);
 };

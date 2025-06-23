@@ -1,0 +1,83 @@
+import { auth } from '@/auth';
+import { db } from '@/db/db';
+
+import { articleSubmissions, editorActions } from '@/db/schema';
+import { notifyUserAboutEditorDecision } from '@/lib/emailTransporter';
+import { eq } from 'drizzle-orm';
+import { NextRequest, NextResponse } from 'next/server';
+
+type Params = { articleId: string };
+
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<Params> }
+) {
+  try {
+    const session = await auth();
+
+    const { decision, fileId, message } = await req.json();
+
+    if (session?.user.role !== 'CHIEF_EDITOR') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { articleId } = await params;
+
+    if (!articleId) {
+      return NextResponse.json(
+        { error: 'Article ID is required' },
+        { status: 400 }
+      );
+    }
+
+    await db.insert(editorActions).values({
+      articleId,
+      decision,
+      message,
+      editorfileId: fileId,
+      editorId: session.user.id as string,
+    });
+
+    const article = await db.query.articleSubmissions.findFirst({
+      columns: {
+        id: true,
+      },
+      with: {
+        metadata: {
+          columns: {
+            title: true,
+          },
+        },
+        user: {
+          columns: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
+      where: eq(articleSubmissions.id, articleId),
+    });
+
+    await notifyUserAboutEditorDecision({
+      article: article?.metadata.title as string,
+      authorName: `${article?.user.firstName} ${article?.user.lastName}`,
+      authorEmail: article?.user.email as string,
+      articleLink: articleId,
+      decision,
+      fileIds: fileId,
+    });
+
+    return NextResponse.json({
+      message: 'Decision updated and author notified successfully!',
+    });
+  } catch (error) {
+    console.error('Error sending editor decision:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

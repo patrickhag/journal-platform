@@ -371,6 +371,46 @@ export const editorialBoardMembers = pgTable('editorial_board_members', {
     .notNull(),
 });
 
+export const editorActions = pgTable('editor_actions', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  articleId: text('articleId')
+    .references(() => articleSubmissions.id, { onDelete: 'cascade' })
+    .notNull(),
+  editorId: text('editorId')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
+  decision: text('decision').notNull(),
+  message: text('message').notNull(),
+  editorfileId: text('editorfileId'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const editorActionsRelations = relations(editorActions, ({ one }) => ({
+  article: one(articleSubmissions, {
+    fields: [editorActions.articleId],
+    references: [articleSubmissions.id],
+    relationName: 'editorActions',
+  }),
+}));
+
+export const articleRevisions = pgTable('article_revisions', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  articleId: text('articleId').references(() => articleSubmissions.id, {
+    onDelete: 'cascade',
+  }),
+  fileIds: text('fileIds')
+    .array()
+    .notNull()
+    .default(sql`'{}'::text[]`),
+  submittedAt: timestamp('submittedAt', { mode: 'date' }).defaultNow(),
+  submittedBy: text('submittedBy').references(() => users.id),
+  note: text('note'),
+});
+
 /*** RELATIONS ***/
 
 export const articleSubmissionsRelations = relations(
@@ -397,11 +437,38 @@ export const articleSubmissionsRelations = relations(
     reviewers: many(reviewers, {
       relationName: 'reviewers',
     }),
+    reviews: many(reviews, {
+      relationName: 'reviews',
+    }),
+    editorActions: many(editorActions, {
+      relationName: 'editorActions',
+    }),
     reviewAssignments: many(reviewAssignments, {
       relationName: 'reviewAssignments',
     }),
   })
 );
+
+export const reviewersRelations = relations(reviewers, ({ one }) => ({
+  article: one(articleSubmissions, {
+    fields: [reviewers.articleId],
+    references: [articleSubmissions.id],
+    relationName: 'reviewers',
+  }),
+}));
+
+export const reviewsRelations = relations(reviews, ({ one }) => ({
+  article: one(articleSubmissions, {
+    fields: [reviews.articleId],
+    references: [articleSubmissions.id],
+    relationName: 'reviews',
+  }),
+  user: one(users, {
+    fields: [reviews.userId],
+    references: [users.id],
+    relationName: 'userReviews',
+  }),
+}));
 
 export const issuesRelations = relations(issues, ({ one, many }) => ({
   volume: one(volumes, {
@@ -436,6 +503,9 @@ export const reviewAssignmentsRelations = relations(
 export const usersRelations = relations(users, ({ many }) => ({
   articles: many(articleSubmissions, {
     relationName: 'articleSubmissions',
+  }),
+  reviews: many(reviews, {
+    relationName: 'userReviews',
   }),
 }));
 

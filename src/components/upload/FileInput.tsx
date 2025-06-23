@@ -34,10 +34,7 @@ export function DragAndDropFileInput() {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit as any)}
-        className="space-y-8 max-w-3xl mx-auto py-5"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-8">
         <FormField
           control={form.control}
           name="files"

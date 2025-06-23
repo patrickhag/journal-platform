@@ -34,8 +34,6 @@ export function ArticleCardProof() {
     null
   );
 
-  console.log('articleProofs>>>', articleProofs);
-
   const handleProof = (articleId: string) => {
     setSelectedArticleId(articleId);
     setIsProofCardOpen(true);

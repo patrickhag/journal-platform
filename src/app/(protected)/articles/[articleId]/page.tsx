@@ -54,7 +54,7 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
             fallback={<></>}
           />
         </div>
-        {/* metadata */}
+        {/* metadata & contributors */}
         <Metadata articleId={articleId} role={currentUserRole!} />
 
         {/* author info */}
@@ -81,7 +81,7 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
                 <p className="mt-1">
                   {article?.user.orcid ? (
                     <Link
-                      href={`https://orcid.org/${article.user.orcid}`}
+                      href={article.user.orcid}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={cn(
@@ -90,7 +90,7 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
                           : ''
                       )}
                     >
-                      https://orcid.org/{article.user.orcid}
+                      {article.user.orcid}
                     </Link>
                   ) : (
                     'Not provided'
