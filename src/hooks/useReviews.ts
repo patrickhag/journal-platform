@@ -1,4 +1,3 @@
-import { DecisionFormData } from '@/lib/schemas';
 import { ReviewFormData } from '@/schemas/reviewer';
 import { MessageResponse, TReview } from '@/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -75,6 +74,36 @@ export const useSendAuthorRevision = (articleId: string) => {
   return useMutation({
     mutationFn: async (data: RevisionType) => {
       return axios.post<MessageResponse>(`/api/users/${articleId}`, data);
+    },
+    onSuccess: ({ data }) => {
+      if (data.message) {
+        toast(data.message);
+      }
+    },
+    onError: (error: Error | AxiosError) => {
+      console.error('Author revision error:', error.message);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : error.message;
+
+      toast.error(message || 'Failed to submit revision');
+      console.error(message);
+    },
+  });
+};
+
+type ReRevisionType = {
+  message: string;
+  fileIds: string[];
+  reviewerId: string;
+  reviewerName: string;
+  reviewerEmail: string;
+};
+
+export const useSendReRevision = (articleId: string) => {
+  return useMutation({
+    mutationFn: async (data: ReRevisionType) => {
+      return axios.put<MessageResponse>(`/api/editor/${articleId}`, data);
     },
     onSuccess: ({ data }) => {
       if (data.message) {

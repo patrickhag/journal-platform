@@ -43,8 +43,14 @@ export async function GET(
               columns: {
                 firstName: true,
                 lastName: true,
+                email: true,
               },
             },
+          },
+        },
+        editorActions: {
+          columns: {
+            id: true,
           },
         },
       },

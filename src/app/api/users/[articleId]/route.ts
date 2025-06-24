@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import { db } from '@/db/db';
 
 import { articleRevisions, articleSubmissions } from '@/db/schema';
-import { notifyEditorAboutAuthorRevision } from '@/lib/emailTransporter';
+import { notifyEditorAboutRevision } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -57,10 +57,11 @@ export async function POST(
     });
 
     const authorNames = article?.user.firstName + ' ' + article?.user.lastName;
-    await notifyEditorAboutAuthorRevision({
+    await notifyEditorAboutRevision({
       authorName: authorNames,
       articleLink: article?.id as string,
       articleTitle: article?.metadata.title as string,
+      type: 'AUTHOR',
     });
 
     return NextResponse.json({

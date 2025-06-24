@@ -411,6 +411,21 @@ export const articleRevisions = pgTable('article_revisions', {
   note: text('note'),
 });
 
+export const reviewRevisions = pgTable('review_revisions', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  articleId: text('articleId').references(() => articleSubmissions.id, {
+    onDelete: 'cascade',
+  }),
+  fileIds: text('fileIds')
+    .array()
+    .default(sql`'{}'::text[]`),
+  reviewerId: text('reviewerId').references(() => users.id),
+  note: text('note'),
+  reviewedAt: timestamp('reviewedAt', { mode: 'date' }).defaultNow(),
+});
+
 /*** RELATIONS ***/
 
 export const articleSubmissionsRelations = relations(

@@ -10,24 +10,37 @@ import {
   Download,
   File,
   FileSearch2,
+  Repeat,
 } from 'lucide-react';
 import { StatusBadge } from '@/components/status-badge';
 import { useParams, useRouter } from 'next/navigation';
 import { useGetReviews } from '@/hooks/useReviews';
 import { useState } from 'react';
 import EditorDecisionModal from './components/EditorDecisionModal';
+import EditorReReviewModal from './components/EditorReReview';
 
 export default function ReviewsPage() {
   const { articleId } = useParams();
 
   const { data: reviewData } = useGetReviews(articleId as string);
   const [open, setOpen] = useState(false);
-
-  console.log('reviewData>>>', reviewData);
+  const [reviewerUserId, setReviewerUserId] = useState('');
+  const [reviewerName, setReviewerName] = useState('');
+  const [revieweEmail, setReviewerEMail] = useState('');
 
   const router = useRouter();
-
   const onClose = () => setOpen(false);
+
+  const handleReReviewRequest = (
+    reviewId: string,
+    reviewerName: string,
+    formReviwerEmail: string
+  ) => {
+    setOpen(true);
+    setReviewerUserId(reviewId);
+    setReviewerName(reviewerName);
+    setReviewerEMail(formReviwerEmail);
+  };
 
   return (
     <>
@@ -154,9 +167,26 @@ export default function ReviewsPage() {
                                 </div>
                               </div>
                             )}
-
-                            <div className="mt-4 text-sm text-muted-foreground">
-                              Submitted on {review.reviewedAt}
+                            <div className="flex justify-between gap-2">
+                              <div className="mt-4 text-sm text-muted-foreground">
+                                Submitted on {review.reviewedAt}
+                              </div>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() =>
+                                  handleReReviewRequest(
+                                    review.userId,
+                                    review.user.firstName +
+                                      ' ' +
+                                      review.user.lastName,
+                                    review.user.email
+                                  )
+                                }
+                              >
+                                <Repeat />
+                                Request Re-Review
+                              </Button>
                             </div>
                           </CardContent>
                         </Card>
@@ -180,6 +210,14 @@ export default function ReviewsPage() {
         isOpen={open}
         onClose={onClose}
         articleId={articleId as string}
+      />
+      <EditorReReviewModal
+        isOpen={open}
+        onClose={onClose}
+        articleId={articleId as string}
+        reviewerId={reviewerUserId}
+        reviewerName={reviewerName}
+        reviewerEmail={revieweEmail}
       />
     </>
   );

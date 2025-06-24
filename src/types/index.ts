@@ -136,7 +136,11 @@ export type TReview =
         user: {
           firstName: string;
           lastName: string;
+          email: string;
         };
       }[];
+      editorActions: {
+        id: string;
+      };
     }
   | undefined;

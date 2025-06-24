@@ -14,7 +14,10 @@ import {
 } from '@/components/emails/notify-author';
 import ProofSubmittedAdminEmailTemplate from '@/components/emails/notify-admin-proof';
 import ArticleNotificationEmail from '@/components/emails/notify-user-proof';
-import { AuthorRevisedManuscriptEmailTemplate } from '@/components/emails/author-revised-manuscript';
+import {
+  AuthorRevisedManuscriptEmailTemplate,
+  ReviewerReReviewEmailTemplate,
+} from '@/components/emails/author-revised-manuscript';
 
 export const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -368,28 +371,54 @@ export const notifyUserAboutEditorDecision = async ({
   }
 };
 
-export const notifyEditorAboutAuthorRevision = async ({
+export const notifyEditorAboutRevision = async ({
   editorName = 'Patrick HAGENIMANA',
   authorName,
   articleLink,
   articleTitle,
+  type,
+  reviewerName,
+  reviewerEmail,
 }: {
   editorName?: string;
   authorName: string;
   articleLink: string;
   articleTitle: string;
+  type: 'AUTHOR' | 'REVIEWER';
+  reviewerName?: string;
+  reviewerEmail?: string;
 }) => {
-  const emailHtml = await render(
-    <AuthorRevisedManuscriptEmailTemplate
-      editorName={editorName}
-      authorName={authorName}
-      articleLink={articleLink}
-      articleTitle={articleTitle}
-    />
-  );
+  let subject;
+  let emailHtml;
+  switch (type) {
+    case 'AUTHOR':
+      subject = 'Revised Manuscript Ready for Re-evaluation';
+      emailHtml = await render(
+        <AuthorRevisedManuscriptEmailTemplate
+          editorName={editorName}
+          authorName={authorName}
+          articleLink={articleLink}
+          articleTitle={articleTitle}
+        />
+      );
+      break;
+    case 'REVIEWER':
+      subject = 'Manuscript Revision Complete - Re-review Request';
+      emailHtml = await render(
+        <ReviewerReReviewEmailTemplate
+          articleLink={articleLink}
+          articleTitle={articleTitle}
+          authorName={authorName}
+          reviewerName={reviewerName as string}
+        />
+      );
+    default:
+      break;
+  }
+
   const options = {
     from: process.env.EMAIL_USER,
-    to: 'patrickhag09@gmail.com',
+    to: type === 'REVIEWER' ? reviewerEmail : 'patrickhag09@gmail.com',
     subject: 'Revised Manuscript Ready for Re-evaluation',
     html: emailHtml,
   };

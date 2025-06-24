@@ -42,3 +42,9 @@ export const decisionSchema = z.object({
 });
 
 export type DecisionFormData = z.infer<typeof decisionSchema>;
+
+export const reReviewSchema = z.object({
+  message: z.string().min(20, 'Message must be at least 20 characters'),
+});
+
+export type ReReviewFormData = z.infer<typeof reReviewSchema>;

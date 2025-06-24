@@ -38,7 +38,6 @@ import { useClearURL } from '@/components/ClearURL';
 interface EditorDecisionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit?: (data: DecisionFormData) => void;
   articleId: string;
 }
 
