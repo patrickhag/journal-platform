@@ -101,6 +101,19 @@ export default function ShowNav({ isOpen = false }: { isOpen: boolean }) {
           Manage
         </span>
       </Link>
+      <Link
+        href="/editor/manage/editorial-board-members"
+        className={cn(
+          pathname.toLowerCase().includes('editorial-board-members')
+            ? 'text-gray-700 bg-gray-100 rounded-md px-2.5 py-1.5'
+            : 'text-muted-foreground hover:text-gray-700'
+        )}
+      >
+        <span className="flex items-center gap-2">
+          <Users className="h-4 w-4" />
+          Editorial Board
+        </span>
+      </Link>
     </nav>
   );
 }
