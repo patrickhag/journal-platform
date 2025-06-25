@@ -1,8 +1,20 @@
-import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { editorialBoardMembers } from "@/db/schema";
-import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { InferSelectModel } from "drizzle-orm";
+import { Button } from '@/components/ui/button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { editorialBoardMembers } from '@/db/schema';
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { InferSelectModel } from 'drizzle-orm';
 
 interface EditorialBoardMembersTableProps {
   data: InferSelectModel<typeof editorialBoardMembers>[];
@@ -10,43 +22,46 @@ interface EditorialBoardMembersTableProps {
   onDelete: (memberId: string) => void;
 }
 
-export const getColumns = (onEdit: EditorialBoardMembersTableProps["onEdit"], onDelete: EditorialBoardMembersTableProps["onDelete"]): ColumnDef<InferSelectModel<typeof editorialBoardMembers>>[] => {
+export const getColumns = (
+  onEdit: EditorialBoardMembersTableProps['onEdit'],
+  onDelete: EditorialBoardMembersTableProps['onDelete']
+): ColumnDef<InferSelectModel<typeof editorialBoardMembers>>[] => {
   return [
     {
-      accessorKey: "fullName",
-      header: "Full Name",
+      accessorKey: 'fullName',
+      header: 'Full Name',
     },
     {
-      accessorKey: "affiliation",
-      header: "Affiliation",
+      accessorKey: 'affiliation',
+      header: 'Affiliation',
     },
     {
-      accessorKey: "country",
-      header: "Country",
+      accessorKey: 'country',
+      header: 'Country',
     },
     {
-      accessorKey: "role",
-      header: "Role",
+      accessorKey: 'role',
+      header: 'Role',
     },
     {
-      accessorKey: "areasOfExpertise",
-      header: "Areas of Expertise",
+      accessorKey: 'areasOfExpertise',
+      header: 'Areas of Expertise',
     },
     {
-      accessorKey: "photoUrl",
-      header: "Photo URL",
+      accessorKey: 'photoUrl',
+      header: 'Photo URL',
     },
     {
-      accessorKey: "orcidOrProfileUrl",
-      header: "ORCID / Profile URL",
+      accessorKey: 'orcidOrProfileUrl',
+      header: 'ORCID / Profile URL',
     },
     {
-      accessorKey: "isVisible",
-      header: "Visible",
-      cell: ({ row }) => (row.original.isVisible ? "Yes" : "No"),
+      accessorKey: 'isVisible',
+      header: 'Visible',
+      cell: ({ row }) => (row.original.isVisible ? 'Yes' : 'No'),
     },
     {
-      id: "actions",
+      id: 'actions',
       cell: ({ row }) => {
         const member = row.original;
         return (
@@ -54,7 +69,11 @@ export const getColumns = (onEdit: EditorialBoardMembersTableProps["onEdit"], on
             <Button variant="outline" size="sm" onClick={() => onEdit(member)}>
               Edit
             </Button>
-            <Button variant="destructive" size="sm" onClick={() => onDelete(member.id)}>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => onDelete(member.id)}
+            >
               Delete
             </Button>
           </div>
@@ -84,7 +103,10 @@ export function EditorialBoardMembersTable({
               <TableHead key={header.id}>
                 {header.isPlaceholder
                   ? null
-                  : flexRender(header.column.columnDef.header, header.getContext())}
+                  : flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
               </TableHead>
             ))}
           </TableRow>
@@ -93,7 +115,10 @@ export function EditorialBoardMembersTable({
       <TableBody>
         {table.getRowModel().rows.length ? (
           table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+            <TableRow
+              key={row.id}
+              data-state={row.getIsSelected() && 'selected'}
+            >
               {row.getVisibleCells().map((cell) => (
                 <TableCell key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -103,7 +128,10 @@ export function EditorialBoardMembersTable({
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan={getColumns(onEdit, onDelete).length} className="h-24 text-center">
+            <TableCell
+              colSpan={getColumns(onEdit, onDelete).length}
+              className="h-24 text-center"
+            >
               No results.
             </TableCell>
           </TableRow>

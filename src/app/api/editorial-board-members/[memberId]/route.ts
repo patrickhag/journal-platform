@@ -1,9 +1,9 @@
-import { db } from "@/db/db";
-import { editorialBoardMembers, users } from "@/db/schema";
+import { db } from '@/db/db';
+import { editorialBoardMembers, users } from '@/db/schema';
 import { auth } from '@/auth';
-import { eq } from "drizzle-orm";
-import { InferInsertModel } from "drizzle-orm";
-import { NextResponse } from "next/server";
+import { eq } from 'drizzle-orm';
+import { InferInsertModel } from 'drizzle-orm';
+import { NextResponse } from 'next/server';
 
 export async function GET(
   req: Request,
@@ -17,13 +17,13 @@ export async function GET(
     });
 
     if (!member) {
-      return new NextResponse("Not Found", { status: 404 });
+      return new NextResponse('Not Found', { status: 404 });
     }
 
     return NextResponse.json(member);
   } catch (error) {
-    console.error("Error fetching editorial board member:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    console.error('Error fetching editorial board member:', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
 
@@ -37,12 +37,13 @@ export async function PATCH(
       where: eq(users.id, session?.user.id as string),
     });
 
-    if (!user || user.role !== "ADMIN") {
-      return new NextResponse("Unauthorized", { status: 401 });
+    if (!user || user.role !== 'ADMIN') {
+      return new NextResponse('Unauthorized', { status: 401 });
     }
 
     const { memberId } = params;
-    const body: Partial<InferInsertModel<typeof editorialBoardMembers>> = await req.json();
+    const body: Partial<InferInsertModel<typeof editorialBoardMembers>> =
+      await req.json();
 
     const updatedMember = await db
       .update(editorialBoardMembers)
@@ -51,13 +52,13 @@ export async function PATCH(
       .returning();
 
     if (!updatedMember[0]) {
-      return new NextResponse("Not Found", { status: 404 });
+      return new NextResponse('Not Found', { status: 404 });
     }
 
     return NextResponse.json(updatedMember[0]);
   } catch (error) {
-    console.error("Error updating editorial board member:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    console.error('Error updating editorial board member:', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
 
@@ -71,8 +72,8 @@ export async function DELETE(
       where: eq(users.id, session?.user.id as string),
     });
 
-    if (!user || user.role !== "ADMIN") {
-      return new NextResponse("Unauthorized", { status: 401 });
+    if (!user || user.role !== 'ADMIN') {
+      return new NextResponse('Unauthorized', { status: 401 });
     }
 
     const { memberId } = params;
@@ -83,14 +84,14 @@ export async function DELETE(
       .returning();
 
     if (!deletedMember[0]) {
-      return new NextResponse("Not Found", { status: 404 });
+      return new NextResponse('Not Found', { status: 404 });
     }
 
     return NextResponse.json({
-      message: "Editorial board member deleted successfully",
+      message: 'Editorial board member deleted successfully',
     });
   } catch (error) {
-    console.error("Error deleting editorial board member:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    console.error('Error deleting editorial board member:', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
   }
-} 
+}
