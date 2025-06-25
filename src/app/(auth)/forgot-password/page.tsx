@@ -47,7 +47,6 @@ export default function ResetPasswordPage() {
   });
 
   const onSubmit = (data: z.infer<typeof forgotPasswordSchema>) => {
-    console.log('data>>>', data);
     resetPassword(data);
   };
 

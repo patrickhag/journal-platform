@@ -33,25 +33,99 @@ export default function ShowNav({ isOpen = false }: { isOpen: boolean }) {
         !isOpen && 'hidden'
       )}
     >
-      {navItems.map(({ label, href, icon: Icon }) => {
-        const isActive = pathname.includes(href.split('/').pop() || '');
-        const baseClasses = 'text-muted-foreground hover:text-gray-700';
-        const activeClasses =
-          'text-gray-700 bg-gray-100 rounded-md px-2.5 py-1.5';
+      <Link
+        href="/editor/dashboard"
+        className={cn(
+          pathname.toLowerCase().split('/').includes('dashboard')
+            ? 'text-gray-600 bg-gray-100 rounded-md px-2.5 py-1.5'
+            : 'text-muted-foreground hover:text-gray-700'
+        )}
+      >
+        <span className="flex items-center gap-2">
+          <LayoutDashboard className="h-4 w-4" />
+          Dashboard
+        </span>
+      </Link>
 
-        return (
-          <Link
-            key={href}
-            href={href}
-            className={cn(isActive ? activeClasses : baseClasses)}
-          >
-            <span className="flex items-center gap-2">
-              <Icon className="h-4 w-4" />
-              {label}
-            </span>
-          </Link>
-        );
-      })}
+      <Link
+        href="/editor/articles"
+        className={cn(
+          pathname.toLowerCase().split('/').includes('articles')
+            ? 'text-gray-700 bg-gray-100 rounded-md px-2.5 py-1.5'
+            : 'text-muted-foreground hover:text-gray-700'
+        )}
+      >
+        <span className="flex items-center gap-2">
+          <FileText className="h-4 w-4" />
+          Articles
+        </span>
+      </Link>
+
+      <Link
+        href="/editor/users"
+        className={cn(
+          pathname.toLowerCase().split('/').includes('users')
+            ? 'text-gray-700 bg-gray-100 rounded-md px-2.5 py-1.5'
+            : 'text-muted-foreground hover:text-gray-700'
+        )}
+      >
+        <span className="flex items-center gap-2">
+          <Users className="h-4 w-4" />
+          Users
+        </span>
+      </Link>
+      <Link
+        href="/editor/issues"
+        className={cn(
+          pathname.toLowerCase().split('/').includes('issues')
+            ? 'text-gray-700 bg-gray-100 rounded-md px-2.5 py-1.5'
+            : 'text-muted-foreground hover:text-gray-700'
+        )}
+      >
+        <span className="flex items-center gap-2">
+          <Calendar className="h-4 w-4" />
+          Issues
+        </span>
+      </Link>
+      <Link
+        href="/editor/proof"
+        className={cn(
+          pathname.toLowerCase().split('/').includes('proof')
+            ? 'text-gray-700 bg-gray-100 rounded-md px-2.5 py-1.5'
+            : 'text-muted-foreground hover:text-gray-700'
+        )}
+      >
+        <span className="flex items-center gap-2">
+          <FilePenLine className="h-4 w-4" />
+          Proofs
+        </span>
+      </Link>
+      <Link
+        href="/editor/manage"
+        className={cn(
+          pathname.toLowerCase().split('/').includes('manage')
+            ? 'text-gray-700 bg-gray-100 rounded-md px-2.5 py-1.5'
+            : 'text-muted-foreground hover:text-gray-700'
+        )}
+      >
+        <span className="flex items-center gap-2">
+          <FileCog className="h-4 w-4" />
+          Manage
+        </span>
+      </Link>
+      <Link
+        href="/editor/manage/editorial-board-members"
+        className={cn(
+          pathname.toLowerCase().includes('editorial-board-members')
+            ? 'text-gray-700 bg-gray-100 rounded-md px-2.5 py-1.5'
+            : 'text-muted-foreground hover:text-gray-700'
+        )}
+      >
+        <span className="flex items-center gap-2">
+          <Users className="h-4 w-4" />
+          Editorial Board
+        </span>
+      </Link>
     </nav>
   );
 }
