@@ -1,28 +1,33 @@
-"use client"
-import React, { useState, useEffect } from "react";
-import { EditorialBoardMembersTable } from "@/components/editorial-board-members/EditorialBoardMembersTable";
-import { Button } from "@/components/ui/button";
-import EditorialBoardMemberFormModal from "@/components/editorial-board-members/EditorialBoardMemberFormModal";
-import { editorialBoardMembers } from "@/db/schema";
-import { toast } from "sonner";
-import { InferSelectModel, InferInsertModel } from "drizzle-orm";
+'use client';
+import React, { useState, useEffect } from 'react';
+import { EditorialBoardMembersTable } from '@/components/editorial-board-members/EditorialBoardMembersTable';
+import { Button } from '@/components/ui/button';
+import EditorialBoardMemberFormModal from '@/components/editorial-board-members/EditorialBoardMemberFormModal';
+import { editorialBoardMembers } from '@/db/schema';
+import { toast } from 'sonner';
+import { InferSelectModel, InferInsertModel } from 'drizzle-orm';
 
 const EditorialBoardMembersPage = () => {
-  const [members, setMembers] = useState<InferSelectModel<typeof editorialBoardMembers>[]>([]);
+  const [members, setMembers] = useState<
+    InferSelectModel<typeof editorialBoardMembers>[]
+  >([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<InferSelectModel<typeof editorialBoardMembers> | null>(null);
+  const [selectedMember, setSelectedMember] = useState<InferSelectModel<
+    typeof editorialBoardMembers
+  > | null>(null);
 
   const fetchMembers = async () => {
     try {
-      const response = await fetch("/api/editorial-board-members");
+      const response = await fetch('/api/editorial-board-members');
       if (!response.ok) {
-        throw new Error("Failed to fetch members");
+        throw new Error('Failed to fetch members');
       }
-      const data: InferSelectModel<typeof editorialBoardMembers>[] = await response.json();
+      const data: InferSelectModel<typeof editorialBoardMembers>[] =
+        await response.json();
       setMembers(data);
     } catch (error) {
-      console.error("Error fetching members:", error);
-      toast.error("Failed to load editorial board members.");
+      console.error('Error fetching members:', error);
+      toast.error('Failed to load editorial board members.');
     }
   };
 
@@ -30,25 +35,30 @@ const EditorialBoardMembersPage = () => {
     fetchMembers();
   }, []);
 
-  const handleEdit = (member: InferSelectModel<typeof editorialBoardMembers>) => {
+  const handleEdit = (
+    member: InferSelectModel<typeof editorialBoardMembers>
+  ) => {
     setSelectedMember(member);
     setIsModalOpen(true);
   };
 
   const handleDelete = async (memberId: string) => {
-    if (window.confirm("Are you sure you want to delete this member?")) {
+    if (window.confirm('Are you sure you want to delete this member?')) {
       try {
-        const response = await fetch(`/api/editorial-board-members/${memberId}`, {
-          method: "DELETE",
-        });
+        const response = await fetch(
+          `/api/editorial-board-members/${memberId}`,
+          {
+            method: 'DELETE',
+          }
+        );
         if (!response.ok) {
-          throw new Error("Failed to delete member");
+          throw new Error('Failed to delete member');
         }
-        toast.success("Editorial board member deleted successfully.");
+        toast.success('Editorial board member deleted successfully.');
         fetchMembers();
       } catch (error) {
-        console.error("Error deleting member:", error);
-        toast.error("Failed to delete editorial board member.");
+        console.error('Error deleting member:', error);
+        toast.error('Failed to delete editorial board member.');
       }
     }
   };
@@ -58,47 +68,54 @@ const EditorialBoardMembersPage = () => {
     setIsModalOpen(true);
   };
 
-  const handleModalSubmit = async (formData: InferInsertModel<typeof editorialBoardMembers>) => {
+  const handleModalSubmit = async (
+    formData: InferInsertModel<typeof editorialBoardMembers>
+  ) => {
     try {
       let response;
       if (selectedMember) {
         // Update existing member
-        response = await fetch(`/api/editorial-board-members/${selectedMember.id}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
+        response = await fetch(
+          `/api/editorial-board-members/${selectedMember.id}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          }
+        );
         if (!response.ok) {
-          throw new Error("Failed to update member");
+          throw new Error('Failed to update member');
         }
-        toast.success("Editorial board member updated successfully.");
+        toast.success('Editorial board member updated successfully.');
       } else {
         // Add new member
-        response = await fetch("/api/editorial-board-members", {
-          method: "POST",
+        response = await fetch('/api/editorial-board-members', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(formData),
         });
         if (!response.ok) {
-          throw new Error("Failed to add member");
+          throw new Error('Failed to add member');
         }
-        toast.success("Editorial board member added successfully.");
+        toast.success('Editorial board member added successfully.');
       }
       setIsModalOpen(false);
       fetchMembers();
     } catch (error) {
-      console.error("Error saving member:", error);
-      toast.error("Failed to save editorial board member.");
+      console.error('Error saving member:', error);
+      toast.error('Failed to save editorial board member.');
     }
   };
 
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-6">Manage Editorial Board Members</h1>
+      <h1 className="text-3xl font-bold mb-6">
+        Manage Editorial Board Members
+      </h1>
       <div className="flex justify-end mb-4">
         <Button onClick={handleAddMember}>Add New Member</Button>
       </div>

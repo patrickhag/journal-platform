@@ -1,11 +1,17 @@
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { editorialBoardMembers } from "@/db/schema";
-import React, { useEffect, useState } from "react";
-import { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { editorialBoardMembers } from '@/db/schema';
+import React, { useEffect, useState } from 'react';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 
 interface EditorialBoardMemberFormModalProps {
   isOpen: boolean;
@@ -14,24 +20,21 @@ interface EditorialBoardMemberFormModalProps {
   onSubmit: (member: InferInsertModel<typeof editorialBoardMembers>) => void;
 }
 
-const EditorialBoardMemberFormModal: React.FC<EditorialBoardMemberFormModalProps> = ({
-  isOpen,
-  onClose,
-  member,
-  onSubmit,
-}) => {
-  const [formData, setFormData] = useState<Partial<InferInsertModel<typeof editorialBoardMembers>>>(
-    {
-      fullName: "",
-      affiliation: "",
-      country: "",
-      role: "",
-      areasOfExpertise: "",
-      photoUrl: "",
-      orcidOrProfileUrl: "",
-      isVisible: true,
-    }
-  );
+const EditorialBoardMemberFormModal: React.FC<
+  EditorialBoardMemberFormModalProps
+> = ({ isOpen, onClose, member, onSubmit }) => {
+  const [formData, setFormData] = useState<
+    Partial<InferInsertModel<typeof editorialBoardMembers>>
+  >({
+    fullName: '',
+    affiliation: '',
+    country: '',
+    role: '',
+    areasOfExpertise: '',
+    photoUrl: '',
+    orcidOrProfileUrl: '',
+    isVisible: true,
+  });
 
   useEffect(() => {
     if (member) {
@@ -40,27 +43,29 @@ const EditorialBoardMemberFormModal: React.FC<EditorialBoardMemberFormModalProps
         affiliation: member.affiliation,
         country: member.country,
         role: member.role,
-        areasOfExpertise: member.areasOfExpertise || "",
-        photoUrl: member.photoUrl || "",
-        orcidOrProfileUrl: member.orcidOrProfileUrl || "",
+        areasOfExpertise: member.areasOfExpertise || '',
+        photoUrl: member.photoUrl || '',
+        orcidOrProfileUrl: member.orcidOrProfileUrl || '',
         isVisible: member.isVisible,
         id: member.id, // Include id for updates
       });
     } else {
       setFormData({
-        fullName: "",
-        affiliation: "",
-        country: "",
-        role: "",
-        areasOfExpertise: "",
-        photoUrl: "",
-        orcidOrProfileUrl: "",
+        fullName: '',
+        affiliation: '',
+        country: '',
+        role: '',
+        areasOfExpertise: '',
+        photoUrl: '',
+        orcidOrProfileUrl: '',
         isVisible: true,
       });
     }
   }, [member]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
@@ -78,9 +83,11 @@ const EditorialBoardMemberFormModal: React.FC<EditorialBoardMemberFormModalProps
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{member ? "Edit Member" : "Add New Member"}</DialogTitle>
+          <DialogTitle>{member ? 'Edit Member' : 'Add New Member'}</DialogTitle>
           <DialogDescription>
-            {member ? "Edit the details of the editorial board member." : "Add a new editorial board member."}
+            {member
+              ? 'Edit the details of the editorial board member.'
+              : 'Add a new editorial board member.'}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid gap-4 py-4">
@@ -90,7 +97,7 @@ const EditorialBoardMemberFormModal: React.FC<EditorialBoardMemberFormModalProps
             </Label>
             <Input
               id="fullName"
-              value={formData.fullName || ""}
+              value={formData.fullName || ''}
               onChange={handleChange}
               className="col-span-3"
               required
@@ -102,7 +109,7 @@ const EditorialBoardMemberFormModal: React.FC<EditorialBoardMemberFormModalProps
             </Label>
             <Input
               id="affiliation"
-              value={formData.affiliation || ""}
+              value={formData.affiliation || ''}
               onChange={handleChange}
               className="col-span-3"
               required
@@ -114,7 +121,7 @@ const EditorialBoardMemberFormModal: React.FC<EditorialBoardMemberFormModalProps
             </Label>
             <Input
               id="country"
-              value={formData.country || ""}
+              value={formData.country || ''}
               onChange={handleChange}
               className="col-span-3"
               required
@@ -126,7 +133,7 @@ const EditorialBoardMemberFormModal: React.FC<EditorialBoardMemberFormModalProps
             </Label>
             <Input
               id="role"
-              value={formData.role || ""}
+              value={formData.role || ''}
               onChange={handleChange}
               className="col-span-3"
               required
@@ -138,7 +145,7 @@ const EditorialBoardMemberFormModal: React.FC<EditorialBoardMemberFormModalProps
             </Label>
             <Textarea
               id="areasOfExpertise"
-              value={formData.areasOfExpertise || ""}
+              value={formData.areasOfExpertise || ''}
               onChange={handleChange}
               className="col-span-3"
             />
@@ -149,7 +156,7 @@ const EditorialBoardMemberFormModal: React.FC<EditorialBoardMemberFormModalProps
             </Label>
             <Input
               id="photoUrl"
-              value={formData.photoUrl || ""}
+              value={formData.photoUrl || ''}
               onChange={handleChange}
               className="col-span-3"
             />
@@ -160,7 +167,7 @@ const EditorialBoardMemberFormModal: React.FC<EditorialBoardMemberFormModalProps
             </Label>
             <Input
               id="orcidOrProfileUrl"
-              value={formData.orcidOrProfileUrl || ""}
+              value={formData.orcidOrProfileUrl || ''}
               onChange={handleChange}
               className="col-span-3"
             />
@@ -177,7 +184,9 @@ const EditorialBoardMemberFormModal: React.FC<EditorialBoardMemberFormModalProps
               className="col-span-3"
             />
           </div>
-          <Button type="submit">{member ? "Save Changes" : "Add Member"}</Button>
+          <Button type="submit">
+            {member ? 'Save Changes' : 'Add Member'}
+          </Button>
         </form>
       </DialogContent>
     </Dialog>
