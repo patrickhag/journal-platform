@@ -12,7 +12,7 @@ import { safeParse, serialize } from 'zod-urlsearchparams';
 import { Button } from '../ui/button';
 
 const fileTypes = [
-  { value: 'article', label: 'Article Text' },
+  { value: 'article', label: 'Manuscript Text' },
   { value: 'instrument', label: 'Research Instrument' },
   { value: 'materials', label: 'Research Materials' },
   { value: 'results', label: 'Research Results' },

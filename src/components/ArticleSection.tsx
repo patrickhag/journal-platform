@@ -23,13 +23,12 @@ export function ArticleSection({ articles }: { articles: TArticle[] }) {
 
 function ArticleCard({
   article,
-  index,
 }: {
   article: {
     id: string;
     section: string;
     userId: string;
-    proofStatus?: string;
+    proofStatus: string;
     createdAt: string;
     updatedAt: string;
     articleStatus: string;
@@ -37,7 +36,7 @@ function ArticleCard({
       title: string;
     };
     editorActions: Array<{
-      editorfileId: string | null;
+      editorfileId: string;
       decision: string;
       message: string;
     }>;

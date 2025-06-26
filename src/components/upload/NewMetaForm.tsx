@@ -183,7 +183,7 @@ export const NewMetaForm: FC<
         }}
       >
         <div>
-          SEO Tags/Keywords <span className="text-red-500">*</span>
+          SEO Keywords <span className="text-red-500">*</span>
         </div>
         <label
           htmlFor="topics"
@@ -209,7 +209,7 @@ export const NewMetaForm: FC<
 
           <input
             id="topics"
-            placeholder="Add seo tags/keywords"
+            placeholder="Add seo keywords"
             name="topic"
             ref={topicRef}
             className="outline-none border-none placeholder-gray-400 text-sm"

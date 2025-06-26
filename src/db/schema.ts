@@ -183,9 +183,6 @@ export const reviewers = pgTable('reviewers', {
   email: varchar('email', { length: 255 }).notNull(),
   phone: varchar('phone', { length: 40 }),
   expertise: text('expertise').notNull(),
-  editorUserId: text('userId')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
   articleId: text('articleId').references(() => articleSubmissions.id, {
     onDelete: 'cascade',
   }),

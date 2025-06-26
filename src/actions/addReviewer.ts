@@ -1,6 +1,5 @@
 'use server';
 
-import { auth } from '@/auth';
 import { db, reviewers } from '@/db/schema';
 import { reviewerSchema } from '@/schemas/reviewer';
 import { revalidatePath } from 'next/cache';
@@ -10,12 +9,9 @@ export async function addReviewerAction(
   _: unknown,
   formData: z.infer<typeof reviewerSchema> & { articleId: string }
 ) {
-  const session = await auth();
-  const editorUserId = session?.user?.id || '';
-
   await db
     .insert(reviewers)
-    .values({ ...formData, editorUserId })
+    .values({ ...formData })
     .execute();
   revalidatePath('/articles/' + formData.articleId);
 }

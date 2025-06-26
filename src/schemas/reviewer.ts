@@ -70,10 +70,11 @@ export const reviewSchema = z.object({
 export type TArticle = {
   section: string;
   id: string;
-  createdAt: string | null;
+  createdAt: string;
   userId: string;
-  updatedAt: string | null;
-  proofFileUrl: string[] | null;
+  updatedAt: string;
+  proofFileUrl: string[];
+  proofStatus: string;
   articleStatus: string;
   metadata: {
     title: string;
@@ -81,7 +82,7 @@ export type TArticle = {
   editorActions: {
     message: string;
     decision: string;
-    editorfileId: string | null;
+    editorfileId: string;
   }[];
 };
 
