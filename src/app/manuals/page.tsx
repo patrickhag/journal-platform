@@ -19,7 +19,7 @@ export default async function GuidelinesPage() {
               <GuidelineSection
                 id="guidelines"
                 title="Guidelines"
-                description="Submission guidelines and expectations"
+                description="Submission guidelines for authors"
               >
                 <div
                   className="prose max-w-none"

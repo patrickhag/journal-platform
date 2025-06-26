@@ -1,4 +1,3 @@
-import React from 'react';
 import Image from 'next/image';
 import SearchBar from './searchBar';
 import { format } from 'date-fns';
@@ -6,6 +5,8 @@ import { getSectionImage } from '@/lib/utils';
 import { articleSubmissions } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { db } from '@/db/db';
+import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
 
 const RightSideBar = async () => {
   const editorsPicks = await db.query.articleSubmissions.findMany({
@@ -52,31 +53,34 @@ const RightSideBar = async () => {
           const imageUrl = getSectionImage(section);
 
           return (
-            <div key={id} className="rounded-lg overflow-hidden">
-              <div className="relative rounded-lg">
-                <p className="font-semibold mb-2">{section}</p>
-                <Image
-                  src={imageUrl}
-                  width={300}
-                  height={160}
-                  className="w-full h-40 object-cover rounded-lg"
-                  alt={section}
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2">
-                  <p className="text-sm line-clamp-1">
-                    {metadata?.title || 'Untitled Article'}
+            <Link key={id} href={`/articles/article/${id}`}>
+              <div className="group rounded-lg overflow-hidden cursor-pointer transition relative">
+                <div className="relative rounded-lg">
+                  <p className="font-semibold mb-2">{section}</p>
+                  <Image
+                    src={imageUrl}
+                    width={300}
+                    height={160}
+                    className="w-full h-40 object-cover rounded-lg"
+                    alt={section}
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 bg-black rounded-lg bg-opacity-50 text-white p-2 flex items-center justify-between">
+                    <p className="text-sm line-clamp-1">
+                      {metadata?.title || 'Untitled Article'}
+                    </p>
+                    <ArrowUpRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <p className="text-gray-500 text-xs">
+                    {fullName || 'Unknown Author'}
+                  </p>
+                  <p className="text-gray-500 text-xs">
+                    {format(new Date(updatedAt as string), 'MMM dd, yyyy')}
                   </p>
                 </div>
               </div>
-              <div className="mt-3">
-                <p className="text-gray-500 text-xs">
-                  {fullName || 'Unknown Author'}
-                </p>
-                <p className="text-gray-500 text-xs">
-                  {format(new Date(updatedAt as string), 'MMM dd, yyyy')}
-                </p>
-              </div>
-            </div>
+            </Link>
           );
         })}
       </div>

@@ -54,7 +54,6 @@ export default async function ArticlePage({
 }) {
   const { articleId } = await params;
 
-  console.log('articleId>>>', articleId);
   let articleData;
 
   try {
