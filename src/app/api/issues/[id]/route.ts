@@ -128,11 +128,11 @@ export async function PUT(
     }
 
     if (removedArticles) {
-      for (const article of removedArticles) {
+      for (const articleId of removedArticles) {
         await db
           .update(articleSubmissions)
           .set({ issueId: null })
-          .where(eq(articles.id, article));
+          .where(eq(articles.id, articleId));
       }
     }
 

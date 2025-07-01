@@ -1,5 +1,6 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import React from 'react';
+import { Input } from '../ui/input';
 
 export default function SearchBar() {
   return (
@@ -11,7 +12,7 @@ export default function SearchBar() {
         JAEPH is calling for new manuscripts
       </h1>
       <div className="flex items-center border mx-auto border-gray-300 rounded-md px-3 py-2 shadow-sm w-auto lg:w-1/2">
-        <input
+        <Input
           type="text"
           placeholder="Search journals, authors, reviewers..."
           className="flex-1 outline-none border-none text-gray-700 placeholder-gray-400"

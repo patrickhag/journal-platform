@@ -100,7 +100,7 @@ export function EditIssueModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Issue</DialogTitle>
         </DialogHeader>
@@ -274,7 +274,7 @@ export function EditIssueModal({
                         </h4>
                         <div className="text-sm text-muted-foreground">
                           {article.section} •{' '}
-                          {article.user.firstName + article.user.lastName}
+                          {article.user.firstName + ' ' + article.user.lastName}
                         </div>
                       </div>
                       {markedForDeletion.has(article.id) && (

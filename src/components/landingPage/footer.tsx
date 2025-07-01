@@ -127,7 +127,7 @@ const Footer = () => {
         <hr className="mt-6" />
         {/* Bottom Section */}
         <div className="mt-4 flex justify-between items-center text-sm text-gray-600">
-          <span>© 2024 JAEPH. All rights reserved.</span>
+          <span>© 2025 JAEPH. All rights reserved.</span>
           <div className="flex space-x-4">
             <a
               href="https://twitter.com/"

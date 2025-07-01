@@ -35,7 +35,6 @@ export default function DashboardPannel() {
     selectedValue
   );
 
-  console.log('articles>>>', articles);
   return (
     <div>
       <div className="mb-10">

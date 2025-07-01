@@ -23,6 +23,8 @@ import {
   SendIcon,
   Ellipsis,
   Dot,
+  Edit,
+  Trash,
 } from 'lucide-react';
 import { useGetVolumes } from '@/hooks/useVolumes';
 import {
@@ -121,12 +123,15 @@ export function IssueList() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onSelect={() => setEditingIssue(issue)}>
+                        <Edit className="mr-2 h-4 w-4" />
                         Edit Issue
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="text-destructive"
                         onClick={() => handleDeleteIssue(issue.id)}
                       >
+                        <Trash className="mr-2 h-4 w-4" />
+
                         {isDeletingIssuePending ? (
                           <Loader text="Deleting..." />
                         ) : (

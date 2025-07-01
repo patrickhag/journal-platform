@@ -1,3 +1,4 @@
+import { TManuals } from '@/db/schema';
 import { EditorsPicks } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
@@ -52,12 +53,16 @@ export const useCreateManuals = () => {
       policies,
       aimsNscope,
       termsNconditions,
+      paperTemplate,
+      copyrightTemplate,
     }: {
       guidelines?: unknown;
       aboutUs?: unknown;
       policies?: unknown;
       aimsNscope?: unknown;
       termsNconditions?: unknown;
+      paperTemplate?: string;
+      copyrightTemplate?: string;
     }) => {
       return axios.post(`/api/manuals/`, {
         guidelines,
@@ -65,6 +70,8 @@ export const useCreateManuals = () => {
         policies,
         aimsNscope,
         termsNconditions,
+        paperTemplate,
+        copyrightTemplate,
       });
     },
     onSuccess: ({ data }) => {
@@ -85,7 +92,7 @@ export const useGetManuals = () => {
   return useQuery({
     queryKey: ['manuals'],
     queryFn: async () => {
-      const res = await axios.get('/api/manuals');
+      const res = await axios.get<TManuals>('/api/manuals');
       return res.data;
     },
   });

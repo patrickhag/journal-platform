@@ -32,6 +32,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useGetPublishedVolumes } from '@/hooks/useVolumes';
 import { useIncrementMetrics } from '@/hooks/useMetrics';
+import { useGetManuals } from '@/hooks/useSettings';
 
 interface LeftSideBarProps {
   isAbstract?: boolean;
@@ -45,9 +46,9 @@ const LeftSideBar = ({
   articleId,
 }: LeftSideBarProps) => {
   const { data: volumes } = useGetPublishedVolumes();
-
   const [copied, setCopied] = useState(false);
   const [viewCount, setViewCount] = useState(false);
+  const { data: manuals } = useGetManuals();
 
   const handleCopyAPA = async () => {
     try {
@@ -363,12 +364,18 @@ const LeftSideBar = ({
           </h2>
           <ul className="mt-2 space-y-2 text-sm text-gray-600">
             <li>
-              <a href="#" className="hover:text-blue-600">
+              <a
+                href={manuals?.copyrightTemplate as string}
+                className="hover:text-blue-600"
+              >
                 Copyright form
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-600">
+              <a
+                href={manuals?.paperTemplate as string}
+                className="hover:text-blue-600"
+              >
                 Paper template
               </a>
             </li>

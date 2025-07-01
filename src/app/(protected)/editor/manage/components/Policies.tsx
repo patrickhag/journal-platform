@@ -24,11 +24,14 @@ import { RichTextEditor } from '@/components/RichTextEditor';
 import { useCreateManuals, useGetManuals } from '@/hooks/useSettings';
 import Loader from '@/components/Loader';
 import { useEffect } from 'react';
+import { DragAndDropFileInput } from '@/components/upload/FileInput';
+import { FileList } from '@/components/upload/FileList';
+import { useSearchParams } from 'next/navigation';
+import { safeParse } from 'zod-urlsearchparams';
+import { filesSchema } from '@/schemas/reviewer';
 
 const policiesSchema = z.object({
   privacyPolicy: z.string(),
-  editorialPolicy: z.string(),
-  termsAndConditions: z.string(),
 });
 
 type PoliciesForm = z.infer<typeof policiesSchema>;
@@ -38,45 +41,50 @@ export default function Policies() {
     resolver: zodResolver(policiesSchema),
     defaultValues: {
       privacyPolicy: '',
-      termsAndConditions: '',
-      editorialPolicy: '',
     },
   });
 
-  const { mutate: createManualMutation, isPending } = useCreateManuals();
-
   const { data: manualData } = useGetManuals();
+  const searchParams = useSearchParams();
+
+  const filesValidation = safeParse({
+    schema: filesSchema,
+    input: new URLSearchParams(searchParams.toString()),
+  });
+
+  const files = filesValidation.data?.files || [];
+  const fileIds = files.map((f) => f.publicId);
+  const copyrightTemplate = fileIds[0];
 
   useEffect(() => {
     if (manualData?.policies) {
       form.setValue('privacyPolicy', manualData.policies.privacyPolicy || '');
-      form.setValue(
-        'termsAndConditions',
-        manualData.policies.termsAndConditions || ''
-      );
-      form.setValue(
-        'editorialPolicy',
-        manualData.policies.editorialPolicy || ''
-      );
     }
   }, [manualData]);
 
+  const { mutate: createManualMutation, isPending } = useCreateManuals();
+
   const onSubmit = (data: PoliciesForm) => {
-    createManualMutation({ policies: data });
+    createManualMutation({ policies: data, copyrightTemplate });
   };
 
   return (
     <TabsContent value="policies" className="space-y-6">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Card>
-            <CardHeader>
-              <CardTitle>Journal Policies</CardTitle>
-              <CardDescription>
-                Update privacy policy, terms and conditions, and other policies
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+      <Card>
+        <CardHeader>
+          <CardTitle>Journal Policies</CardTitle>
+          <CardDescription>
+            Update privacy policy, terms and conditions, and other policies
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3 mb-4">
+            <p className="text-sm mb-4">Upload copyright template</p>
+            <DragAndDropFileInput />
+            <FileList isEditNeeded />
+          </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="space-y-6">
                 <FormField
                   control={form.control}
@@ -97,52 +105,14 @@ export default function Policies() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="termsAndConditions"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Terms and Conditions</FormLabel>
-                      <FormControl>
-                        <RichTextEditor
-                          description={form.getValues().termsAndConditions}
-                          onChange={(d) => {
-                            form.setValue('termsAndConditions', d);
-                          }}
-                          placeholder="By using this journal platform, you agree to the following terms..."
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="editorialPolicy"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Editorial policy</FormLabel>
-                      <FormControl>
-                        <RichTextEditor
-                          description={form.getValues().editorialPolicy}
-                          onChange={(d) => {
-                            form.setValue('editorialPolicy', d);
-                          }}
-                          placeholder="Our editorial policy outlines how we review and publish..."
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
                 <Button type="submit" className="w-full" disabled={isPending}>
                   {isPending ? <Loader text="Saving..." /> : 'Save Policies'}
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-        </form>
-      </Form>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
     </TabsContent>
   );
 }

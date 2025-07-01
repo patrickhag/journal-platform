@@ -14,7 +14,6 @@ export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
 
-  const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute =
     publicRoutes.some((route) => {
       const dynamicRoute = route.replace(/:\w+/g, '.*');
@@ -25,8 +24,10 @@ export default auth((req) => {
 
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
-  if (isApiAuthRoute) {
-    return undefined;
+  const allowApiRoutes = apiAuthPrefix.includes(nextUrl.pathname);
+
+  if (allowApiRoutes) {
+    return NextResponse.next();
   }
   if (isAuthRoute) {
     if (isLoggedIn) {

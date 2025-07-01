@@ -41,6 +41,7 @@ import {
   RotateCcw,
   Search,
   Eye,
+  FileStack,
 } from 'lucide-react';
 import { StatusBadge } from './status-badge';
 
@@ -57,6 +58,10 @@ import { useAssignIssues, useGetIssues } from '@/hooks/useIssues';
 import Loader from './Loader';
 import { useEditorsPick } from '@/hooks/useSettings';
 import { useRouter } from 'next/navigation';
+import {
+  useAssignCollectionArticles,
+  useGetCollections,
+} from '@/hooks/useCollections';
 
 type Article = {
   id: string | null;
@@ -245,7 +250,10 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
     },
   });
 
-  const { mutate: assignIssuesMutation, isPending } = useAssignIssues();
+  const { mutate: assignIssuesMutation, isPending: isAssigningIssuePending } =
+    useAssignIssues();
+  const { data: collections } = useGetCollections();
+  console.log('collections:', collections);
   const {
     mutate: pickArticlesMutation,
     isPending: isPickArticlesMutationPending,
@@ -260,8 +268,17 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
     pickArticlesMutation({ articleIds: selectedRowIds });
   };
 
+  const {
+    mutate: assignCollectionsMutation,
+    isPending: isAssigningCollectionPending,
+  } = useAssignCollectionArticles();
+
   const handleIssueAssertion = (issueId: string) => {
     assignIssuesMutation({ articleIds: selectedRowIds, issueId });
+  };
+
+  const handleCollectionAssertion = (collectionId: string) => {
+    assignCollectionsMutation({ articleIds: selectedRowIds, collectionId });
   };
 
   const selectedCount = selectedRows.length;
@@ -347,16 +364,47 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
                   <Button
                     variant="outline"
                     size="sm"
-                    disabled={isPending}
+                    disabled={isAssigningCollectionPending}
                     className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50"
                   >
-                    <FolderPlus className="h-4 w-4 mr-2" />
-                    {isPending ? (
+                    <FolderPlus className="h-3 w-3" />
+                    {isAssigningCollectionPending ? (
+                      <Loader text="Assigning..." />
+                    ) : (
+                      'Assign collections'
+                    )}
+                    <ChevronDown className="h-3 w-3 " />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-48">
+                  <DropdownMenuSeparator />
+                  {collections?.map((collection, index) => (
+                    <DropdownMenuItem
+                      key={index}
+                      onClick={() => handleCollectionAssertion(collection.id)}
+                      className="hover:bg-blue-50"
+                    >
+                      <FileStack className="h-4 w-4 mr-2" />
+                      Collection {collection.title}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={isAssigningIssuePending}
+                    className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50"
+                  >
+                    <FolderPlus className="h-3 w-3" />
+                    {isAssigningIssuePending ? (
                       <Loader text="Assigning..." />
                     ) : (
                       'Assign Issues'
                     )}
-                    <ChevronDown className="h-4 w-4 ml-2" />
+                    <ChevronDown className="h-3 w-3 " />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-48">
@@ -381,7 +429,7 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
                 disabled={isPickArticlesMutationPending}
                 className="bg-white border-green-300 text-green-700 hover:bg-green-50"
               >
-                <FileHeart className="h-4 w-4 mr-2" />
+                <FileHeart className="h-3 w-3" />
                 {isPickArticlesMutationPending ? (
                   <Loader text="Picking..." />
                 ) : (

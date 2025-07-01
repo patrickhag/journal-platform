@@ -115,6 +115,33 @@ export type EditorsPicks = {
   };
 }[];
 
+export type TCollections = {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  objective: string;
+  sdgGoal: string;
+  isFeatured: boolean;
+  thumbnailUrl: string;
+  createdAt: Date;
+  updatedAt: string;
+  collectionArticles: {
+    collectionId: string;
+    articleId: string;
+    articleSubmission: {
+      articleStatus: string;
+      metadata: {
+        title: string;
+      };
+      user: {
+        firstName: string;
+        lastName: string;
+      };
+    };
+  }[];
+};
+
 export type TReview =
   | {
       articleStatus: string | null;

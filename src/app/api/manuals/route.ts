@@ -12,6 +12,8 @@ export async function POST(req: NextRequest) {
     aboutUs,
     aimsNscope,
     termsNconditions,
+    paperTemplate,
+    copyrightTemplate,
   } = body;
 
   try {
@@ -26,6 +28,7 @@ export async function POST(req: NextRequest) {
         aboutUs,
         aimsNscope,
         termsNconditions,
+        copyrightTemplate,
       });
 
       return NextResponse.json(
@@ -43,6 +46,8 @@ export async function POST(req: NextRequest) {
           aboutUs,
           aimsNscope,
           termsNconditions,
+          paperTemplate,
+          copyrightTemplate,
         })
         .returning();
 

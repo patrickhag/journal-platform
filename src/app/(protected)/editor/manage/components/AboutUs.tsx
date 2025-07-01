@@ -32,7 +32,7 @@ export default function AboutUs() {
   const { data: manualData } = useGetManuals();
 
   useEffect(() => {
-    if (manualData?.guidelines) {
+    if (manualData?.aboutUs) {
       form.setValue('content', manualData.aboutUs.content || '');
     }
   }, [manualData]);

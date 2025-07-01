@@ -32,7 +32,7 @@ export default function AimsNScope() {
   const { data: manualData } = useGetManuals();
 
   useEffect(() => {
-    if (manualData?.guidelines) {
+    if (manualData?.aimsNscope) {
       form.setValue('content', manualData.aimsNscope.content || '');
     }
   }, [manualData]);

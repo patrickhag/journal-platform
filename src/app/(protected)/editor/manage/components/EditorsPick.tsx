@@ -9,15 +9,15 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Dot, FilePlus, Trash2 } from 'lucide-react';
-import Link from 'next/link';
+import { Dot, Trash2 } from 'lucide-react';
 import { useEditorsPick, useGetEditorsPick } from '@/hooks/useSettings';
 import Loader from '@/components/Loader';
 import { useState } from 'react';
 import EditorsCardSkeleton from './SkeletonEditorsPick';
 
 export default function EditorsPick() {
-  const { data: editorsPicks, isPending: isLoadingPicks } = useGetEditorsPick();
+  const { data: editorsPicks = [], isPending: isLoadingPicks } =
+    useGetEditorsPick();
   const [loadingArticleId, setLoadingArticleId] = useState<string | null>(null);
   const { mutate, isPending } = useEditorsPick();
 
@@ -43,18 +43,11 @@ export default function EditorsPick() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {isLoadingPicks && <Loader text="Loading..." />}
-
           {/* No articles found */}
-          {!isLoadingPicks && editorsPicks?.length === 0 && (
-            <p className="text-sm text-muted-foreground mb-4">
-              No featured articles yet. Add one to get started.
-            </p>
-          )}
-
-          {/* Loaded articles */}
-          {!isLoadingPicks &&
-            editorsPicks?.map((article) => (
+          {isLoadingPicks ? (
+            [...Array(3)].map((_, index) => <EditorsCardSkeleton key={index} />)
+          ) : editorsPicks.length > 0 ? (
+            editorsPicks.map((article) => (
               <div
                 key={article.id}
                 className="flex items-start mb-6 pb-6 border-b last:border-0"
@@ -85,7 +78,12 @@ export default function EditorsPick() {
                   </Button>
                 </div>
               </div>
-            ))}
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground mb-4">
+              No featured articles yet. Add one to get started.
+            </p>
+          )}
         </CardContent>
       </Card>
     </TabsContent>

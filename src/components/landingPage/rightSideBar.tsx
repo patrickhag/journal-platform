@@ -1,4 +1,3 @@
-import React from 'react';
 import Image from 'next/image';
 import SearchBar from './searchBar';
 import { format } from 'date-fns';
@@ -7,6 +6,7 @@ import { articleSubmissions } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { db } from '@/db/db';
 import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
 const RightSideBar = async () => {
   const editorsPicks = await db.query.articleSubmissions.findMany({
@@ -54,7 +54,7 @@ const RightSideBar = async () => {
 
           return (
             <Link key={id} href={`/articles/article/${id}`}>
-              <div>
+              <div className="group rounded-lg overflow-hidden cursor-pointer transition relative">
                 <div className="relative rounded-lg">
                   <p className="font-semibold mb-2">{section}</p>
                   <Image
@@ -64,10 +64,11 @@ const RightSideBar = async () => {
                     className="w-full h-40 object-cover rounded-lg"
                     alt={section}
                   />
-                  <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2">
+                  <div className="absolute bottom-0 left-0 right-0 bg-black rounded-lg bg-opacity-50 text-white p-2 flex items-center justify-between">
                     <p className="text-sm line-clamp-1">
                       {metadata?.title || 'Untitled Article'}
                     </p>
+                    <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
                   </div>
                 </div>
                 <div className="mt-3">

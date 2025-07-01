@@ -48,3 +48,17 @@ export const reReviewSchema = z.object({
 });
 
 export type ReReviewFormData = z.infer<typeof reReviewSchema>;
+
+export const collectionSchema = z.object({
+  title: z.string().min(2, 'Title is required'),
+  description: z.string().min(5, 'Description is required'),
+  objective: z.string().optional(),
+  sdgGoal: z.string().min(1, 'SDG Goal is required'),
+  isFeatured: z.boolean().optional(),
+  thumbnailUrl: z
+    .string()
+    .url('Must be a valid URL')
+    .min(1, 'Thumbnail is required'),
+});
+
+export type CollectionFormValues = z.infer<typeof collectionSchema>;

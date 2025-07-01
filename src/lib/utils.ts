@@ -52,3 +52,38 @@ export const getReviewAssignmentsStatusStyle = (status: string) => {
       return 'text-gray-900 bg-gray-100'; // Unknown/Pending
   }
 };
+
+export const slugify = (value: string) =>
+  value
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '');
+
+const sdgGoalsMap: Record<string, string> = {
+  'No Poverty': 'Goal 1 - No Poverty',
+  'Zero Hunger': 'Goal 2 - Zero Hunger',
+  'Good Health and Well-being': 'Goal 3 - Good Health and Well-being',
+  'Quality Education': 'Goal 4 - Quality Education',
+  'Gender Equality': 'Goal 5 - Gender Equality',
+  'Clean Water and Sanitation': 'Goal 6 - Clean Water and Sanitation',
+  'Affordable and Clean Energy': 'Goal 7 - Affordable and Clean Energy',
+  'Decent Work and Economic Growth': 'Goal 8 - Decent Work and Economic Growth',
+  'Industry, Innovation and Infrastructure':
+    'Goal 9 - Industry, Innovation and Infrastructure',
+  'Reduced Inequality': 'Goal 10 - Reduced Inequality',
+  'Sustainable Cities and Communities':
+    'Goal 11 - Sustainable Cities and Communities',
+  'Responsible Consumption and Production':
+    'Goal 12 - Responsible Consumption and Production',
+  'Climate Action': 'Goal 13 - Climate Action',
+  'Life Below Water': 'Goal 14 - Life Below Water',
+  'Life on Land': 'Goal 15 - Life on Land',
+  'Peace, Justice and Strong Institutions':
+    'Goal 16 - Peace, Justice and Strong Institutions',
+  'Partnerships for the Goals': 'Goal 17 - Partnerships for the Goals',
+};
+
+export function getSDGLabel(sdg: string): string {
+  return sdgGoalsMap[sdg] ?? sdg;
+}

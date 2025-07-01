@@ -1,14 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Settings,
   FileText,
@@ -24,6 +14,7 @@ import AboutUs from './components/AboutUs';
 import Policies from './components/Policies';
 import AimsNScope from './components/AimsNScope';
 import TermsAndConditions from './components/TermsNConditions';
+import SiteSettings from './components/Settings';
 
 function ManagePage() {
   return (
@@ -80,31 +71,7 @@ function ManagePage() {
           <Policies />
           <TermsAndConditions />
           <AimsNScope />
-          <TabsContent value="settings" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Journal Settings</CardTitle>
-                <CardDescription>
-                  Configure general journal settings and preferences
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Journal Name</label>
-                  <Input defaultValue="Journal of Scientific Research" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Description</label>
-                  <Textarea defaultValue="A peer-reviewed journal publishing original research..." />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Contact Email</label>
-                  <Input type="email" defaultValue="editor@journal.com" />
-                </div>
-                <Button className="w-full">Save Settings</Button>
-              </CardContent>
-            </Card>
-          </TabsContent>
+          <SiteSettings />
         </Tabs>
       </div>
     </div>

@@ -215,10 +215,6 @@ export const articleSubmissions = pgTable('article_submissions', {
   requirements: text('requirements').array().notNull(),
   commentsForEditor: text('comments_for_editor'),
   articleStatus: varchar('article_status', { length: 50 }).default('SUBMITTED'),
-  userId: text('userId')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  issueId: text('issueId').references(() => issues.id, { onDelete: 'cascade' }),
   proofFileUrl: text('proof_file_url')
     .array()
     .default(sql`'{}'::text[]`),
@@ -229,6 +225,10 @@ export const articleSubmissions = pgTable('article_submissions', {
   isEditorsPick: boolean('isEditorsPick'),
   createdAt: date('createdAt').defaultNow(),
   updatedAt: date('updatedAt').defaultNow(),
+  userId: text('userId')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  issueId: text('issueId').references(() => issues.id, { onDelete: 'cascade' }),
 });
 
 export const finalSubmissions = pgTable('final_submissions', {
@@ -336,6 +336,8 @@ export const manuals = pgTable('manuals', {
   aboutUs: jsonb('aboutUs').$type<{ content: string }>(),
   aimsNscope: jsonb('aimsNscope').$type<{ content: string }>(),
   termsNconditions: jsonb('termsNconditions').$type<{ content: string }>(),
+  paperTemplate: text('paperTemplate'),
+  copyrightTemplate: text('copyrightTemplate'),
 });
 
 export const editorialBoardMembers = pgTable('editorial_board_members', {
@@ -423,6 +425,51 @@ export const reviewRevisions = pgTable('review_revisions', {
   reviewedAt: timestamp('reviewedAt', { mode: 'date' }).defaultNow(),
 });
 
+export const collections = pgTable('collections', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  title: varchar('title', { length: 255 }).notNull(),
+  slug: varchar('slug', { length: 255 }).notNull().unique(),
+  description: text('description'),
+  objective: text('objective'),
+  sdgGoal: text('sdg_goal'),
+  isFeatured: boolean('is_featured').default(false),
+  thumbnailUrl: text('thumbnail_url'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const collectionArticles = pgTable('collection_articles', {
+  collectionId: text('collectionId')
+    .notNull()
+    .references(() => collections.id),
+  articleId: text('articleId')
+    .notNull()
+    .references(() => articleSubmissions.id),
+});
+
+export const collectionsRelations = relations(collections, ({ many }) => ({
+  collectionArticles: many(collectionArticles, {
+    relationName: 'collectionArticles',
+  }),
+}));
+
+export const collectionArticlesRelations = relations(
+  collectionArticles,
+  ({ one }) => ({
+    collection: one(collections, {
+      fields: [collectionArticles.collectionId],
+      references: [collections.id],
+      relationName: 'collectionArticles',
+    }),
+    articleSubmission: one(articleSubmissions, {
+      fields: [collectionArticles.articleId],
+      references: [articleSubmissions.id],
+    }),
+  })
+);
+
 /*** RELATIONS ***/
 
 export const articleSubmissionsRelations = relations(
@@ -457,6 +504,9 @@ export const articleSubmissionsRelations = relations(
     }),
     reviewAssignments: many(reviewAssignments, {
       relationName: 'reviewAssignments',
+    }),
+    collectionArticles: many(collectionArticles, {
+      relationName: 'collectionArticles',
     }),
   })
 );
@@ -557,3 +607,4 @@ export type TNotifications = typeof notifications.$inferSelect;
 export type Notifications = typeof notifications.$inferInsert;
 export type Issues = typeof issues.$inferInsert;
 export type TManuals = typeof manuals.$inferInsert;
+export type TCollections = typeof collections.$inferSelect;
