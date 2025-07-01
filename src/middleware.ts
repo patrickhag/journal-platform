@@ -13,36 +13,45 @@ const { auth } = NextAuth(authOptions);
 export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
+  const pathname = nextUrl.pathname;
+
+  // Check if this is an API auth route
+  const isApiAuthRoute = apiAuthPrefix.some((prefix) =>
+    pathname.startsWith(prefix)
+  );
+
+  // Handle API routes first
+  if (isApiAuthRoute) {
+    return NextResponse.next();
+  }
+
+  const isAuthRoute = authRoutes.includes(pathname);
 
   const isPublicRoute =
     publicRoutes.some((route) => {
-      const dynamicRoute = route.replace(/:\w+/g, '.*');
-      return new RegExp(`^${dynamicRoute}$`).test(nextUrl.pathname);
+      const dynamicRoute = route.replace(/:\w+/g, '[^/]+');
+      const regex = new RegExp(`^${dynamicRoute}(?:/.*)?$`);
+      return regex.test(pathname);
     }) ||
-    nextUrl.pathname.startsWith('/manuals') ||
-    nextUrl.pathname.startsWith('/editorial-board');
+    ['/manuals', '/editorial-board', '/forgot-password'].some((prefix) =>
+      pathname.startsWith(prefix)
+    );
 
-  const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-
-  const allowApiRoutes = apiAuthPrefix.includes(nextUrl.pathname);
-
-  if (allowApiRoutes) {
-    return NextResponse.next();
-  }
+  // Handle auth routes
   if (isAuthRoute) {
     if (isLoggedIn) {
       return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
     }
-    return undefined;
+    return NextResponse.next();
   }
 
   if (!isLoggedIn && !isPublicRoute) {
     const loginUrl = new URL('/login', nextUrl.origin);
-    loginUrl.searchParams.set('redirect', nextUrl.pathname + nextUrl.search);
+    loginUrl.searchParams.set('from', nextUrl.pathname + nextUrl.search);
     return NextResponse.redirect(loginUrl);
   }
 
-  return undefined;
+  return NextResponse.next();
 });
 
 export const config = {

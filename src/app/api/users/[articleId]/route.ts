@@ -65,7 +65,7 @@ export async function POST(
     });
 
     return NextResponse.json({
-      message: 'Decision updated and author notified successfully!',
+      message: 'Decision updated and editor notified successfully!',
     });
   } catch (error) {
     console.error('Error sending editor decision:', error);

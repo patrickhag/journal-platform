@@ -24,12 +24,14 @@ export default function ReviewsPage() {
 
   const { data: reviewData } = useGetReviews(articleId as string);
   const [open, setOpen] = useState(false);
+  const [openEditor, setOpenEditor] = useState(false);
   const [reviewerUserId, setReviewerUserId] = useState('');
   const [reviewerName, setReviewerName] = useState('');
   const [revieweEmail, setReviewerEMail] = useState('');
 
   const router = useRouter();
   const onClose = () => setOpen(false);
+  const onCloseEditor = () => setOpenEditor(false);
 
   const handleReReviewRequest = (
     reviewId: string,
@@ -212,8 +214,8 @@ export default function ReviewsPage() {
         articleId={articleId as string}
       />
       <EditorReReviewModal
-        isOpen={open}
-        onClose={onClose}
+        isOpen={openEditor}
+        onClose={onCloseEditor}
         articleId={articleId as string}
         reviewerId={reviewerUserId}
         reviewerName={reviewerName}

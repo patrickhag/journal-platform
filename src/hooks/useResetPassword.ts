@@ -10,20 +10,21 @@ type RequestData = {
 export const useResetPassword = () => {
   return useMutation({
     mutationFn: async (data: RequestData) => {
+      console.log('payload-hook:', data);
       const response = await axios.post<{ message: string; success: boolean }>(
         '/api/auth/reset-password',
         data
       );
       return response.data;
     },
-    onSuccess: (data) => {
-      toast.success(data.message || 'Password reset email sent successfully');
+    onSuccess: ({ message, success }) => {
+      toast.success(message);
     },
     onError: (error) => {
       const message = axios.isAxiosError(error)
         ? error.response?.data.message
         : error.message;
-      toast.error(message || 'Failed to reset password');
+      toast.error(message);
     },
   });
 };

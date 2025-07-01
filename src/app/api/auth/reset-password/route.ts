@@ -1,5 +1,4 @@
-import { passwordResets, users } from '@/db/schema';
-import { db } from '@/db/db';
+import { passwordResets, users, db } from '@/db/schema';
 import { RESET_PASSWORD_EXPIRATION_TIME } from '@/lib/consts';
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
@@ -10,8 +9,7 @@ import { AuthError } from 'next-auth';
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { email, password } = body;
+    const { email, password } = await req.json();
 
     const user = await db
       .select()
@@ -19,9 +17,9 @@ export async function POST(req: NextRequest) {
       .where(eq(users.email, email))
       .limit(1);
 
-    if (!user[0]) {
+    if (user.length === 0) {
       return NextResponse.json(
-        { message: 'User not found', success: false },
+        { message: 'No user found with provided email', success: false },
         { status: 404 }
       );
     }
@@ -88,11 +86,13 @@ export const GET = async (request: NextRequest) => {
 
   if (!token) redirect('/login');
 
-  const data = await db.query.passwordResets.findFirst({
-    where: eq(passwordResets.token, token),
-  });
+  const data = await db
+    .select()
+    .from(passwordResets)
+    .where(eq(passwordResets.token, token))
+    .limit(1);
 
-  const userRequest = data;
+  const userRequest = data[0];
 
   if (!userRequest) {
     return redirect('/forgot-password?msg=Invalid or expired token');

@@ -113,7 +113,7 @@ export const useDeleteCollection = () => {
     },
     onSuccess: ({ message }) => {
       queryClient.invalidateQueries({ queryKey: ['collections'] });
-      toast.success(message || 'Collection deleted successfully');
+      toast.success(message);
     },
     onError: (error: Error | AxiosError) => {
       const message = axios.isAxiosError(error)
