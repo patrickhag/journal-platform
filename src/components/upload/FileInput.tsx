@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { CloudUpload } from 'lucide-react';
-// import { FileInput, FileUploader } from '@/components/ui/file-upload';
+import { FileInput, FileUploader } from '@/components/ui/file-upload';
 import { useUploadArticleFiles } from '@/hooks/useUploadFiles';
 import Loader from '../Loader';
 
@@ -35,7 +35,7 @@ export function DragAndDropFileInput() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-8">
-        {/* <FormField
+        <FormField
           control={form.control}
           name="files"
           render={() => (
@@ -67,7 +67,7 @@ export function DragAndDropFileInput() {
               <FormMessage />
             </FormItem>
           )}
-        /> */}
+        />
         {files && (
           <div className="flex items-center justify-center">
             <Button

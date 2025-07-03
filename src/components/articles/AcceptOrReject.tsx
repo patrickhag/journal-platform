@@ -14,7 +14,8 @@ const AcceptOrReject = ({ articleId }: { articleId: string }) => {
     useAcceptManuscript();
 
   return (
-    <div className="w-4/5 mx-auto grid grid-cols-2 gap-2 mt-5">
+    <div className="w-4/5 mx-auto grid grid-cols-3 gap-2 mt-5">
+      <Button>Assign Editor</Button>
       <Button
         className="bg-green-500 hover:bg-green-600"
         onClick={() => {
@@ -22,7 +23,11 @@ const AcceptOrReject = ({ articleId }: { articleId: string }) => {
         }}
         disabled={isAcceptingPending}
       >
-        {isAcceptingPending ? <Loader /> : ''}Accept this manuscript
+        {isAcceptingPending ? (
+          <Loader text="Accepting..." />
+        ) : (
+          'Accept Manuscript'
+        )}
       </Button>
       <Button
         className="bg-red-500 hover:bg-red-600"
@@ -31,7 +36,7 @@ const AcceptOrReject = ({ articleId }: { articleId: string }) => {
         }}
         disabled={isPending}
       >
-        {isPending ? <Loader /> : ''} Reject this manuscript
+        {isPending ? <Loader text="Rejecting..." /> : 'Reject Manuscript'}
       </Button>
     </div>
   );

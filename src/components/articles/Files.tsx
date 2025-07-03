@@ -13,7 +13,7 @@ async function Files({
   role,
   userId,
 }: {
-  userId: string;
+  userId?: string;
   articleId: string;
   role: string;
 }) {
@@ -22,16 +22,16 @@ async function Files({
     .from(files)
     .where(eq(files.articleId, articleId));
 
-  const hasReviewerAcceptInvitation =
-    await db.query.reviewAssignments.findFirst({
-      where: and(
-        eq(reviewAssignments.status, 'ACCEPTED'),
-        eq(reviewAssignments.articleId, articleId),
-        eq(reviewAssignments.userId, userId)
-      ),
-    });
+  // const hasReviewerAcceptInvitation =
+  //   await db.query.reviewAssignments.findFirst({
+  //     where: and(
+  //       eq(reviewAssignments.status, 'ACCEPTED'),
+  //       eq(reviewAssignments.articleId, articleId),
+  //       eq(reviewAssignments.userId, userId)
+  //     ),
+  //   });
 
-  console.log('hasReviewerAcceptInvitation>>>', hasReviewerAcceptInvitation);
+  // console.log('hasReviewerAcceptInvitation>>>', hasReviewerAcceptInvitation);
 
   return (
     <>
@@ -67,7 +67,7 @@ async function Files({
                   </span>
                 </Link>
               </Button>
-              {hasReviewerAcceptInvitation?.status === 'ACCEPTED' && (
+              {/* {hasReviewerAcceptInvitation?.status === 'ACCEPTED' && (
                 <div className="flex space-x-1">
                   <UlterFile
                     requiredPermissions={['ADD_REVIEW']}
@@ -81,7 +81,7 @@ async function Files({
                     fallback={<></>}
                   />
                 </div>
-              )}
+              )} */}
             </div>
           ))}
         </CardContent>

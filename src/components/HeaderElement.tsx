@@ -1,12 +1,12 @@
 'use client';
 
-import ShowNav from './ShowNav';
 import Link from 'next/link';
 import Image from 'next/image';
 import HeaderModal from './HeaderModal';
 import NotificationsModal from './NotificationsModal';
 import { TNotifications } from '@/db/schema';
 import { useState } from 'react';
+import { Badge } from './ui/badge';
 
 export const HeaderElement = ({
   notifications = [],
@@ -14,10 +14,9 @@ export const HeaderElement = ({
   role,
 }: {
   notifications?: TNotifications[];
-  role?: 'NORMAL_USER' | 'CHIEF_EDITOR' | 'ADMIN' | 'REVIEWER';
+  role?: string;
   name: string;
 }) => {
-  const [isOpen] = useState(false);
   return (
     <>
       <div className="flex items-center gap-8">
@@ -31,18 +30,13 @@ export const HeaderElement = ({
               className="rounded-full object-cover"
             />
           </Link>
-          {role !== 'ADMIN' && role !== 'CHIEF_EDITOR' && (
-            <h1>
-              <span className="hidden sm:inline text-lg max-[1132px]:text-sm">
-                Journal of African Epidemiology and Public Health
-              </span>
-              <span className="sm:hidden">JAEPH</span>
-            </h1>
-          )}
+          <div className="flex items-center space-x-4">
+            <div>Journal of African Epidemiology and Public Health</div>
+            <Badge className="bg-purple-100 text-purple-800">
+              {role && role}
+            </Badge>
+          </div>
         </div>
-        {(role === 'ADMIN' || role === 'CHIEF_EDITOR') && (
-          <ShowNav isOpen={isOpen} />
-        )}
       </div>
       <div className="flex items-center gap-4">
         <NotificationsModal notifications={notifications} />

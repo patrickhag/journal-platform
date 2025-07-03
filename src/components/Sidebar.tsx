@@ -1,54 +1,111 @@
 'use client';
 
-import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Button } from './ui/button';
-import { signOut } from 'next-auth/react';
-import { Files, LayoutDashboard, LogOut } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import {
+  BarChart3,
+  Calendar,
+  CheckSquare,
+  Clock,
+  FileCog,
+  FilePenLine,
+  Files,
+  FileText,
+  History,
+  MessageSquare,
+  PlusCircle,
+  Users,
+} from 'lucide-react';
 
-export const Sidebar = () => {
+interface SidebarProps {
+  userRole: string;
+}
+
+const Sidebar = ({ userRole }: SidebarProps) => {
   const pathname = usePathname();
+
+  const getMenuItems = () => {
+    switch (userRole) {
+      case 'normal_user':
+        return [
+          { href: '/submissions', label: 'My Submissions', icon: FileText },
+          {
+            href: '/articles/new/start',
+            label: 'New Submission',
+            icon: PlusCircle,
+          },
+          { href: '/reviews', label: 'Reviews Received', icon: MessageSquare },
+        ];
+      case 'chief_editor':
+        return [
+          { href: '/editor/dashboard', label: 'Overview', icon: BarChart3 },
+          {
+            href: '/editor/articles',
+            label: 'All Submissions',
+            icon: FileText,
+          },
+          { href: '/editor/users', label: 'Manage Users', icon: Users },
+          {
+            href: '/editor/collections',
+            label: 'Manage Collections',
+            icon: Files,
+          },
+          {
+            href: '/editor/issues',
+            label: 'Manage Issues',
+            icon: Calendar,
+          },
+          {
+            href: '/editor/proof',
+            label: 'Proofs Reading',
+            icon: FilePenLine,
+          },
+          {
+            href: '/editor/manage',
+            label: 'Site Settings',
+            icon: FileCog,
+          },
+        ];
+      case 'reviewer':
+        return [
+          { href: '/reviewer', label: 'My Assignments', icon: CheckSquare },
+          { href: '/completed', label: 'Completed Reviews', icon: FileText },
+          { href: '/deadlines', label: 'Upcoming Deadlines', icon: Clock },
+        ];
+      default:
+        return [];
+    }
+  };
+
+  const menuItems = getMenuItems();
+
   return (
-    <aside className="w-64 bg-white p-6 shadow-md flex flex-col justify-between max-h-[calc(100vh-4rem)] sticky top-16">
-      <nav className="space-y-4">
-        <Link
-          href="/dashboard"
-          className={cn(
-            pathname.toLowerCase().split('/').includes('dashboard')
-              ? 'bg-gray-100 hover:text-gray-800 text-gray-600 rounded-lg p-2'
-              : 'text-gray-500 hover:text-gray-800',
-            'flex items-center space-x-2'
-          )}
-        >
-          <LayoutDashboard strokeWidth={1.75} />
-          <span>Dashboard</span>
-        </Link>
-        <Link
-          href="/articles"
-          className={cn(
-            pathname.toLowerCase().split('/').includes('articles')
-              ? 'bg-gray-100 hover:text-gray-800 text-gray-600 rounded-lg p-2 '
-              : 'text-gray-500 hover:text-gray-800',
-            'flex items-center space-x-2'
-          )}
-        >
-          <Files strokeWidth={1.75} />
-          <span>Articles</span>
-        </Link>
+    <div className="h-full bg-gray-50 border-r p-4">
+      <nav className="space-y-2">
+        {menuItems.map((item) => {
+          const isActive = pathname === item.href;
+          const Icon = item.icon;
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                'flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors',
+                isActive
+                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  : 'text-gray-700 hover:bg-gray-100'
+              )}
+            >
+              <Icon className="mr-3 h-4 w-4" />
+              {item.label}
+            </Link>
+          );
+        })}
       </nav>
-      <Button
-        variant={'ghost'}
-        className="justify-start"
-        onClick={() => {
-          signOut({
-            redirectTo: '/',
-          });
-        }}
-      >
-        <LogOut strokeWidth={1.75} />
-        Logout
-      </Button>
-    </aside>
+    </div>
   );
 };
+
+export default Sidebar;
