@@ -6,7 +6,15 @@ import { and, eq } from 'drizzle-orm';
 export default async function Header() {
   const session = await auth();
 
-  const role = session?.user?.role;
+  const roleMap: Record<string, string> = {
+    NORMAL_USER: 'Author',
+    CHIEF_EDITOR: 'Editor',
+    ADMIN: 'Admin',
+    REVIEWER: 'Reviewer',
+  };
+  const roleKey = session?.user?.role;
+  const role = roleMap[roleKey as string] || roleKey;
+
   const name = session?.user?.name?.split(' ')?.[1]?.substring(0, 1) as string;
 
   const notificationsData = await db
@@ -24,7 +32,7 @@ export default async function Header() {
       <div className="flex items-center justify-between h-full mx-3">
         <HeaderElement
           notifications={notificationsData}
-          role={role as 'NORMAL_USER' | 'CHIEF_EDITOR' | 'ADMIN' | 'REVIEWER'}
+          role={role as string}
           name={name}
         />
       </div>

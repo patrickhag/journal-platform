@@ -18,8 +18,6 @@ import withPermissions from '@/components/WithPermission';
 
 async function page({ params }: { params: Promise<{ articleId: string }> }) {
   const session = await auth();
-  const userId = session?.user?.id;
-
   const { articleId } = await params;
 
   const article = await db.query.articleSubmissions.findFirst({
@@ -126,7 +124,7 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
         </Card>
 
         {/* files */}
-        <Files articleId={articleId} role={currentUserRole!} userId={userId!} />
+        <Files articleId={articleId} role={currentUserRole!} />
 
         {/* reviewers */}
         {currentUserRole === 'CHIEF_EDITOR' || currentUserRole === 'ADMIN' ? (

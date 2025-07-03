@@ -2,13 +2,9 @@ import { NextResponse } from 'next/server';
 import { db } from '@/db/db';
 import { reviews } from '@/db/schema';
 import { auth } from '@/auth';
-
 import { articleSubmissions, notifications, users } from '@/db/schema';
-
 import { eq } from 'drizzle-orm';
 import { notifyAdmin } from '@/lib/emailTransporter';
-
-// your reviews schema
 
 export async function POST(req: Request) {
   try {

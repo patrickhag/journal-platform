@@ -26,7 +26,6 @@ export const useIncrementMetrics = () => {
       if (!downloadCount && !viewCount) {
         throw new Error('Either downloadCount or viewCount must be specified');
       }
-      console.log('tobe sent data>>>', articleId, downloadCount, viewCount);
       const response = await axios.post<MetricsResponse>('/api/metrics', {
         articleId,
         downloadCount,

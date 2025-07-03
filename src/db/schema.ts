@@ -166,9 +166,6 @@ export const contributors = pgTable('contributors', {
   affiliation: text('affiliation').notNull(),
   bio: text('bio').notNull(),
   role: text('role').notNull(),
-  userId: text('userId')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
   articleId: text('articleId').references(() => articleSubmissions.id, {
     onDelete: 'cascade',
   }),

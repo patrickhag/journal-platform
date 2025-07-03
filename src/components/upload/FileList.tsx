@@ -23,7 +23,7 @@ export const FileList = ({ isEditNeeded }: { isEditNeeded?: boolean }) => {
       {files.map((file) => (
         <div
           key={file.publicId}
-          className="flex items-center justify-between rounded-lg border p-4"
+          className="flex items-center justify-between rounded-lg border p-4 mt-3"
         >
           <div className="flex items-center space-x-4">
             <FileText />
