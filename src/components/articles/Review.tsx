@@ -36,11 +36,18 @@ import {
 import { reviewSchema, ReviewFormData } from '@/schemas/reviewer';
 import { useCreateReview } from '@/hooks/useReviews';
 import Loader from '../Loader';
+import { useClearURL } from '../ClearURL';
 
-export default function ReviewModal() {
-  const [open, setOpen] = useState(false);
+export default function ReviewModal({
+  open,
+  onClose,
+  articleId,
+}: {
+  open: boolean;
+  onClose: () => void;
+  articleId: string;
+}) {
   const searchParams = useSearchParams();
-  const { articleId } = useParams();
 
   const filesValidation = safeParse({
     schema: filesSchema,
@@ -69,23 +76,22 @@ export default function ReviewModal() {
 
   const { handleSubmit } = form;
 
-  const { mutate: createReviewMutation, isPending } = useCreateReview(setOpen);
+  const { mutate: createReviewMutation, isPending } = useCreateReview();
+
+  const clearURL = useClearURL();
 
   const onSubmit = (data: ReviewFormData) => {
-    createReviewMutation(data);
+    createReviewMutation(data, {
+      onSettled: () => {
+        clearURL();
+        onClose();
+      },
+    });
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="link"
-          className="text-blue-500 hover:text-blue-600 px-0 underline"
-        >
-          Add a review
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl">
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-[#1a237e]">
             Write a review

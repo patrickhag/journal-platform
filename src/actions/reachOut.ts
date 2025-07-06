@@ -17,7 +17,6 @@ export async function reachOut(_: unknown, formData: FormData) {
 
   const editorInChiefId = session?.user?.id;
 
-  // Convert FormData entries to an object for better logging
   const formDataObject = Object.fromEntries(formData.entries());
 
   if (!editorInChiefId) return null;

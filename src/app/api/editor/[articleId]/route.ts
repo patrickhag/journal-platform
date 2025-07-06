@@ -24,7 +24,12 @@ export async function POST(
 
     const { decision, fileId, message } = await req.json();
 
-    if (session?.user.role !== 'CHIEF_EDITOR') {
+    if (
+      !(
+        session?.user.role === 'CHIEF_EDITOR' ||
+        session?.user.role === 'ASSOCIATE_EDITOR'
+      )
+    ) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

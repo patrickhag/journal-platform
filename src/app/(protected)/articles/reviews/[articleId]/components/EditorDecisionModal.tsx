@@ -66,6 +66,8 @@ const EditorDecisionModal = ({
   const fileIds = files.map((f) => f.publicId);
   const fileId = fileIds[0];
 
+  console.log('articleId>>>', articleId);
+
   const { mutate, isPending } = useSendEditorDecision(articleId);
 
   const handleSubmit = (data: DecisionFormData) => {

@@ -124,7 +124,7 @@ export default function AddReviewerModal({
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Full names of the contributor"
+                        placeholder="Full names of the reviewer"
                         {...field}
                       />
                     </FormControl>

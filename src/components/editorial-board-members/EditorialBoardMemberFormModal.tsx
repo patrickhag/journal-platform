@@ -47,7 +47,7 @@ const EditorialBoardMemberFormModal: React.FC<
         photoUrl: member.photoUrl || '',
         orcidOrProfileUrl: member.orcidOrProfileUrl || '',
         isVisible: member.isVisible,
-        id: member.id, // Include id for updates
+        id: member.id,
       });
     } else {
       setFormData({

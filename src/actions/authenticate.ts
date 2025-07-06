@@ -38,6 +38,8 @@ export async function authenticate(
   switch (user?.role) {
     case 'NORMAL_USER':
       return redirect('/submissions', RedirectType.replace);
+    case 'ASSOCIATE_EDITOR':
+      return redirect('/associate-editor/assigned', RedirectType.replace);
     case 'REVIEWER':
       return redirect('/reviewer', RedirectType.replace);
     case 'CHIEF_EDITOR':

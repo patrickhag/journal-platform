@@ -171,3 +171,27 @@ export type TReview =
       };
     }
   | undefined;
+
+export type TReviewerAssignment = {
+  id: string;
+  assignedDate: string; // ISO date string
+  dueDate: string; // ISO date string
+  status: 'INVITED' | 'ACCEPTED' | 'DECLINED' | 'COMPLETED' | string;
+  article: {
+    id: string;
+    articleStatus:
+      | 'SUBMITTED'
+      | 'UNDER REVIEW'
+      | 'ACCEPTED'
+      | 'PUBLISHED'
+      | string;
+    metadata: {
+      title: string;
+      prefix: string;
+    };
+    user: {
+      firstName: string;
+      lastName: string;
+    };
+  };
+};

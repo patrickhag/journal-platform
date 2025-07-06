@@ -3,6 +3,7 @@ export const USER_ROLES = [
   'CHIEF_EDITOR',
   'REVIEWER',
   'ADMIN',
+  'ASSOCIATE_EDITOR',
 ] as const;
 export type USER_ROLE = (typeof USER_ROLES)[number];
 export type TPermissionItem =
@@ -26,7 +27,8 @@ export type TPermissionItem =
   | 'ARCHIVE_OWN_ARTICLE'
   | 'ACCEPT_ARTICLE'
   | 'REJECT_ARTICLE'
-  | 'INVITE_REVIEWERS';
+  | 'INVITE_REVIEWERS'
+  | 'ASSIGN_REVIEWERS';
 
 type TPermission = {
   [role in (typeof USER_ROLES)[number]]: TPermissionItem[];
@@ -78,6 +80,7 @@ export const ROLE_PERMISSIONS: TPermission = {
     'EDIT_OWN_ARTICLES',
     'DELETE_OWN_ARTICLES',
   ],
+  ASSOCIATE_EDITOR: ['INVITE_REVIEWERS', 'ASSIGN_REVIEWERS', 'VIEW_REVIEW'],
 };
 
 export type TUserPermissions = {

@@ -73,6 +73,24 @@ const Sidebar = ({ userRole }: SidebarProps) => {
           { href: '/completed', label: 'Completed Reviews', icon: FileText },
           { href: '/deadlines', label: 'Upcoming Deadlines', icon: Clock },
         ];
+      case 'associate_editor':
+        return [
+          {
+            href: '/associate-editor/assigned',
+            label: 'Assigned to me',
+            icon: CheckSquare,
+          },
+          {
+            href: '/editor/decision',
+            label: 'Editorial Decision',
+            icon: Clock,
+          },
+          {
+            href: '/editor/history',
+            label: 'Editorial history',
+            icon: History,
+          },
+        ];
       default:
         return [];
     }

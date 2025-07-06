@@ -15,6 +15,7 @@ import { AcceptOrRejectComponent } from '@/components/articles/AcceptOrReject';
 import { Button } from '@/components/ui/button';
 import { ArrowUpRight } from 'lucide-react';
 import withPermissions from '@/components/WithPermission';
+import AssignRevieweModal from './components/AssignReviewersModal';
 
 async function page({ params }: { params: Promise<{ articleId: string }> }) {
   const session = await auth();
@@ -127,25 +128,22 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
         <Files articleId={articleId} role={currentUserRole!} />
 
         {/* reviewers */}
-        {currentUserRole === 'CHIEF_EDITOR' || currentUserRole === 'ADMIN' ? (
-          <>
-            <Card className="my-3">
-              <CardHeader>
-                <CardTitle className="text-[#1a237e]">Reviewers</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex justify-between">
-                  {reviewrs.length === 0 ? (
-                    <>
-                      <p className="text-sm">
-                        This author has not proposed any reviewer.
-                      </p>
-                    </>
-                  ) : (
-                    <p className="text-sm">Add new reviewers</p>
-                  )}
-                  <AddReviewersLinkPermission
-                    requiredPermissions={['INVITE_REVIEWERS']}
+
+        <Card className="my-3">
+          <CardHeader>
+            <CardTitle className="text-[#1a237e]">Reviewers</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex justify-between">
+              {currentUserRole === 'CHIEF_EDITOR' ||
+              currentUserRole === 'ASSOCIATE_EDITOR' ? (
+                reviewrs.length === 0 ? (
+                  <p className="text-sm">
+                    This author has not proposed any reviewer.
+                  </p>
+                ) : (
+                  <AssignReviewerLinkPermission
+                    requiredPermissions={['ASSIGN_REVIEWERS']}
                     role={
                       currentUserRole as
                         | 'NORMAL_USER'
@@ -155,20 +153,31 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
                     }
                     fallback={<></>}
                   />
-                </div>
-                <Separator />
-                {reviewrs.map((r, index) => (
-                  <Reviewer
-                    reviewer={r}
-                    index={index}
-                    key={r.id}
-                    articleId={article?.id as string}
-                  />
-                ))}
-              </CardContent>
-            </Card>
-          </>
-        ) : null}
+                )
+              ) : null}
+              <AddReviewersLinkPermission
+                requiredPermissions={['INVITE_REVIEWERS']}
+                role={
+                  currentUserRole as
+                    | 'NORMAL_USER'
+                    | 'CHIEF_EDITOR'
+                    | 'ADMIN'
+                    | 'REVIEWER'
+                }
+                fallback={<></>}
+              />
+            </div>
+            <Separator />
+            {reviewrs.map((r, index) => (
+              <Reviewer
+                reviewer={r}
+                index={index}
+                key={r.id}
+                articleId={article?.id as string}
+              />
+            ))}
+          </CardContent>
+        </Card>
         <AcceptOrRejectComponent
           role={
             (currentUserRole ?? 'ADMIN') as
@@ -177,7 +186,7 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
               | 'ADMIN'
               | 'REVIEWER'
           }
-          requiredPermissions={['ACCEPT_ARTICLE', 'REJECT_ARTICLE']}
+          requiredPermissions={['REJECT_ARTICLE']}
           fallback=""
           articleId={articleId}
         />
@@ -200,5 +209,9 @@ const AddReviewersLink = () => (
 );
 
 const AddReviewersLinkPermission = withPermissions(AddReviewersLink);
+
+const AssignReviewerLink = () => <AssignRevieweModal />;
+
+const AssignReviewerLinkPermission = withPermissions(AssignReviewerLink);
 
 export default page;

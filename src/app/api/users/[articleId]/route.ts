@@ -1,7 +1,11 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
 
-import { articleRevisions, articleSubmissions } from '@/db/schema';
+import {
+  articleRevisions,
+  articleSubmissions,
+  notifications,
+} from '@/db/schema';
 import { notifyEditorAboutRevision } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -52,16 +56,37 @@ export async function POST(
             role: true,
           },
         },
+        editor: {
+          with: {
+            user: {
+              columns: {
+                id: true,
+                email: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        },
       },
       where: eq(articleSubmissions.id, articleId),
     });
 
     const authorNames = article?.user.firstName + ' ' + article?.user.lastName;
+
     await notifyEditorAboutRevision({
       authorName: authorNames,
       articleLink: article?.id as string,
       articleTitle: article?.metadata.title as string,
       type: 'AUTHOR',
+      associateEditorName:
+        article?.editor?.user.firstName + ' ' + article?.editor?.user.lastName,
+      associateEditorEmail: article?.editor?.user.email as string,
+    });
+
+    await db.insert(notifications).values({
+      message: `Author with the manuscript ${article?.metadata.title} has revised the manuscript`,
+      userId: article?.editor?.user.id,
     });
 
     return NextResponse.json({

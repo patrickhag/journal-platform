@@ -1,20 +1,18 @@
 import { ReviewFormData } from '@/schemas/reviewer';
-import { MessageResponse, TReview } from '@/types';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { MessageResponse, TReview, TReviewerAssignment } from '@/types';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { Dispatch, SetStateAction } from 'react';
 import { toast } from 'sonner';
 
-export const useCreateReview = (
-  setReviewModalOpen: Dispatch<SetStateAction<boolean>>
-) => {
+export const useCreateReview = () => {
   return useMutation({
     mutationFn: async (data: ReviewFormData) => {
       return axios.post<MessageResponse>('/api/reviews', data);
     },
     onSuccess: ({ data }) => {
       if (data.message) {
-        setReviewModalOpen(false);
+        toast.success(data.message);
       }
     },
     onError: (error: Error | AxiosError) => {
@@ -24,6 +22,45 @@ export const useCreateReview = (
         : error.message;
 
       toast.error(message || 'Failed to submit review');
+    },
+  });
+};
+
+type TData = {
+  assignmentId: string;
+};
+
+export const useAcceptReviewAssignment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: TData) => {
+      console.log('payload-data:', data);
+      return axios.patch<MessageResponse>('/api/reviews', data);
+    },
+    onSuccess: ({ data }) => {
+      if (data.message) {
+        queryClient.invalidateQueries({ queryKey: ['reviewerAssignments'] });
+        toast.success(data.message);
+      }
+    },
+    onError: (error: Error | AxiosError) => {
+      console.error('Review submission error:', error);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : error.message;
+
+      toast.error(message || 'Failed to accept review');
+    },
+  });
+};
+
+export const useGetReviewerAssignments = () => {
+  return useQuery({
+    queryKey: ['reviewerAssignments'],
+    queryFn: async () => {
+      const { data } = await axios.get<TReviewerAssignment[]>(`/api/reviews/`);
+      return data || [];
     },
   });
 };
@@ -77,7 +114,7 @@ export const useSendAuthorRevision = (articleId: string) => {
     },
     onSuccess: ({ data }) => {
       if (data.message) {
-        toast(data.message);
+        toast.success(data.message);
       }
     },
     onError: (error: Error | AxiosError) => {
@@ -107,7 +144,7 @@ export const useSendReRevision = (articleId: string) => {
     },
     onSuccess: ({ data }) => {
       if (data.message) {
-        toast(data.message);
+        toast.success(data.message);
       }
     },
     onError: (error: Error | AxiosError) => {

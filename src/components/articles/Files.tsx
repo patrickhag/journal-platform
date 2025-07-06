@@ -92,6 +92,6 @@ async function Files({
 
 export default Files;
 
-const FileControls = () => <ReviewModal />;
+// const FileControls = () => <ReviewModal />;
 
-const UlterFile = withPermissions(FileControls);
+// const UlterFile = withPermissions(FileControls);

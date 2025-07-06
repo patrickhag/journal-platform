@@ -16,7 +16,6 @@ export const loginSchema = z.object({
         ),
       'Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character'
     ),
-  role: z.string().min(3, { message: 'Role is required' }),
 });
 
 export const forgotPasswordSchema = z.object({

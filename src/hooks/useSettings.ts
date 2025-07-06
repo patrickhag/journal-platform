@@ -1,4 +1,4 @@
-import { TManuals } from '@/db/schema';
+import { TManuals, TNotifications } from '@/db/schema';
 import { EditorsPicks } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
@@ -93,6 +93,16 @@ export const useGetManuals = () => {
     queryKey: ['manuals'],
     queryFn: async () => {
       const res = await axios.get<TManuals>('/api/manuals');
+      return res.data;
+    },
+  });
+};
+
+export const useGetNotifications = () => {
+  return useQuery({
+    queryKey: ['notifications'],
+    queryFn: async () => {
+      const res = await axios.get<TNotifications[]>('/api/notifications');
       return res.data;
     },
   });

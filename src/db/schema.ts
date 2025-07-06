@@ -146,9 +146,6 @@ export const metadata = pgTable('metadata', {
     .array()
     .notNull()
     .default(sql`ARRAY[]::text[]`),
-  userId: text('userId')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
   articleId: text('articleId').references(() => articleSubmissions.id, {
     onDelete: 'cascade',
   }),
@@ -226,6 +223,7 @@ export const articleSubmissions = pgTable('article_submissions', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   issueId: text('issueId').references(() => issues.id, { onDelete: 'cascade' }),
+  editorId: text('editorId').references(() => editors.id),
 });
 
 export const finalSubmissions = pgTable('final_submissions', {
@@ -452,6 +450,33 @@ export const collectionsRelations = relations(collections, ({ many }) => ({
   }),
 }));
 
+export const editors = pgTable('editors', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text('userId')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  assignedAt: timestamp('assignedAt').defaultNow(),
+});
+
+export const editorsRelations = relations(editors, ({ one, many }) => ({
+  user: one(users, {
+    fields: [editors.userId],
+    references: [users.id],
+  }),
+  articleSubmissions: many(articleSubmissions, {
+    relationName: 'assignedSubmissions',
+  }),
+}));
+
+// export const articleSubmissionsRelations = relations(articleSubmissions, ({ one }) => ({
+//   editor: one(editors, {
+//     fields: [articleSubmissions.editorId],
+//     references: [editors.id],
+//   }),
+// }));
+
 export const collectionArticlesRelations = relations(
   collectionArticles,
   ({ one }) => ({
@@ -475,6 +500,11 @@ export const articleSubmissionsRelations = relations(
     user: one(users, {
       fields: [articleSubmissions.userId],
       references: [users.id],
+    }),
+    editor: one(editors, {
+      fields: [articleSubmissions.editorId],
+      references: [editors.id],
+      relationName: 'assignedSubmissions',
     }),
     issue: one(issues, {
       fields: [articleSubmissions.issueId],
@@ -547,10 +577,7 @@ export const reviewAssignmentsRelations = relations(
     article: one(articleSubmissions, {
       fields: [reviewAssignments.articleId],
       references: [articleSubmissions.id],
-    }),
-    reviewer: one(reviewers, {
-      fields: [reviewAssignments.reviewerId],
-      references: [reviewers.id],
+      relationName: 'reviewAssignments',
     }),
     user: one(users, {
       fields: [reviewAssignments.userId],

@@ -44,7 +44,6 @@ const LoginComponent = () => {
     defaultValues: {
       email: '',
       password: '',
-      role: '',
     },
   });
 
@@ -74,7 +73,7 @@ const LoginComponent = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div>
       <Card className="w-full max-w-2xl mx-auto p-4 mt-24">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
@@ -105,20 +104,6 @@ const LoginComponent = () => {
         <CardContent className="space-y-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <RoleSelector
-                      selectedRole={field.value}
-                      onRoleSelect={field.onChange}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 control={form.control}
                 name="email"

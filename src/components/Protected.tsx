@@ -2,34 +2,32 @@ import { auth } from '@/auth';
 import { USER_ROLE } from '@/lib/roles';
 import Link from 'next/link';
 import { ReactNode } from 'react';
-
 interface ProtectedProps {
   allowedRoles: string[];
   children: ReactNode;
 }
 
-// Role-based route mapping
 const ROLE_ROUTES: Record<USER_ROLE, string> = {
   NORMAL_USER: '/submissions',
   REVIEWER: '/reviewer',
-  CHIEF_EDITOR: '/editor',
+  CHIEF_EDITOR: '/editor/dashboard',
   ADMIN: '/editor',
+  ASSOCIATE_EDITOR: '/associate-editor/assigned',
 } as const;
 
-// Helper function to get appropriate redirect route for user role
 function getRedirectRoute(role: USER_ROLE): string {
   return ROLE_ROUTES[role] || '/';
 }
 
-// Helper function to get role display name
 function getRoleDisplayName(role: USER_ROLE): string {
   const roleNames: Record<USER_ROLE, string> = {
-    NORMAL_USER: 'User',
+    NORMAL_USER: 'Author',
     REVIEWER: 'Reviewer',
     CHIEF_EDITOR: 'Chief Editor',
+    ASSOCIATE_EDITOR: 'Chief Editor',
     ADMIN: 'Administrator',
   };
-  return roleNames[role] || 'User';
+  return roleNames[role] || 'Author';
 }
 
 export default async function Protected({
@@ -38,7 +36,6 @@ export default async function Protected({
 }: ProtectedProps) {
   const session = await auth();
 
-  // Handle unauthenticated users
   if (!session?.user) {
     return (
       <div className="grid place-items-center h-[calc(100vh-4rem)]">
@@ -64,7 +61,6 @@ export default async function Protected({
 
   const role = session.user.role as USER_ROLE;
 
-  // Check if user has required permissions
   if (!allowedRoles.includes(role)) {
     const redirectRoute = getRedirectRoute(role);
     const roleDisplayName = getRoleDisplayName(role);

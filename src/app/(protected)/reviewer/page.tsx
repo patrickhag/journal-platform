@@ -5,86 +5,83 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FileText, Eye, Upload } from 'lucide-react';
-import { useGetReviews } from '@/hooks/useReviews';
+import {
+  useAcceptReviewAssignment,
+  useGetReviewerAssignments,
+} from '@/hooks/useReviews';
+import Loader from '@/components/Loader';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import ReviewModal from '@/components/articles/Review';
 
-interface ReviewAssignment {
-  id: string;
-  articleTitle: string;
-  author: string;
-  assignedDate: string;
-  dueDate: string;
-  status: string;
-  roundNumber: number;
-  daysRemaining: number;
-}
+export default function ReviewerDashboard() {
+  const { data: reviewerAssignments, isLoading } = useGetReviewerAssignments();
 
-const ReviewerDashboard = () => {
-  const [assignments] = useState<ReviewAssignment[]>([
-    {
-      id: '1',
-      articleTitle:
-        'Machine Learning Applications in Healthcare: A Systematic Review',
-      author: 'Dr. Jane Smith',
-      assignedDate: '2024-01-20',
-      dueDate: '2024-02-10',
-      status: 'invited',
-      roundNumber: 1,
-      daysRemaining: 5,
-    },
-    {
-      id: '2',
-      articleTitle: 'Blockchain Technology in Supply Chain Management',
-      author: 'Prof. John Doe',
-      assignedDate: '2024-01-15',
-      dueDate: '2024-02-05',
-      status: 'in_progress',
-      roundNumber: 1,
-      daysRemaining: -2,
-    },
-    {
-      id: '3',
-      articleTitle: 'Sustainable Energy Solutions for Urban Development',
-      author: 'Dr. Maria Garcia',
-      assignedDate: '2024-01-10',
-      dueDate: '2024-01-30',
-      status: 'completed',
-      roundNumber: 2,
-      daysRemaining: -3,
-    },
-  ]);
-
-  const [reviewModal, setReviewModal] = useState({
+  const [reviewModal, setReviewModal] = useState<{
+    isOpen: boolean;
+    articleId?: string;
+  }>({
     isOpen: false,
-    assignmentId: '',
-    articleTitle: '',
+    articleId: '',
   });
 
-  const handleSubmitReview = (assignmentId: string, articleTitle: string) => {
-    setReviewModal({
-      isOpen: true,
-      assignmentId,
-      articleTitle,
-    });
+  const handleSubmitReview = (articleId: string) => {
+    setReviewModal({ isOpen: true, articleId });
   };
 
-  // const { data: assignmentso } = useGetReviews()
-
-  const handleReviewSubmit = (data: any) => {
-    console.log('Review submitted:', data);
-    setReviewModal({ isOpen: false, assignmentId: '', articleTitle: '' });
+  const onClose = () => {
+    setReviewModal({ isOpen: false });
   };
 
-  const pendingAssignments = assignments.filter((a) => a.status === 'invited');
-  const activeAssignments = assignments.filter(
-    (a) => a.status === 'in_progress'
-  );
+  const calculateDaysRemaining = (dueDate: string): number => {
+    const today = new Date();
+    const due = new Date(dueDate);
+    return Math.ceil((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  };
 
   const getUrgencyColor = (daysRemaining: number, status: string) => {
-    if (status === 'completed') return '!bg-green-100 !text-green-800';
-    if (daysRemaining < 0) return '!bg-red-100 !text-red-800';
+    if (status === 'COMPLETED') return '!bg-green-100 !text-green-800';
     if (daysRemaining <= 3) return '!bg-amber-100 !text-amber-800';
     return '!bg-blue-100 !text-blue-800';
   };
+
+  const filteredAssignments = reviewerAssignments?.filter((assignment) => {
+    const daysRemaining = calculateDaysRemaining(assignment.dueDate);
+    return (
+      assignment.article.articleStatus === 'PUBLISHED' || daysRemaining >= 0
+    );
+  });
+
+  const [acceptInvitaion, setAcceptInvitaion] = useState<{
+    open: boolean;
+    reviwAssignmentId?: string;
+  }>({
+    open: false,
+    reviwAssignmentId: '',
+  });
+
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending: isAcceptingInvitePending } =
+    useAcceptReviewAssignment();
+
+  const handleAcceptAssignment = (assignmentId: string) => {
+    setAcceptInvitaion({ open: true });
+    if (acceptInvitaion.open) {
+      mutate(
+        { assignmentId },
+        {
+          onSettled: () => {
+            queryClient.invalidateQueries({
+              queryKey: ['reviewerAssignments'],
+            });
+          },
+        }
+      );
+    }
+  };
+
+  const router = useRouter();
 
   return (
     <div className="space-y-6">
@@ -92,7 +89,6 @@ const ReviewerDashboard = () => {
         <h1 className="text-3xl font-bold text-gray-900">Review Assignments</h1>
       </div>
 
-      {/* Assignments List */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
@@ -102,90 +98,128 @@ const ReviewerDashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {assignments.map((assignment) => (
-              <div
-                key={assignment.id}
-                className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="font-semibold text-lg text-gray-900">
-                        {assignment.articleTitle}
-                      </h3>
-                    </div>
+            {filteredAssignments?.map((assignment) => {
+              const { id, status, assignedDate, dueDate, article } = assignment;
 
-                    <p className="text-gray-600 mb-3">by {assignment.author}</p>
+              const daysRemaining = calculateDaysRemaining(dueDate);
+              const isPublished = article.articleStatus === 'PUBLISHED';
+              const author = `${article.metadata?.prefix ?? ''} ${article.user.firstName} ${article.user.lastName}`;
+              const title = article.metadata?.title;
 
-                    <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
-                      <span>
-                        Assigned:{' '}
-                        {new Date(assignment.assignedDate).toLocaleDateString()}
-                      </span>
-                      <span>•</span>
-                      <span>
-                        Due: {new Date(assignment.dueDate).toLocaleDateString()}
-                      </span>
-                    </div>
+              return (
+                <div
+                  key={id}
+                  className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <h3 className="font-semibold text-lg text-gray-900">
+                          {title}
+                        </h3>
+                      </div>
 
-                    <div className="flex items-center space-x-4">
-                      {/* <Badge status={assignment.status} type="review" /> */}
-                      <Badge>{assignment.status}</Badge>
+                      <p className="text-gray-600 mb-3">by {author}</p>
 
-                      <Badge
-                        className={getUrgencyColor(
-                          assignment.daysRemaining,
-                          assignment.status
-                        )}
-                      >
-                        {assignment.status === 'completed'
-                          ? 'Submitted'
-                          : assignment.daysRemaining < 0
-                            ? `${Math.abs(assignment.daysRemaining)} days overdue`
-                            : assignment.daysRemaining === 0
+                      <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
+                        <span>
+                          Assigned:{' '}
+                          {new Date(assignedDate).toLocaleDateString()}
+                        </span>
+                        <span>•</span>
+                        <span>
+                          Due: {new Date(dueDate).toLocaleDateString()}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center space-x-4">
+                        <Badge>{status}</Badge>
+                        {!isPublished && (
+                          <Badge
+                            className={getUrgencyColor(daysRemaining, status)}
+                          >
+                            {daysRemaining === 0
                               ? 'Due today'
-                              : `${assignment.daysRemaining} days remaining`}
-                      </Badge>
+                              : `${daysRemaining} days remaining`}
+                          </Badge>
+                        )}
+                        {isPublished && (
+                          <Badge className="bg-gray-100 text-gray-700">
+                            PUBLISHED
+                          </Badge>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="flex space-x-2 ml-4">
-                    <Button variant="outline" size="sm">
-                      <Eye className="mr-2 h-4 w-4" />
-                      View Article
-                    </Button>
-
-                    {assignment.status === 'in_progress' && (
+                    <div className="flex space-x-2 ml-4">
                       <Button
+                        variant="outline"
                         size="sm"
-                        className="bg-blue-600 hover:bg-blue-700"
-                        onClick={() =>
-                          handleSubmitReview(
-                            assignment.id,
-                            assignment.articleTitle
-                          )
-                        }
+                        onClick={() => router.push(`/articles/${article.id}`)}
                       >
-                        <Upload className="mr-2 h-4 w-4" />
-                        Submit Review
+                        <Eye className="mr-2 h-4 w-4" />
+                        View Article
                       </Button>
-                    )}
+
+                      {!isPublished && (
+                        <>
+                          {status === 'INVITED' && (
+                            <>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-red-600 border-red-300 hover:bg-red-50"
+                              >
+                                Decline
+                              </Button>
+                              <Button
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700"
+                                onClick={() =>
+                                  handleAcceptAssignment(assignment.id)
+                                }
+                                disabled={isAcceptingInvitePending}
+                              >
+                                {isAcceptingInvitePending ? (
+                                  <Loader text="Accepting..." />
+                                ) : (
+                                  'Accept'
+                                )}
+                              </Button>
+                            </>
+                          )}
+
+                          {status === 'ACCEPTED' && (
+                            <Button
+                              size="sm"
+                              className="bg-blue-600 hover:bg-blue-700"
+                              onClick={() => handleSubmitReview(article.id)}
+                            >
+                              <Upload className="mr-2 h-4 w-4" />
+                              Submit Review
+                            </Button>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
+
+            {!isLoading && filteredAssignments?.length === 0 && (
+              <p className="text-sm text-gray-500">
+                You have no active assignments.
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>
-
-      {/* <SubmitReviewModal
-        isOpen={reviewModal.isOpen}
-        onClose={() => setReviewModal({ isOpen: false, assignmentId: '', articleTitle: '' })}
-        articleTitle={reviewModal.articleTitle}
-        onSubmit={handleReviewSubmit}
-      /> */}
+      <ReviewModal
+        open={reviewModal.isOpen}
+        onClose={onClose}
+        articleId={reviewModal.articleId as string}
+      />
     </div>
   );
-};
-
-export default ReviewerDashboard;
+}

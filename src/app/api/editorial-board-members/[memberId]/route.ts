@@ -3,14 +3,14 @@ import { editorialBoardMembers, users } from '@/db/schema';
 import { auth } from '@/auth';
 import { eq } from 'drizzle-orm';
 import { InferInsertModel } from 'drizzle-orm';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
-  req: Request,
-  { params }: { params: { memberId: string } }
+  req: NextRequest,
+  { params }: { params: Promise<{ memberId: string }> }
 ) {
   try {
-    const { memberId } = params;
+    const { memberId } = await params;
 
     const member = await db.query.editorialBoardMembers.findFirst({
       where: eq(editorialBoardMembers.id, memberId),
@@ -28,8 +28,8 @@ export async function GET(
 }
 
 export async function PATCH(
-  req: Request,
-  { params }: { params: { memberId: string } }
+  req: NextRequest,
+  { params }: { params: Promise<{ memberId: string }> }
 ) {
   try {
     const session = await auth();
@@ -41,7 +41,7 @@ export async function PATCH(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const { memberId } = params;
+    const { memberId } = await params;
     const body: Partial<InferInsertModel<typeof editorialBoardMembers>> =
       await req.json();
 
@@ -63,8 +63,8 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  req: Request,
-  { params }: { params: { memberId: string } }
+  req: NextRequest,
+  { params }: { params: Promise<{ memberId: string }> }
 ) {
   try {
     const session = await auth();
@@ -76,7 +76,7 @@ export async function DELETE(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const { memberId } = params;
+    const { memberId } = await params;
 
     const deletedMember = await db
       .delete(editorialBoardMembers)

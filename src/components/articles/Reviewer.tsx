@@ -113,7 +113,8 @@ export default async function Reviewer({
         <h4 className="text-sm text-muted-foreground mb-2">Expertise</h4>
         <p className="text-base">{expertise}</p>
       </div>
-      {(currentUserRole === 'CHIEF_EDITOR' || currentUserRole === 'ADMIN') && (
+      {(currentUserRole === 'CHIEF_EDITOR' ||
+        currentUserRole === 'ASSOCIATE_EDITOR') && (
         <Dialog>
           <DialogTrigger asChild>
             <Button variant={'outline'}>

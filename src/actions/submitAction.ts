@@ -11,7 +11,11 @@ import {
   metadata,
   reviewers,
 } from '@/db/schema';
-import { notifyContibutor, notifyAdmin } from '@/lib/emailTransporter';
+import {
+  notifyContibutor,
+  notifyAdmin,
+  thankAuthorAboutSubmission,
+} from '@/lib/emailTransporter';
 
 import {
   type articleSubmitionSchema,
@@ -60,6 +64,7 @@ export async function submitAction(_: unknown, formData: FormData) {
       return { message: 'Unauthorized' };
     }
 
+    const authorEmail = session.user.email;
     await db.transaction(async (trx) => {
       const userId = session?.user?.id || '';
 
@@ -97,7 +102,6 @@ export async function submitAction(_: unknown, formData: FormData) {
       await trx.insert(metadata).values({
         ...metadataValidations,
         articleId: articleSubmissionIds[0].id,
-        userId: userId,
       });
 
       await trx.insert(finalSubmissions).values({
@@ -110,6 +114,7 @@ export async function submitAction(_: unknown, formData: FormData) {
         ethicalReference: result.data.ethicalReference,
       });
 
+      // notify admin email
       await notifyAdmin({
         article: metadataValidations.title,
         authorName: session.user.name || session.user.email || 'Unknown Author',
@@ -117,6 +122,13 @@ export async function submitAction(_: unknown, formData: FormData) {
         articleId: articleSubmissionIds[0].id,
         participant: 'AUTHOR',
       });
+    });
+
+    // thank author email
+    await thankAuthorAboutSubmission({
+      articleTitle: metadataValidations.title,
+      authorNames: session.user.name,
+      authorEmail: session.user.email,
     });
 
     for (const contributor of contributorValidations) {

@@ -18,6 +18,9 @@ import {
   AuthorRevisedManuscriptEmailTemplate,
   ReviewerReReviewEmailTemplate,
 } from '@/components/emails/author-revised-manuscript';
+import { ThankAuthorEmailTemplate } from '@/components/emails/thank-you-email-template';
+import { AssignEditorEmailTemplate } from '@/components/emails/inform-associate-editor';
+import { AssignReviewerEmailTemplate } from '@/components/emails/inform-reviewer-email-template';
 
 export const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -197,19 +200,16 @@ export const notifyAdmin = async ({
   subject,
   articleId,
   participant,
+  associateEditorEmail,
 }: {
   article: string;
   authorName: string;
   subject: string;
   articleId: string;
   participant: 'REVIEWER' | 'AUTHOR';
+  associateEditorEmail: string;
 }) => {
   try {
-    const adminEmail = process.env.ADMIN_EMAIL;
-    if (!adminEmail) {
-      throw new Error('Admin email not configured');
-    }
-
     const emailHtml = await render(
       <NotifyAdminEmail
         articleId={articleId}
@@ -222,7 +222,7 @@ export const notifyAdmin = async ({
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: adminEmail,
+      to: associateEditorEmail,
       subject: subject,
       html: emailHtml,
     });
@@ -339,7 +339,6 @@ export const notifyUserAboutEditorDecision = async ({
             authorName={authorName}
             articleTitle={article}
             articleLink={articleLink}
-            fileIds={fileIds}
           />
         );
         break;
@@ -372,21 +371,23 @@ export const notifyUserAboutEditorDecision = async ({
 };
 
 export const notifyEditorAboutRevision = async ({
-  editorName = 'Patrick HAGENIMANA',
+  associateEditorName,
   authorName,
   articleLink,
   articleTitle,
   type,
   reviewerName,
   reviewerEmail,
+  associateEditorEmail,
 }: {
-  editorName?: string;
+  associateEditorName?: string;
   authorName: string;
   articleLink: string;
   articleTitle: string;
   type: 'AUTHOR' | 'REVIEWER';
   reviewerName?: string;
   reviewerEmail?: string;
+  associateEditorEmail?: string;
 }) => {
   let subject;
   let emailHtml;
@@ -395,7 +396,7 @@ export const notifyEditorAboutRevision = async ({
       subject = 'Revised Manuscript Ready for Re-evaluation';
       emailHtml = await render(
         <AuthorRevisedManuscriptEmailTemplate
-          editorName={editorName}
+          editorName={associateEditorName as string}
           authorName={authorName}
           articleLink={articleLink}
           articleTitle={articleTitle}
@@ -418,9 +419,105 @@ export const notifyEditorAboutRevision = async ({
 
   const options = {
     from: process.env.EMAIL_USER,
-    to: type === 'REVIEWER' ? reviewerEmail : 'patrickhag09@gmail.com',
+    to: type === 'REVIEWER' ? reviewerEmail : associateEditorEmail,
     subject: 'Revised Manuscript Ready for Re-evaluation',
     html: emailHtml,
   };
   await transporter.sendMail(options);
+};
+
+export const notifyAssociateEditor = async ({
+  articleTitle,
+  authorNames,
+  associateEditorEmail,
+  editorName,
+}: {
+  articleTitle: string;
+  authorNames: string;
+  associateEditorEmail: string;
+  editorName: string;
+}) => {
+  try {
+    const emailHtml = await render(
+      <AssignEditorEmailTemplate
+        articleTitle={articleTitle}
+        authorName={authorNames}
+        editorName={editorName}
+      />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: associateEditorEmail,
+      subject: 'You have been assigned as Associate Editor to an article',
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending admin notification:', error);
+    return { success: false, error };
+  }
+};
+
+export const associateNotifyReviewer = async ({
+  articleTitle,
+  reviewerNames,
+  reviewerEmail,
+  authorNames,
+}: {
+  articleTitle: string;
+  reviewerNames: string;
+  reviewerEmail: string;
+  authorNames: string;
+}) => {
+  try {
+    const emailHtml = await render(
+      <AssignReviewerEmailTemplate
+        articleTitle={articleTitle}
+        authorName={authorNames}
+        reviewerName={reviewerNames}
+      />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: reviewerEmail,
+      subject: 'Invitation of reviewing a manuscript',
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending reviewer invitation:', error);
+    return { success: false, error };
+  }
+};
+
+export const thankAuthorAboutSubmission = async ({
+  articleTitle,
+  authorNames,
+  authorEmail,
+}: {
+  articleTitle: string;
+  authorNames: string;
+  authorEmail?: string;
+}) => {
+  try {
+    const emailHtml = await render(
+      <ThankAuthorEmailTemplate names={authorNames} article={articleTitle} />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: authorEmail,
+      subject: 'Thank you for submitting your article',
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending admin notification:', error);
+    return { success: false, error };
+  }
 };

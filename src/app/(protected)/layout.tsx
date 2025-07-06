@@ -1,10 +1,9 @@
 import { auth } from '@/auth';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
-import { ProgressLine } from '@/components/upload/Progress';
 import { Toaster } from 'sonner';
 import { Suspense } from 'react';
-import Loader from '@/components/Loader'; // Make sure this exists
+import Loader from '@/components/Loader';
 
 interface LayoutProps {
   children: React.ReactNode;

@@ -15,9 +15,7 @@ export default async function addNewContributor({
   const session = await auth();
   try {
     if (!articleId || !session?.user.id) return;
-    await db
-      .insert(contributors)
-      .values({ ...data, articleId, userId: session.user.id });
+    await db.insert(contributors).values({ ...data, articleId });
     revalidatePath('/articles/' + articleId);
   } catch (error) {
     if (error instanceof Error) return error.message;

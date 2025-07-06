@@ -5,7 +5,6 @@ import Image from 'next/image';
 import HeaderModal from './HeaderModal';
 import NotificationsModal from './NotificationsModal';
 import { TNotifications } from '@/db/schema';
-import { useState } from 'react';
 import { Badge } from './ui/badge';
 
 export const HeaderElement = ({

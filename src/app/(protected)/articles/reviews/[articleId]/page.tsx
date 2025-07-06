@@ -133,7 +133,7 @@ export default function ReviewsPage() {
                                   {review.fileIds.map((fileUrl, idx) => (
                                     <div
                                       key={idx}
-                                      className="flex items-center justify-between p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors"
+                                      className="flex items-center justify-between p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors mb-3"
                                     >
                                       <div className="flex items-center gap-3">
                                         <File className="h-4 w-4 text-red-500" />
