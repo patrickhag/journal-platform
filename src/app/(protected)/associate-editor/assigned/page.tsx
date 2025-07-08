@@ -3,7 +3,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Eye } from 'lucide-react';
+import { FileText, Eye, Hourglass } from 'lucide-react';
 import { useAssignedAssociateEditor } from '../hooks/useAssociateEditorHooks';
 import { AssignmentCardSkeleton } from '../components/AssignmentCardSkeleton';
 import { useRouter } from 'next/navigation';
@@ -83,6 +83,21 @@ export default function AssociateEditorDashboard() {
                         </div>
 
                         <div className="flex space-x-2 ml-4">
+                          {submission.reviews.length > 0 && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="bg-amber-600 hover:bg-amber-700 text-white"
+                              onClick={() =>
+                                router.push(
+                                  `/articles/reviews/${submission.id}`
+                                )
+                              }
+                            >
+                              <Hourglass className="mr-1 h-3 w-3" />
+                              View Reviews
+                            </Button>
+                          )}
                           <Button
                             variant="outline"
                             size="sm"

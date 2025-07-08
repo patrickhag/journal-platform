@@ -49,6 +49,7 @@ export default function UpdateReviewerModal({
   });
 
   const reviewers = reviewersValidation.data?.reviewers || [];
+
   const form = useForm<ReviewerFormValues>({
     resolver: zodResolver(reviewerSchema),
     defaultValues: reviewers.find((r) => r.email === email),

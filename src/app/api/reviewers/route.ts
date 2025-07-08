@@ -58,6 +58,13 @@ export async function POST(req: NextRequest) {
       dueDate: date,
     });
 
+    await db
+      .update(articleSubmissions)
+      .set({
+        articleStatus: 'UNDER REVIEW',
+      })
+      .where(eq(articleSubmissions.id, articleId));
+
     const article = await db.query.articleSubmissions.findFirst({
       columns: {
         id: true,

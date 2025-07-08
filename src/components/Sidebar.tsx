@@ -14,7 +14,9 @@ import {
   FileText,
   History,
   MessageSquare,
+  Newspaper,
   PlusCircle,
+  Share2,
   Users,
 } from 'lucide-react';
 
@@ -62,6 +64,11 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             icon: FilePenLine,
           },
           {
+            href: '/editor/publish',
+            label: 'Publish Manuscript',
+            icon: Newspaper,
+          },
+          {
             href: '/editor/manage',
             label: 'Site Settings',
             icon: FileCog,
@@ -82,8 +89,8 @@ const Sidebar = ({ userRole }: SidebarProps) => {
           },
           {
             href: '/editor/decision',
-            label: 'Editorial Decision',
-            icon: Clock,
+            label: 'Manage Reviewers',
+            icon: Users,
           },
           {
             href: '/editor/history',

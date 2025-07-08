@@ -32,7 +32,7 @@ export const NotifiyContributor: React.FC<{
             <span className="font-semibold">{originalAuthor}</span>.
           </Text>
           <Text className="text-gray-700 my-4">
-            Wanna submit your own manuscript on our platform?
+            Want submit your own manuscript on our platform?
           </Text>
           <Button
             href={process.env.NEXT_PUBLIC_URL}

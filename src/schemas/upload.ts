@@ -10,7 +10,7 @@ export const contributorFormSchema = z.object({
     .email('Enter a valid email'),
   orcid: z.string().optional(),
   homepage: z.string().optional(),
-  affiliation: z.string(),
+  affiliation: z.string().min(3, { message: 'Affiliation must be provided' }),
   bio: z.string(),
   role: z.enum(['Author', 'Translator'], {
     required_error: 'Please select a role.',

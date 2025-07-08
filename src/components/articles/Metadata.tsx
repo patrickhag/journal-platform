@@ -21,7 +21,6 @@ export default async function Metadata({
       title: true,
       subtitle: true,
       abstract: true,
-      userId: true,
       prefix: true,
       topics: true,
     },
@@ -32,6 +31,13 @@ export default async function Metadata({
           section: true,
           commentsForEditor: true,
           createdAt: true,
+        },
+        with: {
+          user: {
+            columns: {
+              id: true,
+            },
+          },
         },
       },
     },
@@ -63,7 +69,7 @@ export default async function Metadata({
               />
             </div>
           </CardHeader>
-          {userId === meta.userId &&
+          {userId === meta.article?.user.id &&
             meta.article?.articleStatus !== 'PUBLISHED' && (
               <EditMetadata
                 meta={{

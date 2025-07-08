@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -68,8 +67,6 @@ export default function ReviewModal({
     resolver: zodResolver(reviewSchema),
     defaultValues: {
       message: '',
-      articleId: articleId as string,
-      fileIds,
       status: undefined,
     },
   });
@@ -81,10 +78,15 @@ export default function ReviewModal({
   const clearURL = useClearURL();
 
   const onSubmit = (data: ReviewFormData) => {
-    createReviewMutation(data, {
+    const payloadData = {
+      ...data,
+      articleId,
+      fileIds,
+    };
+    createReviewMutation(payloadData, {
       onSettled: () => {
-        clearURL();
         onClose();
+        clearURL();
       },
     });
   };
@@ -120,17 +122,6 @@ export default function ReviewModal({
                   <FormMessage />
                 </FormItem>
               )}
-            />
-
-            <input
-              type="hidden"
-              value={articleId}
-              {...form.register('articleId')}
-            />
-            <input
-              type="hidden"
-              value={JSON.stringify(fileIds)}
-              {...form.register('fileIds')}
             />
 
             <FormField

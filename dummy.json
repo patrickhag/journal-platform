@@ -124,5 +124,34 @@
         "bio_statement": "Jonas Meyer is a radiology informatics researcher focused on clinical applications of deep learning."
       }
     ]
+  },
+  {
+    "section_type": "short communication",
+    "comments_for_the_editor": "Brief report on a novel rapid diagnostic tool for malaria.",
+    "prefix": "Dr.",
+    "title": "A Portable Device for Rapid Malaria Detection",
+    "subtitle": "Field Evaluation in Sub-Saharan Africa",
+    "abstract": "This short communication presents the development and field testing of a portable device for rapid malaria detection, demonstrating high sensitivity and specificity in rural clinics.",
+    "keywords": [
+      "malaria",
+      "rapid diagnostics",
+      "portable device",
+      "field testing",
+      "infectious diseases"
+    ],
+    "contributors": [
+      {
+        "names_of_the_contributor": "Samuel Osei",
+        "email": "samuel.osei@ug.edu.gh",
+        "salutation": "Dr.",
+        "country": "Ghana",
+        "userDetails": {
+          "ORCID_ID": "0000-0004-5678-1234",
+          "Homepage": "https://samuelosei-malaria.org"
+        },
+        "affiliation": "University of Ghana",
+        "bio_statement": "Dr. Samuel Osei is a biomedical engineer specializing in diagnostic technologies for infectious diseases."
+      }
+    ]
   }
 ]

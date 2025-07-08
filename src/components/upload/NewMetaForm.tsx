@@ -108,22 +108,22 @@ export const NewMetaForm: FC<
     <>
       <Form {...formm}>
         <form ref={form} onSubmit={saveMeta}>
-          <div className="mb-4 grid grid-cols-2 gap-4">
-            <FormField
-              name="title"
-              control={formm.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="title">
-                    Title <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="Title of the manuscript" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+            name="title"
+            control={formm.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor="title">
+                  Title <span className="text-red-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input placeholder="Title of the manuscript" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="mb-4 grid grid-cols-2 gap-4 mt-3">
             <FormField
               name="prefix"
               control={formm.control}
@@ -139,25 +139,25 @@ export const NewMetaForm: FC<
                 </FormItem>
               )}
             />
+            <FormField
+              name="subtitle"
+              control={formm.control}
+              render={({ field }) => (
+                <FormItem className="mb-4">
+                  <FormLabel htmlFor="subtitle">Subtitle</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Subtitle of the journal" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
-          <FormField
-            name="subtitle"
-            control={formm.control}
-            render={({ field }) => (
-              <FormItem className="mb-4">
-                <FormLabel htmlFor="subtitle">Subtitle</FormLabel>
-                <FormControl>
-                  <Input placeholder="Subtitle of the journal" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             name="abstract"
             control={formm.control}
             render={({ field }) => (
-              <FormItem className="mb-4 py-3">
+              <FormItem className="mb-4">
                 <FormLabel htmlFor="abstract">
                   Abstract <span className="text-red-500">*</span>
                 </FormLabel>

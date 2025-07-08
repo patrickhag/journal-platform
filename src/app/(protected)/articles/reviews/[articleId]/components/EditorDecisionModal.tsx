@@ -66,8 +66,6 @@ const EditorDecisionModal = ({
   const fileIds = files.map((f) => f.publicId);
   const fileId = fileIds[0];
 
-  console.log('articleId>>>', articleId);
-
   const { mutate, isPending } = useSendEditorDecision(articleId);
 
   const handleSubmit = (data: DecisionFormData) => {
@@ -120,7 +118,7 @@ const EditorDecisionModal = ({
             publication, request revisions, or reject it.
           </DialogDescription>
         </DialogHeader>
-        <p>Annotate files</p>
+        <p>Attach Annotate Files (if any)</p>
         <DragAndDropFileInput />
         <FileList isEditNeeded={true} />
 

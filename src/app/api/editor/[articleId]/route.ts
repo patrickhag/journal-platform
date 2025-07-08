@@ -4,9 +4,11 @@ import { db } from '@/db/db';
 import {
   articleSubmissions,
   editorActions,
+  notifications,
   reviewRevisions,
 } from '@/db/schema';
 import {
+  informChiefEditorAboutAcceptance,
   notifyEditorAboutRevision,
   notifyUserAboutEditorDecision,
 } from '@/lib/emailTransporter';
@@ -69,6 +71,16 @@ export async function POST(
             role: true,
           },
         },
+        editor: {
+          with: {
+            user: {
+              columns: {
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        },
       },
       where: eq(articleSubmissions.id, articleId),
     });
@@ -81,6 +93,30 @@ export async function POST(
       decision,
       fileIds: fileId,
     });
+
+    await db.insert(notifications).values({
+      message:
+        '🎉 Congratulations, your manuscript has been accepted by Associate editor.',
+      userId: article?.user.id,
+    });
+
+    const associateEditorName =
+      article?.editor?.user.firstName + ' ' + article?.editor?.user.lastName;
+    const authorNames = article?.user.firstName + ' ' + article?.user.lastName;
+
+    if (decision === 'ACCEPT') {
+      await informChiefEditorAboutAcceptance({
+        articleLink: article?.id as string,
+        articleTitle: article?.metadata.title as string,
+        associateEditorName: associateEditorName,
+        authorNames: authorNames,
+        authorEmail: article?.user.email as string,
+      });
+      await db.insert(notifications).values({
+        message: `Manuscript by the name of ${article?.metadata.title} has been accepted by associate-editor and it's ready for proof-reading.`,
+        userId: process.env.EDITOR_IN_CHIEF_ID,
+      });
+    }
 
     return NextResponse.json({
       message: 'Decision updated and author notified successfully!',
@@ -158,6 +194,49 @@ export async function PUT(
     return NextResponse.json({
       message: 'Review revision updated and reviewer notified!',
     });
+  } catch (error) {
+    console.error('Error sending review revision:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<Params> }
+) {
+  try {
+    const session = await auth();
+    const { articleId } = await params;
+
+    if (session?.user.role !== 'CHIEF_EDITOR') {
+      return NextResponse.json({ error: 'Unauthorized user' }, { status: 401 });
+    }
+
+    if (!articleId) {
+      return NextResponse.json(
+        { error: 'Article ID is required' },
+        { status: 400 }
+      );
+    }
+
+    const isUpdatingDone = await db
+      .update(articleSubmissions)
+      .set({
+        articleStatus: 'ACCEPTED',
+        acceptedAt: Date.now(),
+      })
+      .where(eq(articleSubmissions.id, articleId))
+      .returning();
+
+    if (isUpdatingDone[0]) {
+      return NextResponse.json({
+        message:
+          "Manuscript status has been approved, it's ready for publication",
+      });
+    }
   } catch (error) {
     console.error('Error sending review revision:', error);
     return NextResponse.json(

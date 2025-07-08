@@ -109,8 +109,19 @@ function ArticleCard({
 
               {/* Right Section: Action Buttons */}
               <div className="flex space-x-2 ml-4">
+                {transformedArticle.articleStatus === 'SUBMITTED' && (
+                  <Button
+                    variant="outline"
+                    size={'sm'}
+                    onClick={() => setOpenDeleteArticleDialog(true)}
+                  >
+                    <Trash className="mr-1 h-4 w-4" />
+                    Delete Manuscript
+                  </Button>
+                )}
                 <Button
                   variant="outline"
+                  size="sm"
                   onClick={() =>
                     router.push(`/articles/${transformedArticle.id}`)
                   }
@@ -118,19 +129,10 @@ function ArticleCard({
                   <Eye className="mr-1 h-4 w-4" />
                   View Details
                 </Button>
-                {transformedArticle.articleStatus === 'SUBMITTED' && (
-                  <Button
-                    variant="outline"
-                    onClick={() => setOpenDeleteArticleDialog(true)}
-                  >
-                    <Trash className="mr-1 h-4 w-4" />
-                    Delete Manuscript
-                  </Button>
-                )}
-
                 {transformedArticle.editorDecision && (
                   <Button
                     className="bg-amber-600 hover:bg-amber-700 text-white"
+                    size="sm"
                     onClick={() => setIsOpen(true)}
                   >
                     <Upload className="mr-1 h-4 w-4" />

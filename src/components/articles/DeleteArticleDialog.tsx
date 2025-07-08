@@ -30,7 +30,7 @@ export function DeleteaArticleDialog({
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete this
-            manuscript.
+            manuscript from our database.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

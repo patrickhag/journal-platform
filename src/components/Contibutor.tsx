@@ -25,19 +25,23 @@ import { Textarea } from '@/components/ui/textarea';
 import { COUNTRIES, SALUTATION } from '@/lib/consts';
 import { contributorFormSchema } from '@/schemas/upload';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { startTransition, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { safeParse, serialize } from 'zod-urlsearchparams';
-import addNewContributor from '@/actions/addNewContributor';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
-export default function NewContibutorForm({
-  autoSave,
-}: {
-  autoSave?: boolean;
-}) {
-  const [modalOpen, setModalOpen] = useState(false);
+export default function NewContibutorForm() {
+  const [open, setOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -63,43 +67,38 @@ export default function NewContibutorForm({
     },
   });
 
-  const { articleId } = useParams();
-
   const onSubmit = (data: z.infer<typeof contributorFormSchema>) => {
-    if (autoSave) {
-      startTransition(async () => {
-        await addNewContributor({ data, articleId: articleId?.[0] });
-      });
-      form.reset();
-      setModalOpen(false);
-      return;
-    }
     const contributors = validation.data?.contributors || [];
     contributors.push(data);
+
     const serializedData = serialize({
       data: { contributors },
-      schema: z.object({
-        contributors: z.array(contributorFormSchema),
-      }),
+      schema: z.object({ contributors: z.array(contributorFormSchema) }),
     });
-    const params = new URLSearchParams(searchParams.toString());
 
+    const params = new URLSearchParams(searchParams.toString());
     params.delete('contributors');
     router.replace(`?${params.toString()}&${serializedData.toString()}`);
     form.reset();
-    setModalOpen(false);
+    setOpen(false);
   };
 
   return (
     <div className="my-8">
-      {modalOpen && (
-        <>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline">Add contributor</Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add New Contributor</DialogTitle>
+            <DialogDescription>
+              Fill out the form below to add a contributor.
+            </DialogDescription>
+          </DialogHeader>
+
           <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-4 my-8 py-12"
-            >
-              <hr />
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -138,6 +137,7 @@ export default function NewContibutorForm({
                   )}
                 />
               </div>
+
               <FormField
                 control={form.control}
                 name="salutation"
@@ -183,43 +183,44 @@ export default function NewContibutorForm({
                   </FormItem>
                 )}
               />
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">User details</h3>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <FormField
-                    control={form.control}
-                    name="orcid"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>ORCID ID</FormLabel>
-                        <FormControl>
-                          <Input placeholder="ORCID ID" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="homepage"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Homepage</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Website page" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="orcid"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>ORCID ID</FormLabel>
+                      <FormControl>
+                        <Input placeholder="ORCID ID" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="homepage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Homepage</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Website page" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
+
               <FormField
                 control={form.control}
                 name="affiliation"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Affiliation</FormLabel>
+                    <FormLabel>
+                      Affiliation <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="e.g: Organisation" {...field} />
                     </FormControl>
@@ -227,6 +228,7 @@ export default function NewContibutorForm({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="bio"
@@ -244,14 +246,14 @@ export default function NewContibutorForm({
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="role"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Contributor&apos;s role{' '}
-                      <span className="text-red-500">*</span>
+                      Contributor's role <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
                       <RadioGroup
@@ -279,30 +281,22 @@ export default function NewContibutorForm({
                   </FormItem>
                 )}
               />
-              <div className="flex gap-3">
+
+              <DialogFooter className="flex gap-3 pt-4">
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setModalOpen(false)}
+                  onClick={() => setOpen(false)}
                 >
                   Cancel
                 </Button>
                 <Button type="submit">Add</Button>
-              </div>
+              </DialogFooter>
             </form>
           </Form>
-        </>
-      )}
-      {!modalOpen && (
-        <Button
-          onClick={() => setModalOpen(!modalOpen)}
-          variant="outline"
-          className="mt-4"
-          type="submit"
-        >
-          Add contributor
-        </Button>
-      )}
+        </DialogContent>
+      </Dialog>
+
       <p className="text-sm text-muted-foreground mt-5">
         <span className="text-red-500">*</span> Denotes a required field
       </p>

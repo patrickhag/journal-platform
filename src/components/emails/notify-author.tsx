@@ -7,12 +7,6 @@ import {
   Section,
 } from '@react-email/components';
 
-type ReviewSubmittedEmailTemplateProps = {
-  authorName: string;
-  articleTitle: string;
-  articleLink: string;
-};
-
 export const ArticleAcceptedEmailTemplate = ({
   authorName,
   articleTitle,

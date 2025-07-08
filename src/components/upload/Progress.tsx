@@ -18,7 +18,7 @@ export const ProgressLine = () => {
   const currentStepIndex = journalKeys.findIndex((k) => k.page === page);
 
   return (
-    <div className="sticky top-16 z-30 ml-64 bg-gray-100">
+    <div className="sticky top-16 z-30 bg-gray-100">
       <div className="max-w-5xl mx-auto">
         <Card>
           <div className="flex items-center justify-between m-3 gap-0 sm:gap-2 md:gap-4">

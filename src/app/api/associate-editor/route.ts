@@ -40,6 +40,11 @@ export async function GET(req: NextRequest) {
                 prefix: true,
               },
             },
+            reviews: {
+              columns: {
+                id: true,
+              },
+            },
           },
         },
       },

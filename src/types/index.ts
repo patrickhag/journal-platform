@@ -195,3 +195,24 @@ export type TReviewerAssignment = {
     };
   };
 };
+
+export type TAssociateEditorAssignment = {
+  id: string;
+  assignedAt: string;
+  articleSubmissions: {
+    id: string;
+    articleStatus: string;
+    createdAt: string;
+    user: {
+      firstName: string;
+      lastName: string;
+    };
+    metadata: {
+      title: string;
+      prefix: string;
+    };
+    reviews: {
+      id: true;
+    }[];
+  }[];
+};

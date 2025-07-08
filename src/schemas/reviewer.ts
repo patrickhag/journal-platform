@@ -24,7 +24,7 @@ export const reviewerSchema = z.object({
 export const articleSubmitionSchema = z.object({
   section: z.enum(ARTICLE_TYPES, { message: 'Please select a section' }),
   requirements: z.array(z.string()).length(requirementsCheckboxGroup.length),
-  'Comments for the editor': z.string(),
+  'Comments for the editor': z.string().optional(),
   articleStatus: z
     .enum(ARTICLE_STATUS, { message: 'Please select an article status' })
     .optional(),
@@ -60,10 +60,7 @@ export const finalSubmissionSchema = z.object({
 });
 
 export const reviewSchema = z.object({
-  id: z.string().uuid().optional(),
   message: z.string().min(10, 'Message must be at least 10 characters'),
-  articleId: z.string(),
-  fileIds: z.array(z.string()),
   status: z.enum(['MAJOR ISSUE', 'MINOR ISSUE', 'ACCEPTED', 'REJECTED']),
 });
 

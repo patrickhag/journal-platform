@@ -8,13 +8,10 @@ export default async function Layout({ children }: PropsWithChildren) {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Sticky progress line at top */}
-      <div className="sticky top-0 z-30 bg-gray-100">
-        <ProgressLine />
-      </div>
+      <ProgressLine />
 
       {/* Main content */}
-      <div className="p-6 max-w-6xl mx-auto">{children}</div>
+      <div className="p-6">{children}</div>
     </div>
   );
 }

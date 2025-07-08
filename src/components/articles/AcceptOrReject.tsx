@@ -5,7 +5,7 @@ import withPermissions from '../WithPermission';
 import { useRejectManuscript } from '@/hooks/useRejectManuscript';
 import Loader from '../Loader';
 import { useState } from 'react';
-import AssignEditorModal from '@/app/(protected)/articles/[articleId]/components/AssignAssociateEditorModal';
+import AssignEditorModal from './AssignAssociateEditorModal';
 
 const AcceptOrReject = ({ articleId }: { articleId: string }) => {
   const { mutate: rejectManuscript, isPending } = useRejectManuscript();

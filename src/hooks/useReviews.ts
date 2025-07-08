@@ -1,13 +1,14 @@
+import { useClearURL } from '@/components/ClearURL';
 import { ReviewFormData } from '@/schemas/reviewer';
 import { MessageResponse, TReview, TReviewerAssignment } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { Dispatch, SetStateAction } from 'react';
 import { toast } from 'sonner';
 
 export const useCreateReview = () => {
   return useMutation({
     mutationFn: async (data: ReviewFormData) => {
+      console.log('data>>>', data);
       return axios.post<MessageResponse>('/api/reviews', data);
     },
     onSuccess: ({ data }) => {
@@ -88,7 +89,7 @@ export const useSendEditorDecision = (articleId: string) => {
     },
     onSuccess: ({ data }) => {
       if (data.message) {
-        toast(data.message);
+        toast.success(data.message);
       }
     },
     onError: (error: Error | AxiosError) => {
@@ -155,6 +156,33 @@ export const useSendReRevision = (articleId: string) => {
 
       toast.error(message || 'Failed to submit revision');
       console.error(message);
+    },
+  });
+};
+
+export const useAcceptArticle = (
+  articleId: string,
+  onOpenChange: (open: boolean) => void
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      return axios.patch<MessageResponse>(`/api/editor/${articleId}`);
+    },
+    onSuccess: ({ data }) => {
+      if (data.message) {
+        queryClient.invalidateQueries({ queryKey: ['reviewerAssignments'] });
+        toast.success(data.message);
+        onOpenChange(false);
+      }
+    },
+    onError: (error: Error | AxiosError) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : error.message;
+
+      toast.error(message || 'Failed to accept article');
     },
   });
 };

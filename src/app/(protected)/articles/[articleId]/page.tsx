@@ -128,33 +128,15 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
         <Files articleId={articleId} role={currentUserRole!} />
 
         {/* reviewers */}
-
         <Card className="my-3">
           <CardHeader>
             <CardTitle className="text-[#1a237e]">Reviewers</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex justify-between">
-              {currentUserRole === 'CHIEF_EDITOR' ||
-              currentUserRole === 'ASSOCIATE_EDITOR' ? (
-                reviewrs.length === 0 ? (
-                  <p className="text-sm">
-                    This author has not proposed any reviewer.
-                  </p>
-                ) : (
-                  <AssignReviewerLinkPermission
-                    requiredPermissions={['ASSIGN_REVIEWERS']}
-                    role={
-                      currentUserRole as
-                        | 'NORMAL_USER'
-                        | 'CHIEF_EDITOR'
-                        | 'ADMIN'
-                        | 'REVIEWER'
-                    }
-                    fallback={<></>}
-                  />
-                )
-              ) : null}
+              {reviewrs.length === 0 && (
+                <p className="text-sm">Author has not proposed any reviewer.</p>
+              )}
               <AddReviewersLinkPermission
                 requiredPermissions={['INVITE_REVIEWERS']}
                 role={
@@ -209,9 +191,5 @@ const AddReviewersLink = () => (
 );
 
 const AddReviewersLinkPermission = withPermissions(AddReviewersLink);
-
-const AssignReviewerLink = () => <AssignRevieweModal />;
-
-const AssignReviewerLinkPermission = withPermissions(AssignReviewerLink);
 
 export default page;

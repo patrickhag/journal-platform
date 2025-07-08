@@ -219,10 +219,11 @@ export const articleSubmissions = pgTable('article_submissions', {
   isEditorsPick: boolean('isEditorsPick'),
   createdAt: date('createdAt').defaultNow(),
   updatedAt: date('updatedAt').defaultNow(),
+  acceptedAt: date('acceptedAt'),
   userId: text('userId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
-  issueId: text('issueId').references(() => issues.id, { onDelete: 'cascade' }),
+  issueId: text('issueId').references(() => issues.id),
   editorId: text('editorId').references(() => editors.id),
 });
 
@@ -491,6 +492,27 @@ export const collectionArticlesRelations = relations(
     }),
   })
 );
+
+export const publishedArticles = pgTable('published_articles', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  articleId: text('articleId')
+    .notNull()
+    .unique()
+    .references(() => articleSubmissions.id, { onDelete: 'cascade' }),
+  issueId: text('issueId')
+    .unique()
+    .references(() => issues.id),
+  doi: varchar('doi', { length: 100 }).unique(),
+  status: varchar('status', { length: 20 }).default('PUBLISHED'),
+  publishedAt: timestamp('publishedAt').defaultNow(),
+  pageRange: varchar('page_range', { length: 20 }),
+  pdfUrl: text('pdf_url').notNull(),
+  keywords: text('keywords').array(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at'),
+});
 
 /*** RELATIONS ***/
 

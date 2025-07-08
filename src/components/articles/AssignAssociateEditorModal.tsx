@@ -26,11 +26,11 @@ interface AssignEditorModalProps {
   articleId: string;
 }
 
-const AssignEditorModal = ({
+export default function AssignEditorModal({
   isOpen,
   onClose,
   articleId,
-}: AssignEditorModalProps) => {
+}: AssignEditorModalProps) {
   const [selectedEditorId, setSelectedEditorId] = useState<string>('');
   const { data: availableEditors } = useGetEditors();
   const { mutate, isPending } = useAssignEditor();
@@ -176,6 +176,4 @@ const AssignEditorModal = ({
       </DialogContent>
     </Dialog>
   );
-};
-
-export default AssignEditorModal;
+}

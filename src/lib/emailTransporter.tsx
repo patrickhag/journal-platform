@@ -21,6 +21,7 @@ import {
 import { ThankAuthorEmailTemplate } from '@/components/emails/thank-you-email-template';
 import { AssignEditorEmailTemplate } from '@/components/emails/inform-associate-editor';
 import { AssignReviewerEmailTemplate } from '@/components/emails/inform-reviewer-email-template';
+import { ArticleReadyForEICApprovalEmailTemplate } from '@/components/emails/inform-chief-editor-email-template';
 
 export const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -207,7 +208,7 @@ export const notifyAdmin = async ({
   subject: string;
   articleId: string;
   participant: 'REVIEWER' | 'AUTHOR';
-  associateEditorEmail: string;
+  associateEditorEmail?: string;
 }) => {
   try {
     const emailHtml = await render(
@@ -511,6 +512,43 @@ export const thankAuthorAboutSubmission = async ({
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: authorEmail,
+      subject: 'Thank you for submitting your article',
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending admin notification:', error);
+    return { success: false, error };
+  }
+};
+
+export const informChiefEditorAboutAcceptance = async ({
+  articleTitle,
+  authorNames,
+  associateEditorName,
+  articleLink,
+}: {
+  articleTitle: string;
+  authorNames: string;
+  authorEmail?: string;
+  associateEditorName: string;
+  articleLink: string;
+}) => {
+  try {
+    const emailHtml = await render(
+      <ArticleReadyForEICApprovalEmailTemplate
+        articleLink={articleLink}
+        articleTitle={articleTitle}
+        associateEditorName={associateEditorName}
+        authorName={authorNames}
+        editorInChiefName={process.env.EDITOR_IN_CHIEF_NAME as string}
+      />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: process.env.EDITOR_IN_CHIEF_EMAIL,
       subject: 'Thank you for submitting your article',
       html: emailHtml,
     });

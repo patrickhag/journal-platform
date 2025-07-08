@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
 import { articleSubmissions, metadata } from '@/db/schema';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, desc } from 'drizzle-orm';
 import { ARTICLE_STATUS } from '@/lib/consts';
 import { auth } from '@/auth';
 
@@ -59,6 +59,7 @@ export async function GET(
           },
         },
       },
+      orderBy: (articles) => [desc(articles.createdAt)],
     });
 
     // Apply title search filter in JavaScript since title is in metadata table

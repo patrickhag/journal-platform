@@ -69,8 +69,6 @@ const EditorReReviewModal = ({
 
   const { mutate, isPending } = useSendReRevision(articleId);
 
-  console.log('reviewerId:', reviewerId);
-
   const handleSubmit = (data: ReReviewFormData) => {
     const { message } = data;
     console.log('data:', message, reviewerId, fileIds);
