@@ -1,5 +1,5 @@
 import { TArticle } from '@/schemas/reviewer';
-import { MessageResponse } from '@/types';
+import { IArticle, MessageResponse } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
@@ -59,8 +59,8 @@ export const useDeleteArticle = (
 };
 
 export const useGetAcceptedArticles = () => {
-  const fetchArticles = async (): Promise<TArticle[]> => {
-    const response = await axios.get<TArticle[]>(`/api/articles`);
+  const fetchArticles = async (): Promise<IArticle[]> => {
+    const response = await axios.get<IArticle[]>(`/api/articles`);
 
     if (response.status !== 200) {
       throw new Error('Error occurred while fetching articles');
@@ -68,9 +68,81 @@ export const useGetAcceptedArticles = () => {
 
     return response.data;
   };
-  return useQuery<TArticle[], Error>({
-    queryKey: ['acceptedArticles'],
+  return useQuery<IArticle[], Error>({
+    queryKey: ['toBePublishedArticles'],
     queryFn: fetchArticles,
     refetchOnWindowFocus: false,
+  });
+};
+
+type TPublishArticle = {
+  pdfUrl: string;
+  articleId: string;
+  title: string;
+  doi?: string;
+  issueId: string;
+  pageRange: string;
+};
+
+export const usePublishArticle = (clearUrl: () => void) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: TPublishArticle) => {
+      const response = await axios.post<MessageResponse>(
+        `/api/articles/publish`,
+        data
+      );
+      return response.data;
+    },
+    onSuccess: ({ message }) => {
+      queryClient.invalidateQueries({ queryKey: ['toBePublishedArticles'] });
+      toast.success(message);
+      clearUrl();
+    },
+    onError: (error: Error | AxiosError) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data.message
+        : error.message;
+
+      toast.error(message || 'Failed to publish an article');
+    },
+  });
+};
+
+type TPayloadData = {
+  status: string;
+  issueId: string;
+  pageRange: string;
+  doi?: string | undefined;
+  pdfUrl?: string | undefined;
+  publishedArticleId: string;
+  articleId: string;
+  title: string;
+};
+
+export const useUpdatePublishedArticle = (clearUrl: () => void) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: TPayloadData) => {
+      const response = await axios.put<MessageResponse>(
+        `/api/articles/published`,
+        data
+      );
+      return response.data;
+    },
+    onSuccess: ({ message }) => {
+      queryClient.invalidateQueries({ queryKey: ['publishedArticles'] });
+      toast.success(message);
+      clearUrl();
+    },
+    onError: (error: Error | AxiosError) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data.message
+        : error.message;
+
+      toast.error(message || 'Failed to modify published article');
+    },
   });
 };

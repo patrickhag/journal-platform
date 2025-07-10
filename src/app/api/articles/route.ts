@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
-import { eq, or } from 'drizzle-orm';
-import { articleSubmissions, files } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import { articleSubmissions } from '@/db/schema';
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,6 +11,7 @@ export async function GET(req: NextRequest) {
         createdAt: true,
         updatedAt: true,
         articleStatus: true,
+        acceptedAt: true,
         proofStatus: true,
         proofFileUrl: true,
         proofNote: true,
@@ -27,6 +28,7 @@ export async function GET(req: NextRequest) {
           columns: {
             title: true,
             prefix: true,
+            abstract: true,
           },
         },
         files: {
@@ -35,10 +37,7 @@ export async function GET(req: NextRequest) {
           },
         },
       },
-      where: or(
-        eq(articleSubmissions.articleStatus, 'ACCEPTED'),
-        eq(articleSubmissions.articleStatus, 'PUBLISHED')
-      ),
+      where: eq(articleSubmissions.articleStatus, 'ACCEPTED'),
     });
 
     return NextResponse.json(articles);

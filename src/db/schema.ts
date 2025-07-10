@@ -497,22 +497,36 @@ export const publishedArticles = pgTable('published_articles', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  articleId: text('articleId')
+  articleId: text('article_id')
     .notNull()
     .unique()
     .references(() => articleSubmissions.id, { onDelete: 'cascade' }),
-  issueId: text('issueId')
+  issueId: text('issue_id')
     .unique()
     .references(() => issues.id),
+  slug: text('slug').unique().notNull(),
   doi: varchar('doi', { length: 100 }).unique(),
   status: varchar('status', { length: 20 }).default('PUBLISHED'),
-  publishedAt: timestamp('publishedAt').defaultNow(),
+  publishedAt: timestamp('published_at').defaultNow(),
   pageRange: varchar('page_range', { length: 20 }),
   pdfUrl: text('pdf_url').notNull(),
-  keywords: text('keywords').array(),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at'),
 });
+
+export const publishedArticlesRelations = relations(
+  publishedArticles,
+  ({ one }) => ({
+    article: one(articleSubmissions, {
+      fields: [publishedArticles.articleId],
+      references: [articleSubmissions.id],
+    }),
+    issue: one(issues, {
+      fields: [publishedArticles.issueId],
+      references: [issues.id],
+    }),
+  })
+);
 
 /*** RELATIONS ***/
 

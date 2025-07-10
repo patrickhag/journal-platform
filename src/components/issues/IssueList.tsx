@@ -81,7 +81,8 @@ export function IssueList() {
     mutate({ issueId, articleIds });
   };
 
-  const { mutate: editIssueMutation } = useEditIssue();
+  const { mutate: editIssueMutation, isPending: isUpdatingIssuePending } =
+    useEditIssue();
 
   const handleEditSubmit = (data: IssueType & { articles: string[] }) => {
     editIssueMutation({ issueId: editingIssue?.id as string, data });
@@ -263,6 +264,7 @@ export function IssueList() {
           onSubmit={handleEditSubmit}
           issue={editingIssue}
           volumes={volumes ?? []}
+          isUpdatingIssuePending={isUpdatingIssuePending}
         />
       )}
     </>

@@ -62,3 +62,12 @@ export const collectionSchema = z.object({
 });
 
 export type CollectionFormValues = z.infer<typeof collectionSchema>;
+
+export const publishArticleSchema = z.object({
+  issueId: z.string().min(1, 'Issue is required'),
+  doi: z.string().optional(),
+  pageRange: z.string().optional(),
+  files: z
+    .array(z.string().url({ message: 'Invalid URL format' }))
+    .min(1, 'At least one PDF URL is required'),
+});

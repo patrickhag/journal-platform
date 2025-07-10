@@ -1,5 +1,5 @@
-import { MessageResponse } from '@/types';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { MessageResponse, TIssues, TPublishedArticle } from '@/types';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { Dispatch, SetStateAction } from 'react';
 import { toast } from 'sonner';
@@ -39,5 +39,41 @@ export const usePublishArticle = (
 
       toast.error(message || 'Failed to publish an article');
     },
+  });
+};
+
+export const useGetIssues = () => {
+  const fetchArticles = async (): Promise<TIssues[]> => {
+    const response = await axios.get<TIssues[]>(`/api/articles/publish`);
+
+    if (response.status !== 200) {
+      throw new Error('Error occurred while fetching articles');
+    }
+
+    return response.data;
+  };
+  return useQuery<TIssues[], Error>({
+    queryKey: ['publishIssues'],
+    queryFn: fetchArticles,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useGetPublishedArticles = () => {
+  const fetchArticles = async (): Promise<TPublishedArticle[]> => {
+    const response = await axios.get<TPublishedArticle[]>(
+      `/api/articles/published`
+    );
+
+    if (response.status !== 200) {
+      throw new Error('Error occurred while fetching articles');
+    }
+
+    return response.data;
+  };
+  return useQuery<TPublishedArticle[], Error>({
+    queryKey: ['publishedArticles'],
+    queryFn: fetchArticles,
+    refetchOnWindowFocus: false,
   });
 };

@@ -249,7 +249,8 @@ export default function UpdateContributorModal({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Contributor's role <span className="text-red-500">*</span>
+                    Contributor&apos;s role{' '}
+                    <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     <RadioGroup

@@ -38,13 +38,14 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-
+import Loader from '../Loader';
 interface EditIssueModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: IssueType & { articles: string[] }) => void;
   issue: Issue;
   volumes: VolumeType;
+  isUpdatingIssuePending: boolean;
 }
 
 export function EditIssueModal({
@@ -53,6 +54,7 @@ export function EditIssueModal({
   onSubmit,
   issue,
   volumes,
+  isUpdatingIssuePending,
 }: EditIssueModalProps) {
   const form = useForm<IssueType & { articles: string[] }>({
     resolver: zodResolver(issueSchema),
@@ -88,7 +90,6 @@ export function EditIssueModal({
   };
 
   const handleSubmit = (data: IssueType & { articles: string[] }) => {
-    // Combine form data with marked for deletion info
     const formData = {
       ...data,
       removedArticles: Array.from(markedForDeletion),
@@ -300,8 +301,16 @@ export function EditIssueModal({
               </ScrollArea>
             </div>
 
-            <Button type="submit" className="w-full">
-              Save Changes
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isUpdatingIssuePending}
+            >
+              {isUpdatingIssuePending ? (
+                <Loader text="Saving..." />
+              ) : (
+                'Edit Issue'
+              )}
             </Button>
           </form>
         </Form>

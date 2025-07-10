@@ -81,6 +81,8 @@ export type IArticle = {
   id: string;
   createdAt: string;
   updatedAt: string;
+  articleStatus: string;
+  acceptedAt: string;
   proofStatus:
     | 'AwaitingProof'
     | 'ProofUploaded'
@@ -96,6 +98,7 @@ export type IArticle = {
   metadata: {
     title: string;
     prefix: string;
+    abstract: string;
   };
   files: {
     publicId: string;
@@ -215,4 +218,39 @@ export type TAssociateEditorAssignment = {
       id: true;
     }[];
   }[];
+};
+
+export type TIssues = {
+  id: string;
+  issueNumber: number;
+  volume: {
+    id: string;
+    year: number;
+  };
+};
+
+export type TPublishedArticle = {
+  id: string;
+  doi: string;
+  publishedAt: string;
+  status: 'PUBLISHED' | string;
+  pageRange: string;
+  article: {
+    id: string;
+    metadata: {
+      title: string;
+      prefix: string;
+    };
+    user: {
+      firstName: string;
+      lastName: string;
+    };
+  };
+  issue: {
+    id: string;
+    issueNumber: number;
+    volume: {
+      year: number;
+    };
+  };
 };

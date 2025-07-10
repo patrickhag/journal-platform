@@ -284,3 +284,5 @@ export const sdgGoals = [
   'Peace and Justice Strong Institutions',
   'Partnerships to achieve the Goal',
 ];
+
+export const publishedArticles = ['PUBLISHED', 'UNPUBLISHED', 'ARCHIVE'];

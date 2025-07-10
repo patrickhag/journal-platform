@@ -94,7 +94,12 @@ const Footer = () => {
                   info@airpd.org
                 </a>
               </li>
-              <li>Phone: 07xxxxxxxx</li>
+              <li>
+                WhatsApp-Phone:{' '}
+                <a href="https://wa.me/+250788589658" className="text-blue-500">
+                  +250788589658
+                </a>
+              </li>
               <li>
                 Website:{' '}
                 <a href="https://www.airpd.org" className="text-blue-500">
