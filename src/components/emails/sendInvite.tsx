@@ -1,92 +1,119 @@
-import { Button, Tailwind } from '@react-email/components';
 import type * as React from 'react';
-import { Section, Text, Container, Row, Column } from '@react-email/components';
+import {
+  Tailwind,
+  Text,
+  Container,
+  Section,
+  Row,
+  Column,
+  Button,
+} from '@react-email/components';
 
 export const SendInvitation: React.FC<{
-  reviewer: string;
-  article: {
-    article: string;
-    title: string;
-    subTitle: string;
-    content?: string;
-  };
-  reviewerEmail: string;
+  reviewerName: string;
+  articleTitle: string;
   isAlreadyUser: boolean;
-  editorInChiefId: string;
   dueDate?: string;
-}> = (props) => {
-  const { article, reviewer, isAlreadyUser, editorInChiefId, dueDate } = props;
-  const nameParts = reviewer.split(' ');
-  const password = nameParts.length > 2 ? nameParts[1] : nameParts[0];
-
+  articleId: string;
+  password: string;
+}> = ({
+  reviewerName,
+  articleTitle,
+  isAlreadyUser,
+  dueDate,
+  articleId,
+  password,
+}) => {
   return (
     <Tailwind>
       <Container className="bg-white border border-gray-200 max-w-xl mx-auto my-8 p-6 text-center">
+        {/* Header */}
         <Section className="text-center py-4 border-b bg-gray-100 font-semibold text-gray-600">
           <Text className="text-xl font-semibold text-gray-800">
             Journal of African Epidemiology and Public Health
           </Text>
         </Section>
-        <Section className="px-6 py-4">
+
+        {/* Content */}
+        <Section className="px-6 py-4 text-left">
           <Text className="text-lg font-medium text-gray-800">
-            Hi, <span className="font-semibold">{reviewer}</span>
-          </Text>
-          <Text className="text-gray-700 my-4">
-            You have received this email because JAEPH editors are proposing you
-            to review the manuscript titled{' '}
-            <span className="font-semibold">“{article.title}”</span>.
-          </Text>
-          {article.content && (
-            <Text className="text-gray-700 my-4">
-              Editor-in-chief has left a message{' '}
-              <span className="font-semibold">
-                &quot;{article.content}&quot;
-              </span>{' '}
-              and you might want to visit the manuscript page to accept or
-              reject the invitation.
-            </Text>
-          )}
-          <Text className="text-gray-700 my-4">
-            If you&apos;re ready to review the manuscript you can use your email{' '}
-            {isAlreadyUser ? (
-              <span>and password to login.</span>
-            ) : (
-              <span>
-                and <span className="font-semibold">{`@123${password}`}</span>{' '}
-                as your password.
-              </span>
-            )}
+            Dear {reviewerName},
           </Text>
 
+          <Text className="text-gray-700 my-4">
+            You are receiving this invitation due to your expertise in the
+            field. The editorial team of JAEPH would be honored to have your
+            review for the manuscript titled{' '}
+            <span className="font-semibold">“{articleTitle}”</span>.
+          </Text>
+
+          {isAlreadyUser ? (
+            <Text className="text-gray-700 my-4">
+              Since you already have an account with us, you can log in to your
+              reviewer dashboard and begin the review process directly.
+            </Text>
+          ) : (
+            <>
+              <Text className="text-gray-700 my-4">
+                We’ve created a reviewer account for you. Please follow the
+                invitation link below to log in.
+              </Text>
+              <Text className="text-gray-700 my-4">
+                <strong>Temporary password:</strong>{' '}
+                <code className="bg-gray-100 px-2 py-1 rounded">
+                  {password}
+                </code>
+              </Text>
+              <Text className="text-gray-700 my-2">
+                You can update your password after logging in.
+              </Text>
+            </>
+          )}
+
           {dueDate && (
-            <Text className="text-gray-700">
-              <span className="font-semibold">Note:</span> you&apos;ve got until{' '}
-              {dueDate} to review
+            <Text className="text-gray-700 my-4">
+              <strong>Note:</strong> The deadline to submit your review is{' '}
+              {dueDate}.
             </Text>
           )}
+
+          <Text className="text-gray-700 my-4">
+            Kindly respond to this invitation by accepting or declining, so we
+            can either proceed with your review or assign another reviewer if
+            necessary.
+          </Text>
+
+          {/* Buttons */}
           <Row className="my-5">
             <Column align="center">
               <Row>
-                <td align="center" className="w-1/2 pr-[16px]" colSpan={1}>
+                <td align="center" className="w-1/2 pr-[16px]">
                   <Button
                     className="box-border w-full rounded-[8px] bg-indigo-600 px-[20px] py-[12px] text-center font-semibold text-white"
-                    href={`${process.env.NEXT_PUBLIC_URL}/invitation/${article.article}?accept_invite=1?editor=${editorInChiefId}`}
+                    href={`${process.env.NEXT_PUBLIC_URL}/invitation/${articleId}?accept_invite=1`}
                   >
-                    Accept invitation
+                    Accept Invitation
                   </Button>
                 </td>
-                <td align="center" className="w-1/2 pl-[16px]" colSpan={1}>
+                <td align="center" className="w-1/2 pl-[16px]">
                   <Button
                     className="box-border w-full rounded-[8px] border border-solid border-gray-200 bg-red-500 px-[20px] py-[12px] text-center font-semibold text-white"
-                    href={`${process.env.NEXT_PUBLIC_URL}/invitation/${article.article}?accept_invite=0?editor=${editorInChiefId}`}
+                    href={`${process.env.NEXT_PUBLIC_URL}/invitation/${articleId}?accept_invite=0`}
                   >
-                    Reject invitation
+                    Decline Invitation
                   </Button>
                 </td>
               </Row>
             </Column>
           </Row>
+
+          <Text className="text-gray-700 mt-4">
+            Thank you for considering this request. Your support contributes
+            greatly to the quality and integrity of JAEPH.
+          </Text>
         </Section>
+
+        {/* Footer */}
         <Section className="bg-gray-100 text-center py-4 text-sm font-semibold text-gray-600">
           <Text>© 2025 JAEPH. All rights reserved.</Text>
         </Section>

@@ -65,6 +65,9 @@ export const users = pgTable('user', {
   avatar: text('avatar'),
   orcid: text('orcid'),
   bio: text('bio'),
+  expertise: text('expertise'),
+  updatedAt: date('updatedAt'),
+  prefix: varchar('prefix', { length: 50 }),
   createdAt: date('createdAt').defaultNow(),
 });
 
@@ -501,9 +504,7 @@ export const publishedArticles = pgTable('published_articles', {
     .notNull()
     .unique()
     .references(() => articleSubmissions.id, { onDelete: 'cascade' }),
-  issueId: text('issue_id')
-    .unique()
-    .references(() => issues.id),
+  issueId: text('issue_id').references(() => issues.id),
   slug: text('slug').unique().notNull(),
   doi: varchar('doi', { length: 100 }).unique(),
   status: varchar('status', { length: 20 }).default('PUBLISHED'),
@@ -566,7 +567,7 @@ export const articleSubmissionsRelations = relations(
       relationName: 'editorActions',
     }),
     reviewAssignments: many(reviewAssignments, {
-      relationName: 'reviewAssignments',
+      relationName: 'reviewAssignmentsArticle',
     }),
     collectionArticles: many(collectionArticles, {
       relationName: 'collectionArticles',
@@ -613,11 +614,12 @@ export const reviewAssignmentsRelations = relations(
     article: one(articleSubmissions, {
       fields: [reviewAssignments.articleId],
       references: [articleSubmissions.id],
-      relationName: 'reviewAssignments',
+      relationName: 'reviewAssignmentsArticle',
     }),
     user: one(users, {
       fields: [reviewAssignments.userId],
       references: [users.id],
+      relationName: 'userReviewAssignments',
     }),
   })
 );
@@ -628,6 +630,9 @@ export const usersRelations = relations(users, ({ many }) => ({
   }),
   reviews: many(reviews, {
     relationName: 'userReviews',
+  }),
+  reviewAssignments: many(reviewAssignments, {
+    relationName: 'userReviewAssignments',
   }),
 }));
 

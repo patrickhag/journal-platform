@@ -41,7 +41,7 @@ export const AuthorRevisedManuscriptEmailTemplate = ({
           for re-evaluation.
         </Text>
         <Button
-          href={`${process.env.NEXT_PUBLIC_URL}/editor/articles/${articleLink}`}
+          href={`${process.env.NEXT_PUBLIC_URL}/articles/${articleLink}`}
           className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md font-medium my-4"
         >
           View Revised Manuscript

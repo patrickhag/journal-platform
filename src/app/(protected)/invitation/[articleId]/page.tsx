@@ -5,8 +5,8 @@ import {
   notifications,
   reviewAssignments,
   reviewers,
-  users,
 } from '@/db/schema';
+import { informAssociateEditor } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 
@@ -24,16 +24,8 @@ export default async function AcceptPage({ params, searchParams }: PageProps) {
 
   const userId = (await auth())?.user?.id;
   const search = await searchParams;
-  const isAcceptingInvite = search.accept_invite?.toString();
-  const editorInChiefId = search.editor?.toString();
-
-  const toEmail = (
-    await db
-      .select()
-      .from(reviewers)
-      .where(eq(reviewers.articleId, articleId))
-      .limit(1)
-  )[0]?.email;
+  const invitationSign = search.accept_invite;
+  const isAcceptedOrDeclined = !!invitationSign;
 
   const reviewer = await db.query.reviewers.findFirst({
     columns: {
@@ -42,32 +34,78 @@ export default async function AcceptPage({ params, searchParams }: PageProps) {
     where: eq(reviewers.articleId, articleId),
   });
 
-  if (isAcceptingInvite && userId) {
+  const associateEditorInfo = await db.query.articleSubmissions.findFirst({
+    where: eq(articleSubmissions.id, articleId),
+    with: {
+      editor: {
+        with: {
+          user: {
+            columns: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
+      },
+      metadata: {
+        columns: {
+          title: true,
+        },
+      },
+    },
+  });
+
+  const associateEditorName =
+    associateEditorInfo?.editor?.user.firstName +
+    ' ' +
+    associateEditorInfo?.editor?.user.lastName;
+  const associateEditorId = associateEditorInfo?.editor?.user.id;
+  const reviewerNames = reviewer?.names;
+  const articleTitle = associateEditorInfo?.metadata.title;
+
+  if (isAcceptedOrDeclined && userId) {
     await db
       .update(reviewAssignments)
       .set({ status: 'ACCEPTED', userId: userId })
       .where(eq(reviewAssignments.articleId, articleId));
 
     await db
-      .update(users)
-      .set({ role: 'REVIEWER' })
-      .where(eq(users.email, toEmail));
-
-    await db
       .update(articleSubmissions)
       .set({
         articleStatus: 'UNDER REVIEW',
-        updatedAt: new Date().toISOString(),
       })
       .where(eq(articleSubmissions.id, articleId));
 
+    await informAssociateEditor({
+      associateEditorName: associateEditorName,
+      associateEditorEmail: associateEditorInfo?.editor?.user.email as string,
+      reviewerName: reviewerNames as string,
+      articleTitle: articleTitle as string,
+      status: 'accepted',
+    });
+
     await db.insert(notifications).values({
-      message: `Reviewer ${reviewer?.names} has accepted an invitation of reviewing the manuscript.`,
-      userId: editorInChiefId,
+      message: `Reviwer ${reviewerNames} has accepted the invitation of reviewing the manuscript.`,
+      userId: associateEditorId,
+    });
+
+    redirect(`/articles/${articleId}`);
+  } else if (isAcceptedOrDeclined === false) {
+    await informAssociateEditor({
+      associateEditorName: associateEditorName,
+      associateEditorEmail: associateEditorInfo?.editor?.user.email as string,
+      reviewerName: reviewerNames as string,
+      articleTitle: articleTitle as string,
+      status: 'rejected',
+    });
+
+    await db.insert(notifications).values({
+      message: `Reviwer ${reviewerNames} has declined the invitation of reviewing the manuscript.`,
+      userId: associateEditorId,
     });
   }
-
-  redirect(`/articles/${articleId}`);
 
   return <p>Redirecting...</p>;
 }

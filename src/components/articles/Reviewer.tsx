@@ -1,20 +1,13 @@
-import { metadata, reviewAssignments } from '@/db/schema';
-import { db } from '@/db/db';
+'use client';
+
 import { ReachOut } from './ReachOut';
-import { eq } from 'drizzle-orm';
-import { auth } from '@/auth';
 import { Button } from '../ui/button';
 import { Send } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '../ui/dialog';
-import { formatStatus, getReviewAssignmentsStatusStyle } from '@/lib/utils';
+import { Badge } from '../ui/badge';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
 
-export default async function Reviewer({
+export default function Reviewer({
   reviewer: { id: reviewerId, email, names, affiliation, phone, expertise },
   index,
   articleId,
@@ -31,36 +24,24 @@ export default async function Reviewer({
   index: number;
   articleId: string;
 }) {
-  const [meta] = await db
-    .select({
-      title: metadata.title,
-      subTitle: metadata.subtitle,
-      content: metadata.abstract,
-    })
-    .from(metadata)
-    .where(eq(metadata.articleId, articleId))
-    .limit(1);
+  const { data } = useSession();
 
-  const session = await auth();
-  if (!session?.user?.id) return null;
+  // const hasUserAcceptedInvitation = await db.query.reviewAssignments.findMany({
+  //   columns: {
+  //     status: true,
+  //     reviewerId: true,
+  //   },
+  //   where: eq(reviewAssignments.articleId, articleId),
+  // });
 
-  const hasUserAcceptedInvitation = await db.query.reviewAssignments.findMany({
-    columns: {
-      status: true,
-      reviewerId: true,
-    },
-    where: eq(reviewAssignments.articleId, articleId),
-  });
+  // const reviewerStatus = hasUserAcceptedInvitation.find(
+  //   (invitation) => invitation.reviewerId === reviewerId
+  // );
+  const [isDialogOpen, setDialogOpen] = useState(false);
 
-  const reviewerStatus = hasUserAcceptedInvitation.find(
-    (invitation) => invitation.reviewerId === reviewerId
-  );
+  const reviewerStatus = 'Sent';
 
-  const currentUserRole = session?.user?.role;
-
-  const statusStyle = getReviewAssignmentsStatusStyle(
-    reviewerStatus?.status || 'PENDING'
-  );
+  const currentUserRole = data?.user?.role;
 
   return (
     <>
@@ -78,14 +59,12 @@ export default async function Reviewer({
           </sup>{' '}
           proposed reviewer{' '}
         </h3>
-        <span className={`text-center px-2 py-1 rounded-md ${statusStyle}`}>
-          Invitation{' '}
-          {reviewerStatus
-            ? reviewerStatus.status === 'INVITED'
-              ? 'Sent'
-              : formatStatus(reviewerStatus.status as string)
-            : 'Pending'}
-        </span>
+        <Badge
+          variant={'outline'}
+          className={`text-center px-2 py-1 rounded-md`}
+        >
+          Invitation {reviewerStatus}
+        </Badge>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -115,32 +94,19 @@ export default async function Reviewer({
       </div>
       {(currentUserRole === 'CHIEF_EDITOR' ||
         currentUserRole === 'ASSOCIATE_EDITOR') && (
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant={'outline'}>
-              {' '}
-              <span className="flex items-center">
-                Reach out <Send className="ml-2" />
-              </span>{' '}
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Invite Reviewer</DialogTitle>
-            </DialogHeader>
-            <ReachOut
-              article={{ ...meta, article: articleId }}
-              reviewer={names}
-              author={{
-                avatar: '',
-                name: session.user.name,
-                role: session.user.email,
-              }}
-              toEmail={email}
-            />
-          </DialogContent>
-        </Dialog>
+        <Button variant={'outline'} onClick={() => setDialogOpen(true)}>
+          {' '}
+          <span className="flex items-center">
+            Reach out <Send className="ml-2" />
+          </span>{' '}
+        </Button>
       )}
+      <ReachOut
+        open={isDialogOpen}
+        setOpen={setDialogOpen}
+        reviewerNames={names}
+        toEmail={email}
+      />
     </>
   );
 }

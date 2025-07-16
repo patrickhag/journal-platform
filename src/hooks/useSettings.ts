@@ -107,3 +107,17 @@ export const useGetNotifications = () => {
     },
   });
 };
+
+export const useMarkAsReadAll = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      return axios.post(`/api/notifications/`, {
+        userId,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    },
+  });
+};

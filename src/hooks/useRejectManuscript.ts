@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 
 export const useRejectManuscript = () => {
   return useMutation({
-    mutationFn: async ({ articleId }: { articleId: string }) => {
+    mutationFn: async (articleId: string) => {
       const response = await fetch(`/api/reject-manuscript/${articleId}`, {
         method: 'PUT',
       });

@@ -2,15 +2,13 @@
 
 import { Button } from '@/components/ui/button';
 import withPermissions from '../WithPermission';
-import { useRejectManuscript } from '@/hooks/useRejectManuscript';
-import Loader from '../Loader';
 import { useState } from 'react';
 import AssignEditorModal from './AssignAssociateEditorModal';
+import { RejectManuscriptModal } from './RejectManuscriptModal';
 
 const AcceptOrReject = ({ articleId }: { articleId: string }) => {
-  const { mutate: rejectManuscript, isPending } = useRejectManuscript();
-
   const [open, setOpen] = useState(false);
+  const [openRejectModal, setOpenRejectModal] = useState(false);
 
   const onClose = () => setOpen(false);
 
@@ -25,18 +23,19 @@ const AcceptOrReject = ({ articleId }: { articleId: string }) => {
         </Button>
         <Button
           className="bg-red-500 hover:bg-red-600"
-          onClick={() => {
-            rejectManuscript({ articleId });
-          }}
-          disabled={isPending}
+          onClick={() => setOpenRejectModal(true)}
         >
-          {isPending ? <Loader text="Rejecting..." /> : 'Reject Manuscript'}
+          Reject Manuscript
         </Button>
       </div>
       <AssignEditorModal
         isOpen={open}
         onClose={onClose}
         articleId={articleId}
+      />
+      <RejectManuscriptModal
+        onOpenChange={setOpenRejectModal}
+        open={openRejectModal}
       />
     </>
   );

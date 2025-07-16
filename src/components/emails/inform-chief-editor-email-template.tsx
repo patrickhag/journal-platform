@@ -42,12 +42,12 @@ export const ArticleReadyForEICApprovalEmailTemplate = ({
         <Text className="text-gray-700 my-4">
           It is now awaiting your final approval as Editor-in-Chief.
         </Text>
-        <Button
+        {/* <Button
           href={`${process.env.NEXT_PUBLIC_URL}/editor-in-chief/articles/${articleLink}`}
           className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md font-medium my-4"
         >
           Review Final Submission
-        </Button>
+        </Button> */}
         <Text className="text-gray-700 mt-6">
           Thank you for your leadership and time.
         </Text>

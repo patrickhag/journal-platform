@@ -186,3 +186,26 @@ export const useAcceptArticle = (
     },
   });
 };
+
+export const useSendInvitation = (articleId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      return axios.patch<MessageResponse>(`/api/editor/${articleId}`);
+    },
+    onSuccess: ({ data }) => {
+      if (data.message) {
+        queryClient.invalidateQueries({ queryKey: ['reviewerAssignments'] });
+        toast.success(data.message);
+      }
+    },
+    onError: (error: Error | AxiosError) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : error.message;
+
+      toast.error(message || 'Failed to accept article');
+    },
+  });
+};

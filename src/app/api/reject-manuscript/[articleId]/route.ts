@@ -3,6 +3,7 @@ import { db } from '@/db/db';
 import { articleSubmissions } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { rejectManuscriptEmail } from '@/lib/emailTransporter';
+import { revalidatePath } from 'next/cache';
 
 export async function PUT(
   req: NextRequest,
@@ -45,7 +46,7 @@ export async function PUT(
 
     const updatedArticle = await db
       .update(articleSubmissions)
-      .set({ articleStatus: 'Rejected' })
+      .set({ articleStatus: 'REJECTED' })
       .where(eq(articleSubmissions.id, articleId))
       .returning();
 
@@ -60,7 +61,7 @@ export async function PUT(
       });
     }
 
-    // revalidatePath('/articles/' + articleId);
+    revalidatePath('/articles/' + articleId);
 
     return NextResponse.json({
       status: 200,

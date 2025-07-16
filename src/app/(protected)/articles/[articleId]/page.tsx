@@ -8,14 +8,13 @@ import { eq } from 'drizzle-orm';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import GoBackButton from '@/components/articles/GoBackButton';
 import { Separator } from '@/components/ui/separator';
-import AddReviewerModal from '@/components/upload/AddReviewerModal';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { AcceptOrRejectComponent } from '@/components/articles/AcceptOrReject';
 import { Button } from '@/components/ui/button';
 import { ArrowUpRight } from 'lucide-react';
 import withPermissions from '@/components/WithPermission';
-import AssignRevieweModal from './components/AssignReviewersModal';
+import AddReviewerModal from '@/components/upload/AddReviewerModal';
 
 async function page({ params }: { params: Promise<{ articleId: string }> }) {
   const session = await auth();
@@ -40,7 +39,7 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
       <div className="container mx-auto p-6">
         <div className="flex justify-between">
           <GoBackButton />
-          <ReveiwArticleLinkPermission
+          <ReviewsArticleLinkPermission
             articleId={articleId}
             role={
               currentUserRole as
@@ -137,6 +136,17 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
               {reviewrs.length === 0 && (
                 <p className="text-sm">Author has not proposed any reviewer.</p>
               )}
+              <AssignReviewerLinkPermission
+                requiredPermissions={['ASSIGN_REVIEWERS']}
+                role={
+                  currentUserRole as
+                    | 'NORMAL_USER'
+                    | 'CHIEF_EDITOR'
+                    | 'ADMIN'
+                    | 'REVIEWER'
+                }
+                fallback={<></>}
+              />
               <AddReviewersLinkPermission
                 requiredPermissions={['INVITE_REVIEWERS']}
                 role={
@@ -184,12 +194,27 @@ const ReveiwArticleLink = ({ articleId }: { articleId: string }) => (
   </Button>
 );
 
-const ReveiwArticleLinkPermission = withPermissions(ReveiwArticleLink);
+const ReviewsArticleLinkPermission = withPermissions(ReveiwArticleLink);
+
+const AssignReviewerLink = () => {
+  return (
+    <Link href={'/associate-editor/reviewers'}>
+      <Button
+        className="text-blue-500 hover:text-blue-600 underline"
+        variant={'link'}
+      >
+        Assign Reviewers
+      </Button>
+    </Link>
+  );
+};
 
 const AddReviewersLink = () => (
   <AddReviewerModal typeOfPage="review" autoSave />
 );
 
 const AddReviewersLinkPermission = withPermissions(AddReviewersLink);
+
+const AssignReviewerLinkPermission = withPermissions(AssignReviewerLink);
 
 export default page;

@@ -29,7 +29,8 @@ export const ArticleAcceptedEmailTemplate = ({
         </Text>
         <Text className="text-gray-700 my-4">
           We are pleased to inform you that your article titled &quot;
-          {articleTitle}&quot; has been accepted for publication in our journal.
+          {articleTitle}&quot; has been accepted. Publication process is going
+          to start!
         </Text>
         {fileIds && (
           <>

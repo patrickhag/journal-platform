@@ -9,14 +9,12 @@ import {
   CheckSquare,
   Clock,
   FileCog,
-  FilePenLine,
   Files,
   FileText,
   History,
   MessageSquare,
   Newspaper,
   PlusCircle,
-  Share2,
   Users,
 } from 'lucide-react';
 
@@ -44,7 +42,7 @@ const Sidebar = ({ userRole }: SidebarProps) => {
           { href: '/editor/dashboard', label: 'Overview', icon: BarChart3 },
           {
             href: '/editor/articles',
-            label: 'All Submissions',
+            label: 'Manage Submissions',
             icon: FileText,
           },
           { href: '/editor/users', label: 'Manage Users', icon: Users },
@@ -57,11 +55,6 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             href: '/editor/issues',
             label: 'Manage Issues',
             icon: Calendar,
-          },
-          {
-            href: '/editor/proof',
-            label: 'Proofs Reading',
-            icon: FilePenLine,
           },
           {
             href: '/editor/publish',
@@ -88,7 +81,7 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             icon: CheckSquare,
           },
           {
-            href: '/editor/decision',
+            href: '/associate-editor/reviewers',
             label: 'Manage Reviewers',
             icon: Users,
           },

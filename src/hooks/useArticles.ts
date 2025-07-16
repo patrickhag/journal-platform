@@ -31,33 +31,6 @@ export const useGetUserArticles = (
   });
 };
 
-export const useDeleteArticle = (
-  setOpenDeleteArticleDialog: (openOrClose: boolean) => void
-) => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (articleId: string) => {
-      const response = await axios.delete<MessageResponse>(
-        `/api/articles/article/${articleId}`
-      );
-      return response.data;
-    },
-    onSuccess: ({ message }) => {
-      setOpenDeleteArticleDialog(false);
-      queryClient.invalidateQueries({ queryKey: ['manuscripts'] });
-      toast.success(message || 'Failed to delete article');
-    },
-    onError: (error: Error | AxiosError) => {
-      const message = axios.isAxiosError(error)
-        ? error.response?.data.message
-        : error.message;
-
-      toast.error(message || 'Failed to delete article');
-    },
-  });
-};
-
 export const useGetAcceptedArticles = () => {
   const fetchArticles = async (): Promise<IArticle[]> => {
     const response = await axios.get<IArticle[]>(`/api/articles`);
@@ -96,7 +69,9 @@ export const usePublishArticle = (clearUrl: () => void) => {
       return response.data;
     },
     onSuccess: ({ message }) => {
-      queryClient.invalidateQueries({ queryKey: ['toBePublishedArticles'] });
+      queryClient.invalidateQueries({
+        queryKey: ['toBePublishedArticles', 'publishedArticles'],
+      });
       toast.success(message);
       clearUrl();
     },

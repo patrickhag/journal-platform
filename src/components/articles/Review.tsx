@@ -9,13 +9,11 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { FileList } from '../upload/FileList';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { safeParse } from 'zod-urlsearchparams';
 import { filesSchema } from '@/schemas/reviewer';
-import { ARTICLE_STATUS } from '@/lib/consts';
 import {
   Select,
   SelectContent,
@@ -56,11 +54,11 @@ export default function ReviewModal({
   const files = filesValidation.data?.files || [];
   const fileIds = files.map((f) => f.publicId);
 
-  const reviewStatus: (typeof ARTICLE_STATUS)[number][] = [
-    'MAJOR ISSUE',
-    'MINOR ISSUE',
-    'ACCEPTED',
-    'REJECTED',
+  const reviewStatus = [
+    'Major Collection',
+    'Minor Collection',
+    'Accepted',
+    'Rejected',
   ];
 
   const form = useForm<ReviewFormData>({

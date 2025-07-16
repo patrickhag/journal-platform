@@ -179,7 +179,7 @@ export default async function EditorialBoardPage() {
             {editorInChief.length > 0 && (
               <div className="mb-8">
                 <h3 className="text-xl font-semibold text-gray-900 mb-6">
-                  Editor-in-Chief
+                  Editor-in-Chief(s)
                 </h3>
                 <div className="grid grid-cols-1 gap-6">
                   {editorInChief.map((member) => (

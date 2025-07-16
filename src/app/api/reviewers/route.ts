@@ -1,11 +1,6 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
-import {
-  articleSubmissions,
-  editors,
-  reviewAssignments,
-  users,
-} from '@/db/schema';
+import { articleSubmissions, reviewAssignments, users } from '@/db/schema';
 import { associateNotifyReviewer } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -24,6 +19,41 @@ export async function GET(req: NextRequest) {
 
     const reviewers = await db.query.users.findMany({
       where: eq(users.role, 'REVIEWER'),
+      columns: {
+        firstName: true,
+        lastName: true,
+        affiliation: true,
+        expertise: true,
+        prefix: true,
+      },
+      with: {
+        reviews: {
+          columns: {
+            id: true,
+          },
+        },
+        reviewAssignments: {
+          columns: {
+            id: true,
+          },
+          with: {
+            article: {
+              columns: {
+                id: true,
+                createdAt: true,
+                articleStatus: true,
+              },
+              with: {
+                metadata: {
+                  columns: {
+                    title: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
 
     return NextResponse.json(reviewers);

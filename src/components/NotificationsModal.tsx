@@ -22,16 +22,17 @@ import { useSession } from 'next-auth/react';
 import Spinner from './Spinner';
 import { usePathname } from 'next/navigation';
 import { markAllAsRead } from '@/actions/markAllAsRead';
+import { useMarkAsReadAll } from '@/hooks/useSettings';
+import Loader from './Loader';
 
 export default function NotificationsModal({
   notifications = [],
 }: {
   notifications: TNotifications[];
 }) {
-  const [, formAction, isPending] = useActionState(markAllAsRead, undefined);
-  const { data: session } = useSession();
-
-  const pathname = usePathname();
+  const { data } = useSession();
+  const userId = data?.user.id;
+  const { mutate, isPending } = useMarkAsReadAll();
 
   return (
     <DropdownMenu>
@@ -77,14 +78,10 @@ export default function NotificationsModal({
             <CardFooter>
               <Button
                 className="w-full"
-                onClick={() => {
-                  startTransition(async () => {
-                    if (!session?.user?.id) return undefined;
-                    formAction({ id: session?.user?.id, pathname });
-                  });
-                }}
+                disabled={isPending}
+                onClick={() => mutate(userId as string)}
               >
-                <Check /> Mark all as read {isPending && <Spinner />}
+                {isPending ? <Loader text="Marking..." /> : 'Mark all as read'}
               </Button>
             </CardFooter>
           </Card>

@@ -3,7 +3,7 @@ import { db } from '@/db/db';
 import { reviewAssignments, reviews } from '@/db/schema';
 import { auth } from '@/auth';
 import { articleSubmissions, notifications, users } from '@/db/schema';
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { notifyAdmin } from '@/lib/emailTransporter';
 
 export async function POST(req: Request) {
@@ -105,6 +105,7 @@ export async function GET(req: NextRequest) {
         dueDate: true,
         status: true,
       },
+      orderBy: desc(reviewAssignments.assignedDate),
       where: and(eq(reviewAssignments.userId, session.user.id as string)),
       with: {
         article: {
@@ -128,7 +129,6 @@ export async function GET(req: NextRequest) {
           },
         },
       },
-      orderBy: (assignments) => [assignments.assignedDate],
     });
 
     return NextResponse.json(assignedArticles);

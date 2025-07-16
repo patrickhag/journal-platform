@@ -2,12 +2,10 @@
 
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
-import { Eye, Trash, Upload } from 'lucide-react';
+import { Eye, Upload } from 'lucide-react';
 import { TArticle } from '@/schemas/reviewer';
 import { StatusBadge } from './status-badge';
-import { useEffect, useState } from 'react';
-import { DeleteaArticleDialog } from './articles/DeleteArticleDialog';
-import { useDeleteArticle } from '@/hooks/useArticles';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import UploadRevisionModal from '@/app/(protected)/submissions/components/UploadRevisionModal';
 
@@ -43,15 +41,11 @@ function ArticleCard({
   };
   index: number;
 }) {
-  const [openDeleteArticleDialog, setOpenDeleteArticleDialog] = useState(false);
   const [allowArticleDeletion, setAllowArticleDeletion] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
   const onClose = () => setIsOpen(false);
-
-  const { mutate: deleteArticle, isPending: isDeletingArticle } =
-    useDeleteArticle(setOpenDeleteArticleDialog);
 
   // Transform article data for display
   const latestEditorAction =
@@ -66,13 +60,6 @@ function ArticleCard({
     editorMessage: latestEditorAction?.message || null,
     editorFile: latestEditorAction?.editorfileId || null,
   };
-
-  useEffect(() => {
-    if (allowArticleDeletion) {
-      deleteArticle(article.id);
-      setAllowArticleDeletion(false);
-    }
-  }, [allowArticleDeletion]);
 
   return (
     <>
@@ -109,16 +96,6 @@ function ArticleCard({
 
               {/* Right Section: Action Buttons */}
               <div className="flex space-x-2 ml-4">
-                {transformedArticle.articleStatus === 'SUBMITTED' && (
-                  <Button
-                    variant="outline"
-                    size={'sm'}
-                    onClick={() => setOpenDeleteArticleDialog(true)}
-                  >
-                    <Trash className="mr-1 h-4 w-4" />
-                    Delete Manuscript
-                  </Button>
-                )}
                 <Button
                   variant="outline"
                   size="sm"
@@ -144,12 +121,7 @@ function ArticleCard({
           </div>
         </CardContent>
       </Card>
-      <DeleteaArticleDialog
-        open={openDeleteArticleDialog}
-        onOpenChange={setOpenDeleteArticleDialog}
-        setAllowArticleDeletion={setAllowArticleDeletion}
-        isDeletingArticlePending={isDeletingArticle}
-      />
+
       <UploadRevisionModal
         articleId={transformedArticle.id}
         articleTitle={transformedArticle.title}

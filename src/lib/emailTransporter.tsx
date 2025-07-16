@@ -22,6 +22,7 @@ import { ThankAuthorEmailTemplate } from '@/components/emails/thank-you-email-te
 import { AssignEditorEmailTemplate } from '@/components/emails/inform-associate-editor';
 import { AssignReviewerEmailTemplate } from '@/components/emails/inform-reviewer-email-template';
 import { ArticleReadyForEICApprovalEmailTemplate } from '@/components/emails/inform-chief-editor-email-template';
+import { ReviewerResponseEmail } from '@/components/emails/inform-associate-editor-about';
 
 export const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -93,33 +94,30 @@ export const notifyContibutor = async ({
 };
 
 export const sendInvitation = async ({
-  article,
-  reviewer,
+  reviewerNames,
+  articleId,
+  articleTitle,
   toEmail,
   isAlreadyUser,
-  editorInChiefId,
   dueDate,
+  password,
 }: {
-  reviewer: string;
-  article: {
-    article: string;
-    title: string;
-    subTitle: string;
-    content: string;
-  };
+  reviewerNames: string;
+  articleId: string;
+  articleTitle: string;
   toEmail: string;
   isAlreadyUser: boolean;
-  editorInChiefId: string;
   dueDate: string;
+  password: string;
 }) => {
   const emailHtml = await render(
     <SendInvitation
-      reviewerEmail={toEmail}
-      article={article}
-      reviewer={reviewer}
+      reviewerName={reviewerNames}
+      articleTitle={articleTitle}
       isAlreadyUser={isAlreadyUser}
-      editorInChiefId={editorInChiefId}
+      articleId={articleId}
       dueDate={dueDate}
+      password={password}
     />
   );
   const options = {
@@ -476,8 +474,8 @@ export const associateNotifyReviewer = async ({
     const emailHtml = await render(
       <AssignReviewerEmailTemplate
         articleTitle={articleTitle}
-        authorName={authorNames}
         reviewerName={reviewerNames}
+        reviewAcceptUrl=""
       />
     );
 
@@ -549,7 +547,48 @@ export const informChiefEditorAboutAcceptance = async ({
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: process.env.EDITOR_IN_CHIEF_EMAIL,
-      subject: 'Thank you for submitting your article',
+      subject: 'Associate editor has accepted the manuscript.',
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending admin notification:', error);
+    return { success: false, error };
+  }
+};
+
+export const informAssociateEditor = async ({
+  associateEditorName,
+  associateEditorEmail,
+  reviewerName,
+  articleTitle,
+  status,
+}: {
+  associateEditorName: string;
+  associateEditorEmail: string;
+  reviewerName: string;
+  articleTitle: string;
+  authorEmail?: string;
+  status: 'accepted' | 'rejected';
+}) => {
+  try {
+    const emailHtml = await render(
+      <ReviewerResponseEmail
+        articleTitle={articleTitle}
+        associateEditorName={associateEditorName}
+        reviewerName={reviewerName}
+        status={status}
+      />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: associateEditorEmail,
+      subject:
+        status === 'accepted'
+          ? 'Reviwer has accepted the invitation to review the manuscript.'
+          : 'Reviwer has declined the invitation to review the manuscript.',
       html: emailHtml,
     });
 

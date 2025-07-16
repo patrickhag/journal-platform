@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
-import { articleSubmissions, editors, Issues, issues } from '@/db/schema';
+import { editors } from '@/db/schema';
 import { auth } from '@/auth';
-import { and, eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 
 export async function GET(req: NextRequest) {
   try {
@@ -15,11 +15,12 @@ export async function GET(req: NextRequest) {
     }
 
     const associateEditorsAssigments = await db.query.editors.findMany({
+      where: eq(editors.userId, editorId as string),
+      orderBy: desc(editors.assignedAt),
       columns: {
         id: true,
         assignedAt: true,
       },
-      where: eq(editors.userId, editorId as string),
       with: {
         articleSubmissions: {
           columns: {
@@ -41,14 +42,13 @@ export async function GET(req: NextRequest) {
               },
             },
             reviews: {
-              columns: {
-                id: true,
-              },
+              columns: { id: true },
             },
           },
         },
       },
     });
+
     return NextResponse.json(associateEditorsAssigments);
   } catch (error) {
     console.error('Error creating volume:', error);

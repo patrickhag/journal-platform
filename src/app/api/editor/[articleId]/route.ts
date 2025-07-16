@@ -94,11 +94,30 @@ export async function POST(
       fileIds: fileId,
     });
 
-    await db.insert(notifications).values({
-      message:
-        '🎉 Congratulations, your manuscript has been accepted by Associate editor.',
-      userId: article?.user.id,
-    });
+    switch (decision) {
+      case decision === 'ACCEPT':
+        await db.insert(notifications).values({
+          message:
+            '🎉 Congratulations, your manuscript has been accepted by Associate editor.',
+          userId: article?.user.id,
+        });
+        break;
+      case decision === 'REQUEST_REVISION':
+        await db.insert(notifications).values({
+          message:
+            'Associate-editor has requested a revision of your manuscript.',
+          userId: article?.user.id,
+        });
+      case decision === 'REJECT':
+        await db.insert(notifications).values({
+          message:
+            'The Peer-review team has rejected your manuscript. Check your email for more info.',
+          userId: article?.user.id,
+        });
+        break;
+      default:
+        break;
+    }
 
     const associateEditorName =
       article?.editor?.user.firstName + ' ' + article?.editor?.user.lastName;
@@ -141,7 +160,12 @@ export async function PUT(
     const { fileIds, message, reviewerUserId, reviewerName, reviewerEmail } =
       await req.json();
 
-    if (session?.user.role !== 'CHIEF_EDITOR') {
+    if (
+      !(
+        session?.user.role === 'CHIEF_EDITOR' ||
+        session?.user.role === 'ASSOCIATE_EDITOR'
+      )
+    ) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -191,6 +215,11 @@ export async function PUT(
       type: 'REVIEWER',
     });
 
+    await db.insert(notifications).values({
+      message: `${article?.user.firstName} has submitted a revised manuscript for manuscript: "${article?.metadata.title as string}"`,
+      userId: reviewerUserId as string,
+    });
+
     return NextResponse.json({
       message: 'Review revision updated and reviewer notified!',
     });
@@ -226,7 +255,7 @@ export async function PATCH(
       .update(articleSubmissions)
       .set({
         articleStatus: 'ACCEPTED',
-        acceptedAt: Date.now(),
+        acceptedAt: new Date(),
       })
       .where(eq(articleSubmissions.id, articleId))
       .returning();

@@ -71,7 +71,6 @@ const EditorReReviewModal = ({
 
   const handleSubmit = (data: ReReviewFormData) => {
     const { message } = data;
-    console.log('data:', message, reviewerId, fileIds);
     mutate(
       { fileIds, message, reviewerId, reviewerName, reviewerEmail },
       {

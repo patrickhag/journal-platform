@@ -33,6 +33,38 @@ export const useGetReviewers = () => {
   });
 };
 
+type TInviteData = {
+  reviewerNames: string;
+  toEmail: string;
+  date: Date;
+  articleId: string | string[] | undefined;
+};
+
+export const useInviteReviewer = () => {
+  return useMutation({
+    mutationFn: async (data: TInviteData) => {
+      console.log('payload-data:', data);
+      const response = await axios.post<{ message: string }>(
+        `/api/reviewers/invitation`,
+        data
+      );
+      return response;
+    },
+    onSuccess: ({ data }) => {
+      if (data) {
+        toast.info(data.message);
+      }
+    },
+    onError: (error: Error | AxiosError) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data.message
+        : error.message;
+
+      toast.error(message || 'Failed to invite reviewer');
+    },
+  });
+};
+
 type TReviwerPayloadData = {
   userId: string;
   articleId: string;

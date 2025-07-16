@@ -108,7 +108,7 @@ export default function PublishManuscriptDialog({
         <SheetHeader>
           <SheetTitle>Publish Article</SheetTitle>
           <SheetDescription>
-            Enter the publication details for "{title}".
+            Enter the publication details for &quot;{title}&quot;.
           </SheetDescription>
         </SheetHeader>
 
