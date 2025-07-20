@@ -5,11 +5,13 @@ import {
   articleSubmissions,
   editorActions,
   notifications,
+  publishedArticles,
   reviewRevisions,
 } from '@/db/schema';
 import {
   informChiefEditorAboutAcceptance,
   notifyEditorAboutRevision,
+  notifyUser,
   notifyUserAboutEditorDecision,
 } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
@@ -241,7 +243,10 @@ export async function PATCH(
     const { articleId } = await params;
 
     if (session?.user.role !== 'CHIEF_EDITOR') {
-      return NextResponse.json({ error: 'Unauthorized user' }, { status: 401 });
+      return NextResponse.json(
+        { message: 'Unauthorized user' },
+        { status: 401 }
+      );
     }
 
     if (!articleId) {
@@ -252,18 +257,52 @@ export async function PATCH(
     }
 
     const isUpdatingDone = await db
-      .update(articleSubmissions)
+      .update(publishedArticles)
       .set({
-        articleStatus: 'ACCEPTED',
-        acceptedAt: new Date(),
+        status: 'PUBLISHED',
+        publishedAt: new Date(),
       })
-      .where(eq(articleSubmissions.id, articleId))
+      .where(eq(publishedArticles.id, articleId))
       .returning();
+
+    const article = await db.query.articleSubmissions.findFirst({
+      columns: {
+        id: true,
+      },
+      with: {
+        metadata: {
+          columns: {
+            title: true,
+          },
+        },
+        user: {
+          columns: {
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+      },
+      where: eq(articleSubmissions.id, articleId),
+    });
+
+    const articleTitle = article?.metadata.title as string;
+    const authorName = `${article?.user.firstName as string} ${article?.user.lastName as string}`;
+    const authorEmail = article?.user.email as string;
+    const articleLink = article?.id as string;
+
+    await notifyUser({
+      articleTitle: articleTitle,
+      authorName,
+      authorEmail,
+      articleLink: `${process.env.NEXT_PUBLIC_URL}/articles/article/${articleLink}`,
+      type: 'published',
+      subject: '🎉 Congratulations! Your Manuscript Is Officially Published',
+    });
 
     if (isUpdatingDone[0]) {
       return NextResponse.json({
-        message:
-          "Manuscript status has been approved, it's ready for publication",
+        message: 'Manuscript is officially published!',
       });
     }
   } catch (error) {

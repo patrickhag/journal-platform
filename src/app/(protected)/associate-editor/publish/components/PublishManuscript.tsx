@@ -106,7 +106,7 @@ export default function PublishManuscriptDialog({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-[500px] sm:w-[540px]">
         <SheetHeader>
-          <SheetTitle>Publish Article</SheetTitle>
+          <SheetTitle>Approve Manuscript</SheetTitle>
           <SheetDescription>
             Enter the publication details for &quot;{title}&quot;.
           </SheetDescription>
@@ -187,9 +187,9 @@ export default function PublishManuscriptDialog({
               </Button>
               <Button type="submit" disabled={isPending}>
                 {isPending ? (
-                  <Loader text="Publishing..." />
+                  <Loader text="Approving..." />
                 ) : (
-                  'Publish Article'
+                  'Approve Manuscript'
                 )}
               </Button>
             </div>

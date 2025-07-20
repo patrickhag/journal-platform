@@ -19,14 +19,12 @@ import { useState } from 'react';
 import EditorDecisionModal from './components/EditorDecisionModal';
 import EditorReReviewModal from './components/EditorReReview';
 import { useSession } from 'next-auth/react';
-import { ApproveManuscriptDialog } from './components/ApproveManuscriptDialog';
+// import { ApproveManuscriptDialog } from './components/ApproveManuscriptDialog';
 
 export default function ReviewsPage() {
   const { articleId } = useParams();
   const { data } = useSession();
-  const [openApproveDialog, setOpenApproveDialog] = useState(false);
-
-  const userRole = data?.user.role;
+  // const [openApproveDialog, setOpenApproveDialog] = useState(false);
 
   const { data: reviewData } = useGetReviews(articleId as string);
   const [openEditor, setOpenEditor] = useState(false);
@@ -206,7 +204,7 @@ export default function ReviewsPage() {
 
           {/* Move the decision button here */}
 
-          <div className="w-4/5 mx-auto grid grid-cols-2 gap-2 mt-5">
+          <div className="w-1/2 mx-auto grid grid-cols-1 gap-2 mt-5">
             <Button
               className="bg-amber-600 hover:bg-amber-700"
               onClick={() => setOpenEditor(true)}
@@ -214,14 +212,14 @@ export default function ReviewsPage() {
               <CheckSquare className="mr-2 h-4 w-4" />
               Make Decision
             </Button>
-            <Button
+            {/* <Button
               className="bg-green-600 hover:bg-green-700"
               disabled={userRole !== 'CHIEF_EDITOR'}
               onClick={() => setOpenApproveDialog(true)}
             >
               <CheckSquare className="mr-2 h-4 w-4" />
               Approve Manuscript
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>
@@ -238,10 +236,10 @@ export default function ReviewsPage() {
         reviewerName={reviewerName}
         reviewerEmail={revieweEmail}
       />
-      <ApproveManuscriptDialog
+      {/* <ApproveManuscriptDialog
         onOpenChange={setOpenApproveDialog}
         open={openApproveDialog}
-      />
+      /> */}
     </>
   );
 }

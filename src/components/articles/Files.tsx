@@ -1,46 +1,40 @@
-import { files, reviewAssignments } from '@/db/schema';
+import { files } from '@/db/schema';
 import { db } from '@/db/db';
 import { Button } from '../ui/button';
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { EyeIcon, File } from 'lucide-react';
-import ReviewModal from './Review';
-import withPermissions from '../WithPermission';
+import AddArticleFiles from './AddArticleFiles';
 
 async function Files({
   articleId,
-  role,
   userId,
+  articleStatus,
 }: {
   userId?: string;
   articleId: string;
   role: string;
+  articleStatus: string;
 }) {
   const filesData = await db
     .select()
     .from(files)
     .where(eq(files.articleId, articleId));
 
-  // const hasReviewerAcceptInvitation =
-  //   await db.query.reviewAssignments.findFirst({
-  //     where: and(
-  //       eq(reviewAssignments.status, 'ACCEPTED'),
-  //       eq(reviewAssignments.articleId, articleId),
-  //       eq(reviewAssignments.userId, userId)
-  //     ),
-  //   });
-
-  // console.log('hasReviewerAcceptInvitation>>>', hasReviewerAcceptInvitation);
-
   return (
     <>
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold text-[#1a237e]">
-            Article Files
-          </CardTitle>
-        </CardHeader>
+        <div className="flex justify-between items-center">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold text-[#1a237e]">
+              Article Files
+            </CardTitle>
+          </CardHeader>
+          {userId === filesData[0].userId && articleStatus !== 'PUBLISHED' && (
+            <AddArticleFiles articleId={articleId} userId={userId} />
+          )}
+        </div>
         <CardContent className="space-y-4">
           {filesData.map((file) => (
             <div
@@ -52,7 +46,7 @@ async function Files({
                 <div>
                   <p className="font-medium">{file.originalName}</p>
                   <p className="text-sm text-muted-foreground my-1">
-                    {file.fileType}
+                    {file.fileType || 'Revised Manuscript'}
                   </p>
                 </div>
               </div>
@@ -67,21 +61,6 @@ async function Files({
                   </span>
                 </Link>
               </Button>
-              {/* {hasReviewerAcceptInvitation?.status === 'ACCEPTED' && (
-                <div className="flex space-x-1">
-                  <UlterFile
-                    requiredPermissions={['ADD_REVIEW']}
-                    role={
-                      role as
-                        | 'NORMAL_USER'
-                        | 'CHIEF_EDITOR'
-                        | 'ADMIN'
-                        | 'REVIEWER'
-                    }
-                    fallback={<></>}
-                  />
-                </div>
-              )} */}
             </div>
           ))}
         </CardContent>
@@ -91,7 +70,3 @@ async function Files({
 }
 
 export default Files;
-
-// const FileControls = () => <ReviewModal />;
-
-// const UlterFile = withPermissions(FileControls);

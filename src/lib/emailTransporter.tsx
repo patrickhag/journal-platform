@@ -23,6 +23,8 @@ import { AssignEditorEmailTemplate } from '@/components/emails/inform-associate-
 import { AssignReviewerEmailTemplate } from '@/components/emails/inform-reviewer-email-template';
 import { ArticleReadyForEICApprovalEmailTemplate } from '@/components/emails/inform-chief-editor-email-template';
 import { ReviewerResponseEmail } from '@/components/emails/inform-associate-editor-about';
+import { ReviewerSubmittedEmail } from '@/components/emails/review-submitted-email';
+import { AuthorReplyToReviewEmail } from '@/components/emails/author-reply-to-review-email';
 
 export const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -108,7 +110,7 @@ export const sendInvitation = async ({
   toEmail: string;
   isAlreadyUser: boolean;
   dueDate: string;
-  password: string;
+  password?: string;
 }) => {
   const emailHtml = await render(
     <SendInvitation
@@ -117,7 +119,7 @@ export const sendInvitation = async ({
       isAlreadyUser={isAlreadyUser}
       articleId={articleId}
       dueDate={dueDate}
-      password={password}
+      password={password as string}
     />
   );
   const options = {
@@ -595,6 +597,81 @@ export const informAssociateEditor = async ({
     return { success: true };
   } catch (error) {
     console.error('Error sending admin notification:', error);
+    return { success: false, error };
+  }
+};
+
+export const informingAuthorNReviewer = async ({
+  participantEmail,
+  participantName,
+  articleTitle,
+  subject,
+  userType,
+}: {
+  participantEmail: string;
+  participantName: string;
+  articleTitle: string;
+  subject: string;
+  userType: string;
+}) => {
+  try {
+    const emailHtml = await render(
+      <ReviewerSubmittedEmail
+        articleTitle={articleTitle}
+        participantName={participantName}
+        userType={userType}
+      />
+    );
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: participantEmail,
+      subject,
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending admin notification:', error);
+    return { success: false, error };
+  }
+};
+
+export const authorInformReviewer = async ({
+  reviewerEmail,
+  reviewerName,
+  authorName,
+  articleTitle,
+  articleLink,
+  message,
+}: {
+  reviewerName: string;
+  authorName: string;
+  articleTitle: string;
+  articleLink: string;
+  reviewerEmail: string;
+  message: string;
+}) => {
+  try {
+    const emailHtml = await render(
+      <AuthorReplyToReviewEmail
+        articleTitle={articleTitle}
+        reviewerName={reviewerName}
+        articleLink={articleLink}
+        authorName={authorName}
+        message={message}
+      />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: reviewerEmail,
+      subject: 'Author has replied to your the review on JAEPH.',
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending notification:', error);
     return { success: false, error };
   }
 };

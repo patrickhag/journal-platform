@@ -36,6 +36,7 @@ export default function AssignRevieweModal() {
   const { mutate, isPending } = useAssignReviewer();
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date>();
+  const [warning, setWarning] = useState<string>('');
 
   const { articleId } = useParams();
 
@@ -44,6 +45,11 @@ export default function AssignRevieweModal() {
   );
 
   const handleAssign = () => {
+    if (!date) {
+      setWarning('Please select a due date before assigning');
+      return;
+    }
+
     if (selectedReviewer) {
       const data = {
         articleId: articleId as string,
@@ -58,6 +64,7 @@ export default function AssignRevieweModal() {
           setOpen(false);
         },
       });
+      setWarning('');
     }
   };
 
@@ -97,16 +104,19 @@ export default function AssignRevieweModal() {
                     onValueChange={setSelectedReviewerId}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Choose a reviewer..." />
+                      <SelectValue
+                        placeholder="Choose a reviewer..."
+                        defaultValue=""
+                      >
+                        {selectedReviewer
+                          ? `${selectedReviewer.firstName} ${selectedReviewer.lastName}`
+                          : null}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {availableReviwers?.map((reviewer) => (
                         <SelectItem key={reviewer.id} value={reviewer.id}>
-                          <div className="flex items-center justify-between w-full">
-                            <span>
-                              {reviewer.firstName} {reviewer.lastName}
-                            </span>
-                          </div>
+                          {reviewer.firstName} {reviewer.lastName}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -126,6 +136,9 @@ export default function AssignRevieweModal() {
                           {selectedReviewer.lastName}
                         </p>
                         <p>
+                          <strong>Email:</strong> {selectedReviewer.email}
+                        </p>
+                        <p>
                           <strong>Affiliation:</strong>{' '}
                           {selectedReviewer.affiliation}
                         </p>
@@ -140,6 +153,7 @@ export default function AssignRevieweModal() {
               )}
             </div>
           </div>
+          {warning && <p className="text-sm text-red-500">{warning}</p>}
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -158,6 +172,7 @@ export default function AssignRevieweModal() {
                 mode="single"
                 selected={date}
                 onSelect={setDate}
+                disabled={(date) => date < new Date()}
                 initialFocus
               />
             </PopoverContent>

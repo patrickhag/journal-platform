@@ -75,7 +75,7 @@ type TReviwerPayloadData = {
 export const useAssignReviewer = () => {
   return useMutation({
     mutationFn: async (data: TReviwerPayloadData) => {
-      const response = await axios.post<{ message: string }>(
+      const response = await axios.post<{ message: string; error: string }>(
         `/api/reviewers/`,
         data
       );
@@ -91,7 +91,7 @@ export const useAssignReviewer = () => {
         ? error.response?.data.message
         : error.message;
 
-      toast.error(message || 'Failed to assign editor');
+      toast.error(message);
     },
   });
 };

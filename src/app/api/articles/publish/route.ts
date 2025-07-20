@@ -11,7 +11,10 @@ export async function GET(req: NextRequest) {
     const session = await auth();
 
     if (
-      !(session?.user.role === 'ADMIN' || session?.user.role === 'CHIEF_EDITOR')
+      !(
+        session?.user.role === 'ASSOCIATE_EDITOR' ||
+        session?.user.role === 'CHIEF_EDITOR'
+      )
     ) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -42,6 +45,16 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: Request) {
   try {
+    const session = await auth();
+
+    if (
+      !(
+        session?.user.role === 'ASSOCIATE_EDITOR' ||
+        session?.user.role === 'CHIEF_EDITOR'
+      )
+    ) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const body = await req.json();
 
     const { articleId, issueId, doi, pageRange, pdfUrl, title } = body;
@@ -57,46 +70,11 @@ export async function POST(req: Request) {
 
     await db
       .update(articleSubmissions)
-      .set({ articleStatus: 'PUBLISHED' })
+      .set({ articleStatus: 'AWAITING_DECICION' })
       .where(eq(articleSubmissions.id, articleId));
 
-    const article = await db.query.articleSubmissions.findFirst({
-      columns: {
-        id: true,
-      },
-      with: {
-        metadata: {
-          columns: {
-            title: true,
-          },
-        },
-        user: {
-          columns: {
-            firstName: true,
-            lastName: true,
-            email: true,
-          },
-        },
-      },
-      where: eq(articleSubmissions.id, articleId),
-    });
-
-    const articleTitle = article?.metadata.title as string;
-    const authorName = `${article?.user.firstName as string} ${article?.user.lastName as string}`;
-    const authorEmail = article?.user.email as string;
-    const articleLink = article?.id as string;
-
-    await notifyUser({
-      articleTitle: articleTitle,
-      authorName,
-      authorEmail,
-      articleLink: `${process.env.NEXT_PUBLIC_URL}/articles/article/${articleLink}`,
-      type: 'published',
-      subject: '🎉 Congratulations! Your Manuscript Is Officially Published',
-    });
-
     return NextResponse.json({
-      message: 'Article published and author was informed.',
+      message: "Article status changed, It's ready for chief-editor approval.",
     });
   } catch (error) {
     console.error('[PUBLISH_ARTICLE_POST_ERROR]', error);

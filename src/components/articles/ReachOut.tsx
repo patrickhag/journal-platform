@@ -22,7 +22,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../ui/dialog';
-import { useSession } from 'next-auth/react';
 
 export const ReachOut: FC<{
   toEmail: string;

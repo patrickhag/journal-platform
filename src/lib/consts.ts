@@ -285,4 +285,4 @@ export const sdgGoals = [
   'Partnerships to achieve the Goal',
 ];
 
-export const publishedArticles = ['PUBLISHED', 'UNPUBLISHED', 'ARCHIVE'];
+export const publishedArticlesStatus = ['PUBLISHED', 'UNPUBLISH'];

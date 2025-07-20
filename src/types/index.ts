@@ -254,3 +254,28 @@ export type TPublishedArticle = {
     };
   };
 };
+
+export type ReviewersReview = {
+  id: string;
+  articleId: string;
+  reviewedAt: string;
+  status: string;
+  message: string;
+  fileIds: string[];
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    prefix: string | null;
+    email: string;
+  };
+};
+
+export type TArticlesReview = {
+  id: string;
+  articleStatus: string;
+  metadata: {
+    title: string;
+  };
+  reviews: ReviewersReview[];
+};

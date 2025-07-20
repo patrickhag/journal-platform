@@ -1,6 +1,10 @@
-import { useClearURL } from '@/components/ClearURL';
 import { ReviewFormData } from '@/schemas/reviewer';
-import { MessageResponse, TReview, TReviewerAssignment } from '@/types';
+import {
+  MessageResponse,
+  TArticlesReview,
+  TReview,
+  TReviewerAssignment,
+} from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
@@ -8,7 +12,6 @@ import { toast } from 'sonner';
 export const useCreateReview = () => {
   return useMutation({
     mutationFn: async (data: ReviewFormData) => {
-      console.log('data>>>', data);
       return axios.post<MessageResponse>('/api/reviews', data);
     },
     onSuccess: ({ data }) => {
@@ -72,6 +75,47 @@ export const useGetReviews = (articleId: string) => {
     queryFn: async () => {
       const { data } = await axios.get<TReview>(`/api/reviews/${articleId}`);
       return data;
+    },
+  });
+};
+
+export const useGetAuthorsReviews = () => {
+  return useQuery({
+    queryKey: ['authorReviews'],
+    queryFn: async () => {
+      const { data } =
+        await axios.get<TArticlesReview[]>(`/api/reviews/author`);
+      return data;
+    },
+  });
+};
+
+type TpayloadData = {
+  reviewerId: string;
+  articleId: string;
+  message: string;
+  reviewerEmail: string;
+  reviewerName: string;
+  articleTitle: string;
+};
+
+export const useAuthorReplyReviewer = () => {
+  return useMutation({
+    mutationFn: async (data: TpayloadData) => {
+      return axios.post<MessageResponse>(`/api/reviews/author`, data);
+    },
+    onSuccess: ({ data }) => {
+      if (data.message) {
+        toast.success(data.message);
+      }
+    },
+    onError: (error: Error | AxiosError) => {
+      console.error('Author submission error:', error.message);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : error.message;
+
+      toast.error(message || 'Failed to submit author response');
     },
   });
 };
@@ -160,7 +204,7 @@ export const useSendReRevision = (articleId: string) => {
   });
 };
 
-export const useAcceptArticle = (
+export const usePublishAcceptedArticle = (
   articleId: string,
   onOpenChange: (open: boolean) => void
 ) => {
@@ -172,7 +216,7 @@ export const useAcceptArticle = (
     },
     onSuccess: ({ data }) => {
       if (data.message) {
-        queryClient.invalidateQueries({ queryKey: ['reviewerAssignments'] });
+        queryClient.invalidateQueries({ queryKey: ['publishedArticles'] });
         toast.success(data.message);
         onOpenChange(false);
       }
@@ -206,6 +250,18 @@ export const useSendInvitation = (articleId: string) => {
         : error.message;
 
       toast.error(message || 'Failed to accept article');
+    },
+  });
+};
+
+export const useGetAuthorsRevisions = () => {
+  return useQuery({
+    queryKey: ['authorRevisions'],
+    queryFn: async () => {
+      const { data } = await axios.get<TArticlesReview[]>(
+        `/api/reviews/reviewer`
+      );
+      return data;
     },
   });
 };

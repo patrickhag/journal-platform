@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowUpRight } from 'lucide-react';
 import withPermissions from '@/components/WithPermission';
 import AddReviewerModal from '@/components/upload/AddReviewerModal';
+import AssignRevieweModal from './components/AssignReviewersModal';
 
 async function page({ params }: { params: Promise<{ articleId: string }> }) {
   const session = await auth();
@@ -48,7 +49,7 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
                 | 'ADMIN'
                 | 'REVIEWER'
             }
-            requiredPermissions={['VIEW_REVIEW']}
+            requiredPermissions={['VIEW_REVIEWS']}
             fallback={<></>}
           />
         </div>
@@ -124,7 +125,12 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
         </Card>
 
         {/* files */}
-        <Files articleId={articleId} role={currentUserRole!} />
+        <Files
+          articleId={articleId}
+          role={currentUserRole!}
+          userId={session?.user.id}
+          articleStatus={article?.articleStatus as string}
+        />
 
         {/* reviewers */}
         <Card className="my-3">
@@ -196,18 +202,7 @@ const ReveiwArticleLink = ({ articleId }: { articleId: string }) => (
 
 const ReviewsArticleLinkPermission = withPermissions(ReveiwArticleLink);
 
-const AssignReviewerLink = () => {
-  return (
-    <Link href={'/associate-editor/reviewers'}>
-      <Button
-        className="text-blue-500 hover:text-blue-600 underline"
-        variant={'link'}
-      >
-        Assign Reviewers
-      </Button>
-    </Link>
-  );
-};
+const AssignReviewerLink = () => <AssignRevieweModal />;
 
 const AddReviewersLink = () => (
   <AddReviewerModal typeOfPage="review" autoSave />

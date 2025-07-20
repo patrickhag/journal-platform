@@ -6,8 +6,8 @@ import { Eye, Upload } from 'lucide-react';
 import { TArticle } from '@/schemas/reviewer';
 import { StatusBadge } from './status-badge';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import UploadRevisionModal from '@/app/(protected)/submissions/components/UploadRevisionModal';
+import Link from 'next/link';
 
 export function ArticleSection({ articles }: { articles: TArticle[] }) {
   return (
@@ -41,9 +41,7 @@ function ArticleCard({
   };
   index: number;
 }) {
-  const [allowArticleDeletion, setAllowArticleDeletion] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
 
   const onClose = () => setIsOpen(false);
 
@@ -96,17 +94,13 @@ function ArticleCard({
 
               {/* Right Section: Action Buttons */}
               <div className="flex space-x-2 ml-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    router.push(`/articles/${transformedArticle.id}`)
-                  }
-                >
-                  <Eye className="mr-1 h-4 w-4" />
-                  View Details
-                </Button>
-                {transformedArticle.editorDecision && (
+                <Link href={`/articles/${transformedArticle.id}`}>
+                  <Button variant="outline" size="sm">
+                    <Eye className="mr-1 h-4 w-4" />
+                    View Details
+                  </Button>
+                </Link>
+                {/* {transformedArticle.editorDecision && (
                   <Button
                     className="bg-amber-600 hover:bg-amber-700 text-white"
                     size="sm"
@@ -115,7 +109,7 @@ function ArticleCard({
                     <Upload className="mr-1 h-4 w-4" />
                     Upload Revision
                   </Button>
-                )}
+                )} */}
               </div>
             </div>
           </div>

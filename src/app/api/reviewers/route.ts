@@ -1,8 +1,11 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
 import { articleSubmissions, reviewAssignments, users } from '@/db/schema';
-import { associateNotifyReviewer } from '@/lib/emailTransporter';
-import { eq } from 'drizzle-orm';
+import {
+  associateNotifyReviewer,
+  sendInvitation,
+} from '@/lib/emailTransporter';
+import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -20,11 +23,14 @@ export async function GET(req: NextRequest) {
     const reviewers = await db.query.users.findMany({
       where: eq(users.role, 'REVIEWER'),
       columns: {
+        id: true,
         firstName: true,
         lastName: true,
+        email: true,
         affiliation: true,
         expertise: true,
         prefix: true,
+        bio: true,
       },
       with: {
         reviews: {
@@ -79,7 +85,22 @@ export async function POST(req: NextRequest) {
         session?.user.role === 'ASSOCIATE_EDITOR'
       )
     ) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const isReviewerAlreadyAssigned =
+      await db.query.reviewAssignments.findFirst({
+        where: and(
+          eq(reviewAssignments.userId, userId),
+          eq(reviewAssignments.articleId, articleId)
+        ),
+      });
+
+    if (isReviewerAlreadyAssigned) {
+      return NextResponse.json(
+        { message: 'Reviewer has already been assigned to this article' },
+        { status: 409 }
+      );
     }
 
     await db.insert(reviewAssignments).values({
@@ -115,11 +136,13 @@ export async function POST(req: NextRequest) {
       where: eq(articleSubmissions.id, articleId),
     });
 
-    await associateNotifyReviewer({
-      articleTitle: article?.metadata.title as string,
-      authorNames: article?.user.firstName + ' ' + article?.user.lastName,
-      reviewerEmail: reviewerEmail,
+    await sendInvitation({
       reviewerNames: reviewerName,
+      articleId: articleId,
+      toEmail: reviewerEmail,
+      isAlreadyUser: true,
+      dueDate: date,
+      articleTitle: article?.metadata.title as string,
     });
 
     return NextResponse.json(
@@ -130,7 +153,7 @@ export async function POST(req: NextRequest) {
     );
   } catch (error) {
     if (error instanceof Error) {
-      console.error('Error assigning editor:', error.message);
+      console.error('Error assigning reviewer:', error.message);
       return NextResponse.json({ error: error.message }, { status: 500 });
     } else {
       return NextResponse.json(

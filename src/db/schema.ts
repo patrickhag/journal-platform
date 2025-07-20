@@ -126,8 +126,8 @@ export const files = pgTable('files', {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   publicId: text('publicId').notNull(),
-  resourceType: text('resourceType').notNull(),
-  originalName: text('originalName').notNull(),
+  resourceType: text('resourceType'),
+  originalName: text('originalName'),
   fileType: text('fileType'),
   userId: text('userId')
     .notNull()
@@ -404,9 +404,25 @@ export const articleRevisions = pgTable('article_revisions', {
     .array()
     .notNull()
     .default(sql`'{}'::text[]`),
-  submittedAt: timestamp('submittedAt', { mode: 'date' }).defaultNow(),
+  submittedAt: timestamp('submittedAt').defaultNow(),
   submittedBy: text('submittedBy').references(() => users.id),
   note: text('note'),
+});
+
+export const authorRevisions = pgTable('author_revisions', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  articleId: text('articleId').references(() => articleSubmissions.id, {
+    onDelete: 'cascade',
+  }),
+  fileIds: text('fileIds')
+    .array()
+    .default(sql`'{}'::text[]`),
+  submittedAt: timestamp('submittedAt').defaultNow(),
+  authorId: text('authorId').references(() => users.id),
+  reviewerId: text('reviewerId').references(() => users.id),
+  message: text('message'),
 });
 
 export const reviewRevisions = pgTable('review_revisions', {
@@ -421,7 +437,7 @@ export const reviewRevisions = pgTable('review_revisions', {
     .default(sql`'{}'::text[]`),
   reviewerId: text('reviewerId').references(() => users.id),
   note: text('note'),
-  reviewedAt: timestamp('reviewedAt', { mode: 'date' }).defaultNow(),
+  reviewedAt: timestamp('reviewedAt').defaultNow(),
 });
 
 export const collections = pgTable('collections', {
@@ -507,7 +523,7 @@ export const publishedArticles = pgTable('published_articles', {
   issueId: text('issue_id').references(() => issues.id),
   slug: text('slug').unique().notNull(),
   doi: varchar('doi', { length: 100 }).unique(),
-  status: varchar('status', { length: 20 }).default('PUBLISHED'),
+  status: varchar('status', { length: 20 }),
   publishedAt: timestamp('published_at').defaultNow(),
   pageRange: varchar('page_range', { length: 20 }),
   pdfUrl: text('pdf_url').notNull(),
@@ -571,6 +587,9 @@ export const articleSubmissionsRelations = relations(
     }),
     collectionArticles: many(collectionArticles, {
       relationName: 'collectionArticles',
+    }),
+    authorRevisions: many(authorRevisions, {
+      relationName: 'authorRevisions',
     }),
   })
 );
@@ -658,6 +677,16 @@ export const contributorsRelations = relations(contributors, ({ one }) => ({
     relationName: 'contributors',
   }),
 }));
+
+export const authorRevisionsRelations = relations(
+  authorRevisions,
+  ({ one }) => ({
+    articleSubmissions: one(articleSubmissions, {
+      fields: [authorRevisions.articleId],
+      references: [articleSubmissions.id],
+    }),
+  })
+);
 
 export type TFinalSubmissions = typeof finalSubmissions.$inferInsert;
 export type TArticleSubmissions = typeof articleSubmissions.$inferSelect;

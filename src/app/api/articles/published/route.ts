@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
 import { articleSubmissions, publishedArticles } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { desc, eq, or } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -9,13 +9,20 @@ export async function GET(req: NextRequest) {
     const session = await auth();
 
     if (
-      !(session?.user.role === 'ADMIN' || session?.user.role === 'CHIEF_EDITOR')
+      !(
+        session?.user.role === 'ASSOCIATE_EDITOR' ||
+        session?.user.role === 'CHIEF_EDITOR'
+      )
     ) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const foundPublishedArticles = await db.query.publishedArticles.findMany({
-      where: eq(publishedArticles.status, 'PUBLISHED'),
+      where: or(
+        eq(publishedArticles.status, 'AWAITING_DECISION'),
+        eq(publishedArticles.status, 'PUBLISHED')
+      ),
+      orderBy: desc(publishedArticles.publishedAt),
       columns: {
         id: true,
         doi: true,
@@ -108,7 +115,7 @@ export async function PUT(req: NextRequest) {
     }
 
     // Check if DOI is unique (if provided and different from current)
-    if (doi && doi !== existingPublishedArticle.doi) {
+    if (doi && doi === existingPublishedArticle.doi) {
       return NextResponse.json(
         { error: 'DOI already exists for another article' },
         { status: 409 }
@@ -132,13 +139,14 @@ export async function PUT(req: NextRequest) {
       .set(updateData)
       .where(eq(publishedArticles.id, publishedArticleId));
 
-    await db
-      .update(articleSubmissions)
-      .set({
-        articleStatus: 'ARCHIVED',
-      })
-      .where(eq(articleSubmissions.id, articleId));
-
+    if (status === 'UNPUBLISHED') {
+      await db
+        .update(articleSubmissions)
+        .set({
+          articleStatus: 'ARCHIVED',
+        })
+        .where(eq(articleSubmissions.id, articleId));
+    }
     return NextResponse.json(
       {
         message: 'Published article updated successfully',

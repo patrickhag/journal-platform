@@ -8,7 +8,7 @@ import {
 } from '@/db/schema';
 import { sendInvitation } from '@/lib/emailTransporter';
 import bcrypt from 'bcryptjs';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -51,8 +51,10 @@ export async function POST(req: NextRequest) {
       where: eq(users.email, reviewerEmail),
     });
 
+    let userId;
     if (!existingUser) {
-      await db
+      // Insert new user
+      const [newUser] = await db
         .insert(users)
         .values({
           firstName,
@@ -62,12 +64,31 @@ export async function POST(req: NextRequest) {
           role: 'REVIEWER',
         })
         .returning({ id: users.id });
+      userId = newUser.id;
+    } else {
+      userId = existingUser.id;
+    }
+
+    const isReviewerAlreadyAssigned =
+      await db.query.reviewAssignments.findFirst({
+        where: and(
+          eq(reviewAssignments.userId, userId),
+          eq(reviewAssignments.articleId, articleId)
+        ),
+      });
+
+    if (isReviewerAlreadyAssigned) {
+      return NextResponse.json(
+        { message: 'Reviewer has already been assigned to this article' },
+        { status: 409 }
+      );
     }
 
     await db.insert(reviewAssignments).values({
       articleId,
       reviewerId,
       dueDate,
+      userId,
     });
 
     const article = await db.query.articleSubmissions.findFirst({

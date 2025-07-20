@@ -38,7 +38,7 @@ import {
 } from '@/components/ui/sheet';
 import { useEffect, useState } from 'react';
 import { TPublishedArticle } from '@/types';
-import { publishedArticles } from '@/lib/consts';
+import { publishedArticlesStatus } from '@/lib/consts';
 import { useUpdatePublishedArticle } from '@/hooks/useArticles';
 import Loader from '@/components/Loader';
 
@@ -164,7 +164,7 @@ export default function EditPublishedManuscript({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {publishedArticles?.map((status, index) => (
+                        {publishedArticlesStatus?.map((status, index) => (
                           <SelectItem key={index} value={status}>
                             {status}
                           </SelectItem>

@@ -7,6 +7,7 @@ import {
   BarChart3,
   Calendar,
   CheckSquare,
+  ClipboardCheck,
   Clock,
   FileCog,
   Files,
@@ -57,20 +58,24 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             icon: Calendar,
           },
           {
-            href: '/editor/publish',
-            label: 'Publish Manuscript',
-            icon: Newspaper,
-          },
-          {
             href: '/editor/manage',
             label: 'Site Settings',
             icon: FileCog,
+          },
+          {
+            href: '/editor/publish',
+            label: 'Publish Manuscript',
+            icon: ClipboardCheck,
           },
         ];
       case 'reviewer':
         return [
           { href: '/reviewer', label: 'My Assignments', icon: CheckSquare },
-          { href: '/completed', label: 'Completed Reviews', icon: FileText },
+          {
+            href: '/reviewer/author-revisions',
+            label: 'Completed Reviews',
+            icon: FileText,
+          },
           { href: '/deadlines', label: 'Upcoming Deadlines', icon: Clock },
         ];
       case 'associate_editor':
@@ -89,6 +94,11 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             href: '/editor/history',
             label: 'Editorial history',
             icon: History,
+          },
+          {
+            href: '/associate-editor/publish',
+            label: 'Publish Manuscript',
+            icon: Newspaper,
           },
         ];
       default:

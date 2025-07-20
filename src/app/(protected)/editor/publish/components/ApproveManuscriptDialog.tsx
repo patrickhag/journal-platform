@@ -11,20 +11,18 @@ import {
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { useAcceptArticle } from '@/hooks/useReviews';
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { usePublishAcceptedArticle } from '@/hooks/useReviews';
 
 export function ApproveManuscriptDialog({
   open,
   onOpenChange,
+  articleId,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  articleId: string;
 }) {
-  const { articleId } = useParams();
-
-  const { mutate, isPending } = useAcceptArticle(
+  const { mutate, isPending } = usePublishAcceptedArticle(
     articleId as string,
     onOpenChange
   );
@@ -37,11 +35,11 @@ export function ApproveManuscriptDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Manuscript Approval Confirmation</AlertDialogTitle>
+          <AlertDialogTitle>Manuscript Publish Confirmation</AlertDialogTitle>
           <AlertDialogDescription>
             By proceeding, you will approve this manuscript for publication.
             Upon approval, the manuscript&apos;s status will be updated and it
-            will be prepared for the publication process.
+            will be officially published.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -51,7 +49,7 @@ export function ApproveManuscriptDialog({
             variant={'secondary'}
             onClick={() => handleAcceptManuscript()}
           >
-            {isPending ? <Loader text="Approving..." /> : 'Yes, Approve'}
+            {isPending ? <Loader text="Publishing..." /> : 'Yes, Publish'}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

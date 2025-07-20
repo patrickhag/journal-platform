@@ -112,6 +112,7 @@ export const useMarkAsReadAll = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (userId: string) => {
+      console.log('this-userId:', userId);
       return axios.post(`/api/notifications/`, {
         userId,
       });

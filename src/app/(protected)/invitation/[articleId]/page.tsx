@@ -4,7 +4,6 @@ import {
   articleSubmissions,
   notifications,
   reviewAssignments,
-  reviewers,
 } from '@/db/schema';
 import { informAssociateEditor } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
@@ -27,11 +26,16 @@ export default async function AcceptPage({ params, searchParams }: PageProps) {
   const invitationSign = search.accept_invite;
   const isAcceptedOrDeclined = !!invitationSign;
 
-  const reviewer = await db.query.reviewers.findFirst({
-    columns: {
-      names: true,
+  const reviewer = await db.query.reviewAssignments.findFirst({
+    where: eq(reviewAssignments.userId, userId as string),
+    with: {
+      user: {
+        columns: {
+          firstName: true,
+          lastName: true,
+        },
+      },
     },
-    where: eq(reviewers.articleId, articleId),
   });
 
   const associateEditorInfo = await db.query.articleSubmissions.findFirst({
@@ -62,7 +66,8 @@ export default async function AcceptPage({ params, searchParams }: PageProps) {
     ' ' +
     associateEditorInfo?.editor?.user.lastName;
   const associateEditorId = associateEditorInfo?.editor?.user.id;
-  const reviewerNames = reviewer?.names;
+  const reviewerNames =
+    reviewer?.user?.firstName + ' ' + reviewer?.user?.lastName;
   const articleTitle = associateEditorInfo?.metadata.title;
 
   if (isAcceptedOrDeclined && userId) {
@@ -91,7 +96,7 @@ export default async function AcceptPage({ params, searchParams }: PageProps) {
       userId: associateEditorId,
     });
 
-    redirect(`/articles/${articleId}`);
+    redirect(`/reviewer`);
   } else if (isAcceptedOrDeclined === false) {
     await informAssociateEditor({
       associateEditorName: associateEditorName,

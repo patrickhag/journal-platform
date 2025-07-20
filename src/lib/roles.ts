@@ -23,7 +23,7 @@ export type TPermissionItem =
   | 'UPDATE_REVIEW' // New permission: Update a review
   | 'DELETE_REVIEW' // New permission: Delete a review
   | 'ADD_REVIEW' // New permission: Create a review
-  | 'VIEW_REVIEW' // New permission: View reviews
+  | 'VIEW_REVIEWS' // New permission: View reviews
   | 'ARCHIVE_OWN_ARTICLE'
   | 'ACCEPT_ARTICLE'
   | 'REJECT_ARTICLE'
@@ -53,7 +53,8 @@ export const ROLE_PERMISSIONS: TPermission = {
     'ACCEPT_ARTICLE',
     'REJECT_ARTICLE',
     'INVITE_REVIEWERS',
-    'VIEW_REVIEW',
+    'VIEW_REVIEWS',
+    'ASSIGN_REVIEWERS',
   ],
   ADMIN: [
     'VIEW_PUBLIC_ARTICLES',
@@ -70,17 +71,17 @@ export const ROLE_PERMISSIONS: TPermission = {
     'UPDATE_REVIEW', // Admin can update any review
     'DELETE_REVIEW', // Admin can delete any review
     'PUBLISH_ARTICLES', // Editors can publish articles
-    'VIEW_REVIEW',
+    'VIEW_REVIEWS',
   ],
   REVIEWER: [
     'VIEW_PUBLIC_ARTICLES',
     'ADD_REVIEW',
-    'VIEW_REVIEW',
+    'VIEW_REVIEWS',
     'ARCHIVE_OWN_ARTICLE',
     'EDIT_OWN_ARTICLES',
     'DELETE_OWN_ARTICLES',
   ],
-  ASSOCIATE_EDITOR: ['INVITE_REVIEWERS', 'ASSIGN_REVIEWERS', 'VIEW_REVIEW'],
+  ASSOCIATE_EDITOR: ['INVITE_REVIEWERS', 'ASSIGN_REVIEWERS', 'VIEW_REVIEWS'],
 };
 
 export type TUserPermissions = {

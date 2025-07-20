@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
 import { reviewAssignments, reviews } from '@/db/schema';
 import { auth } from '@/auth';
-import { articleSubmissions, notifications, users } from '@/db/schema';
+import { articleSubmissions, notifications } from '@/db/schema';
 import { and, desc, eq } from 'drizzle-orm';
-import { notifyAdmin } from '@/lib/emailTransporter';
+import { notifyAdmin, informingAuthorNReviewer } from '@/lib/emailTransporter';
 
 export async function POST(req: Request) {
   try {
@@ -33,6 +33,7 @@ export async function POST(req: Request) {
         },
         user: {
           columns: {
+            id: true,
             firstName: true,
             lastName: true,
             email: true,
@@ -53,8 +54,19 @@ export async function POST(req: Request) {
     });
 
     const articleTitle = article?.metadata.title;
+    const authorName = article?.user.firstName + ' ' + article?.user.lastName;
+    const authorEmail = article?.user.email;
 
-    // send email to admin
+    // send email to author
+    await informingAuthorNReviewer({
+      articleTitle: articleTitle as string,
+      participantName: authorName,
+      participantEmail: authorEmail as string,
+      subject: 'Reviewer has reviewed your manuscript and provided a review',
+      userType: 'reviewer',
+    });
+
+    // send email to associate-editor also
     await notifyAdmin({
       article: articleTitle as string,
       authorName: session?.user?.name as string,
@@ -64,15 +76,15 @@ export async function POST(req: Request) {
       associateEditorEmail: article?.editor?.user.email as string,
     });
 
-    // send in-app notification for admin
+    // send in-app notification for author
     await db.insert(notifications).values({
-      message: `New review submitted for article named "${articleTitle}"`,
-      userId: article?.editor?.user.id,
+      message: `New review submitted for your article named "${articleTitle}"`,
+      userId: article?.user.id,
       kind: 'Info',
     });
 
     return NextResponse.json(
-      { message: 'Review sent successfully and associate editor informed' },
+      { message: 'Review sent successfully and author informed' },
       { status: 201 }
     );
   } catch (error) {
@@ -106,7 +118,10 @@ export async function GET(req: NextRequest) {
         status: true,
       },
       orderBy: desc(reviewAssignments.assignedDate),
-      where: and(eq(reviewAssignments.userId, session.user.id as string)),
+      where: and(
+        eq(reviewAssignments.userId, session.user.id as string),
+        eq(reviewAssignments.status, 'ACCEPTED')
+      ),
       with: {
         article: {
           columns: {

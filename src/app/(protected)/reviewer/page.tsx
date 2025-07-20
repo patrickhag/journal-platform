@@ -5,12 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FileText, Eye, Upload } from 'lucide-react';
-import {
-  useAcceptReviewAssignment,
-  useGetReviewerAssignments,
-} from '@/hooks/useReviews';
-import Loader from '@/components/Loader';
-import { useQueryClient } from '@tanstack/react-query';
+import { useGetReviewerAssignments } from '@/hooks/useReviews';
 import { useRouter } from 'next/navigation';
 import ReviewModal from '@/components/articles/Review';
 
@@ -51,35 +46,6 @@ export default function ReviewerDashboard() {
       assignment.article.articleStatus === 'PUBLISHED' || daysRemaining >= 0
     );
   });
-
-  const [acceptInvitaion, setAcceptInvitaion] = useState<{
-    open: boolean;
-    reviwAssignmentId?: string;
-  }>({
-    open: false,
-    reviwAssignmentId: '',
-  });
-
-  const queryClient = useQueryClient();
-
-  const { mutate, isPending: isAcceptingInvitePending } =
-    useAcceptReviewAssignment();
-
-  const handleAcceptAssignment = (assignmentId: string) => {
-    setAcceptInvitaion({ open: true });
-    if (acceptInvitaion.open) {
-      mutate(
-        { assignmentId },
-        {
-          onSettled: () => {
-            queryClient.invalidateQueries({
-              queryKey: ['reviewerAssignments'],
-            });
-          },
-        }
-      );
-    }
-  };
 
   const router = useRouter();
 
@@ -160,46 +126,15 @@ export default function ReviewerDashboard() {
                         <Eye className="mr-2 h-4 w-4" />
                         View Article
                       </Button>
-
-                      {!isPublished && (
-                        <>
-                          {status === 'INVITED' && (
-                            <>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="text-red-600 border-red-300 hover:bg-red-50"
-                              >
-                                Decline
-                              </Button>
-                              <Button
-                                size="sm"
-                                className="bg-green-600 hover:bg-green-700"
-                                onClick={() =>
-                                  handleAcceptAssignment(assignment.id)
-                                }
-                                disabled={isAcceptingInvitePending}
-                              >
-                                {isAcceptingInvitePending ? (
-                                  <Loader text="Accepting..." />
-                                ) : (
-                                  'Accept'
-                                )}
-                              </Button>
-                            </>
-                          )}
-
-                          {status === 'ACCEPTED' && (
-                            <Button
-                              size="sm"
-                              className="bg-blue-600 hover:bg-blue-700"
-                              onClick={() => handleSubmitReview(article.id)}
-                            >
-                              <Upload className="mr-2 h-4 w-4" />
-                              Submit Review
-                            </Button>
-                          )}
-                        </>
+                      {!isPublished && status === 'ACCEPTED' && (
+                        <Button
+                          size="sm"
+                          className="bg-blue-600 hover:bg-blue-700"
+                          onClick={() => handleSubmitReview(article.id)}
+                        >
+                          <Upload className="mr-2 h-4 w-4" />
+                          Submit Review
+                        </Button>
                       )}
                     </div>
                   </div>

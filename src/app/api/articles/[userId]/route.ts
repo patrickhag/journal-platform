@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
-import { articleSubmissions, metadata } from '@/db/schema';
+import { articleSubmissions } from '@/db/schema';
 import { and, eq, desc } from 'drizzle-orm';
 import { ARTICLE_STATUS } from '@/lib/consts';
 import { auth } from '@/auth';
@@ -40,7 +40,6 @@ export async function GET(
         id: true,
         section: true,
         userId: true,
-        proofStatus: true,
         createdAt: true,
         updatedAt: true,
         articleStatus: true,
@@ -49,13 +48,6 @@ export async function GET(
         metadata: {
           columns: {
             title: true,
-          },
-        },
-        editorActions: {
-          columns: {
-            editorfileId: true,
-            decision: true,
-            message: true,
           },
         },
       },
