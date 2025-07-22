@@ -279,3 +279,50 @@ export type TArticlesReview = {
   };
   reviews: ReviewersReview[];
 };
+
+type ArticleMetadata = {
+  prefix: string;
+  title: string;
+  subtitle: string;
+  abstract: string;
+  topics: string[];
+};
+
+type Contributor = {
+  name: string;
+  salutation: string;
+  affiliation: string;
+};
+
+type Author = {
+  firstName: true;
+  lastName: true;
+};
+
+type Article = {
+  id: string;
+  section: string;
+  user: Author;
+  createdAt: string;
+  acceptedAt: string;
+  metadata: ArticleMetadata;
+  contributors: Contributor[];
+};
+
+type PublishedIssue = {
+  issueNumber: number;
+  volume: {
+    year: number;
+  };
+};
+
+export type TPublication = {
+  id: string;
+  doi: string;
+  publishedAt: string;
+  pdfUrl: string;
+  pageRange: string;
+  slug: string;
+  article: Article;
+  issue: PublishedIssue;
+};

@@ -308,20 +308,6 @@ export const issues = pgTable('issues', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-export const metrics = pgTable('metrics', {
-  id: text('id')
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  views: integer('views').default(0),
-  downloads: integer('downloads').default(0),
-  articleId: text('articleId')
-    .references(() => articleSubmissions.id, { onDelete: 'cascade' })
-    .notNull(),
-  citations: integer('citations').default(0),
-  createdAt: date('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-});
-
 export const manuals = pgTable('manuals', {
   id: text('id')
     .primaryKey()
@@ -544,6 +530,27 @@ export const publishedArticlesRelations = relations(
     }),
   })
 );
+
+export const metrics = pgTable('metrics', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  views: integer('views').default(0),
+  downloads: integer('downloads').default(0),
+  articleId: text('articleId')
+    .references(() => publishedArticles.id, { onDelete: 'cascade' })
+    .notNull(),
+  citations: integer('citations').default(0),
+  createdAt: date('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const metricsRelations = relations(metrics, ({ one }) => ({
+  publishedArticle: one(publishedArticles, {
+    fields: [metrics.articleId],
+    references: [publishedArticles.id],
+  }),
+}));
 
 /*** RELATIONS ***/
 

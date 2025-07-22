@@ -15,7 +15,6 @@ import { useGetAcceptedArticles } from '@/hooks/useArticles';
 import { TPublishedArticle } from '@/types';
 import PublishManuscriptSheet from './components/PublishManuscript';
 import Link from 'next/link';
-import EditPublishedManuscript from './components/EditPublishedManuscript';
 
 const PublishedArticles = () => {
   const [sheetOpen, setSheetOpen] = useState<{
@@ -125,13 +124,6 @@ const PublishedArticles = () => {
           title={sheetOpen.articleTitle as string}
         />
       )}
-      {/* {editSheetOpen && (
-        <EditPublishedManuscript
-          open={editSheetOpen}
-          onOpenChange={setEditSheetOpen}
-          publishedArticle={selectedPublishedArticle}
-        />
-      )} */}
     </>
   );
 };

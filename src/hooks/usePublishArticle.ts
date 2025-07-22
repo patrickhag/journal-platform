@@ -1,4 +1,9 @@
-import { MessageResponse, TIssues, TPublishedArticle } from '@/types';
+import {
+  MessageResponse,
+  TIssues,
+  TPublication,
+  TPublishedArticle,
+} from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { Dispatch, SetStateAction } from 'react';
@@ -74,6 +79,20 @@ export const useGetPublishedArticles = () => {
   return useQuery<TPublishedArticle[], Error>({
     queryKey: ['publishedArticles'],
     queryFn: fetchArticles,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useGetPublishedArticle = (slug: string) => {
+  return useQuery<TPublication, Error>({
+    queryKey: ['publishedArticles'],
+    queryFn: async () => {
+      console.log('payload-slug:', slug);
+      const { data } = await axios.get<TPublication>(
+        `/api/articles/published/${slug}`
+      );
+      return data;
+    },
     refetchOnWindowFocus: false,
   });
 };
