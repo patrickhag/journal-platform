@@ -121,23 +121,23 @@ export async function POST(
         break;
     }
 
-    const associateEditorName =
-      article?.editor?.user.firstName + ' ' + article?.editor?.user.lastName;
-    const authorNames = article?.user.firstName + ' ' + article?.user.lastName;
+    // const associateEditorName =
+    //   article?.editor?.user.firstName + ' ' + article?.editor?.user.lastName;
+    // const authorNames = article?.user.firstName + ' ' + article?.user.lastName;
 
-    if (decision === 'ACCEPT') {
-      await informChiefEditorAboutAcceptance({
-        articleLink: article?.id as string,
-        articleTitle: article?.metadata.title as string,
-        associateEditorName: associateEditorName,
-        authorNames: authorNames,
-        authorEmail: article?.user.email as string,
-      });
-      await db.insert(notifications).values({
-        message: `Manuscript by the name of ${article?.metadata.title} has been accepted by associate-editor and it's ready for proof-reading.`,
-        userId: process.env.EDITOR_IN_CHIEF_ID,
-      });
-    }
+    // if (decision === 'ACCEPT') {
+    //   await informChiefEditorAboutAcceptance({
+    //     articleLink: article?.id as string,
+    //     articleTitle: article?.metadata.title as string,
+    //     associateEditorName: associateEditorName,
+    //     authorNames: authorNames,
+    //     authorEmail: article?.user.email as string,
+    //   });
+    //   await db.insert(notifications).values({
+    //     message: `Manuscript by the name of ${article?.metadata.title} has been accepted by associate-editor and it's ready for proof-reading.`,
+    //     userId: process.env.EDITOR_IN_CHIEF_ID,
+    //   });
+    // }
 
     return NextResponse.json({
       message: 'Decision updated and author notified successfully!',

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
-import { authorRevisions, users } from '@/db/schema';
+import { authorRevisions, reviews, users } from '@/db/schema';
 import { auth } from '@/auth';
 import { articleSubmissions } from '@/db/schema';
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { authorInformReviewer } from '@/lib/emailTransporter';
 
 export async function GET(req: NextRequest) {
@@ -28,6 +28,7 @@ export async function GET(req: NextRequest) {
           },
         },
         reviews: {
+          orderBy: desc(reviews.reviewedAt),
           columns: {
             id: true,
             articleId: true,

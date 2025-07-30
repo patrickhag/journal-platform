@@ -295,8 +295,9 @@ type Contributor = {
 };
 
 type Author = {
-  firstName: true;
-  lastName: true;
+  firstName: string;
+  lastName: string;
+  affiliation: string;
 };
 
 type Article = {
@@ -326,3 +327,19 @@ export type TPublication = {
   article: Article;
   issue: PublishedIssue;
 };
+
+export type TMetric = {
+  views: number;
+  downloads: number;
+};
+
+export type FormState =
+  | {
+      errors?: {
+        name?: string[];
+        email?: string[];
+        password?: string[];
+      };
+      message?: string;
+    }
+  | undefined;

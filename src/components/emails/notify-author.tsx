@@ -23,33 +23,49 @@ export const ArticleAcceptedEmailTemplate = ({
           Journal of African Epidemiology and Public Health
         </Text>
       </Section>
+
       <Section className="px-6 py-4">
         <Text className="text-lg font-medium text-gray-800">
           Dear <span className="font-semibold">{authorName}</span>,
         </Text>
+
         <Text className="text-gray-700 my-4">
           We are pleased to inform you that your article titled &quot;
-          {articleTitle}&quot; has been accepted. Publication process is going
-          to start!
+          {articleTitle}&quot; has been accepted and has now entered the
+          proofreading stage of the publication process.
         </Text>
+
+        <Text className="text-gray-700 my-4">
+          At this stage, we kindly ask you to review the annotated file provided
+          by the editor. This is your final opportunity to check for any
+          typographical, grammatical, or formatting errors before the article is
+          formally published.
+        </Text>
+
         {fileIds && (
           <>
             <Text className="text-gray-700 my-4">
-              An annotated file has been provided by the editor. You can
-              download it using the button below:
+              You can download the annotated proof using the button below:
             </Text>
             <Button
               href={`${process.env.NEXT_PUBLIC_URL}/files/${fileIds}`}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md font-medium my-4"
+              className="bg-gray-900 hover:bg-gray-800 text-white px-6 py-2 rounded-md font-medium my-4"
             >
-              Download Editor&quot;s File
+              Download Proof File
             </Button>
           </>
         )}
+
+        <Text className="text-gray-700 mt-6">
+          If you notice any issues that need to be corrected, please let us know
+          as soon as possible.
+        </Text>
+
         <Text className="text-gray-700 mt-6">
           Thank you for your valuable contribution to our journal.
         </Text>
       </Section>
+
       <Section className="bg-gray-100 text-center py-4 text-sm font-semibold text-gray-600">
         <Text>© 2025 JAEPH. All rights reserved.</Text>
       </Section>

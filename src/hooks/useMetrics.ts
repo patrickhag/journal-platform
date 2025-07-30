@@ -1,3 +1,4 @@
+import { TMetric } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
@@ -9,7 +10,7 @@ type MetricsResponse = {
 };
 
 type IncrementMetricsParams = {
-  articleId: string;
+  slug: string;
   downloadCount?: boolean;
   viewCount?: boolean;
 };
@@ -19,7 +20,7 @@ export const useIncrementMetrics = () => {
 
   return useMutation({
     mutationFn: async ({
-      articleId,
+      slug,
       downloadCount,
       viewCount,
     }: IncrementMetricsParams) => {
@@ -27,7 +28,7 @@ export const useIncrementMetrics = () => {
         throw new Error('Either downloadCount or viewCount must be specified');
       }
       const response = await axios.post<MetricsResponse>('/api/metrics', {
-        articleId,
+        slug,
         downloadCount,
         viewCount,
       });
@@ -36,15 +37,11 @@ export const useIncrementMetrics = () => {
     },
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ['articles', variables.articleId],
+        queryKey: ['metric', variables.slug],
       });
       queryClient.invalidateQueries({
-        queryKey: ['metrics', variables.articleId],
+        queryKey: ['metric', variables.slug],
       });
-
-      if (data.message) {
-        toast.success(data.message);
-      }
     },
     onError: (error: Error | AxiosError) => {
       const message = axios.isAxiosError(error)
@@ -61,6 +58,16 @@ export const useGetMetricsInteractions = () => {
     queryKey: ['metrics'],
     queryFn: async () => {
       const { data } = await axios.get(`/api/metrics`);
+      return data || [];
+    },
+  });
+};
+
+export const useGetMetricInteraction = (slug: string) => {
+  return useQuery({
+    queryKey: ['metric'],
+    queryFn: async () => {
+      const { data } = await axios.get<TMetric>(`/api/metrics/${slug}`);
       return data || [];
     },
   });

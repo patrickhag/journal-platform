@@ -10,7 +10,6 @@ type RequestData = {
 export const useResetPassword = () => {
   return useMutation({
     mutationFn: async (data: RequestData) => {
-      console.log('payload-hook:', data);
       const response = await axios.post<{ message: string; success: boolean }>(
         '/api/auth/reset-password',
         data

@@ -31,7 +31,7 @@ const ReviewsReceived = () => {
 
   const getRecommendationBadge = (status: string) => {
     const config = {
-      Accepted: { variant: 'default' as const, label: 'Accept' },
+      Accepted: { variant: 'default' as const, label: 'Accepted' },
       'Minor Collection': {
         variant: 'secondary' as const,
         label: 'Minor Collection',

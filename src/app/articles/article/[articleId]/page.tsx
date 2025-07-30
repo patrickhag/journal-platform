@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -22,7 +22,18 @@ import {
   Tags,
   Copy,
   FileDown,
+  TwitterIcon,
+  FacebookIcon,
+  LinkedinIcon,
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import sanitizeHtml from 'sanitize-html';
 import { useGetPublishedArticle } from '@/hooks/usePublishArticle';
 import { format } from 'date-fns';
@@ -30,32 +41,43 @@ import { useParams } from 'next/navigation';
 import PublishedArticleSkeleton from '../../components/PublishedArticleSkeleton';
 import { downloadPublishedArticle } from '@/lib/downloadPublishedArticle';
 import { toast } from 'sonner';
+import {
+  useGetMetricInteraction,
+  useIncrementMetrics,
+} from '@/hooks/useMetrics';
 
 export default function PublicArticleView() {
   const { articleId } = useParams();
 
   const [showCiteModal, setShowCiteModal] = useState(false);
+  const [viewCount, setViewCount] = useState(false);
+  const [downloadCount, setDownloadCount] = useState(false);
 
   const { data: article, isPending } = useGetPublishedArticle(
     articleId as string
   );
+  const { mutate } = useIncrementMetrics();
+
+  const { data: metric } = useGetMetricInteraction(articleId as string);
+
+  useEffect(() => {
+    if (viewCount || downloadCount) {
+      mutate({ slug: articleId as string, viewCount, downloadCount });
+    }
+  }, [viewCount, downloadCount]);
 
   const articleData = article?.article;
 
   const author = {
     name: `${articleData?.user.firstName} ${articleData?.user.lastName}`,
-    salutation: articleData?.metadata.prefix!,
-    affiliation: articleData?.user.affiliation!,
+    salutation: articleData?.metadata.prefix as string,
+    affiliation: articleData?.user.affiliation as string,
   };
 
   const contributors = articleData ? [author, ...articleData.contributors] : [];
 
   const handleCite = () => {
     setShowCiteModal(true);
-  };
-
-  const handleShare = () => {
-    console.log('Share article');
   };
 
   const generateRIS = () => {
@@ -108,12 +130,12 @@ export default function PublicArticleView() {
 
   const generateAPA = () => {
     const authors = contributors.map((a) => a.name).join(', ');
-    return `${authors} (2025). ${articleData?.metadata.title}${articleData?.metadata.subtitle ? ': ' + articleData?.metadata.subtitle : ''}. Journal of African Epidemiology and Public Health, ${article?.issue.volume.year}(${article?.issue.issueNumber}), ${article?.pageRange}. https://doi.org/${article?.doi}`;
+    return `${authors} (2025). ${articleData?.metadata.title}${articleData?.metadata.subtitle ? ': ' + articleData?.metadata.subtitle : ''}. Journal of African Epidemiology and Public Health, ${article?.issue.volume.year}(${article?.issue.issueNumber}), ${article?.pageRange}. ${article?.doi ? `https://doi.org/${article?.doi}` : ''}`;
   };
 
   const generateAMA = () => {
     const authors = contributors.map((a) => a.name).join(', ');
-    return `${authors}. ${articleData?.metadata.title}${articleData?.metadata.subtitle ? ': ' + articleData?.metadata.subtitle : ''}. Journal of African Epidemiology and Public Health. 2025;${article?.issue.volume.year}(${article?.issue.issueNumber}):${article?.pageRange}. https://doi.org/${article?.doi}`;
+    return `${authors}. ${articleData?.metadata.title}${articleData?.metadata.subtitle ? ': ' + articleData?.metadata.subtitle : ''}. Journal of African Epidemiology and Public Health. 2025;${article?.issue.volume.year}(${article?.issue.issueNumber}):${article?.pageRange}. ${article?.doi ? `https://doi.org/${article?.doi}` : ''}`;
   };
 
   return (
@@ -147,9 +169,10 @@ export default function PublicArticleView() {
             <div className="flex flex-wrap gap-3 mb-8">
               <Button
                 variant="outline"
-                onClick={() =>
-                  downloadPublishedArticle(article.pdfUrl, article.slug)
-                }
+                onClick={() => {
+                  setDownloadCount(true);
+                  downloadPublishedArticle(article.pdfUrl, article.slug);
+                }}
                 className="gap-2"
               >
                 <Download className="w-4 h-4" />
@@ -159,6 +182,7 @@ export default function PublicArticleView() {
                 variant="outline"
                 className="gap-2"
                 onClick={() => {
+                  setViewCount(true);
                   window.open(article.pdfUrl);
                 }}
               >
@@ -169,10 +193,56 @@ export default function PublicArticleView() {
                 <Quote className="w-4 h-4" />
                 Cite this article
               </Button>
-              <Button variant="outline" onClick={handleShare} className="gap-2">
-                <Share2 className="w-4 h-4" />
-                Share this article
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">
+                    <span className="flex items-center gap-2">
+                      <Share2 className="w-4 h-4" /> Share this article
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuSeparator />
+                  <DropdownMenuRadioGroup>
+                    <DropdownMenuRadioItem
+                      value="facebook"
+                      onClick={() => {
+                        window.open(
+                          `https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`,
+                          '_blank'
+                        );
+                      }}
+                    >
+                      <FacebookIcon className="w-4 h-4 text-blue-500 mr-2" />
+                      <span>Facebook</span>
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem
+                      value="twitter"
+                      onClick={() => {
+                        window.open(
+                          `https://twitter.com/intent/tweet?url=${window.location.href}`,
+                          '_blank'
+                        );
+                      }}
+                    >
+                      <TwitterIcon className="w-4 h-4 text-blue-500 mr-2  " />
+                      <span>Twitter</span>
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem
+                      value="linkedin"
+                      onClick={() => {
+                        window.open(
+                          `https://www.linkedin.com/shareArticle?url=${window.location.href}`,
+                          '_blank'
+                        );
+                      }}
+                    >
+                      <LinkedinIcon className="w-4 h-4 text-blue-500 mr-2" />
+                      <span>Linkedin</span>
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             <Separator className="mb-8" />
@@ -273,11 +343,11 @@ export default function PublicArticleView() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Views</span>
-                  <span className="font-semibold">1,847</span>
+                  <span className="font-semibold">{metric?.views}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Downloads</span>
-                  <span className="font-semibold">523</span>
+                  <span className="font-semibold">{metric?.downloads}</span>
                 </div>
               </div>
             </div>

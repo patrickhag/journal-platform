@@ -83,8 +83,7 @@ export async function POST(req: NextRequest) {
     if (isEditorInformed.success) {
       return NextResponse.json(
         {
-          message:
-            'Associate editor assigned created and informed successfully',
+          message: 'Associate editor assigned and informed successfully',
         },
         { status: 201 }
       );

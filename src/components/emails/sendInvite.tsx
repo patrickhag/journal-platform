@@ -12,6 +12,7 @@ import {
 export const SendInvitation: React.FC<{
   reviewerName: string;
   articleTitle: string;
+  abstract: string;
   isAlreadyUser: boolean;
   dueDate?: string;
   articleId: string;
@@ -19,6 +20,7 @@ export const SendInvitation: React.FC<{
 }> = ({
   reviewerName,
   articleTitle,
+  abstract,
   isAlreadyUser,
   dueDate,
   articleId,
@@ -45,6 +47,17 @@ export const SendInvitation: React.FC<{
             field. The editorial team of JAEPH would be honored to have your
             review for the manuscript titled{' '}
             <span className="font-semibold">“{articleTitle}”</span>.
+          </Text>
+
+          {/* Abstract Block */}
+          <Text className="text-gray-700 my-4">
+            <span className="font-semibold">Abstract:</span>{' '}
+            <div
+              className="prose max-w-none text-sm italic"
+              dangerouslySetInnerHTML={{
+                __html: abstract,
+              }}
+            />
           </Text>
 
           {isAlreadyUser ? (
@@ -87,17 +100,17 @@ export const SendInvitation: React.FC<{
           <Row className="my-5">
             <Column align="center">
               <Row>
-                <td align="center" className="w-1/2 pr-[16px]">
+                <td align="center" className="w-1/2 pr-[8px]">
                   <Button
-                    className="box-border w-full rounded-[8px] bg-indigo-600 px-[20px] py-[12px] text-center font-semibold text-white"
+                    className="box-border w-full rounded-md border border-gray-300 bg-gray-900 text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition"
                     href={`${process.env.NEXT_PUBLIC_URL}/invitation/${articleId}?accept_invite=1`}
                   >
                     Accept Invitation
                   </Button>
                 </td>
-                <td align="center" className="w-1/2 pl-[16px]">
+                <td align="center" className="w-1/2 pl-[8px]">
                   <Button
-                    className="box-border w-full rounded-[8px] border border-solid border-gray-200 bg-red-500 px-[20px] py-[12px] text-center font-semibold text-white"
+                    className="box-border w-full rounded-md border border-gray-300 bg-white text-gray-900 px-4 py-2 text-sm font-medium hover:bg-gray-100 transition"
                     href={`${process.env.NEXT_PUBLIC_URL}/invitation/${articleId}?accept_invite=0`}
                   >
                     Decline Invitation

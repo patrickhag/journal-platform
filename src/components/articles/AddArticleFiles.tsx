@@ -71,8 +71,8 @@ export default function AddArticleFiles({
             Add revised/updated manuscript files here.
           </DialogDescription>
         </DialogHeader>
-        <FileList isEditNeeded={true} />
         <DragAndDropFileInput />
+        <FileList isEditNeeded={true} />
         <Button
           type="submit"
           onClick={onSubmit}

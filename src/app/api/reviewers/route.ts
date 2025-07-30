@@ -1,11 +1,9 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
 import { articleSubmissions, reviewAssignments, users } from '@/db/schema';
-import {
-  associateNotifyReviewer,
-  sendInvitation,
-} from '@/lib/emailTransporter';
-import { and, eq } from 'drizzle-orm';
+import { sendInvitation } from '@/lib/emailTransporter';
+import { format } from 'date-fns';
+import { and, ConsoleLogWriter, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -124,6 +122,7 @@ export async function POST(req: NextRequest) {
         metadata: {
           columns: {
             title: true,
+            abstract: true,
           },
         },
         user: {
@@ -141,8 +140,9 @@ export async function POST(req: NextRequest) {
       articleId: articleId,
       toEmail: reviewerEmail,
       isAlreadyUser: true,
-      dueDate: date,
+      dueDate: format(new Date(date as string), 'MMMM d, yyyy'),
       articleTitle: article?.metadata.title as string,
+      abstract: article?.metadata.abstract as string,
     });
 
     return NextResponse.json(
@@ -154,7 +154,10 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     if (error instanceof Error) {
       console.error('Error assigning reviewer:', error.message);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json(
+        { message: 'Something went wrong' },
+        { status: 500 }
+      );
     } else {
       return NextResponse.json(
         { error: 'Internal server error' },

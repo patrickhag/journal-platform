@@ -8,16 +8,16 @@ import { notifyAdmin, informingAuthorNReviewer } from '@/lib/emailTransporter';
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const { message, articleId, fileIds, status } = await req.json();
 
     const session = await auth();
     const userId = session?.user?.id || '';
 
     await db.insert(reviews).values({
-      message: body.message,
-      articleId: body.articleId,
-      fileIds: body.fileIds,
-      status: body.status,
+      message: message,
+      articleId: articleId,
+      fileIds: fileIds,
+      status: status,
       userId,
     });
 
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
           },
         },
       },
-      where: eq(articleSubmissions.id, body.articleId),
+      where: eq(articleSubmissions.id, articleId),
     });
 
     const articleTitle = article?.metadata.title;
@@ -67,14 +67,16 @@ export async function POST(req: Request) {
     });
 
     // send email to associate-editor also
-    await notifyAdmin({
-      article: articleTitle as string,
-      authorName: session?.user?.name as string,
-      subject: 'New Review Submitted',
-      participant: 'REVIEWER',
-      articleId: article?.id as string,
-      associateEditorEmail: article?.editor?.user.email as string,
-    });
+    if (status === 'Accepted') {
+      await notifyAdmin({
+        article: articleTitle as string,
+        authorName: session?.user?.name as string,
+        subject: 'New Review Submitted',
+        participant: 'REVIEWER',
+        articleId: article?.id as string,
+        associateEditorEmail: article?.editor?.user.email as string,
+      });
+    }
 
     // send in-app notification for author
     await db.insert(notifications).values({

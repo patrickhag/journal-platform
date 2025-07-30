@@ -46,7 +46,7 @@ export const Recents = async () => {
       </h2>
       {foundPublishedArticles.map((article) => {
         const articleData = article.article;
-        const authorNames = `${articleData.metadata.prefix} ${articleData.user.firstName} ${articleData.user.lastName}`;
+        const authorNames = `${articleData.metadata.prefix}. ${articleData.user.firstName} ${articleData.user.lastName}`;
         return (
           <div key={article.id} className="my-6 w-[90%]">
             <div className="space-y-1">

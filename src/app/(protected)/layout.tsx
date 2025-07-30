@@ -1,9 +1,9 @@
-import { auth } from '@/auth';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import { Toaster } from 'sonner';
 import { Suspense } from 'react';
 import Loader from '@/components/Loader';
+import { auth } from '@/auth';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -11,7 +11,9 @@ interface LayoutProps {
 
 export default async function Layout({ children }: LayoutProps) {
   const session = await auth();
-  if (!session?.user?.id) return;
+  if (!session?.user?.id) {
+    return <div>You must be logged in to view this page.</div>;
+  }
 
   const userRole = session.user.role?.toLowerCase();
 

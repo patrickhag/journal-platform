@@ -13,12 +13,11 @@ export async function authenticate(
   _prevState: string | undefined,
   formData: z.infer<typeof loginSchema> & { redirect?: string }
 ) {
-  const login = loginSchema.safeParse(formData);
-  if (login.error) return login.error.errors[0].message;
   try {
     await signIn('credentials', {
       redirect: false,
-      ...login.data,
+      email: formData.email,
+      password: formData.password,
     });
   } catch (error) {
     if (error instanceof AuthError) {
@@ -32,7 +31,7 @@ export async function authenticate(
     return 'An unexpected error occurred. Please try again.';
   }
   const user = await db.query.users.findFirst({
-    where: eq(users.email, login?.data?.email as string),
+    where: eq(users.email, formData?.email as string),
   });
 
   switch (user?.role) {

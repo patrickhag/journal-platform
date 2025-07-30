@@ -46,7 +46,7 @@ const PublishedArticles = () => {
               Published Articles
             </CardTitle>
             <CardDescription>
-              Manage approved articles by associate editor ready for publication
+              Manage manuscripts that was published by associate editor.
             </CardDescription>
           </CardHeader>
           <CardContent>

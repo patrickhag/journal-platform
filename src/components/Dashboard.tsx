@@ -1,33 +1,32 @@
 'use client';
 
-import { Tabs, TabsContent, TabsList } from '@/components/ui/tabs';
 import { ArticleSection } from './ArticleSection';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Search } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
-import { ArticleFilters } from './ArticleFilters';
 import { useGetUserArticles } from '@/hooks/useArticles';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useDebounce } from '@/hooks/useDebounce';
 import { ArticleSkeleton } from './articles/ArticleSkeleton';
-import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import withPermissions from './WithPermission';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
+import { ARTICLE_STATUS } from '@/lib/consts';
+import { Label } from './ui/label';
 
 export default function DashboardPannel() {
   const { data: session } = useSession();
   const currentUser = session?.user;
-  const currentUserRole = session?.user.role;
   const userId = currentUser?.id as string;
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const [selectedValue, setSelectedValue] = useState('');
-  const [selectedType, setSelectedType] = useState(
-    currentUser?.role === 'REVIEWER' || currentUser?.role === 'CHIEF_EDITOR'
-      ? 'Assigned to review'
-      : 'My articles'
-  );
 
   const { data: articles, isPending } = useGetUserArticles(
     userId,
@@ -36,8 +35,9 @@ export default function DashboardPannel() {
   );
 
   return (
-    <div>
-      <div className="mb-10">
+    <div className="space-y-8">
+      {/* Header Section */}
+      <div className="space-y-2">
         <h2 className="text-2xl text-[#141A26] font-bold">
           Welcome back, {currentUser?.name}
         </h2>
@@ -49,81 +49,76 @@ export default function DashboardPannel() {
         </p>
       </div>
 
-      <Tabs defaultValue="articles">
-        <div className="flex justify-between">
-          <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
-            <ArticleFilters
-              selectedValue={selectedValue}
-              setSelectedValue={setSelectedValue}
-            />
-          </TabsList>
+      {/* Controls */}
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 p-6 bg-card border border-border rounded-xl shadow-sm">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-1">
+          <div className="flex items-center gap-3">
+            <Label className="text-sm font-medium whitespace-nowrap">
+              Filter by status:
+            </Label>
+            <Select
+              onValueChange={(e) => setSelectedValue(e)}
+              value={selectedValue}
+            >
+              <SelectTrigger className="w-[180px] bg-background border-border">
+                <SelectValue placeholder="All Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                {ARTICLE_STATUS.map((status) => (
+                  <SelectItem value={status} key={status}>
+                    {status}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-          <div className="relative w-72">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <div className="relative w-full max-w-sm">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
               placeholder="Search articles..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8"
+              className="pl-10 bg-background border-border"
             />
           </div>
-
-          <CreateArticleButtonWithPermission
-            requiredPermissions={['CREATE_ARTICLE']}
-            role={
-              currentUserRole as
-                | 'NORMAL_USER'
-                | 'CHIEF_EDITOR'
-                | 'ADMIN'
-                | 'REVIEWER'
-            }
-            fallback={<></>}
-          />
         </div>
-        <TabsContent value="articles" className="mt-6">
-          <div className="grid gap-4">
-            {isPending ? (
-              <>
-                {[1, 2, 3].map((_, i) => (
-                  <div className="mb-3" key={i}>
-                    <ArticleSkeleton />
-                  </div>
-                ))}
-              </>
-            ) : articles && articles.length > 0 ? (
-              // Pass the entire articles array to ArticleSection
-              <ArticleSection articles={articles} />
-            ) : (
-              <div className="text-center text-muted-foreground">
-                No articles{' '}
-                {selectedType === 'My articles'
-                  ? 'submitted'
-                  : 'assigned to you'}{' '}
-                yet. Click &apos;New Article&apos; to get started
+
+        <Button asChild className="bg-[#212c9e] hover:bg-[#1A237E]">
+          <Link href="/articles/new/start">
+            <PlusCircle className="w-4 h-4 mr-2" />
+            Submit New Article
+          </Link>
+        </Button>
+      </div>
+
+      {/* Articles Section */}
+      <div className="grid gap-4">
+        {isPending ? (
+          <>
+            {[1, 2, 3].map((_, i) => (
+              <div className="mb-3" key={i}>
+                <ArticleSkeleton />
               </div>
-            )}
+            ))}
+          </>
+        ) : articles && articles.length > 0 ? (
+          <ArticleSection articles={articles} />
+        ) : (
+          <div className="text-center py-12">
+            <div className="bg-card border border-border rounded-xl p-8 max-w-md mx-auto">
+              <p className="text-muted-foreground text-lg">
+                No manuscript(s) found.
+              </p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Try adjusting your search or filter criteria.
+              </p>
+            </div>
           </div>
-        </TabsContent>
-        <TabsContent value="archives" className="mt-6">
-          <div className="text-center text-muted-foreground">
-            No archived articles found.
-          </div>
-        </TabsContent>
-      </Tabs>
+        )}
+      </div>
     </div>
   );
 }
-
-const CreateArticleButton = () => (
-  <Button className="mx-5 bg-[#212c9e] hover:bg-[#1A237E]">
-    <Link href="/articles/new/start">
-      <span className="flex items-center gap-2">
-        <PlusCircle className="w-4 h-4" />
-        New article
-      </span>
-    </Link>
-  </Button>
-);
-
-const CreateArticleButtonWithPermission = withPermissions(CreateArticleButton);

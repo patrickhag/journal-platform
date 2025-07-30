@@ -537,8 +537,8 @@ export const metrics = pgTable('metrics', {
     .$defaultFn(() => crypto.randomUUID()),
   views: integer('views').default(0),
   downloads: integer('downloads').default(0),
-  articleId: text('articleId')
-    .references(() => publishedArticles.id, { onDelete: 'cascade' })
+  articleSlug: text('slug')
+    .references(() => publishedArticles.slug, { onDelete: 'cascade' })
     .notNull(),
   citations: integer('citations').default(0),
   createdAt: date('created_at').defaultNow().notNull(),
@@ -547,8 +547,8 @@ export const metrics = pgTable('metrics', {
 
 export const metricsRelations = relations(metrics, ({ one }) => ({
   publishedArticle: one(publishedArticles, {
-    fields: [metrics.articleId],
-    references: [publishedArticles.id],
+    fields: [metrics.articleSlug],
+    references: [publishedArticles.slug],
   }),
 }));
 

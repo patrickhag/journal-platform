@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
-import { Eye, Upload } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import { TArticle } from '@/schemas/reviewer';
 import { StatusBadge } from './status-badge';
 import { useState } from 'react';

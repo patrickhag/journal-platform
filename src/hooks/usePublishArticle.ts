@@ -87,7 +87,6 @@ export const useGetPublishedArticle = (slug: string) => {
   return useQuery<TPublication, Error>({
     queryKey: ['publishedArticles'],
     queryFn: async () => {
-      console.log('payload-slug:', slug);
       const { data } = await axios.get<TPublication>(
         `/api/articles/published/${slug}`
       );

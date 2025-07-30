@@ -1,10 +1,10 @@
 import { db } from '@/db/db';
 import { users } from '@/db/schema';
 import logger from '@/lib/logger';
-import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import NextAuth, { type User, type NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import Google from 'next-auth/providers/google';
 
 export const BASE_PATH = '/api/auth';
 
@@ -18,32 +18,18 @@ export const authOptions: NextAuthConfig = {
       },
       async authorize(credentials): Promise<User | null> {
         try {
-          if (!credentials?.email || !credentials.password) {
-            return null;
+          const { email, password } = credentials;
+          console.log('email, password: ', email, password);
+          const user = await getUserFromDb(email as string);
+          if (user) {
+            return {
+              name: `${user?.firstName} ${user?.lastName}`,
+              email: user?.email,
+              id: user?.id,
+              role: user?.role ?? 'NORMAL_USER',
+            };
           }
-
-          const user = await db.query.users.findFirst({
-            where: eq(users.email, String(credentials.email)),
-          });
-
-          if (!user) {
-            return null;
-          }
-
-          const isCorrectPassword = await bcrypt.compare(
-            String(credentials.password),
-            user.password ?? ''
-          );
-          if (!isCorrectPassword) {
-            return null;
-          }
-
-          return {
-            name: `${user.firstName} ${user.lastName}`,
-            email: user.isActive ? user.email : '',
-            id: user.id,
-            role: user.role ?? 'NORMAL_USER',
-          };
+          return null;
         } catch (error) {
           if (error instanceof Error) {
             logger.error(error.message);
@@ -52,6 +38,7 @@ export const authOptions: NextAuthConfig = {
         }
       },
     }),
+    Google,
   ],
   session: {
     strategy: 'jwt',
@@ -59,20 +46,6 @@ export const authOptions: NextAuthConfig = {
     updateAge: 24 * 60 * 60, // 24 hours
   },
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      const paths = ['/profile', '/client-side', '/api/session'];
-      const isProtected = paths.some((path) =>
-        nextUrl.pathname.startsWith(path)
-      );
-
-      if (isProtected && !isLoggedIn) {
-        const redirectUrl = new URL('/login', nextUrl.origin);
-        redirectUrl.searchParams.append('callbackUrl', nextUrl.href);
-        return Response.redirect(redirectUrl);
-      }
-      return true;
-    },
     jwt: ({ token, user }) => {
       if (user) {
         return {
@@ -84,7 +57,6 @@ export const authOptions: NextAuthConfig = {
       }
       return token;
     },
-
     session: ({ session, token }) => {
       return {
         ...session,
@@ -99,6 +71,27 @@ export const authOptions: NextAuthConfig = {
   },
   basePath: BASE_PATH,
   secret: process.env.NEXTAUTH_SECRET,
+};
+
+const getUserFromDb = async (email: string) => {
+  try {
+    const user = await db.query.users.findFirst({
+      columns: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        role: true,
+        password: true,
+      },
+      where: eq(users.email, email),
+    });
+    return user;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
 };
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authOptions);

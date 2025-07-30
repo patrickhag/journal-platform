@@ -44,6 +44,8 @@ export default function AssignRevieweModal() {
     (Reviewer) => Reviewer.id === selectedReviewerId
   );
 
+  console.log('selectedReviewerId>>>', selectedReviewerId);
+
   const handleAssign = () => {
     if (!date) {
       setWarning('Please select a due date before assigning');

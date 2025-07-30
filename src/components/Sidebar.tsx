@@ -63,8 +63,8 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             icon: FileCog,
           },
           {
-            href: '/editor/publish',
-            label: 'Publish Manuscript',
+            href: '/editor/published',
+            label: 'Published Manuscripts',
             icon: ClipboardCheck,
           },
         ];

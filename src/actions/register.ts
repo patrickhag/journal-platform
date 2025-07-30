@@ -36,21 +36,14 @@ export async function register(
     };
 
     const createdUser = await db.insert(users).values(user).returning();
-    jwt.sign(
-      { email: createdUser[0].email, id: createdUser[0].id },
-      process.env.NEXTAUTH_SECRET!,
-      {
-        expiresIn: '7d',
-      }
-    );
-    if (!createdUser[0].email) return;
 
-    return { message: 'Registration successful', data: register.data };
+    if (createdUser[0].email) {
+      return { message: 'Registration successful' };
+    }
   } catch (error) {
     if (error instanceof Error) {
       console.log(error.message);
     }
-
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':

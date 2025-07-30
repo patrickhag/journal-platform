@@ -99,6 +99,7 @@ export async function POST(req: NextRequest) {
         metadata: {
           columns: {
             title: true,
+            abstract: true,
           },
         },
       },
@@ -114,6 +115,7 @@ export async function POST(req: NextRequest) {
       isAlreadyUser: existingUser ? true : false,
       toEmail: reviewerEmail,
       password,
+      abstract: article?.metadata.abstract as string,
     });
 
     return NextResponse.json(

@@ -18,12 +18,11 @@ import { useGetReviews } from '@/hooks/useReviews';
 import { useState } from 'react';
 import EditorDecisionModal from './components/EditorDecisionModal';
 import EditorReReviewModal from './components/EditorReReview';
-import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 // import { ApproveManuscriptDialog } from './components/ApproveManuscriptDialog';
 
 export default function ReviewsPage() {
   const { articleId } = useParams();
-  const { data } = useSession();
   // const [openApproveDialog, setOpenApproveDialog] = useState(false);
 
   const { data: reviewData } = useGetReviews(articleId as string);
@@ -71,9 +70,14 @@ export default function ReviewsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div>
                   <h3 className="font-medium">Title</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {reviewData?.metadata.title}
-                  </p>
+                  <Link
+                    href={`${process.env.NEXT_PUBLIC_URL}/articles/${articleId}`}
+                  >
+                    {' '}
+                    <p className="text-sm text-muted-foreground hover:underline">
+                      {reviewData?.metadata.title}
+                    </p>
+                  </Link>
                 </div>
                 <div>
                   <h3 className="font-medium">Status</h3>

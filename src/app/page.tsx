@@ -4,7 +4,7 @@ import Header from '@/components/landingPage/header';
 import LeftSideBar from '@/components/landingPage/leftSideBar';
 import RightSideBar from '@/components/landingPage/rightSideBar';
 
-export default function Home() {
+export default async function Home() {
   return (
     <main>
       <div className="font-sans">

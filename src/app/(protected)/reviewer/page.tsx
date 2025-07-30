@@ -150,11 +150,13 @@ export default function ReviewerDashboard() {
           </div>
         </CardContent>
       </Card>
-      <ReviewModal
-        open={reviewModal.isOpen}
-        onClose={onClose}
-        articleId={reviewModal.articleId as string}
-      />
+      {reviewModal.isOpen && (
+        <ReviewModal
+          open={reviewModal.isOpen}
+          onClose={onClose}
+          articleId={reviewModal.articleId as string}
+        />
+      )}
     </div>
   );
 }

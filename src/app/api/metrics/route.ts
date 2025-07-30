@@ -5,18 +5,18 @@ import { sql, eq } from 'drizzle-orm';
 import { auth } from '@/auth';
 
 export async function POST(req: NextRequest) {
-  const { articleId, downloadCount, viewCount } = await req.json();
+  const { slug, downloadCount, viewCount } = await req.json();
 
   try {
     const metricsRecord = await db
       .select()
       .from(metrics)
-      .where(eq(metrics.articleId, articleId))
+      .where(eq(metrics.articleSlug, slug))
       .execute();
 
     if (!metricsRecord.length) {
       await db.insert(metrics).values({
-        articleId,
+        articleSlug: slug,
         views: viewCount ? 1 : 0,
         downloads: downloadCount ? 1 : 0,
       });
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
           views: sql`${metrics.views} + 1`,
           updatedAt: new Date(),
         })
-        .where(eq(metrics.articleId, articleId));
+        .where(eq(metrics.articleSlug, slug));
 
       return NextResponse.json({ success: true, message: 'View count added' });
     }
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
           downloads: sql`${metrics.downloads} + 1`,
           updatedAt: new Date(),
         })
-        .where(eq(metrics.articleId, articleId));
+        .where(eq(metrics.articleSlug, slug));
 
       return NextResponse.json({
         success: true,

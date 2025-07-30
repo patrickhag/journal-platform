@@ -50,6 +50,13 @@ export async function GET(
             title: true,
           },
         },
+        editorActions: {
+          columns: {
+            editorfileId: true,
+            decision: true,
+            message: true,
+          },
+        },
       },
       orderBy: (articles) => [desc(articles.createdAt)],
     });
