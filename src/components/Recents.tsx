@@ -1,4 +1,4 @@
-import { articleSubmissions, publishedArticles } from '@/db/schema';
+import { publishedArticles } from '@/db/schema';
 import { db } from '@/db/db';
 import { eq } from 'drizzle-orm';
 import { Separator } from './ui/separator';

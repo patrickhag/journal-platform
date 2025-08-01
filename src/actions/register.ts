@@ -2,7 +2,7 @@
 
 import { db, users } from '@/db/schema';
 import { registerSchema } from '@/schemas/auth.schema';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import { AuthError } from 'next-auth';
 import type z from 'zod';

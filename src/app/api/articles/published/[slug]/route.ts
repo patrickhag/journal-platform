@@ -36,6 +36,8 @@ export async function GET(
                 firstName: true,
                 lastName: true,
                 affiliation: true,
+                email: true,
+                orcid: true,
               },
             },
             metadata: {
@@ -52,6 +54,8 @@ export async function GET(
                 name: true,
                 salutation: true,
                 affiliation: true,
+                email: true,
+                orcid: true,
               },
             },
           },

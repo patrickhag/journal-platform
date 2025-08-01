@@ -34,9 +34,13 @@ export default auth((req) => {
       const regex = new RegExp(`^${dynamicRoute}(?:/.*)?$`);
       return regex.test(pathname);
     }) ||
-    ['/manuals', '/editorial-board', '/forgot-password'].some((prefix) =>
-      pathname.startsWith(prefix)
-    );
+    [
+      '/manuals',
+      '/editorial-board',
+      '/forgot-password',
+      '/articles/issues',
+      '/collections',
+    ].some((prefix) => pathname.startsWith(prefix));
 
   // Handle auth routes
   if (isAuthRoute) {

@@ -9,6 +9,7 @@ import { db } from '@/db/db';
 import { eq, or } from 'drizzle-orm';
 import { users } from '@/db/schema';
 import LeftSideBar from '@/components/landingPage/leftSideBar';
+import { roleMap } from '@/lib/utils';
 
 const getRoleBadgeColor = (role: string) => {
   switch (role) {
@@ -59,40 +60,44 @@ export default async function EditorialBoardPage() {
     (member) => member.role !== 'CHIEF_EDITOR'
   );
 
-  const MemberCard = ({ member }: { member: (typeof foundEditors)[0] }) => (
-    <Card className="hover:shadow-lg transition-shadow duration-300 h-full">
-      <CardContent className="p-6">
-        <div className="flex items-start space-x-4">
-          <div className="flex-shrink-0">
-            {member.avatar ? (
-              <img
-                src={member.avatar}
-                alt={member.firstName + ' ' + member.lastName}
-                className="w-20 h-20 rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center">
-                <User className="w-10 h-10 text-gray-400" />
-              </div>
-            )}
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between mb-2">
-              <h3 className="text-lg font-semibold text-gray-900 truncate">
-                {member.firstName + ' ' + member.lastName}
-              </h3>
-              <Badge
-                className={`ml-2 text-xs ${getRoleBadgeColor(member.role)} hover:bg-transparent`}
-              >
-                {member.role}
-              </Badge>
+  const MemberCard = ({ member }: { member: (typeof foundEditors)[0] }) => {
+    const roleKey = member.role;
+    const role = roleMap[roleKey as string] || roleKey;
+
+    return (
+      <Card className="hover:shadow-lg transition-shadow duration-300 h-full">
+        <CardContent className="p-6">
+          <div className="flex items-start space-x-4">
+            <div className="flex-shrink-0">
+              {member.avatar ? (
+                <img
+                  src={member.avatar}
+                  alt={member.firstName + ' ' + member.lastName}
+                  className="w-20 h-20 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center">
+                  <User className="w-10 h-10 text-gray-400" />
+                </div>
+              )}
             </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between mb-2">
+                <h3 className="text-lg font-semibold text-gray-900 truncate">
+                  {member.firstName + ' ' + member.lastName}
+                </h3>
+                <Badge
+                  className={`ml-2 text-xs bg-purple-100 text-purple-800 border-purple-200 hover:bg-transparent`}
+                >
+                  {role}
+                </Badge>
+              </div>
 
-            <p className="text-sm text-gray-600 mb-2">{member.affiliation}</p>
+              <p className="text-sm text-gray-600 mb-2">{member.affiliation}</p>
 
-            <p className="text-sm text-gray-500 mb-3">{member.country}</p>
+              <p className="text-sm text-gray-500 mb-3">{member.country}</p>
 
-            {/* {member.areasOfExpertise && (
+              {/* {member.areasOfExpertise && (
               <div className="mb-3">
                 <p className="text-xs font-medium text-gray-700 mb-1">
                   Areas of Expertise:
@@ -103,30 +108,31 @@ export default async function EditorialBoardPage() {
               </div>
             )} */}
 
-            {member.bio && (
-              <div className="mb-4">
-                <p className="text-xs font-medium text-gray-700 mb-1">
-                  Biography:
-                </p>
-                <p className="text-xs text-gray-600 leading-relaxed">
-                  {member.bio}
-                </p>
-              </div>
-            )}
+              {member.bio && (
+                <div className="mb-4">
+                  <p className="text-xs font-medium text-gray-700 mb-1">
+                    Biography:
+                  </p>
+                  <p className="text-xs text-gray-600 leading-relaxed">
+                    {member.bio}
+                  </p>
+                </div>
+              )}
 
-            {member.orcid && (
-              <div className="flex space-x-2">
-                <Button variant="outline" size="sm" className="text-xs">
-                  <ExternalLink className="w-3 h-3 mr-1" />
-                  Profile
-                </Button>
-              </div>
-            )}
+              {member.orcid && (
+                <div className="flex space-x-2">
+                  <Button variant="outline" size="sm" className="text-xs">
+                    <ExternalLink className="w-3 h-3 mr-1" />
+                    Profile
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
+        </CardContent>
+      </Card>
+    );
+  };
 
   const ReviewerCard = ({
     reviewer,

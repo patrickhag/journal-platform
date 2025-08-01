@@ -4,18 +4,17 @@ import Link from 'next/link';
 import Image from 'next/image';
 import HeaderModal from './HeaderModal';
 import NotificationsModal from './NotificationsModal';
-import { TNotifications } from '@/db/schema';
 import { Badge } from './ui/badge';
+import { useSession } from 'next-auth/react';
+import { roleMap } from '@/lib/utils';
 
-export const HeaderElement = ({
-  notifications = [],
-  name,
-  role,
-}: {
-  notifications?: TNotifications[];
-  role?: string;
-  name: string;
-}) => {
+export const HeaderElement = () => {
+  const { data } = useSession();
+  const roleKey = data?.user?.role;
+  const role = roleMap[roleKey as string] || roleKey;
+
+  const name = data?.user?.name?.split(' ')?.[1]?.substring(0, 1) as string;
+
   return (
     <>
       <div className="flex items-center gap-8">
@@ -38,7 +37,7 @@ export const HeaderElement = ({
         </div>
       </div>
       <div className="flex items-center gap-4">
-        <NotificationsModal notifications={notifications} />
+        <NotificationsModal />
 
         <HeaderModal name={name} />
       </div>

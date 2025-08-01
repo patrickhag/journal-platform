@@ -2,6 +2,7 @@ export const publicRoutes = [
   '/',
   '/articles/article/:id',
   '/manuals/',
+  '/articles/issues/',
   '/collections/:slug',
   '/forgot-password',
 ];
@@ -23,5 +24,6 @@ export const apiAuthPrefix = [
   '/api/metrics/[slug]',
   '/api/articles/published/[slug]',
   '/api/auth/user',
+  '/api/collections',
 ];
 export const DEFAULT_LOGIN_REDIRECT = '/submissions';

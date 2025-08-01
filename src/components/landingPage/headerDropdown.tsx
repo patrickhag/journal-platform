@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { signOut } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function HeaderDropdown({
   names,
@@ -25,16 +26,11 @@ export default function HeaderDropdown({
   const router = useRouter();
   return (
     <div className="flex items-center gap-4">
-      <Button
-        className="text-white px-3 py-2 rounded bg-[#212c9e] hover:bg-[#1A237E]"
-        onClick={() =>
-          session?.user
-            ? router.replace('/articles/new/start')
-            : router.replace('/login')
-        }
-      >
-        Submit your research
-      </Button>
+      <Link href="/articles/new/start">
+        <Button className="text-white px-3 py-2 rounded bg-[#212c9e] hover:bg-[#1A237E]">
+          Submit your research
+        </Button>
+      </Link>
       {session?.user && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

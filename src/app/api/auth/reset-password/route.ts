@@ -3,7 +3,7 @@ import { RESET_PASSWORD_EXPIRATION_TIME } from '@/lib/consts';
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { NextResponse, NextRequest } from 'next/server';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { sendPasswordResetEmail } from '@/lib/emailTransporter';
 import { AuthError } from 'next-auth';
 
@@ -25,13 +25,13 @@ export async function POST(req: NextRequest) {
     }
 
     const token = Math.random().toString(36).substring(2, 15);
-    // const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     await db.insert(passwordResets).values({
       expires: new Date(Date.now() + RESET_PASSWORD_EXPIRATION_TIME),
       identifier: email,
       token,
-      password /* : hashedPassword, */,
+      password: hashedPassword,
     });
 
     const emailSent = await sendPasswordResetEmail({
@@ -105,6 +105,10 @@ export const GET = async (request: NextRequest) => {
     );
   }
 
-  await db.update(users).set({ password: userRequest.password }).execute();
+  await db
+    .update(users)
+    .set({ password: userRequest.password })
+    .where(eq(users.email, userRequest.identifier))
+    .execute();
   return redirect('/login');
 };

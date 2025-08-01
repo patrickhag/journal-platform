@@ -23,6 +23,7 @@ import { Label } from './ui/label';
 export default function DashboardPannel() {
   const { data: session } = useSession();
   const currentUser = session?.user;
+  console.log('currentUser:', currentUser);
   const userId = currentUser?.id as string;
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 500);

@@ -1,6 +1,7 @@
 import { db } from '@/db/db';
 import { users } from '@/db/schema';
 import logger from '@/lib/logger';
+import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import NextAuth, { type User, type NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
@@ -19,9 +20,14 @@ export const authOptions: NextAuthConfig = {
       async authorize(credentials): Promise<User | null> {
         try {
           const { email, password } = credentials;
-          console.log('email, password: ', email, password);
           const user = await getUserFromDb(email as string);
-          if (user) {
+
+          const passwordMatch = await bcrypt.compare(
+            password as string,
+            user?.password as string
+          );
+
+          if (user && passwordMatch) {
             return {
               name: `${user?.firstName} ${user?.lastName}`,
               email: user?.email,

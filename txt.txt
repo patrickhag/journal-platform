@@ -1,51 +1,178 @@
 # gotta test the whole thing
+  # USERS
+    * baikoko708@gmail(author)
+      password: @123Baikoko
+    * patrickhag09@gmail.com(editor-in-chief)
+      password: @123Patrick
+    * jaypaty35@gmail.com(associate-editor)
+      password: @123JayPaty
+    * ahmedsubwarati@gmail.com(reviewer)
+      password: @123Subwarati
 
-# USERS
+# 
 
-    * baikoko - author
-    * patrickhag - chief-editor
-    * jaypaty - associate-editor
-    * subarashi - reviewer
-    * cepova8101@axcradio.com - reviewer
+export default function LoginComponent() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, formAction, isPending] = useActionState(
+    authenticate,
+    undefined
+  );
 
-{
-"section_type": "short communication",
-"comments_for_the_editor": "Brief report on a novel rapid diagnostic tool for malaria.",
-"prefix": "Dr.",
-"title": "A Portable Device for Rapid Malaria Detection",
-"subtitle": "Field Evaluation in Sub-Saharan Africa",
-"abstract": "This short communication presents the development and field testing of a portable device for rapid malaria detection, demonstrating high sensitivity and specificity in rural clinics. Malaria remains a significant public health challenge in many regions, particularly in Sub-Saharan Africa, where timely and accurate diagnosis is critical for effective disease management and control. Traditional diagnostic methods, such as microscopy and rapid diagnostic tests (RDTs), often require laboratory infrastructure or trained personnel, which may not be readily available in remote or resource-limited settings. The portable device described in this report is designed to address these limitations by providing a user-friendly, battery-operated solution capable of delivering reliable results within minutes. Field evaluations were conducted in collaboration with local healthcare workers across multiple rural clinics, assessing the device’s performance under real-world conditions. Results indicate that the device achieved over 95% sensitivity and 97% specificity compared to gold-standard laboratory diagnostics. Additionally, healthcare workers reported high satisfaction with the device’s ease of use, portability, and minimal training requirements. The implementation of this technology has the potential to improve malaria case detection rates, facilitate prompt treatment, and ultimately contribute to reducing malaria-related morbidity and mortality. Further studies are recommended to evaluate long-term durability, cost-effectiveness, and integration into existing healthcare workflows. This report highlights the promise of innovative diagnostic tools in strengthening health systems and supporting global efforts to combat malaria.",
-"keywords": [
-"malaria",
-"rapid diagnostics",
-"portable device",
-"field testing",
-"infectious diseases"
-],
-"contributors": [
-{
-"names_of_the_contributor": "Samuel Osei",
-"email": "samuel.osei@ug.edu.gh",
-"salutation": "Dr.",
-"country": "Ghana",
-"userDetails": {
-"ORCID_ID": "https://orcid.org/0000-0004-5678-1234",
-"Homepage": "https://samuelosei-malaria.org"
-},
-"affiliation": "University of Ghana",
-"bio_statement": "Dr. Samuel Osei is a biomedical engineer specializing in diagnostic technologies for infectious diseases."
-},
-{
-"names_of_the_contributor": "Amina Diallo",
-"email": "amina.diallo@univ-bamako.ml",
-"salutation": "Dr.",
-"country": "Mali",
-"userDetails": {
-"ORCID_ID": "0000-0005-2345-6789",
-"Homepage": "https://aminadiallo-malaria.org"
-},
-"affiliation": "University of Bamako",
-"bio_statement": "Dr. Amina Diallo is a clinical researcher focused on malaria diagnostics and public health interventions in West Africa."
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const searchparams = useSearchParams();
+
+  const onSubmit = useCallback(
+    (data: z.infer<typeof loginSchema>) => {
+      startTransition(() => {
+        formAction({
+          ...data,
+          redirect: searchparams.get('redirect') || undefined,
+        });
+      });
+    },
+    [formAction, searchparams]
+  );
+
+  return (
+    <div>
+      <Card className="w-full max-w-2xl mx-auto p-4 mt-24">
+        <CardHeader className="space-y-1 text-center">
+          <div className="flex justify-center mb-4">
+            <Image
+              src={'/logo.png'}
+              alt="logo"
+              width={40}
+              height={40}
+              className="mx-auto"
+            />
+          </div>
+          <h2 className="text-2xl font-semibold">Welcome back</h2>
+          <p className="text-sm text-muted-foreground">
+            Glad to see you again!
+          </p>
+          {errorMessage && (
+            <div
+              className="flex p-4 items-end space-x-1 justify-center bg-red-100 rounded-md"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+              <p className="text-sm text-red-500">{errorMessage}</p>
+            </div>
+          )}
+        </CardHeader>
+
+        <CardContent className="space-y-6">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="email">Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        id="email"
+                        type="email"
+                        className="bg-blue-50 border-blue-200"
+                        {...field}
+                        placeholder="johndoe@gmail.com"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="password">Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          type={showPassword ? 'text' : 'password'}
+                          className="bg-blue-50 border-blue-200 pr-10"
+                          placeholder="••••••••••"
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                          {showPassword ? (
+                            <EyeOff size={20} />
+                          ) : (
+                            <Eye size={20} />
+                          )}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-1 leading-none">
+                  <FormLabel className="text-sm">Keep me logged in</FormLabel>
+                </div>
+                <Link href="/forgot-password">
+                  <button
+                    type="button"
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    Forgot password?
+                  </button>
+                </Link>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-gray-900 hover:bg-gray-800"
+                disabled={isPending}
+              >
+                {isPending ? <Loader text="Logging in..." /> : 'Login'}
+              </Button>
+            </form>
+          </Form>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or continue with
+              </span>
+            </div>
+          </div>
+
+          <GoogleLogin />
+
+          <div className="text-center text-sm text-gray-600">
+            Don&apos;t have an account yet?{' '}
+            <Link href={'/register'}>
+              <button className="text-blue-600 hover:underline">
+                Register
+              </button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
-]
-}
+
+# 

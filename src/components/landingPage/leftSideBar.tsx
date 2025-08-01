@@ -22,9 +22,9 @@ const LeftSideBar = () => {
           </h2>
           <ul className="mt-2 space-y-2 text-sm text-gray-600">
             <li>
-              <a href="#" className="hover:text-blue-600">
+              <Link href="/editorial-board" className="hover:text-blue-600">
                 Editorial board
-              </a>
+              </Link>
             </li>
             <li>
               <a href="/manuals/#guidelines" className="hover:text-blue-600">
@@ -42,9 +42,9 @@ const LeftSideBar = () => {
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-blue-600">
+              <Link href="/collections" className="hover:text-blue-600">
                 Collections
-              </a>
+              </Link>
             </li>
             <li>
               <a href="#" className="hover:text-blue-600">

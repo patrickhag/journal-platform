@@ -45,6 +45,11 @@ import {
   useGetMetricInteraction,
   useIncrementMetrics,
 } from '@/hooks/useMetrics';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@/components/ui/hover-card';
 
 export default function PublicArticleView() {
   const { articleId } = useParams();
@@ -72,6 +77,8 @@ export default function PublicArticleView() {
     name: `${articleData?.user.firstName} ${articleData?.user.lastName}`,
     salutation: articleData?.metadata.prefix as string,
     affiliation: articleData?.user.affiliation as string,
+    email: articleData?.user.email as string,
+    orcid: articleData?.user.orcid as string,
   };
 
   const contributors = articleData ? [author, ...articleData.contributors] : [];
@@ -255,19 +262,50 @@ export default function PublicArticleView() {
                   Authors
                 </h2>
               </div>
-              <div className="space-y-3">
-                {contributors.map((author, index) => (
-                  <div
-                    key={index}
-                    className="border-l-4 border-primary/20 pl-4"
-                  >
-                    <p className="font-medium text-foreground">
-                      {author.salutation} {author.name}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {author.affiliation}
-                    </p>
-                  </div>
+              <div className="space-y-1">
+                {contributors.map((contributor, index) => (
+                  <HoverCard key={index}>
+                    <HoverCardTrigger asChild>
+                      <button className="text-foreground hover:underline">
+                        <span className="mr-2">
+                          {contributor.name}
+                          {contributors.indexOf(contributor) !==
+                            contributors.length - 1 && ','}
+                        </span>
+                      </button>
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-80">
+                      <div className="space-y-1">
+                        <p className="text-sm">
+                          <span className="text-sm font-semibold">
+                            Affiliation:
+                          </span>{' '}
+                          <span>{contributor.affiliation}</span>
+                        </p>
+                        <p className="text-sm">
+                          <span>
+                            <span className="text-sm font-semibold">
+                              Email:{' '}
+                            </span>
+                            {contributor.email}
+                          </span>
+                        </p>
+                        {contributor.orcid && (
+                          <p className="text-sm">
+                            <span className="flex items-center">
+                              <img
+                                src="/orcid.jpg"
+                                alt="ORCID LOGO"
+                                width={25}
+                                height={20}
+                              />
+                              <span className="ml-2">{contributor.orcid}</span>
+                            </span>
+                          </p>
+                        )}
+                      </div>
+                    </HoverCardContent>
+                  </HoverCard>
                 ))}
               </div>
             </div>
@@ -338,15 +376,15 @@ export default function PublicArticleView() {
                   Article Metrics
                 </h3>
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Citations</span>
+                  <span className="font-medium">Citations</span>
                   <span className="font-semibold text-primary">42</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Views</span>
+                  <span className="font-medium">Views</span>
                   <span className="font-semibold">{metric?.views}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Downloads</span>
+                  <span className="font-medium">Downloads</span>
                   <span className="font-semibold">{metric?.downloads}</span>
                 </div>
               </div>

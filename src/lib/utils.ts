@@ -87,3 +87,11 @@ const sdgGoalsMap: Record<string, string> = {
 export function getSDGLabel(sdg: string): string {
   return sdgGoalsMap[sdg] ?? sdg;
 }
+
+export const roleMap: Record<string, string> = {
+  NORMAL_USER: 'Author',
+  CHIEF_EDITOR: 'Chief Editor',
+  ASSOCIATE_EDITOR: 'Associate Editor',
+  ADMIN: 'Admin',
+  REVIEWER: 'Reviewer',
+};

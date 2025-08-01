@@ -24,7 +24,7 @@ function getRoleDisplayName(role: USER_ROLE): string {
     NORMAL_USER: 'Author',
     REVIEWER: 'Reviewer',
     CHIEF_EDITOR: 'Chief Editor',
-    ASSOCIATE_EDITOR: 'Chief Editor',
+    ASSOCIATE_EDITOR: 'Associate Editor',
     ADMIN: 'Administrator',
   };
   return roleNames[role] || 'Author';

@@ -292,12 +292,16 @@ type Contributor = {
   name: string;
   salutation: string;
   affiliation: string;
+  email: string;
+  orcid: string;
 };
 
 type Author = {
   firstName: string;
   lastName: string;
   affiliation: string;
+  email: string;
+  orcid: string;
 };
 
 type Article = {

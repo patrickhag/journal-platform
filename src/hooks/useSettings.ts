@@ -98,13 +98,14 @@ export const useGetManuals = () => {
   });
 };
 
-export const useGetNotifications = () => {
+export const useGetNotifications = (userId: string) => {
   return useQuery({
     queryKey: ['notifications'],
     queryFn: async () => {
       const res = await axios.get<TNotifications[]>('/api/notifications');
       return res.data;
     },
+    enabled: !!userId,
   });
 };
 
