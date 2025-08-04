@@ -95,6 +95,7 @@ export const useGetManuals = () => {
       const res = await axios.get<TManuals>('/api/manuals');
       return res.data;
     },
+    refetchOnWindowFocus: false,
   });
 };
 

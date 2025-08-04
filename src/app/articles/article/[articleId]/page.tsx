@@ -61,6 +61,7 @@ export default function PublicArticleView() {
   const { data: article, isPending } = useGetPublishedArticle(
     articleId as string
   );
+
   const { mutate } = useIncrementMetrics();
 
   const { data: metric } = useGetMetricInteraction(articleId as string);

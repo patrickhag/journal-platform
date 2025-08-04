@@ -45,7 +45,7 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
         {/* Header */}
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate group-hover:text-blue-600 transition-colors">
+            <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">
               {collection.title}
             </h3>
             <div className="flex items-center text-xs text-gray-500 space-x-2">

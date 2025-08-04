@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import SearchBar from './searchBar';
+import HeroSection from './heroSection';
 import { format } from 'date-fns';
 import { getSectionImage } from '@/lib/utils';
 import { articleSubmissions } from '@/db/schema';
@@ -40,7 +40,7 @@ const RightSideBar = async () => {
 
   return (
     <div>
-      <SearchBar />
+      <HeroSection />
       <h2 className="text-xl font-bold my-7 text-indigo-900">
         Editor&apos;s pick
       </h2>

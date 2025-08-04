@@ -1,5 +1,5 @@
 import React from 'react';
-import { CollectioinsList } from './components/CollectionsList';
+import { CollectionsList } from './components/CollectionsList';
 
 function CollectionsPage() {
   return (
@@ -11,7 +11,7 @@ function CollectionsPage() {
         academic and scientific domains.
       </p>
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 my-8">
-        <CollectioinsList />
+        <CollectionsList />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import Footer from '@/components/landingPage/footer';
 import Header from '@/components/landingPage/header';
 import LeftSideBar from '@/components/landingPage/leftSideBar';
-import SearchBar from '@/components/landingPage/searchBar';
+import SearchBar from '@/components/landingPage/heroSection';
 
 export default async function AboutPage() {
   return (

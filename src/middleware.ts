@@ -40,6 +40,7 @@ export default auth((req) => {
       '/forgot-password',
       '/articles/issues',
       '/collections',
+      '/search-articles',
     ].some((prefix) => pathname.startsWith(prefix));
 
   // Handle auth routes

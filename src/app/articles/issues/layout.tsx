@@ -1,6 +1,6 @@
 import Footer from '@/components/landingPage/footer';
 import Header from '@/components/landingPage/header';
-import SearchBar from '@/components/landingPage/searchBar';
+import SearchBar from '@/components/landingPage/heroSection';
 import { BookOpenCheck, BookText } from 'lucide-react';
 
 export default function Layout({

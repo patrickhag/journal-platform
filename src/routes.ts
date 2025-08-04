@@ -25,5 +25,6 @@ export const apiAuthPrefix = [
   '/api/articles/published/[slug]',
   '/api/auth/user',
   '/api/collections',
+  '/api/articles/searched-articles',
 ];
 export const DEFAULT_LOGIN_REDIRECT = '/submissions';

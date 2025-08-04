@@ -13,7 +13,7 @@ const navItems = [
   { path: '/manuals/#aboutUs', label: 'About' },
   { path: '/articles/issues', label: 'Articles' },
   { path: '/manuals/#guidelines', label: 'Authors' },
-  { path: '#', label: 'Search' },
+  { path: '/search-articles', label: 'Search' },
 ];
 
 export default function Header() {

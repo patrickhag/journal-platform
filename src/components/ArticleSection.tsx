@@ -100,16 +100,6 @@ function ArticleCard({
                     View Details
                   </Button>
                 </Link>
-                {/* {transformedArticle.editorDecision && (
-                  <Button
-                    className="bg-amber-600 hover:bg-amber-700 text-white"
-                    size="sm"
-                    onClick={() => setIsOpen(true)}
-                  >
-                    <Upload className="mr-1 h-4 w-4" />
-                    Upload Revision
-                  </Button>
-                )} */}
               </div>
             </div>
           </div>

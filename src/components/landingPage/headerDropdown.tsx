@@ -24,6 +24,25 @@ export default function HeaderDropdown({
   session: Session | null;
 }) {
   const router = useRouter();
+
+  const handleDashboardRedirect = () => {
+    const role = session?.user?.role;
+
+    switch (role) {
+      case 'NORMAL_USER':
+        router.replace('/submissions');
+        break;
+      case 'ASSOCIATED_EDITOR':
+        router.replace('/associate-editor/assigned');
+        break;
+      case 'CHIEF_EDITOR':
+        router.replace('/editor/dashboard');
+        break;
+      default:
+        router.replace('/'); // fallback
+    }
+  };
+
   return (
     <div className="flex items-center gap-4">
       <Link href="/articles/new/start">
@@ -41,7 +60,7 @@ export default function HeaderDropdown({
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.replace('/submissions')}>
+            <DropdownMenuItem onClick={handleDashboardRedirect}>
               Dashboard
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.replace('/profile')}>

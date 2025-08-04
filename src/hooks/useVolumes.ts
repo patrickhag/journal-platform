@@ -75,5 +75,6 @@ export const useGetPublishedVolumes = () => {
       const { data } = await axios.get<VolumeType>(`/api/volumes/published`);
       return Array.isArray(data) ? data : [];
     },
+    refetchOnWindowFocus: false,
   });
 };
