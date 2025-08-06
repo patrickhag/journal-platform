@@ -71,3 +71,13 @@ export const publishArticleSchema = z.object({
     .array(z.string().url({ message: 'Invalid URL format' }))
     .min(1, 'At least one PDF URL is required'),
 });
+
+export const adSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  linkUrl: z.string().url('Must be a valid link'),
+  startDate: z.date({ required_error: 'Start date is required' }),
+  endDate: z.date({ required_error: 'End date is required' }),
+  isActive: z.boolean(),
+});
+
+export type AdFormSchema = z.infer<typeof adSchema>;

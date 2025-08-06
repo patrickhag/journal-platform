@@ -1,4 +1,4 @@
-import { TMetric } from '@/types';
+import { TMetric, TMostViewed } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
@@ -60,6 +60,17 @@ export const useGetMetricsInteractions = () => {
       const { data } = await axios.get(`/api/metrics`);
       return data || [];
     },
+  });
+};
+
+export const useGetMostViewed = () => {
+  return useQuery({
+    queryKey: ['most-viewed'],
+    queryFn: async () => {
+      const { data } = await axios.get<TMostViewed>(`/api/metrics/most-viewed`);
+      return data || [];
+    },
+    refetchOnWindowFocus: false,
   });
 };
 

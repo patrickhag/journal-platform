@@ -31,7 +31,6 @@ import { CollectionFormValues, collectionSchema } from '@/lib/schemas';
 import { useCreateCollection } from '@/hooks/useCollections';
 import Loader from '@/components/Loader';
 import { sdgGoals } from '@/lib/consts';
-import { DialogDescription } from '@radix-ui/react-dialog';
 
 interface CreateCollectionModalProps {
   isOpen: boolean;

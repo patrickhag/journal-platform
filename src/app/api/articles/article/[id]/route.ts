@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
 import { articleSubmissions } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { auth } from '@/auth';
 import { notifyUser } from '@/lib/emailTransporter';
 
 type Params = {

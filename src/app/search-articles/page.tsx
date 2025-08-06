@@ -64,7 +64,7 @@ const Search = () => {
             foundArticles.length === 0 &&
             searchQuery.trim() !== '' && (
               <p className="text-muted-foreground italic">
-                No articles found matching "{searchQuery}".
+                No articles found matching &quot;{searchQuery}&quot;.
               </p>
             )}
           {foundArticles?.map((result) => {
@@ -79,11 +79,12 @@ const Search = () => {
               : [];
 
             return (
-              <Link href={`/articles/article/${result.slug}`} target="_blank">
-                <div
-                  key={result.id}
-                  className="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-shadow mb-3"
-                >
+              <Link
+                href={`/articles/article/${result.slug}`}
+                target="_blank"
+                key={result.id}
+              >
+                <div className="bg-card border border-border rounded-lg p-4 hover:shadow-md transition-shadow mb-3">
                   <h3 className="text-lg font-medium hover:text-blue-600 cursor-pointer mb-2 line-clamp-1">
                     {result.article.metadata.title}
                   </h3>

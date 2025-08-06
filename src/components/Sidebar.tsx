@@ -14,6 +14,7 @@ import {
   FileText,
   History,
   MessageSquare,
+  MonitorSpeaker,
   Newspaper,
   PlusCircle,
   Users,
@@ -56,6 +57,11 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             href: '/editor/issues',
             label: 'Manage Issues',
             icon: Calendar,
+          },
+          {
+            href: '/editor/manage-ads',
+            label: 'Manage Ads',
+            icon: MonitorSpeaker,
           },
           {
             href: '/editor/manage',

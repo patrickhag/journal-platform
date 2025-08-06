@@ -39,7 +39,7 @@ export default function App() {
           </div>
         </div>
 
-        {<CreateCollectionModal isOpen={isOpen} onClose={onClose} />}
+        <CreateCollectionModal isOpen={isOpen} onClose={onClose} />
       </div>
     </div>
   );

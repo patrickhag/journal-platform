@@ -347,3 +347,17 @@ export type FormState =
       message?: string;
     }
   | undefined;
+
+export type TMostViewed = {
+  id: string;
+  views: number;
+  publishedArticle: {
+    slug: string;
+    article: {
+      id: string;
+      metadata: {
+        title: string;
+      };
+    };
+  };
+}[];

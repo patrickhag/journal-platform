@@ -4,26 +4,22 @@ import Link from 'next/link';
 
 const HeroSection = () => {
   return (
-    <section className="bg-gradient-to-r from-academic-blue-light/20 to-academic-teal/20 py-16">
+    <section className="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 py-16 lg:py-20">
       <div className="container mx-auto px-4 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+        <h1 className="text-3xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-6 leading-tight">
           JAEPH is calling for new manuscripts
         </h1>
-        <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+        <p className="text-lg md:text-lg text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed">
           Submit your groundbreaking research in African epidemiology and public
           health. Join our community of leading researchers making a difference
           in healthcare across Africa.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link href="/articles/new/start">
-            <Button
-              variant="secondary"
-              size="lg"
-              className="flex items-center gap-2"
-            >
-              <BookOpen className="w-5 h-5" />
+            <Button size="lg">
+              <BookOpen className="w-5 h-5 mr-2" />
               Submit Research
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Link>
           <Link href="/articles/issues">

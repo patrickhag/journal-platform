@@ -1,13 +1,68 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useGetPublishedVolumes } from '@/hooks/useVolumes';
 import { useGetManuals } from '@/hooks/useSettings';
+import { useGetMostViewed } from '@/hooks/useMetrics';
+import { useEffect, useState } from 'react';
+import { useGetHomeAds } from '@/hooks/useAds';
+
+const ads = [
+  {
+    id: '1',
+    title: 'Research Conference 2024',
+    imageUrl:
+      'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400',
+    linkUrl: 'https://conference2024.example.com',
+    startDate: new Date('2024-01-01'),
+    endDate: new Date('2024-12-31'),
+    isActive: true,
+    createdAt: new Date('2024-01-01'),
+  },
+  {
+    id: '2',
+    title: 'Academic Writing Workshop',
+    imageUrl:
+      'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400',
+    linkUrl: 'https://workshop.example.com',
+    startDate: new Date('2024-06-01'),
+    endDate: new Date('2024-08-31'),
+    isActive: true,
+    createdAt: new Date('2024-05-15'),
+  },
+  {
+    id: '3',
+    title: 'Research Methods Seminar',
+    imageUrl:
+      'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400',
+    linkUrl: 'https://seminar.example.com',
+    startDate: new Date('2024-09-10'),
+    endDate: new Date('2024-11-20'),
+    isActive: true,
+    createdAt: new Date('2024-08-01'),
+  },
+];
 
 const LeftSideBar = () => {
   const { data: volumes } = useGetPublishedVolumes();
   const { data: manuals } = useGetManuals();
+  const { data: mostViewed } = useGetMostViewed();
+  const [currentAdIndex, setCurrentAdIndex] = useState(0);
+  const { data: ads } = useGetHomeAds();
+
+  useEffect(() => {
+    if (!ads || ads.length === 0) return;
+    const interval = setInterval(() => {
+      setCurrentAdIndex((prevIndex: number) => (prevIndex + 1) % ads.length);
+    }, 7000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!ads || ads.length === 0) {
+    return null;
+  }
+
+  const currentAd = ads[currentAdIndex];
 
   return (
     <div className="sticky top-0 border-l pl-3">
@@ -95,12 +150,14 @@ const LeftSideBar = () => {
             Most Accessed
           </h2>
           <ul className="mt-2 space-y-4">
-            {[1, 2, 3].map((item) => (
-              <li key={item} className="text-sm text-gray-600">
-                <a href="#" className="block hover:text-blue-600">
-                  Lorem ipsum article has been posted has been posted has been
-                  posted
-                </a>
+            {mostViewed?.map((item) => (
+              <li key={item.id} className="text-sm text-gray-600">
+                <Link
+                  href={item.publishedArticle.slug}
+                  className="block hover:text-blue-600"
+                >
+                  {item.publishedArticle.article.metadata.title}
+                </Link>
               </li>
             ))}
           </ul>
@@ -112,16 +169,28 @@ const LeftSideBar = () => {
             className="text-lg font-semibold text-gray-700"
             style={{ color: '#1A237E' }}
           >
-            Reserved for Ads
+            Advertisements
           </h2>
-          <div className="mt-2">
-            <Image
-              width={90}
-              height={90}
-              src="https://res.cloudinary.com/dwhfpxrgz/image/upload/v1732723406/newss_espiuv.png"
-              alt="Ad Placeholder"
-              className="w-full h-auto border border-gray-300 rounded-md"
-            />
+
+          {/* Archives Section */}
+          <div className="relative w-full border border-gray-300 rounded-md overflow-hidden mt-2">
+            <Link
+              href={currentAd.linkUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={currentAd.title}
+            >
+              <img
+                src={currentAd.imageUrl}
+                alt={currentAd.title}
+                width={400}
+                height={200}
+                className="w-full h-40 object-cover transition duration-300 ease-in-out"
+              />
+            </Link>
+            <div className="absolute bottom-0 w-full bg-black bg-opacity-50 text-white text-xs p-2">
+              {currentAd.title}
+            </div>
           </div>
         </div>
 

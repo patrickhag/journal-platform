@@ -545,6 +545,19 @@ export const metrics = pgTable('metrics', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+export const ads = pgTable('ads', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  title: text('title').notNull(),
+  imageUrl: text('image_url').notNull(),
+  linkUrl: text('link_url').notNull(),
+  startDate: date('start_date').notNull(),
+  endDate: date('end_date').notNull(),
+  isActive: boolean('is_active').default(true),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
 export const metricsRelations = relations(metrics, ({ one }) => ({
   publishedArticle: one(publishedArticles, {
     fields: [metrics.articleSlug],
@@ -708,4 +721,6 @@ export type TNotifications = typeof notifications.$inferSelect;
 export type Notifications = typeof notifications.$inferInsert;
 export type Issues = typeof issues.$inferInsert;
 export type TManuals = typeof manuals.$inferInsert;
+export type TAds = typeof ads.$inferSelect;
+export type TNewAd = typeof ads.$inferInsert;
 export type TCollections = typeof collections.$inferSelect;

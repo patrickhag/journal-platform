@@ -39,52 +39,53 @@ const RightSideBar = async () => {
       : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6';
 
   return (
-    <div>
+    <>
       <HeroSection />
-      <h2 className="text-xl font-bold my-7 text-indigo-900">
-        Editor&apos;s pick
-      </h2>
+      <div className="px-4 md:px-8">
+        <h2 className="text-xl font-bold my-7 text-indigo-900">
+          Editor&apos;s pick
+        </h2>
+        <div className={gridClass}>
+          {editorsPicks.map((article) => {
+            const { id, section, metadata, user, updatedAt } = article;
+            const fullName =
+              `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim();
+            const imageUrl = getSectionImage(section);
 
-      <div className={gridClass}>
-        {editorsPicks.map((article) => {
-          const { id, section, metadata, user, updatedAt } = article;
-          const fullName =
-            `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim();
-          const imageUrl = getSectionImage(section);
-
-          return (
-            <Link key={id} href={`/articles/article/${id}`}>
-              <div className="group rounded-lg overflow-hidden cursor-pointer transition relative">
-                <div className="relative rounded-lg">
-                  <p className="font-semibold mb-2">{section}</p>
-                  <Image
-                    src={imageUrl}
-                    width={300}
-                    height={160}
-                    className="w-full h-40 object-cover rounded-lg"
-                    alt={section}
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 bg-black rounded-lg bg-opacity-50 text-white p-2 flex items-center justify-between">
-                    <p className="text-sm line-clamp-1">
-                      {metadata?.title || 'Untitled Article'}
+            return (
+              <Link key={id} href={`/articles/article/${id}`}>
+                <div className="group rounded-lg overflow-hidden cursor-pointer transition relative">
+                  <div className="relative rounded-lg">
+                    <p className="font-semibold mb-2">{section}</p>
+                    <Image
+                      src={imageUrl}
+                      width={300}
+                      height={160}
+                      className="w-full h-40 object-cover rounded-lg"
+                      alt={section}
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-black rounded-lg bg-opacity-50 text-white p-2 flex items-center justify-between">
+                      <p className="text-sm line-clamp-1">
+                        {metadata?.title || 'Untitled Article'}
+                      </p>
+                      <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-gray-500 text-xs">
+                      {fullName || 'Unknown Author'}
                     </p>
-                    <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
+                    <p className="text-gray-500 text-xs">
+                      {format(new Date(updatedAt as string), 'MMM dd, yyyy')}
+                    </p>
                   </div>
                 </div>
-                <div className="mt-3">
-                  <p className="text-gray-500 text-xs">
-                    {fullName || 'Unknown Author'}
-                  </p>
-                  <p className="text-gray-500 text-xs">
-                    {format(new Date(updatedAt as string), 'MMM dd, yyyy')}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          );
-        })}
+              </Link>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
