@@ -44,7 +44,7 @@
     "@radix-ui/react-toggle-group": "^1.1.10",
     "@radix-ui/react-tooltip": "^1.1.8",
     "@react-email/components": "^0.0.28",
-    "@react-email/tailwind": "1.0.3",
+    "@react-email/tailwind": "1.2.2",
     "@react-pdf/renderer": "^4.3.0",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/react-query-devtools": "^5.85.3",
