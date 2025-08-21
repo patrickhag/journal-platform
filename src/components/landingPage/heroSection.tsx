@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 const HeroSection = () => {
   return (
-    <section className="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 py-16 lg:py-20">
+    <section className="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 py-16 lg:py-12">
       <div className="container mx-auto px-4 text-center">
         <h1 className="text-3xl md:text-3xl lg:text-4xl font-bold text-slate-900 mb-6 leading-tight">
           JAEPH is calling for new manuscripts

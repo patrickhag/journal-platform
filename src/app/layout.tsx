@@ -4,6 +4,7 @@ import './globals.css';
 import '@/styles/globals.scss';
 import ReactQueryProvider from '@/lib/ReactQueryProvider';
 import { SessionProvider } from 'next-auth/react';
+import { Toaster } from 'sonner';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -52,6 +53,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased `}
       >
+        <Toaster position="bottom-right" className="bg-green-200" richColors />
         <SessionProvider>
           <ReactQueryProvider>{children}</ReactQueryProvider>
         </SessionProvider>

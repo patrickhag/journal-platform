@@ -8,8 +8,6 @@ import {
 import { db } from '@/db/db';
 
 const UsersPage = async () => {
-  // const { data, isPending } = useGetUsers();
-
   const users = await db.query.users.findMany();
 
   return (

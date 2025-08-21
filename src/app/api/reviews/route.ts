@@ -147,8 +147,16 @@ export async function GET(req: NextRequest) {
         },
       },
     });
+    // Filter articles that are past their due date and not published
+    const dueArticles = assignedArticles.filter((article) => {
+      const dueDate = new Date(article.dueDate as string);
+      const currentDate = new Date();
+      return (
+        currentDate > dueDate && article?.article?.articleStatus !== 'PUBLISHED'
+      );
+    });
 
-    return NextResponse.json(assignedArticles);
+    return NextResponse.json({ assignedArticles, dueArticles });
   } catch (error) {
     console.error('Error fetching reviews:', error);
     return NextResponse.json(

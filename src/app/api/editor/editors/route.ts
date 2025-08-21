@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
-import { articleSubmissions, editors, users } from '@/db/schema';
+import { articleSubmissions, editors, userRoles, users } from '@/db/schema';
 import { notifyAssociateEditor } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -15,10 +15,18 @@ export async function GET(req: NextRequest) {
     }
 
     const associateEditors = await db.query.users.findMany({
-      where: eq(users.role, 'ASSOCIATE_EDITOR'),
+      with: {
+        roles: {
+          where: eq(userRoles.role, 'ASSOCIATE_EDITOR'),
+        },
+      },
     });
 
-    return NextResponse.json(associateEditors);
+    const associateEditorUsers = associateEditors.filter(
+      (user) => user.roles.length > 0
+    );
+
+    return NextResponse.json(associateEditorUsers);
   } catch (error) {
     console.error('Error creating volume:', error);
     return NextResponse.json(

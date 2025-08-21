@@ -13,6 +13,7 @@ const navItems = [
   { path: '/manuals/#aboutUs', label: 'About' },
   { path: '/articles/issues', label: 'Articles' },
   { path: '/manuals/#guidelines', label: 'Authors' },
+  { path: '/contact-us', label: 'Contact Us' },
   { path: '/search-articles', label: 'Search' },
 ];
 

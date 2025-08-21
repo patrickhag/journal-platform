@@ -26,38 +26,61 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function PATCH(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    // const session = await auth();
+    const session = await auth();
 
-    // if (session?.user.role !== 'CHIEF_EDITOR') {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
+    if (
+      !(session?.user.role === 'CHIEF_EDITOR' || session?.user.role === 'ADMIN')
+    ) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    const { userId, isActive, role } = await req.json();
+    const { userIds } = await req.json();
 
-    if (!userId) {
+    const authors: string[] = [];
+
+    for (const userId of userIds) {
+      const foundUser = await db.query.users.findFirst({
+        columns: {
+          role: true,
+          firstName: true,
+          lastName: true,
+        },
+        where: eq(users.id, userId),
+      });
+
+      if (!foundUser) continue;
+
+      // Track authors for later
+      if (foundUser.role === 'AUTHOR') {
+        authors.push(`${foundUser.firstName} ${foundUser.lastName}`);
+        continue; // Skip update
+      }
+
+      // Update all other users
+      await db
+        .update(users)
+        .set({ isPartOfEditorialBoard: true })
+        .where(eq(users.id, userId));
+    }
+
+    // Respond after all updates are done
+    if (authors.length > 0) {
       return NextResponse.json(
-        { message: 'User ID is required' },
+        {
+          message: `⚠️ The following user(s) are AUTHORS and could not be added to the Editorial Board: ${authors.join(
+            ', '
+          )}. All other eligible users were successfully added.`,
+        },
         { status: 400 }
       );
     }
 
-    const isDone = await db
-      .update(users)
-      .set({
-        isActive: !isActive,
-        role,
-      })
-      .where(eq(users.id, userId))
-      .returning();
-
-    if (isDone.length > 0) {
-      revalidatePath('/editor/users');
-      return NextResponse.json({
-        message: 'User updated successfully!',
-      });
-    }
+    return NextResponse.json(
+      { message: 'All user(s) successfully added to the Editorial Board!' },
+      { status: 200 }
+    );
   } catch (error) {
     console.error('Error updating user:', error);
     return NextResponse.json(

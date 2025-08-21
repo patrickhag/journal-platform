@@ -1,6 +1,7 @@
 import { ReviewFormData } from '@/schemas/reviewer';
 import {
   MessageResponse,
+  PReview,
   TArticlesReview,
   TReview,
   TReviewerAssignment,
@@ -63,8 +64,10 @@ export const useGetReviewerAssignments = () => {
   return useQuery({
     queryKey: ['reviewerAssignments'],
     queryFn: async () => {
-      const { data } = await axios.get<TReviewerAssignment[]>(`/api/reviews/`);
-      return data || [];
+      const { data } = await axios.get(`/api/reviews/`);
+      const assignedArticles = data.assignedArticles as TReviewerAssignment;
+      const dueArticles = data.dueArticles as TReviewerAssignment;
+      return { assignedArticles, dueArticles };
     },
   });
 };
@@ -254,13 +257,11 @@ export const useSendInvitation = (articleId: string) => {
   });
 };
 
-export const useGetAuthorsRevisions = () => {
+export const useGetAllCompleted = () => {
   return useQuery({
-    queryKey: ['authorRevisions'],
+    queryKey: ['allRevisions'],
     queryFn: async () => {
-      const { data } = await axios.get<TArticlesReview[]>(
-        `/api/reviews/reviewer`
-      );
+      const { data } = await axios.get<PReview[]>(`/api/reviews/all`);
       return data;
     },
   });

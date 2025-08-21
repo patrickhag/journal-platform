@@ -8,9 +8,13 @@ import { FileText, Eye, Upload } from 'lucide-react';
 import { useGetReviewerAssignments } from '@/hooks/useReviews';
 import { useRouter } from 'next/navigation';
 import ReviewModal from '@/components/articles/Review';
+import ArticleCardSkeleton from '../components/ReviewCardSkeleton';
+import { cn, getAssignmentStatusColor } from '@/lib/utils';
 
 export default function ReviewerDashboard() {
-  const { data: reviewerAssignments, isLoading } = useGetReviewerAssignments();
+  const { data, isPending } = useGetReviewerAssignments();
+
+  const reviewerAssignments = data?.assignedArticles;
 
   const [reviewModal, setReviewModal] = useState<{
     isOpen: boolean;
@@ -63,13 +67,14 @@ export default function ReviewerDashboard() {
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {isPending && [1, 2, 3].map((i) => <ArticleCardSkeleton key={i} />)}
           <div className="space-y-4">
             {filteredAssignments?.map((assignment) => {
               const { id, status, assignedDate, dueDate, article } = assignment;
 
               const daysRemaining = calculateDaysRemaining(dueDate);
               const isPublished = article.articleStatus === 'PUBLISHED';
-              const author = `${article.metadata?.prefix ?? ''} ${article.user.firstName} ${article.user.lastName}`;
+              const author = `${article.metadata?.prefix ?? ''}. ${article.user.firstName} ${article.user.lastName}`;
               const title = article.metadata?.title;
 
               return (
@@ -86,20 +91,29 @@ export default function ReviewerDashboard() {
                       </div>
 
                       <p className="text-gray-600 mb-3">by {author}</p>
-
-                      <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
-                        <span>
-                          Assigned:{' '}
-                          {new Date(assignedDate).toLocaleDateString()}
-                        </span>
-                        <span>•</span>
-                        <span>
-                          Due: {new Date(dueDate).toLocaleDateString()}
-                        </span>
-                      </div>
+                      {!isPublished && (
+                        <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
+                          <span>
+                            Assigned:{' '}
+                            {new Date(assignedDate).toLocaleDateString()}
+                          </span>
+                          <span>•</span>
+                          <span>
+                            Due: {new Date(dueDate).toLocaleDateString()}
+                          </span>
+                        </div>
+                      )}
 
                       <div className="flex items-center space-x-4">
-                        <Badge>{status}</Badge>
+                        <Badge
+                          variant={'outline'}
+                          className={cn(
+                            'lowercase',
+                            getAssignmentStatusColor(status)
+                          )}
+                        >
+                          invitation {status}
+                        </Badge>
                         {!isPublished && (
                           <Badge
                             className={getUrgencyColor(daysRemaining, status)}
@@ -142,7 +156,7 @@ export default function ReviewerDashboard() {
               );
             })}
 
-            {!isLoading && filteredAssignments?.length === 0 && (
+            {!isPending && filteredAssignments?.length === 0 && (
               <p className="text-sm text-gray-500">
                 You have no active assignments.
               </p>

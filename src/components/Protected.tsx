@@ -9,7 +9,7 @@ interface ProtectedProps {
 
 const ROLE_ROUTES: Record<USER_ROLE, string> = {
   NORMAL_USER: '/submissions',
-  REVIEWER: '/reviewer',
+  REVIEWER: '/reviewer/assignments',
   CHIEF_EDITOR: '/editor/dashboard',
   ADMIN: '/editor',
   ASSOCIATE_EDITOR: '/associate-editor/assigned',

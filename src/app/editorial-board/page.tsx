@@ -2,25 +2,14 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { ExternalLink, Mail, User } from 'lucide-react';
+import { ExternalLink, User } from 'lucide-react';
 import Header from '@/components/landingPage/header';
 import Footer from '@/components/landingPage/footer';
 import { db } from '@/db/db';
-import { eq, or } from 'drizzle-orm';
+import { and, eq, or } from 'drizzle-orm';
 import { users } from '@/db/schema';
 import LeftSideBar from '@/components/landingPage/leftSideBar';
 import { roleMap } from '@/lib/utils';
-
-const getRoleBadgeColor = (role: string) => {
-  switch (role) {
-    case 'CHIEF_EDITOR':
-      return 'bg-blue-100 text-blue-800 border-blue-200';
-    case 'ASSOCIATE_EDITOR':
-      return 'bg-purple-100 text-purple-800 border-purple-200';
-    default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
-  }
-};
 
 export default async function EditorialBoardPage() {
   const foundEditors = await db.query.users.findMany({
@@ -35,9 +24,9 @@ export default async function EditorialBoardPage() {
       bio: true,
       affiliation: true,
     },
-    where: or(
-      eq(users.role, 'CHIEF_EDITOR'),
-      eq(users.role, 'ASSOCIATE_EDITOR')
+    where: and(
+      or(eq(users.role, 'CHIEF_EDITOR'), eq(users.role, 'ASSOCIATE_EDITOR')),
+      eq(users.isPartOfEditorialBoard, true)
     ),
   });
 
@@ -49,7 +38,10 @@ export default async function EditorialBoardPage() {
       bio: true,
       affiliation: true,
     },
-    where: eq(users.role, 'REVIEWER'),
+    where: and(
+      eq(users.role, 'REVIEWER'),
+      eq(users.isPartOfEditorialBoard, true)
+    ),
   });
 
   // Separate members by role

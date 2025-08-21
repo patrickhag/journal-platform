@@ -362,14 +362,14 @@ export default function Register() {
                           >
                             I agree to the{' '}
                             <Link
-                              href="/terms"
+                              href="/manuals#termsNconditions"
                               className="text-gray-800 hover:underline"
                             >
                               Terms and Conditions
                             </Link>{' '}
                             and{' '}
                             <Link
-                              href="/privacy"
+                              href="/manuals#policies"
                               className="text-gray-800 hover:underline"
                             >
                               Privacy Policy

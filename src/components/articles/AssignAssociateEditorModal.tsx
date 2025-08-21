@@ -33,6 +33,7 @@ export default function AssignEditorModal({
 }: AssignEditorModalProps) {
   const [selectedEditorId, setSelectedEditorId] = useState<string>('');
   const { data: availableEditors } = useGetEditors();
+  console.log('availableEditors:', availableEditors);
   const { mutate, isPending } = useAssignEditor();
 
   const selectedEditor = availableEditors?.find(

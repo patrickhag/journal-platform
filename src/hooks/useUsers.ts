@@ -1,4 +1,5 @@
 import { TUsers } from '@/db/schema';
+import { TReviewers, TUserInfo } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
@@ -8,6 +9,16 @@ export const useGetUsers = () => {
     queryKey: ['users'],
     queryFn: async () => {
       const { data } = await axios.get(`/api/users`);
+      return data;
+    },
+  });
+};
+
+export const useGetUserInfo = (userId: string) => {
+  return useQuery({
+    queryKey: ['user', userId],
+    queryFn: async () => {
+      const { data } = await axios.get<TUserInfo>(`/api/users/user/${userId}`);
       return data;
     },
   });
@@ -27,7 +38,7 @@ export const useGetReviewers = () => {
   return useQuery({
     queryKey: ['users'],
     queryFn: async () => {
-      const { data } = await axios.get<TUsers[]>(`/api/reviewers/`);
+      const { data } = await axios.get<TReviewers>(`/api/reviewers/`);
       return data || [];
     },
   });
@@ -129,28 +140,25 @@ export const useAssignEditor = () => {
   });
 };
 
-export const useDeactivateUser = () => {
+type DeactivateUser = {
+  isActive?: boolean;
+  role?: string;
+};
+
+export const useDeactivateUser = (userId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      data,
-    }: {
-      data: {
-        isActive?: boolean;
-        userId?: string;
-        role?: string;
-      };
-    }) => {
+    mutationFn: async (data: DeactivateUser) => {
       const response = await axios.patch<{ message: string }>(
-        `/api/users`,
+        `/api/users/user/${userId}`,
         data
       );
       return response;
     },
     onSuccess: ({ data }) => {
       if (data) {
-        queryClient.invalidateQueries({ queryKey: ['users'] });
+        queryClient.invalidateQueries({ queryKey: ['user', userId] });
         toast.info(data.message);
       }
     },
@@ -160,6 +168,27 @@ export const useDeactivateUser = () => {
         : error.message;
 
       toast.error(message || 'Failed to update user');
+    },
+  });
+};
+
+export const useAddToEditorialBoard = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ userIds }: { userIds?: string[] }) => {
+      return axios.post<{ message: string }>(`/api/users/`, {
+        userIds,
+      });
+    },
+    onSuccess: ({ data }) => {
+      toast.info(data.message);
+      queryClient.invalidateQueries({ queryKey: ['editorial-board'] });
+    },
+    onError: (error: Error | AxiosError) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data.message
+        : error.message;
+      toast.error(message || 'Failed to pick article(s)');
     },
   });
 };

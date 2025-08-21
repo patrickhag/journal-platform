@@ -23,7 +23,7 @@ import { Label } from './ui/label';
 export default function DashboardPannel() {
   const { data: session } = useSession();
   const currentUser = session?.user;
-  console.log('currentUser:', currentUser);
+
   const userId = currentUser?.id as string;
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
@@ -42,12 +42,22 @@ export default function DashboardPannel() {
         <h2 className="text-2xl text-[#141A26] font-bold">
           Welcome back, {currentUser?.name}
         </h2>
-        <p className="text-muted-foreground">
-          You&apos;ve got{' '}
-          <span>
-            {articles?.length} submission{articles?.length === 1 ? '' : 's'}
-          </span>
-        </p>
+        {!isPending && (
+          <p className="text-muted-foreground">
+            {articles && articles.length > 0 ? (
+              <>
+                You’ve got{' '}
+                <span className="font-semibold">
+                  {articles.length} manuscript
+                  {articles.length === 1 ? '' : 's'}
+                </span>
+                .
+              </>
+            ) : (
+              'You haven’t submitted any manuscripts yet.'
+            )}
+          </p>
+        )}
       </div>
 
       {/* Controls */}
@@ -112,9 +122,6 @@ export default function DashboardPannel() {
             <div className="bg-card border border-border rounded-xl p-8 max-w-md mx-auto">
               <p className="text-muted-foreground text-lg">
                 No manuscript(s) found.
-              </p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Try adjusting your search or filter criteria.
               </p>
             </div>
           </div>

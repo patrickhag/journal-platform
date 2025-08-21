@@ -18,6 +18,7 @@ export async function authenticate(
       redirect: false,
       email: formData.email,
       password: formData.password,
+      role: formData.role,
     });
   } catch (error) {
     if (error instanceof AuthError) {
@@ -30,11 +31,8 @@ export async function authenticate(
     }
     return 'An unexpected error occurred. Please try again.';
   }
-  const user = await db.query.users.findFirst({
-    where: eq(users.email, formData?.email as string),
-  });
-
-  switch (user?.role) {
+  const role = formData.role;
+  switch (role) {
     case 'NORMAL_USER':
       return redirect('/submissions', RedirectType.replace);
     case 'ASSOCIATE_EDITOR':

@@ -23,6 +23,7 @@ import { authenticate } from '@/actions/authenticate';
 import { useSearchParams } from 'next/navigation';
 import Loader from '@/components/Loader';
 import Link from 'next/link';
+import RoleSelector from '@/components/RoleSelector';
 
 export default function LoginComponent() {
   const [showPassword, setShowPassword] = useState(false);
@@ -85,6 +86,20 @@ export default function LoginComponent() {
         <CardContent className="space-y-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <RoleSelector
+                      selectedRole={field.value}
+                      onRoleSelect={field.onChange}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="email"

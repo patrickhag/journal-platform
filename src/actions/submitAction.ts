@@ -10,6 +10,7 @@ import {
   finalSubmissions,
   metadata,
   reviewers,
+  users,
 } from '@/db/schema';
 import {
   notifyContibutor,
@@ -27,11 +28,12 @@ import {
 import type { contributorFormSchema } from '@/schemas/upload';
 import { RedirectType, redirect } from 'next/navigation';
 import type * as z from 'zod';
+import { eq } from 'drizzle-orm';
 
 export async function submitAction(_: unknown, formData: FormData) {
   const data = Object.fromEntries(formData.entries());
   const result = finalSubmissionSchema.safeParse(data);
-  console.log('data', data);
+
   if (!result.success) {
     console.error(result.error.errors);
     return;
@@ -64,10 +66,13 @@ export async function submitAction(_: unknown, formData: FormData) {
       return { message: 'Unauthorized' };
     }
 
-    const authorEmail = session.user.email;
-    await db.transaction(async (trx) => {
-      const userId = session?.user?.id || '';
+    const userId = session?.user?.id;
+    const userEmail = await db
+      .select({ email: users.email })
+      .from(users)
+      .where(eq(users.id, userId));
 
+    await db.transaction(async (trx) => {
       const articleSubmissionIds = await trx
         .insert(articleSubmissions)
         .values({
@@ -113,22 +118,21 @@ export async function submitAction(_: unknown, formData: FormData) {
         founders: result.data.founders,
         ethicalReference: result.data.ethicalReference,
       });
-
-      // notify admin email
-      await notifyAdmin({
-        article: metadataValidations.title,
-        authorName: session.user.name || session.user.email || 'Unknown Author',
-        subject: 'New Article Submission',
-        articleId: articleSubmissionIds[0].id,
-        participant: 'AUTHOR',
-      });
     });
+    // notify editor-in-chief email
+    // await notifyAdmin({
+    //   article: metadataValidations.title,
+    //   authorName: session.user.name,
+    //   subject: 'New Article Submission',
+    //   articleId: articleSubmissionIds[0].id,
+    //   participant: 'AUTHOR',
+    // });
 
     // thank author email
     await thankAuthorAboutSubmission({
       articleTitle: metadataValidations.title,
       authorNames: session.user.name,
-      authorEmail: session.user.email,
+      authorEmail: userEmail[0]?.email as string,
     });
 
     for (const contributor of contributorValidations) {

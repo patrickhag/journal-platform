@@ -73,65 +73,72 @@ const ManageAds = () => {
               {Array.isArray(ads) && ads.length <= 0 && (
                 <p className="p-4">No adverts found.</p>
               )}
-
-              {ads?.map((ad) => (
-                <TableRow key={ad.id}>
-                  <TableCell>
-                    <img
-                      src={ad.imageUrl}
-                      alt={ad.title}
-                      className="w-12 h-12 object-cover rounded"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{ad.title}</div>
-                      <div className="text-sm text-gray-500 truncate max-w-xs">
-                        {ad.linkUrl}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <div>{ad.startDate}</div>
-                      <div className="text-gray-500">to {ad.endDate}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={ad.isActive ? 'default' : 'secondary'}>
-                      {ad.isActive ? 'Active' : 'Inactive'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setEditingAd(ad);
-                          setIsEditDialogOpen(true);
-                        }}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteAd(ad.id)}
-                        className="text-red-600 hover:text-red-700"
-                        disabled={deletingAdId === ad.id}
-                      >
-                        {deletingAdId === ad.id ? (
-                          <Loader />
-                        ) : (
-                          <Trash2 className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
+              {isPending ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-4">
+                    Loading ...
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                ads?.map((ad) => (
+                  <TableRow key={ad.id}>
+                    <TableCell>
+                      <img
+                        src={ad.imageUrl}
+                        alt={ad.title}
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{ad.title}</div>
+                        <div className="text-sm text-gray-500 truncate max-w-xs">
+                          {ad.linkUrl}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        <div>{ad.startDate}</div>
+                        <div className="text-gray-500">to {ad.endDate}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={ad.isActive ? 'default' : 'secondary'}>
+                        {ad.isActive ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setEditingAd(ad);
+                            setIsEditDialogOpen(true);
+                          }}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteAd(ad.id)}
+                          className="text-red-600 hover:text-red-700"
+                          disabled={deletingAdId === ad.id}
+                        >
+                          {deletingAdId === ad.id ? (
+                            <Loader />
+                          ) : (
+                            <Trash2 className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>

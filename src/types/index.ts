@@ -197,7 +197,7 @@ export type TReviewerAssignment = {
       lastName: string;
     };
   };
-};
+}[];
 
 export type TAssociateEditorAssignment = {
   id: string;
@@ -361,3 +361,64 @@ export type TMostViewed = {
     };
   };
 }[];
+
+export type TUserInfo = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  affiliation: string;
+  country: string;
+  role: string;
+  email: string;
+  emailVerified: string | null; // ISO date string or null
+  isActive: boolean;
+  isPartOfEditorialBoard: boolean;
+  password: string;
+  avatar: string;
+  orcid: string;
+  bio: string;
+  expertise: string | null;
+  updatedAt: string | null; // ISO date string or null
+  prefix: string | null;
+  createdAt: string; // ISO date string
+  articles: { id: string }[];
+  publishedArticles: { id: string }[];
+};
+
+export type TReviewers = {
+  role: string;
+  id: string;
+  userId: string;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    affiliation: string;
+    email: string;
+    bio: string;
+    expertise: string;
+    prefix: string;
+  };
+}[];
+
+export type PReview = {
+  id: string;
+  status: string;
+  reviewedAt: string;
+  message: string;
+  fileIds: string[];
+  article: {
+    id: string;
+    user: {
+      firstName: string;
+      lastName: string;
+    };
+    metadata: {
+      title: string;
+      prefix: string;
+    };
+    authorRevisions: {
+      message: string;
+    };
+  };
+};

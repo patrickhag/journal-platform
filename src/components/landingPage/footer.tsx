@@ -1,7 +1,17 @@
 import { FaTwitter, FaLinkedin } from 'react-icons/fa';
-import React from 'react';
+import Link from 'next/link';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { auth } from '@/auth';
+import NewsletterSubscribeForm from './newsletter-subscribe-form';
 
-const Footer = () => {
+const Footer = async () => {
+  const session = await auth();
+  const userEmail = session?.user.email;
+
   return (
     <footer className="text-gray-700">
       <div className="w-[98%] mx-auto border-t my-5 pt-5">
@@ -60,24 +70,30 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-600">
+                <Link href="/editorial-board" className="hover:text-blue-600">
                   Editorial board
-                </a>
+                </Link>
+              </li>
+              <li className="hover:text-blue-600">
+                <Popover>
+                  <PopoverTrigger>Receive our newsletter</PopoverTrigger>
+                  <PopoverContent align="start">
+                    <NewsletterSubscribeForm defaultEmail={userEmail} />
+                  </PopoverContent>
+                </Popover>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-600">
-                  Receive our newsletter
-                </a>
+                <Link href="contact-us" className="hover:text-blue-600">
+                  Contact us
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-600">
-                  Support and contact us
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-blue-600">
+                <Link
+                  href="/contact-us/#feedback"
+                  className="hover:text-blue-600"
+                >
                   Leave feedback
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

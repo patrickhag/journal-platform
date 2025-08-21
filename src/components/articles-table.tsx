@@ -253,7 +253,7 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
   const { mutate: assignIssuesMutation, isPending: isAssigningIssuePending } =
     useAssignIssues();
   const { data: collections } = useGetCollections();
-  console.log('collections:', collections);
+
   const {
     mutate: pickArticlesMutation,
     isPending: isPickArticlesMutationPending,
@@ -343,7 +343,7 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
             </Button>
           </div>
 
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-500 font-semibold">
             Total articles: {table.getFilteredRowModel().rows.length}
           </div>
         </div>

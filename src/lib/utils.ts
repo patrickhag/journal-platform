@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from 'clsx';
+import { redirect } from 'next/navigation';
 import { Dispatch, SetStateAction } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -94,4 +95,19 @@ export const roleMap: Record<string, string> = {
   ASSOCIATE_EDITOR: 'Associate Editor',
   ADMIN: 'Admin',
   REVIEWER: 'Reviewer',
+};
+
+export const getAssignmentStatusColor = (status: string) => {
+  switch (status) {
+    case 'INVITED':
+      return 'bg-blue-100 text-blue-800'; // pending
+    case 'ACCEPTED':
+      return 'bg-green-100 text-green-800'; // confirmed
+    case 'DECLINED':
+      return 'bg-red-100 text-red-800'; // rejected
+    case 'COMPLETED':
+      return 'bg-gray-100 text-gray-800'; // finished
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
 };

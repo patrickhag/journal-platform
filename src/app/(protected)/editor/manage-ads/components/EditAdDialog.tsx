@@ -32,7 +32,7 @@ import { safeParse } from 'zod-urlsearchparams';
 import { filesSchema } from '@/schemas/reviewer';
 import { useSearchParams } from 'next/navigation';
 import { useClearURL } from '@/components/ClearURL';
-import { useCreateAdverts, useEditAd } from '@/hooks/useAds';
+import { useEditAd } from '@/hooks/useAds';
 import Loader from '@/components/Loader';
 import { TAd } from '@/db/schema';
 

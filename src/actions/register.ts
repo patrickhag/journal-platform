@@ -1,6 +1,6 @@
 'use server';
 
-import { db, users } from '@/db/schema';
+import { db, userRoles, users } from '@/db/schema';
 import { registerSchema } from '@/schemas/auth.schema';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
@@ -38,6 +38,10 @@ export async function register(
     const createdUser = await db.insert(users).values(user).returning();
 
     if (createdUser[0].email) {
+      await db
+        .insert(userRoles)
+        .values({ role: 'NORMAL_USER', userId: createdUser[0].id });
+
       return { message: 'Registration successful' };
     }
   } catch (error) {

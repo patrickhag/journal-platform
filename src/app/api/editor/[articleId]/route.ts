@@ -9,7 +9,6 @@ import {
   reviewRevisions,
 } from '@/db/schema';
 import {
-  informChiefEditorAboutAcceptance,
   notifyEditorAboutRevision,
   notifyUser,
   notifyUserAboutEditorDecision,
@@ -70,7 +69,6 @@ export async function POST(
             firstName: true,
             lastName: true,
             email: true,
-            role: true,
           },
         },
         editor: {
@@ -201,7 +199,6 @@ export async function PUT(
             firstName: true,
             lastName: true,
             email: true,
-            role: true,
           },
         },
       },

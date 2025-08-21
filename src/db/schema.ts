@@ -57,10 +57,10 @@ export const users = pgTable('user', {
   lastName: text('lastName'),
   affiliation: text('affiliation'),
   country: varchar('country', { length: 50 }),
-  role: varchar('role', { length: 50 }).notNull().default('NORMAL_USER'),
   email: text('email').unique(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
   isActive: boolean('is_active').default(true),
+  isPartOfEditorialBoard: boolean('isPartOfEditorialBoard').default(false),
   password: text('password'),
   avatar: text('avatar'),
   orcid: text('orcid'),
@@ -69,6 +69,16 @@ export const users = pgTable('user', {
   updatedAt: date('updatedAt'),
   prefix: varchar('prefix', { length: 50 }),
   createdAt: date('createdAt').defaultNow(),
+});
+
+export const userRoles = pgTable('user_roles', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text('user_id')
+    .references(() => users.id)
+    .notNull(),
+  role: varchar('role', { length: 50 }).notNull(),
 });
 
 export const verificationTokens = pgTable(
@@ -325,36 +335,6 @@ export const manuals = pgTable('manuals', {
   copyrightTemplate: text('copyrightTemplate'),
 });
 
-export const editorialBoardMembers = pgTable('editorial_board_members', {
-  id: text('id')
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-
-  fullName: varchar('fullname', { length: 255 }).notNull(),
-
-  affiliation: text('affiliation').notNull(),
-
-  country: varchar('country', { length: 100 }).notNull(),
-
-  role: varchar('role', { length: 100 }).notNull(),
-
-  areasOfExpertise: text('areas_of_expertise'),
-
-  photoUrl: text('photo_url'),
-
-  orcidOrProfileUrl: text('orcid_or_profile_url'),
-
-  isVisible: boolean('is_visible').default(true).notNull(),
-
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-
-  updatedAt: timestamp('updated_at', { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-});
-
 export const editorActions = pgTable('editor_actions', {
   id: text('id')
     .primaryKey()
@@ -507,6 +487,7 @@ export const publishedArticles = pgTable('published_articles', {
     .unique()
     .references(() => articleSubmissions.id, { onDelete: 'cascade' }),
   issueId: text('issue_id').references(() => issues.id),
+  userId: text('user_id').references(() => users.id),
   slug: text('slug').unique().notNull(),
   doi: varchar('doi', { length: 100 }).unique(),
   status: varchar('status', { length: 20 }),
@@ -527,6 +508,11 @@ export const publishedArticlesRelations = relations(
     issue: one(issues, {
       fields: [publishedArticles.issueId],
       references: [issues.id],
+    }),
+    user: one(users, {
+      fields: [publishedArticles.userId],
+      references: [users.id],
+      relationName: 'publishedArticles',
     }),
   })
 );
@@ -565,6 +551,36 @@ export const metricsRelations = relations(metrics, ({ one }) => ({
   }),
 }));
 
+export const newsletterSubscribers = pgTable('newsletter_subscribers', {
+  email: text('email').primaryKey(),
+  subscribedAt: timestamp('subscribed_at').default(sql`NOW()`),
+});
+
+export const contacts = pgTable('contacts', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  firstName: varchar('first_name', { length: 100 }).notNull(),
+  lastName: varchar('last_name', { length: 100 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull(),
+  institution: varchar('institution', { length: 255 }), // optional
+  subject: varchar('subject', { length: 255 }).notNull(),
+  message: text('message').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const feedbacks = pgTable('feedbacks', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: varchar('name', { length: 200 }),
+  email: varchar('email', { length: 255 }),
+  feedbackType: varchar('feedback_type', { length: 100 }).notNull(),
+  rating: varchar('rating', { length: 5 }),
+  feedbackMessage: text('feedback_message').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 /*** RELATIONS ***/
 
 export const articleSubmissionsRelations = relations(
@@ -573,6 +589,7 @@ export const articleSubmissionsRelations = relations(
     user: one(users, {
       fields: [articleSubmissions.userId],
       references: [users.id],
+      relationName: 'articleSubmissions',
     }),
     editor: one(editors, {
       fields: [articleSubmissions.editorId],
@@ -670,8 +687,22 @@ export const usersRelations = relations(users, ({ many }) => ({
   reviews: many(reviews, {
     relationName: 'userReviews',
   }),
+  roles: many(userRoles, {
+    relationName: 'roles',
+  }),
   reviewAssignments: many(reviewAssignments, {
     relationName: 'userReviewAssignments',
+  }),
+  publishedArticles: many(publishedArticles, {
+    relationName: 'publishedArticles',
+  }),
+}));
+
+export const userRolesRelations = relations(userRoles, ({ one }) => ({
+  user: one(users, {
+    fields: [userRoles.userId],
+    references: [users.id],
+    relationName: 'roles',
   }),
 }));
 
@@ -704,6 +735,7 @@ export const authorRevisionsRelations = relations(
     articleSubmissions: one(articleSubmissions, {
       fields: [authorRevisions.articleId],
       references: [articleSubmissions.id],
+      relationName: 'authorRevisions',
     }),
   })
 );
@@ -721,6 +753,8 @@ export type TNotifications = typeof notifications.$inferSelect;
 export type Notifications = typeof notifications.$inferInsert;
 export type Issues = typeof issues.$inferInsert;
 export type TManuals = typeof manuals.$inferInsert;
-export type TAds = typeof ads.$inferSelect;
+export type TAd = typeof ads.$inferSelect;
 export type TNewAd = typeof ads.$inferInsert;
 export type TCollections = typeof collections.$inferSelect;
+export type TContacts = typeof contacts.$inferSelect;
+export type TFeedbacks = typeof feedbacks.$inferSelect;

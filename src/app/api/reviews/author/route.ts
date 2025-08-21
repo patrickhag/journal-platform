@@ -64,11 +64,26 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: Request) {
   try {
-    const { articleId, message, reviewerEmail, reviewerName, articleTitle } =
-      await req.json();
+    const {
+      articleId,
+      message,
+      reviewerEmail,
+      reviewerName,
+      articleTitle,
+      reviewerId,
+    } = await req.json();
 
     const session = await auth();
     const authorName = session?.user?.name;
+
+    const insertInfo = {
+      articleId,
+      authorId: session?.user?.id,
+      message,
+      reviewerId,
+    };
+
+    await db.insert(authorRevisions).values(insertInfo);
 
     // send email to reviewer
     await authorInformReviewer({

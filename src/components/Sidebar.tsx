@@ -12,7 +12,7 @@ import {
   FileCog,
   Files,
   FileText,
-  History,
+  Mail,
   MessageSquare,
   MonitorSpeaker,
   Newspaper,
@@ -73,16 +73,29 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             label: 'Published Manuscripts',
             icon: ClipboardCheck,
           },
+          {
+            href: '/editor/inquiries',
+            label: 'Manage Inquiries',
+            icon: Mail,
+          },
         ];
       case 'reviewer':
         return [
-          { href: '/reviewer', label: 'My Assignments', icon: CheckSquare },
           {
-            href: '/reviewer/author-revisions',
-            label: 'Completed Reviews',
+            href: '/reviewer/assignments',
+            label: 'My Assignments',
+            icon: CheckSquare,
+          },
+          {
+            href: '/reviewer/revisions',
+            label: 'My Reviews',
             icon: FileText,
           },
-          { href: '/deadlines', label: 'Upcoming Deadlines', icon: Clock },
+          {
+            href: '/reviewer/deadlines',
+            label: 'Upcoming Deadlines',
+            icon: Clock,
+          },
         ];
       case 'associate_editor':
         return [
@@ -95,11 +108,6 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             href: '/associate-editor/reviewers',
             label: 'Manage Reviewers',
             icon: Users,
-          },
-          {
-            href: '/editor/history',
-            label: 'Editorial history',
-            icon: History,
           },
           {
             href: '/associate-editor/publish',
@@ -118,7 +126,8 @@ const Sidebar = ({ userRole }: SidebarProps) => {
     <div className="h-full bg-gray-50 border-r p-4">
       <nav className="space-y-2">
         {menuItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive =
+            pathname === item.href || pathname.startsWith(`${item.href}/`);
           const Icon = item.icon;
 
           return (

@@ -43,7 +43,7 @@ export default function AssociateEditorDashboard() {
               (associateEditorsAssigments ?? []).length > 0 &&
               associateEditorsAssigments?.map((assignment) =>
                 assignment.articleSubmissions.map((submission, index) => {
-                  const authorName = `${submission.metadata?.prefix ?? ''} ${submission.user.firstName} ${submission.user.lastName}`;
+                  const authorName = `${submission.metadata?.prefix ?? ''}. ${submission.user.firstName} ${submission.user.lastName}`;
                   return (
                     <div
                       key={`${assignment.id}-${index}`}
@@ -61,14 +61,14 @@ export default function AssociateEditorDashboard() {
 
                           <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
                             <span>
-                              Assigned on:{' '}
+                              Assigned:{' '}
                               {new Date(
                                 assignment.assignedAt
                               ).toLocaleDateString()}
                             </span>
                             <span>•</span>
                             <span>
-                              Submitted on:{' '}
+                              Submitted:{' '}
                               {new Date(
                                 submission.createdAt
                               ).toLocaleDateString()}

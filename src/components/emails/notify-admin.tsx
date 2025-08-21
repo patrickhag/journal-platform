@@ -43,7 +43,7 @@ export const NotifyAdminEmail = ({
             <Text style={text}>
               <strong>Article Title:</strong>{' '}
               <Link
-                href={`${process.env.NEXT_PUBLIC_URL}/articles/${articleId}`}
+                href={`${process.env.NEXT_PUBLIC_URL}/reviews/articles/${articleId}`}
               >
                 {article}
               </Link>

@@ -133,49 +133,53 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
         />
 
         {/* reviewers */}
-        <Card className="my-3">
-          <CardHeader>
-            <CardTitle className="text-[#1a237e]">Reviewers</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex justify-between">
-              {reviewrs.length === 0 && (
-                <p className="text-sm">Author has not proposed any reviewer.</p>
-              )}
-              <AssignReviewerLinkPermission
-                requiredPermissions={['ASSIGN_REVIEWERS']}
-                role={
-                  currentUserRole as
-                    | 'NORMAL_USER'
-                    | 'CHIEF_EDITOR'
-                    | 'ADMIN'
-                    | 'REVIEWER'
-                }
-                fallback={<></>}
-              />
-              <AddReviewersLinkPermission
-                requiredPermissions={['INVITE_REVIEWERS']}
-                role={
-                  currentUserRole as
-                    | 'NORMAL_USER'
-                    | 'CHIEF_EDITOR'
-                    | 'ADMIN'
-                    | 'REVIEWER'
-                }
-                fallback={<></>}
-              />
-            </div>
-            <Separator />
-            {reviewrs.map((r, index) => (
-              <Reviewer
-                reviewer={r}
-                index={index}
-                key={r.id}
-                articleId={article?.id as string}
-              />
-            ))}
-          </CardContent>
-        </Card>
+        {session?.user.role !== 'REVIEWER' && (
+          <Card className="my-3">
+            <CardHeader>
+              <CardTitle className="text-[#1a237e]">Reviewers</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex justify-between">
+                {reviewrs.length === 0 && (
+                  <p className="text-sm">
+                    Author has not proposed any reviewer.
+                  </p>
+                )}
+                <AssignReviewerLinkPermission
+                  requiredPermissions={['ASSIGN_REVIEWERS']}
+                  role={
+                    currentUserRole as
+                      | 'NORMAL_USER'
+                      | 'CHIEF_EDITOR'
+                      | 'ADMIN'
+                      | 'REVIEWER'
+                  }
+                  fallback={<></>}
+                />
+                <AddReviewersLinkPermission
+                  requiredPermissions={['INVITE_REVIEWERS']}
+                  role={
+                    currentUserRole as
+                      | 'NORMAL_USER'
+                      | 'CHIEF_EDITOR'
+                      | 'ADMIN'
+                      | 'REVIEWER'
+                  }
+                  fallback={<></>}
+                />
+              </div>
+              <Separator />
+              {reviewrs.map((r, index) => (
+                <Reviewer
+                  reviewer={r}
+                  index={index}
+                  key={r.id}
+                  articleId={article?.id as string}
+                />
+              ))}
+            </CardContent>
+          </Card>
+        )}
         {article?.articleStatus !== 'PUBLISHED' && (
           <AcceptOrRejectComponent
             role={

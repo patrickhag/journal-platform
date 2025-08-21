@@ -44,7 +44,9 @@ async function Files({
               <div className="flex items-center">
                 <File className="h-5 w-5 text-muted-foreground mr-2 text-blue-500" />
                 <div>
-                  <p className="font-medium">{file.originalName}</p>
+                  <p className="font-medium line-clamp-1">
+                    {file.originalName}
+                  </p>
                   <p className="text-sm text-muted-foreground my-1">
                     {file.fileType || 'Revised Manuscript'}
                   </p>

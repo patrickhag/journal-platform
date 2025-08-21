@@ -1,5 +1,3 @@
-'use client';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,17 +13,27 @@ import {
   CardHeader,
   CardTitle,
 } from './ui/card';
-import { useSession } from 'next-auth/react';
-import { useGetNotifications, useMarkAsReadAll } from '@/hooks/useSettings';
-import Loader from './Loader';
+import { auth } from '@/auth';
+import { db, notifications } from '@/db/schema';
+import { and, eq } from 'drizzle-orm';
+import { markAllAsRead } from '@/actions/markAllAsRead';
+import { headers } from 'next/headers';
+import { SubmitButton } from './MarkAsReadButton';
 
-export default function NotificationsModal() {
-  const { data } = useSession();
-  const userId = data?.user.id;
-  const { data: notificationsData } = useGetNotifications(
-    data?.user.id as string
-  );
-  const { mutate, isPending } = useMarkAsReadAll();
+export default async function NotificationsModal() {
+  const session = await auth();
+  const notificationsData = await db
+    .select()
+    .from(notifications)
+    .where(
+      and(
+        eq(notifications.userId, session?.user?.id || ''),
+        eq(notifications.isRead, false)
+      )
+    );
+
+  const hdrs = await headers();
+  const currentPath = hdrs.get('x-pathname') ?? '/';
 
   return (
     <DropdownMenu>
@@ -68,13 +76,10 @@ export default function NotificationsModal() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button
-                className="w-full"
-                disabled={isPending}
-                onClick={() => mutate(userId as string)}
-              >
-                {isPending ? <Loader text="Marking..." /> : 'Mark all as read'}
-              </Button>
+              <MarkNotificationAsReadButton
+                id={session?.user?.id as string}
+                pathname={currentPath}
+              />
             </CardFooter>
           </Card>
         </DropdownMenuContent>
@@ -82,3 +87,19 @@ export default function NotificationsModal() {
     </DropdownMenu>
   );
 }
+
+const MarkNotificationAsReadButton = ({
+  id,
+  pathname,
+}: {
+  id: string;
+  pathname: string;
+}) => {
+  return (
+    <form action={markAllAsRead}>
+      <input type="hidden" name="id" value={id} />
+      <input type="hidden" name="pathname" value={pathname} />
+      <SubmitButton />
+    </form>
+  );
+};

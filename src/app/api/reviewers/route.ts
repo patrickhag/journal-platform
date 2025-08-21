@@ -1,9 +1,14 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
-import { articleSubmissions, reviewAssignments, users } from '@/db/schema';
+import {
+  articleSubmissions,
+  reviewAssignments,
+  userRoles,
+  users,
+} from '@/db/schema';
 import { sendInvitation } from '@/lib/emailTransporter';
 import { format } from 'date-fns';
-import { and, ConsoleLogWriter, eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -18,43 +23,19 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const reviewers = await db.query.users.findMany({
-      where: eq(users.role, 'REVIEWER'),
-      columns: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        affiliation: true,
-        expertise: true,
-        prefix: true,
-        bio: true,
-      },
+    const reviewers = await db.query.userRoles.findMany({
+      where: eq(userRoles.role, 'REVIEWER'),
       with: {
-        reviews: {
+        user: {
           columns: {
             id: true,
-          },
-        },
-        reviewAssignments: {
-          columns: {
-            id: true,
-          },
-          with: {
-            article: {
-              columns: {
-                id: true,
-                createdAt: true,
-                articleStatus: true,
-              },
-              with: {
-                metadata: {
-                  columns: {
-                    title: true,
-                  },
-                },
-              },
-            },
+            firstName: true,
+            lastName: true,
+            email: true,
+            affiliation: true,
+            expertise: true,
+            prefix: true,
+            bio: true,
           },
         },
       },

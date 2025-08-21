@@ -1,5 +1,3 @@
-'use client';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,11 +8,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { UserRound } from 'lucide-react';
 import { Session } from 'next-auth';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { signOut } from 'next-auth/react';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 export default function HeaderDropdown({
   names,
@@ -23,23 +21,24 @@ export default function HeaderDropdown({
   names?: string;
   session: Session | null;
 }) {
-  const router = useRouter();
-
   const handleDashboardRedirect = () => {
     const role = session?.user?.role;
 
     switch (role) {
       case 'NORMAL_USER':
-        router.replace('/submissions');
+        redirect('/submissions');
         break;
-      case 'ASSOCIATED_EDITOR':
-        router.replace('/associate-editor/assigned');
+      case 'ASSOCIATE_EDITOR':
+        redirect('/associate-editor/assigned');
         break;
       case 'CHIEF_EDITOR':
-        router.replace('/editor/dashboard');
+        redirect('/editor/dashboard');
+        break;
+      case 'REVIEWER':
+        redirect('/reviewer/assignments');
         break;
       default:
-        router.replace('/'); // fallback
+        redirect('/');
     }
   };
 
@@ -61,9 +60,9 @@ export default function HeaderDropdown({
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleDashboardRedirect}>
-              Dashboard
+              My Dashboard
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => router.replace('/profile')}>
+            <DropdownMenuItem onClick={() => redirect('/profile')}>
               Edit Profile
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -78,7 +77,7 @@ export default function HeaderDropdown({
       {!session?.user && (
         <UserRound
           size={20}
-          onClick={() => router.replace('/login')}
+          onClick={() => redirect('/login')}
           className="cursor-pointer"
         />
       )}

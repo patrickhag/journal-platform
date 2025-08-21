@@ -101,11 +101,6 @@ const LeftSideBar = () => {
                 Collections
               </Link>
             </li>
-            <li>
-              <a href="#" className="hover:text-blue-600">
-                Contact us
-              </a>
-            </li>
           </ul>
         </div>
 

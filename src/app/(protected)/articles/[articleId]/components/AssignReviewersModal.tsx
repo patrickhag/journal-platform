@@ -44,8 +44,6 @@ export default function AssignRevieweModal() {
     (Reviewer) => Reviewer.id === selectedReviewerId
   );
 
-  console.log('selectedReviewerId>>>', selectedReviewerId);
-
   const handleAssign = () => {
     if (!date) {
       setWarning('Please select a due date before assigning');
@@ -55,12 +53,11 @@ export default function AssignRevieweModal() {
     if (selectedReviewer) {
       const data = {
         articleId: articleId as string,
-        userId: selectedReviewer.id,
-        reviewerName: `${selectedReviewer.firstName} ${selectedReviewer.lastName}`,
-        reviewerEmail: selectedReviewer.email as string,
+        userId: selectedReviewer.user.id,
+        reviewerName: `${selectedReviewer.user.firstName} ${selectedReviewer.user.lastName}`,
+        reviewerEmail: selectedReviewer.user.email as string,
         date,
       };
-
       mutate(data, {
         onSettled: () => {
           setOpen(false);
@@ -111,14 +108,14 @@ export default function AssignRevieweModal() {
                         defaultValue=""
                       >
                         {selectedReviewer
-                          ? `${selectedReviewer.firstName} ${selectedReviewer.lastName}`
+                          ? `${selectedReviewer.user.firstName} ${selectedReviewer.user.lastName}`
                           : null}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {availableReviwers?.map((reviewer) => (
                         <SelectItem key={reviewer.id} value={reviewer.id}>
-                          {reviewer.firstName} {reviewer.lastName}
+                          {reviewer.user.firstName} {reviewer.user.lastName}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -134,19 +131,20 @@ export default function AssignRevieweModal() {
                       </div>
                       <div className="space-y-1 text-sm">
                         <p>
-                          <strong>Name:</strong> {selectedReviewer.firstName}{' '}
-                          {selectedReviewer.lastName}
+                          <strong>Name:</strong>{' '}
+                          {selectedReviewer.user.firstName}{' '}
+                          {selectedReviewer.user.lastName}
                         </p>
                         <p>
-                          <strong>Email:</strong> {selectedReviewer.email}
+                          <strong>Email:</strong> {selectedReviewer.user.email}
                         </p>
                         <p>
                           <strong>Affiliation:</strong>{' '}
-                          {selectedReviewer.affiliation}
+                          {selectedReviewer.user.affiliation}
                         </p>
                         <p>
                           <strong>Bio:</strong>{' '}
-                          {selectedReviewer.bio?.slice(0, 120)}...
+                          {selectedReviewer.user.bio?.slice(0, 120)}...
                         </p>
                       </div>
                     </div>

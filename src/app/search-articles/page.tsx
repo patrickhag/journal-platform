@@ -54,7 +54,7 @@ const Search = () => {
             Search Results
           </h2>
           {searchQuery.trim() === '' && (
-            <p className="text-muted-foreground italic">
+            <p className="text-muted-foreground italic my-3">
               Search results will appear here.
             </p>
           )}

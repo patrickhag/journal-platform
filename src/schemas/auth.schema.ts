@@ -17,6 +17,7 @@ export const loginSchema = z.object({
           'Must include uppercase, lowercase, number, and special character',
       }
     ),
+  role: z.string().min(3, { message: 'Select Role is required' }),
 });
 
 export const forgotPasswordSchema = z.object({
@@ -38,7 +39,7 @@ export const forgotPasswordSchema = z.object({
 
 export const registerSchema = z
   .object({
-    affiliation: z.string().min(5, { message: 'Affiliation is required' }),
+    affiliation: z.string().min(2, { message: 'Affiliation is required' }),
     firstName: z
       .string()
       .min(2, { message: 'first name are required' })

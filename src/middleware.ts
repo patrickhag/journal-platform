@@ -12,8 +12,11 @@ const { auth } = NextAuth(authOptions);
 
 export default auth((req) => {
   const { nextUrl } = req;
+  const { pathname } = nextUrl;
   const isLoggedIn = !!req.auth;
-  const pathname = nextUrl.pathname;
+
+  const headers = new Headers(req.headers);
+  headers.set('x-pathname', pathname);
 
   const isApiAuthRoute = apiAuthPrefix.some((prefix) => {
     const dynamicRoute = prefix.replace(/\[.*?\]/g, '[^/]+');
@@ -41,6 +44,7 @@ export default auth((req) => {
       '/articles/issues',
       '/collections',
       '/search-articles',
+      '/contact-us',
     ].some((prefix) => pathname.startsWith(prefix));
 
   // Handle auth routes
@@ -57,7 +61,7 @@ export default auth((req) => {
     return NextResponse.redirect(loginUrl);
   }
 
-  return NextResponse.next();
+  return NextResponse.next({ request: { headers } });
 });
 
 export const config = {

@@ -1,27 +1,41 @@
 'use client';
 
-import { StatusBadge } from '@/components/status-badge';
-import TableData from '@/components/Table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Users } from '@/db/schema';
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { ArrowUpDown, Ellipsis, Eye, User, Shield } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { DeactivateUserDialog } from './DeactivateAccountModal';
-import { useDeactivateUser } from '@/hooks/useUsers';
+import { ArrowUpDown, Eye } from 'lucide-react';
+import { TableData } from '@/components/Table';
+import { useRouter } from 'next/navigation';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { roleMap } from '@/lib/utils';
 
 const columns: ColumnDef<Users>[] = [
+  {
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+        className="border-2 border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value: any) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+        className="border-2 border-gray-300 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: 'avatar',
     header: 'Picture',
@@ -119,7 +133,7 @@ const columns: ColumnDef<Users>[] = [
     ),
   },
   {
-    accessorKey: 'joinedOn',
+    accessorKey: 'createdAt',
     header: ({ column }) => {
       return (
         <div
@@ -152,7 +166,11 @@ const columns: ColumnDef<Users>[] = [
   {
     accessorKey: 'role',
     header: 'Role',
-    cell: ({ row }) => <StatusBadge status={row.getValue('role')} />,
+    cell: ({ row }) => (
+      <Badge variant={'secondary'}>
+        {roleMap[row.getValue('role') as string]}
+      </Badge>
+    ),
   },
   {
     header: 'Actions',
@@ -161,89 +179,19 @@ const columns: ColumnDef<Users>[] = [
 ];
 
 const ActionsButton = ({ row }: { row: Row<Users> }) => {
-  const [openDeactivateAccountDialog, setOpenDeactivateAccountDialog] =
-    useState(false);
-  const [allowDeactivating, setAllowDeactivating] = useState(false);
-  const [selectedRole, setSelectedRole] = useState('');
-
-  const handleDeactivateAccount = () => {
-    setOpenDeactivateAccountDialog(true);
-  };
-
-  const { mutate, isPending } = useDeactivateUser();
-  const roles = ['ASSOCIATE_EDITOR', 'REVIEWER', 'NORMAL_USER'];
-
-  const handleChangeRole = (role: string) => {
-    setSelectedRole(role);
-  };
-
-  useEffect(() => {
-    if (allowDeactivating || selectedRole) {
-      const data = {
-        isActive: allowDeactivating,
-        userId: row.original.id as string,
-        role: selectedRole,
-      };
-      mutate({ data });
-    }
-  }, [allowDeactivating, selectedRole]);
+  const router = useRouter();
 
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="p-3 hover:bg-gray-100 transition-colors"
-          >
-            <Ellipsis className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-48">
-          <DropdownMenuItem className="hover:bg-blue-50 transition-colors">
-            <Eye className="mr-2 h-4 w-4 text-blue-600" />
-            View user
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={handleDeactivateAccount}
-            className="hover:bg-red-50 transition-colors"
-          >
-            <User className="mr-2 h-4 w-4 text-red-600" />
-            {`${row.original.isActive ? 'Deactivate ' : 'Activate'} account`}
-          </DropdownMenuItem>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger className="hover:bg-green-50 transition-colors">
-              <Shield className="mr-2 h-4 w-4 text-green-600" />
-              Change role
-            </DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                {roles.map((role) => (
-                  <DropdownMenuItem
-                    key={role}
-                    onClick={() => handleChangeRole(role)}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
-                    {role
-                      .replace('_', ' ')
-                      .toLowerCase()
-                      .replace(/\b\w/g, (l) => l.toUpperCase())}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      {openDeactivateAccountDialog && (
-        <DeactivateUserDialog
-          open={openDeactivateAccountDialog}
-          onOpenChange={setOpenDeactivateAccountDialog}
-          username={row.original.lastName as string}
-          setAllowDeactivating={setAllowDeactivating}
-          isDisablingPending={isPending}
-        />
-      )}
+      <Button
+        variant="outline"
+        size="sm"
+        className="hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-colors"
+        onClick={() => router.push('/editor/users/' + String(row.original.id))}
+      >
+        <Eye className="h-4 w-4" />
+        View
+      </Button>
     </>
   );
 };

@@ -1,19 +1,17 @@
-'use client';
-
 import Link from 'next/link';
 import Image from 'next/image';
 import HeaderModal from './HeaderModal';
 import NotificationsModal from './NotificationsModal';
 import { Badge } from './ui/badge';
-import { useSession } from 'next-auth/react';
 import { roleMap } from '@/lib/utils';
+import { auth } from '@/auth';
 
-export const HeaderElement = () => {
-  const { data } = useSession();
-  const roleKey = data?.user?.role;
-  const role = roleMap[roleKey as string] || roleKey;
+export const HeaderElement = async () => {
+  const session = await auth();
+  const roleKey = session?.user.role;
+  const role = roleMap[roleKey as string];
 
-  const name = data?.user?.name?.split(' ')?.[1]?.substring(0, 1) as string;
+  const name = session?.user.name?.split(' ')?.[1]?.substring(0, 1) as string;
 
   return (
     <>
