@@ -1,11 +1,4 @@
 import { db } from '@/db/db';
-import {
-  articleSubmissions,
-  issues,
-  metadata,
-  publishedArticles,
-} from '@/db/schema';
-import { and, ilike, gte, lte, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {

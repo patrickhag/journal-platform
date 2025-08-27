@@ -21,7 +21,7 @@ const formatTitle = (key: string) => {
     case 'termsNconditions':
       return 'Terms and conditions';
     default:
-      return key;
+      return null;
   }
 };
 

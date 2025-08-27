@@ -2,7 +2,6 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Users } from '@/db/schema';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { ArrowUpDown, Eye } from 'lucide-react';
 import { TableData } from '@/components/Table';
@@ -10,8 +9,9 @@ import { useRouter } from 'next/navigation';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { roleMap } from '@/lib/utils';
+import { TUser } from '@/types';
 
-const columns: ColumnDef<Users>[] = [
+const columns: ColumnDef<TUser>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -178,7 +178,7 @@ const columns: ColumnDef<Users>[] = [
   },
 ];
 
-const ActionsButton = ({ row }: { row: Row<Users> }) => {
+const ActionsButton = ({ row }: { row: Row<TUser> }) => {
   const router = useRouter();
 
   return (
@@ -187,7 +187,7 @@ const ActionsButton = ({ row }: { row: Row<Users> }) => {
         variant="outline"
         size="sm"
         className="hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-colors"
-        onClick={() => router.push('/editor/users/' + String(row.original.id))}
+        onClick={() => router.push('/users/' + String(row.original.id))}
       >
         <Eye className="h-4 w-4" />
         View
@@ -197,7 +197,7 @@ const ActionsButton = ({ row }: { row: Row<Users> }) => {
 };
 
 interface ArticlesTableProps {
-  data: Users[];
+  data: TUser[];
 }
 
 export const UserTable = ({ data }: ArticlesTableProps) => {

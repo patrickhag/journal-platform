@@ -41,11 +41,17 @@ export async function POST(req: NextRequest) {
     const authors: string[] = [];
 
     for (const userId of userIds) {
-      const foundUser = await db.query.users.findFirst({
+      const foundUser = await db.query.userRoles.findFirst({
         columns: {
           role: true,
-          firstName: true,
-          lastName: true,
+        },
+        with: {
+          user: {
+            columns: {
+              firstName: true,
+              lastName: true,
+            },
+          },
         },
         where: eq(users.id, userId),
       });
@@ -54,7 +60,9 @@ export async function POST(req: NextRequest) {
 
       // Track authors for later
       if (foundUser.role === 'AUTHOR') {
-        authors.push(`${foundUser.firstName} ${foundUser.lastName}`);
+        authors.push(
+          `${foundUser?.user.firstName} ${foundUser?.user.lastName}`
+        );
         continue; // Skip update
       }
 

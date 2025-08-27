@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/dialog';
 import { Search, Eye, Calendar, FileText, File } from 'lucide-react';
 import { useGetAllCompleted } from '@/hooks/useReviews';
+import { getReviewRecommendationColor } from '@/lib/utils';
 
 interface CompletedReview {
   id: string;
@@ -52,21 +53,6 @@ const CompletedReviews = () => {
       comments: r.article.authorRevisions.message ?? 'N/A',
       attachedFile: r.fileIds ?? 'N/A',
     })) ?? [];
-
-  const getRecommendationColor = (recommendation: string) => {
-    switch (recommendation) {
-      case 'Accepted':
-        return 'bg-green-100 text-green-800';
-      case 'Minor Collection':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'Major Collection':
-        return 'bg-orange-100 text-orange-800';
-      case 'Rejected':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
 
   const filteredReviews = completedReviews.filter((review) => {
     const matchesSearch =
@@ -131,7 +117,9 @@ const CompletedReviews = () => {
                 </div>
                 <div className="flex gap-2">
                   <Badge
-                    className={getRecommendationColor(review.recommendation)}
+                    className={getReviewRecommendationColor(
+                      review.recommendation
+                    )}
                   >
                     {review.recommendation}
                   </Badge>
@@ -182,7 +170,7 @@ const CompletedReviews = () => {
                               Recommendation
                             </p>
                             <Badge
-                              className={getRecommendationColor(
+                              className={getReviewRecommendationColor(
                                 selectedReview.recommendation
                               )}
                             >

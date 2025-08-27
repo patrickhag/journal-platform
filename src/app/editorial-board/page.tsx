@@ -7,53 +7,46 @@ import Header from '@/components/landingPage/header';
 import Footer from '@/components/landingPage/footer';
 import { db } from '@/db/db';
 import { and, eq, or } from 'drizzle-orm';
-import { users } from '@/db/schema';
+import { userRoles, users } from '@/db/schema';
 import LeftSideBar from '@/components/landingPage/leftSideBar';
 import { roleMap } from '@/lib/utils';
 
 export default async function EditorialBoardPage() {
-  const foundEditors = await db.query.users.findMany({
-    columns: {
-      id: true,
-      firstName: true,
-      lastName: true,
-      role: true,
-      country: true,
-      orcid: true,
-      avatar: true,
-      bio: true,
-      affiliation: true,
-    },
-    where: and(
-      or(eq(users.role, 'CHIEF_EDITOR'), eq(users.role, 'ASSOCIATE_EDITOR')),
-      eq(users.isPartOfEditorialBoard, true)
-    ),
-  });
+  const foundEditors = await db
+    .select()
+    .from(userRoles)
+    .innerJoin(users, eq(userRoles.userId, users.id))
+    .where(
+      and(
+        or(
+          eq(userRoles.role, 'CHIEF_EDITOR'),
+          eq(userRoles.role, 'ASSOCIATE_EDITOR')
+        ),
+        eq(users.isPartOfEditorialBoard, true)
+      )
+    );
 
-  const foundReviewers = await db.query.users.findMany({
-    columns: {
-      id: true,
-      firstName: true,
-      lastName: true,
-      bio: true,
-      affiliation: true,
-    },
-    where: and(
-      eq(users.role, 'REVIEWER'),
-      eq(users.isPartOfEditorialBoard, true)
-    ),
-  });
+  const foundReviewers = await db
+    .select()
+    .from(userRoles)
+    .innerJoin(users, eq(userRoles.userId, users.id))
+    .where(
+      and(
+        eq(userRoles.role, 'REVIEWER'),
+        eq(users.isPartOfEditorialBoard, true)
+      )
+    );
 
   // Separate members by role
   const editorInChief = foundEditors.filter(
-    (member) => member.role === 'CHIEF_EDITOR'
+    (member) => member.user_roles.role === 'CHIEF_EDITOR'
   );
   const otherMembers = foundEditors.filter(
-    (member) => member.role !== 'CHIEF_EDITOR'
+    (member) => member.user_roles.role !== 'CHIEF_EDITOR'
   );
 
   const MemberCard = ({ member }: { member: (typeof foundEditors)[0] }) => {
-    const roleKey = member.role;
+    const roleKey = member.user_roles.role;
     const role = roleMap[roleKey as string] || roleKey;
 
     return (
@@ -61,10 +54,10 @@ export default async function EditorialBoardPage() {
         <CardContent className="p-6">
           <div className="flex items-start space-x-4">
             <div className="flex-shrink-0">
-              {member.avatar ? (
+              {member.user.avatar ? (
                 <img
-                  src={member.avatar}
-                  alt={member.firstName + ' ' + member.lastName}
+                  src={member.user.avatar}
+                  alt={member.user.firstName + ' ' + member.user.lastName}
                   className="w-20 h-20 rounded-full object-cover"
                 />
               ) : (
@@ -76,7 +69,7 @@ export default async function EditorialBoardPage() {
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between mb-2">
                 <h3 className="text-lg font-semibold text-gray-900 truncate">
-                  {member.firstName + ' ' + member.lastName}
+                  {member.user.firstName + ' ' + member.user.lastName}
                 </h3>
                 <Badge
                   className={`ml-2 text-xs bg-purple-100 text-purple-800 border-purple-200 hover:bg-transparent`}
@@ -85,33 +78,26 @@ export default async function EditorialBoardPage() {
                 </Badge>
               </div>
 
-              <p className="text-sm text-gray-600 mb-2">{member.affiliation}</p>
+              <p className="text-sm text-gray-600 mb-2">
+                {member.user.affiliation}
+              </p>
 
-              <p className="text-sm text-gray-500 mb-3">{member.country}</p>
+              <p className="text-sm text-gray-500 mb-3">
+                {member.user.country}
+              </p>
 
-              {/* {member.areasOfExpertise && (
-              <div className="mb-3">
-                <p className="text-xs font-medium text-gray-700 mb-1">
-                  Areas of Expertise:
-                </p>
-                <p className="text-xs text-gray-600 leading-relaxed">
-                  {member.areasOfExpertise}
-                </p>
-              </div>
-            )} */}
-
-              {member.bio && (
+              {member.user.bio && (
                 <div className="mb-4">
                   <p className="text-xs font-medium text-gray-700 mb-1">
                     Biography:
                   </p>
                   <p className="text-xs text-gray-600 leading-relaxed">
-                    {member.bio}
+                    {member.user.bio}
                   </p>
                 </div>
               )}
 
-              {member.orcid && (
+              {member.user.orcid && (
                 <div className="flex space-x-2">
                   <Button variant="outline" size="sm" className="text-xs">
                     <ExternalLink className="w-3 h-3 mr-1" />
@@ -139,13 +125,13 @@ export default async function EditorialBoardPage() {
           </div>
           <div className="flex-1 min-w-0">
             <h4 className="text-sm font-semibold text-gray-900 truncate">
-              {`${reviewer.firstName} ${reviewer.lastName}`}
+              {`${reviewer.user.firstName} ${reviewer.user.lastName}`}
             </h4>
             <p className="text-xs text-gray-600 mb-1 truncate">
-              {reviewer.affiliation}
+              {reviewer.user.affiliation}
             </p>
             <p className="text-xs text-gray-500 leading-relaxed">
-              {reviewer.bio}
+              {reviewer.user.bio}
             </p>
           </div>
         </div>
@@ -181,7 +167,7 @@ export default async function EditorialBoardPage() {
                 </h3>
                 <div className="grid grid-cols-1 gap-6">
                   {editorInChief.map((member) => (
-                    <MemberCard key={member.id} member={member} />
+                    <MemberCard key={member.user.id} member={member} />
                   ))}
                 </div>
               </div>
@@ -202,7 +188,7 @@ export default async function EditorialBoardPage() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {otherMembers.map((member) => (
-                    <MemberCard key={member.id} member={member} />
+                    <MemberCard key={member.user.id} member={member} />
                   ))}
                 </div>
               </div>
@@ -225,7 +211,7 @@ export default async function EditorialBoardPage() {
               </p>
               <div className="grid grid-cols-1 gap-4">
                 {foundReviewers.map((reviewer) => (
-                  <ReviewerCard key={reviewer.id} reviewer={reviewer} />
+                  <ReviewerCard key={reviewer.user.id} reviewer={reviewer} />
                 ))}
               </div>
             </div>

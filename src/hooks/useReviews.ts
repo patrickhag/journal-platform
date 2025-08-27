@@ -5,6 +5,7 @@ import {
   TArticlesReview,
   TReview,
   TReviewerAssignment,
+  TReviewerInfo,
 } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
@@ -263,6 +264,39 @@ export const useGetAllCompleted = () => {
     queryFn: async () => {
       const { data } = await axios.get<PReview[]>(`/api/reviews/all`);
       return data;
+    },
+  });
+};
+
+export const useGetReviewersInfo = () => {
+  return useQuery({
+    queryKey: ['reviewersInfo'],
+    queryFn: async () => {
+      const { data } = await axios.get<TReviewerInfo[]>(`/api/reviewers/all`);
+      return data;
+    },
+  });
+};
+
+export const useUnAssignReviewer = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: { userId: string; articleId: string }) => {
+      return axios.patch<MessageResponse>('/api/reviewers/all', data);
+    },
+    onSuccess: ({ data }) => {
+      if (data.message) {
+        queryClient.invalidateQueries({ queryKey: ['reviewersInfo'] });
+        toast.success(data.message);
+      }
+    },
+    onError: (error: Error | AxiosError) => {
+      console.error('Review submission error:', error);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : error.message;
+
+      toast.error(message || 'Failed to unassign reviewer');
     },
   });
 };

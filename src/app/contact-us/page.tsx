@@ -49,7 +49,7 @@ export default function ContactFeedback() {
     defaultValues: {
       firstName: '',
       lastName: '',
-      email: session?.user?.email || '',
+      email: '',
       institution: '',
       subject: '',
       message: '',
@@ -61,7 +61,7 @@ export default function ContactFeedback() {
     resolver: zodResolver(feedbackSchema),
     defaultValues: {
       name: '',
-      email: session?.user?.email || '',
+      email: '',
       feedbackType: '',
       rating: '',
       feedbackMessage: '',

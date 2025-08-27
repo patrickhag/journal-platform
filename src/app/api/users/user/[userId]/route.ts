@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
-import { users } from '@/db/schema';
+import { userRoles, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -13,24 +13,35 @@ export async function GET(
   try {
     const session = await auth();
     if (
-      !(session?.user.role === 'ADMIN' || session?.user.role === 'CHIEF_EDITOR')
+      !(
+        session?.user.role === 'CHIEF_EDITOR' ||
+        session?.user.role === 'ASSOCIATE_EDITOR'
+      )
     ) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { userId } = await params;
 
-    const foundUserInfo = await db.query.users.findFirst({
-      where: eq(users.id, userId),
+    const foundUserInfo = await db.query.userRoles.findFirst({
+      where: eq(userRoles.userId, userId),
+      columns: {
+        id: true,
+        role: true,
+      },
       with: {
-        articles: {
-          columns: {
-            id: true,
-          },
-        },
-        publishedArticles: {
-          columns: {
-            id: true,
+        user: {
+          with: {
+            articles: {
+              columns: {
+                id: true,
+              },
+            },
+            publishedArticles: {
+              columns: {
+                id: true,
+              },
+            },
           },
         },
       },
@@ -63,20 +74,25 @@ export async function PATCH(
 
     const { isActive, role } = await req.json();
 
-    const isDone = await db
+    await db
+      .update(userRoles)
+      .set({
+        role,
+      })
+      .where(eq(userRoles.userId, userId))
+      .returning();
+
+    await db
       .update(users)
       .set({
         isActive,
-        role,
       })
       .where(eq(users.id, userId))
       .returning();
 
-    if (isDone.length > 0) {
-      return NextResponse.json({
-        message: 'User info updated successfully!',
-      });
-    }
+    return NextResponse.json({
+      message: 'User info updated successfully!',
+    });
   } catch (error) {
     console.error('Error updating user:', error);
     return NextResponse.json(

@@ -3,8 +3,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Card,
   CardContent,
@@ -22,19 +20,6 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import {
   Table,
   TableBody,
   TableCell,
@@ -42,348 +27,44 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { cn } from '@/lib/utils';
+import { Search, Mail, Building, FileText, User, Trash2 } from 'lucide-react';
+import { useGetReviewersInfo } from '@/hooks/useReviews';
+import Link from 'next/link';
+import { TReviewerInfo } from '@/types';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { format } from 'date-fns';
-import {
-  UserPlus,
-  Search,
-  Mail,
-  Building,
-  Calendar as CalendarIcon,
-  FileText,
-  User,
-} from 'lucide-react';
-import { toast } from 'sonner';
-import { useGetReviewers } from '@/hooks/useUsers';
-
-interface Reviewer {
-  id: string;
-  name: string;
-  email: string;
-  affiliation: string;
-  expertise: string[];
-  totalReviews: number;
-}
-
-interface ReviewAssignment {
-  id: string;
-  reviewerId: string;
-  manuscriptId: string;
-  manuscriptTitle: string;
-  deadline: Date;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'OVERDUE';
-  assignedAt: Date;
-}
-
-interface ManuscriptOption {
-  id: string;
-  title: string;
-  status: string;
-}
+import { UnAssignAlertDialog } from '../components/UnAssignReviewerDialog';
 
 const ManageReviewers = () => {
-  const [reviewers, setReviewers] = useState<Reviewer[]>([
-    {
-      id: '1',
-      name: 'Dr. Sarah Johnson',
-      email: 'sarah.johnson@university.edu',
-      affiliation: 'Stanford University',
-      expertise: ['Machine Learning', 'Data Science', 'AI Ethics'],
-      totalReviews: 15,
-    },
-    {
-      id: '2',
-      name: 'Prof. Michael Chen',
-      email: 'michael.chen@tech.edu',
-      affiliation: 'MIT',
-      expertise: ['Computer Vision', 'Deep Learning', 'Neural Networks'],
-      totalReviews: 23,
-    },
-  ]);
-
-  const [assignments, setAssignments] = useState<ReviewAssignment[]>([
-    {
-      id: '1',
-      reviewerId: '1',
-      manuscriptId: 'ms1',
-      manuscriptTitle:
-        'Deep Learning Approaches to Natural Language Processing',
-      deadline: new Date('2024-02-15'),
-      status: 'IN_PROGRESS',
-      assignedAt: new Date('2024-01-20'),
-    },
-    {
-      id: '2',
-      reviewerId: '1',
-      manuscriptId: 'ms1',
-      manuscriptTitle:
-        'Deep Learning Approaches to Natural Language Processing',
-      deadline: new Date('2024-02-15'),
-      status: 'IN_PROGRESS',
-      assignedAt: new Date('2024-01-20'),
-    },
-    {
-      id: '3',
-      reviewerId: '1',
-      manuscriptId: 'ms1',
-      manuscriptTitle:
-        'Deep Learning Approaches to Natural Language Processing',
-      deadline: new Date('2024-02-15'),
-      status: 'IN_PROGRESS',
-      assignedAt: new Date('2024-01-20'),
-    },
-    {
-      id: '4',
-      reviewerId: '1',
-      manuscriptId: 'ms1',
-      manuscriptTitle:
-        'Deep Learning Approaches to Natural Language Processing',
-      deadline: new Date('2024-02-15'),
-      status: 'IN_PROGRESS',
-      assignedAt: new Date('2024-01-20'),
-    },
-  ]);
-
   const [searchTerm, setSearchTerm] = useState('');
-  const [isCreateReviewerOpen, setIsCreateReviewerOpen] = useState(false);
   const [isAssignReviewerOpen, setIsAssignReviewerOpen] = useState(false);
-  const [selectedReviewer, setSelectedReviewer] = useState<Reviewer | null>(
-    null
-  );
+  const [openAlertDialog, setOpenAlertDialog] = useState(false);
+  const [articleId, setArticleId] = useState('');
+  const [userId, setUserId] = useState('');
+  const [selectedReviewer, setSelectedReviewer] =
+    useState<TReviewerInfo | null>(null);
 
-  const { data: reviewerss } = useGetReviewers();
-
-  console.log('reviewerss>>>', reviewerss);
-
-  // Mock manuscripts for assignment
-  const availableManuscripts: ManuscriptOption[] = [
-    {
-      id: 'ms1',
-      title: 'Deep Learning Approaches to Natural Language Processing',
-      status: 'UNDER_REVIEW',
-    },
-    {
-      id: 'ms2',
-      title: 'Quantum Computing Applications in Cryptography',
-      status: 'UNDER_REVIEW',
-    },
-    {
-      id: 'ms3',
-      title: 'Sustainable AI Development Practices',
-      status: 'UNDER_REVIEW',
-    },
-  ];
-
-  // Form states
-  const [reviewerForm, setReviewerForm] = useState({
-    name: '',
-    email: '',
-    affiliation: '',
-    expertise: '',
-  });
-
-  const [assignmentForm, setAssignmentForm] = useState({
-    manuscriptId: '',
-    deadline: undefined as Date | undefined,
-  });
-
-  const filteredReviewers = reviewers.filter(
-    (reviewer) =>
-      reviewer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      reviewer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      reviewer.affiliation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      reviewer.expertise.some((exp) =>
-        exp.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-  );
-
-  const handleCreateReviewer = () => {
-    if (
-      !reviewerForm.name ||
-      !reviewerForm.email ||
-      !reviewerForm.affiliation ||
-      !reviewerForm.expertise
-    ) {
-      toast.error('Please fill in all required fields');
-      return;
-    }
-
-    const newReviewer: Reviewer = {
-      id: Date.now().toString(),
-      name: reviewerForm.name,
-      email: reviewerForm.email,
-      affiliation: reviewerForm.affiliation,
-      expertise: reviewerForm.expertise.split(',').map((exp) => exp.trim()),
-      totalReviews: 0,
-    };
-
-    setReviewers([...reviewers, newReviewer]);
-    setReviewerForm({ name: '', email: '', affiliation: '', expertise: '' });
-    setIsCreateReviewerOpen(false);
-
-    toast.success('Reviewer account created successfully');
-  };
-
-  const handleAssignReviewer = () => {
-    if (
-      !selectedReviewer ||
-      !assignmentForm.manuscriptId ||
-      !assignmentForm.deadline
-    ) {
-      toast('Please fill in all required fields');
-      return;
-    }
-
-    const manuscript = availableManuscripts.find(
-      (m) => m.id === assignmentForm.manuscriptId
-    );
-
-    const newAssignment: ReviewAssignment = {
-      id: Date.now().toString(),
-      reviewerId: selectedReviewer.id,
-      manuscriptId: assignmentForm.manuscriptId,
-      manuscriptTitle: manuscript?.title || '',
-      deadline: assignmentForm.deadline,
-      status: 'PENDING',
-      assignedAt: new Date(),
-    };
-
-    setAssignments([...assignments, newAssignment]);
-
-    // Update reviewer's active reviews count
-    // setReviewers(
-    //   reviewers.map((reviewer) =>
-    //     reviewer.id === selectedReviewer.id
-    //       ? { ...reviewer, activeReviews: reviewer.activeReviews + 1 }
-    //       : reviewer
-    //   )
-    // );
-
-    setAssignmentForm({ manuscriptId: '', deadline: undefined });
-    setSelectedReviewer(null);
-    setIsAssignReviewerOpen(false);
-
-    toast('Reviewer assigned successfully');
-  };
-
-  const getAssignmentsForReviewer = (reviewerId: string) => {
-    return assignments.filter(
-      (assignment) => assignment.reviewerId === reviewerId
-    );
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'PENDING':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'IN_PROGRESS':
-        return 'bg-blue-100 text-blue-800';
-      case 'COMPLETED':
-        return 'bg-green-100 text-green-800';
-      case 'OVERDUE':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const { data: reviewersInfo, isPending } = useGetReviewersInfo();
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Manage Reviewers</h1>
-          <p className="text-gray-600">
-            Create reviewer accounts, assign manuscripts, and track review
-            progress
-          </p>
+    <>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Manage Reviewers
+            </h1>
+            <p className="text-gray-600">
+              Create reviewer accounts, assign manuscripts, and track review
+              progress
+            </p>
+          </div>
         </div>
 
-        <Sheet
-          open={isCreateReviewerOpen}
-          onOpenChange={setIsCreateReviewerOpen}
-        >
-          <SheetContent className="z-50 bg-white">
-            <SheetHeader>
-              <SheetTitle>Create New Reviewer Account</SheetTitle>
-              <SheetDescription>
-                Add a new reviewer to the system with their credentials and
-                expertise
-              </SheetDescription>
-            </SheetHeader>
+        {/* Search */}
 
-            <div className="space-y-4 mt-6">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name *</Label>
-                <Input
-                  id="name"
-                  value={reviewerForm.name}
-                  onChange={(e) =>
-                    setReviewerForm({ ...reviewerForm, name: e.target.value })
-                  }
-                  placeholder="Dr. John Smith"
-                  className="bg-white"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={reviewerForm.email}
-                  onChange={(e) =>
-                    setReviewerForm({ ...reviewerForm, email: e.target.value })
-                  }
-                  placeholder="john.smith@university.edu"
-                  className="bg-white"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="affiliation">Affiliation *</Label>
-                <Input
-                  id="affiliation"
-                  value={reviewerForm.affiliation}
-                  onChange={(e) =>
-                    setReviewerForm({
-                      ...reviewerForm,
-                      affiliation: e.target.value,
-                    })
-                  }
-                  placeholder="Harvard University"
-                  className="bg-white"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="expertise">Areas of Expertise *</Label>
-                <Textarea
-                  id="expertise"
-                  value={reviewerForm.expertise}
-                  onChange={(e) =>
-                    setReviewerForm({
-                      ...reviewerForm,
-                      expertise: e.target.value,
-                    })
-                  }
-                  placeholder="Machine Learning, Data Science, AI Ethics (comma-separated)"
-                  rows={3}
-                  className="bg-white"
-                />
-              </div>
-
-              <Button onClick={handleCreateReviewer} className="w-full">
-                Create Reviewer Account
-              </Button>
-            </div>
-          </SheetContent>
-        </Sheet>
-      </div>
-
-      {/* Search and Stats */}
-      <div className="flex justify-between">
-        <div className="w-1/2 relative">
+        <div className="relative">
           <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
           <Input
             placeholder="Search reviewers by name, email, affiliation, or expertise..."
@@ -392,247 +73,256 @@ const ManageReviewers = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button onClick={() => setIsCreateReviewerOpen(true)}>
-          <UserPlus className="mr-2 h-4 w-4" />
-          Add New Reviewer
-        </Button>
-      </div>
 
-      {/* Reviewers Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Reviewers ({filteredReviewers.length})</CardTitle>
-          <CardDescription>
-            Manage reviewer accounts and track their assignments
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Reviewer</TableHead>
-                <TableHead>Affiliation</TableHead>
-                <TableHead>Expertise</TableHead>
-                <TableHead>Reviews</TableHead>
-                <TableHead>Current Assignments</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredReviewers.map((reviewer) => {
-                const reviewerAssignments = getAssignmentsForReviewer(
-                  reviewer.id
-                );
-
-                return (
-                  <TableRow key={reviewer.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{reviewer.name}</div>
-                        <div className="text-sm text-gray-500 flex items-center">
-                          <Mail className="mr-1 h-3 w-3" />
-                          {reviewer.email}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center text-sm">
-                        <Building className="mr-2 h-4 w-4 text-gray-400" />
-                        {reviewer.affiliation}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1 max-w-xs">
-                        {reviewer.expertise.slice(0, 2).map((exp, index) => (
-                          <Badge
-                            key={index}
-                            variant="secondary"
-                            className="text-xs"
-                          >
-                            {exp}
-                          </Badge>
-                        ))}
-                        {reviewer.expertise.length > 2 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{reviewer.expertise.length - 2}
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-center font-semibold">
-                        {reviewer.totalReviews}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {reviewerAssignments.length > 0 ? (
-                        <div className="space-y-1 max-w-xs">
-                          {reviewerAssignments.slice(0, 2).map((assignment) => (
-                            <div key={assignment.id} className="text-xs">
-                              <div className="font-medium truncate">
-                                {assignment.manuscriptTitle}
-                              </div>
-                              <div className="flex justify-between items-center">
-                                <Badge
-                                  className={cn(
-                                    'text-xs',
-                                    getStatusColor(assignment.status)
-                                  )}
-                                >
-                                  {assignment.status.replace('_', ' ')}
-                                </Badge>
-                                <span className="text-gray-500">
-                                  {format(assignment.deadline, 'MMM dd')}
-                                </span>
-                              </div>
-                            </div>
-                          ))}
-                          {reviewerAssignments.length > 2 && (
-                            <div className="text-xs text-gray-500">
-                              +{reviewerAssignments.length - 2} more
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-sm text-gray-500">
-                          No assignments
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end space-x-2">
-                        <Sheet
-                          open={
-                            isAssignReviewerOpen &&
-                            selectedReviewer?.id === reviewer.id
-                          }
-                          onOpenChange={(open) => {
-                            setIsAssignReviewerOpen(open);
-                            if (open) setSelectedReviewer(reviewer);
-                            else setSelectedReviewer(null);
-                          }}
-                        >
-                          <SheetTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              <FileText className="h-4 w-4" />
-                            </Button>
-                          </SheetTrigger>
-                          <SheetContent className="z-50 bg-white">
-                            <SheetHeader>
-                              <SheetTitle>
-                                Assign Reviewer to Manuscript
-                              </SheetTitle>
-                              <SheetDescription>
-                                Assign {reviewer.name} to review a specific
-                                manuscript
-                              </SheetDescription>
-                            </SheetHeader>
-
-                            <div className="space-y-4 mt-6">
-                              <div className="space-y-2">
-                                <Label>Reviewer</Label>
-                                <div className="p-3 bg-gray-50 rounded">
-                                  <div className="font-medium">
-                                    {reviewer.name}
-                                  </div>
-                                  <div className="text-sm text-gray-600">
-                                    {reviewer.email}
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="space-y-2">
-                                <Label htmlFor="manuscript">
-                                  Select Manuscript *
-                                </Label>
-                                <Select
-                                  value={assignmentForm.manuscriptId}
-                                  onValueChange={(value) =>
-                                    setAssignmentForm({
-                                      ...assignmentForm,
-                                      manuscriptId: value,
-                                    })
-                                  }
-                                >
-                                  <SelectTrigger className="bg-white">
-                                    <SelectValue placeholder="Choose a manuscript" />
-                                  </SelectTrigger>
-                                  <SelectContent className="z-50 bg-white">
-                                    {availableManuscripts.map((manuscript) => (
-                                      <SelectItem
-                                        key={manuscript.id}
-                                        value={manuscript.id}
-                                      >
-                                        {manuscript.title}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              </div>
-
-                              <div className="space-y-2">
-                                <Label>Review Deadline *</Label>
-                                <Popover>
-                                  <PopoverTrigger asChild>
-                                    <Button
-                                      variant="outline"
-                                      className={cn(
-                                        'w-full justify-start text-left font-normal bg-white',
-                                        !assignmentForm.deadline &&
-                                          'text-muted-foreground'
-                                      )}
-                                    >
-                                      <CalendarIcon className="mr-2 h-4 w-4" />
-                                      {assignmentForm.deadline ? (
-                                        format(assignmentForm.deadline, 'PPP')
-                                      ) : (
-                                        <span>Pick a date</span>
-                                      )}
-                                    </Button>
-                                  </PopoverTrigger>
-                                  <PopoverContent
-                                    className="w-auto p-0 z-50 bg-white"
-                                    align="start"
-                                  >
-                                    <Calendar
-                                      mode="single"
-                                      selected={assignmentForm.deadline}
-                                      onSelect={(date) =>
-                                        setAssignmentForm({
-                                          ...assignmentForm,
-                                          deadline: date,
-                                        })
-                                      }
-                                      disabled={(date) => date < new Date()}
-                                      initialFocus
-                                      className="p-3 pointer-events-auto"
-                                    />
-                                  </PopoverContent>
-                                </Popover>
-                              </div>
-
-                              <Button
-                                onClick={handleAssignReviewer}
-                                className="w-full"
-                              >
-                                Assign Reviewer
-                              </Button>
-                            </div>
-                          </SheetContent>
-                        </Sheet>
-
-                        <Button variant="outline" size="sm">
-                          <User className="h-4 w-4" />
-                        </Button>
-                      </div>
+        {/* Reviewers Table */}
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              Reviewers {`(${reviewersInfo ? reviewersInfo?.length : 'N/A'})`}
+            </CardTitle>
+            <CardDescription>
+              Manage reviewer accounts and track their assignments
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Reviewer</TableHead>
+                  <TableHead>Affiliation</TableHead>
+                  <TableHead>Expertise</TableHead>
+                  <TableHead>Reviews</TableHead>
+                  <TableHead>Current Assignments</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isPending && (
+                  <TableRow>
+                    <TableCell colSpan={6}>
+                      <div className="py-4">Loading...</div>
                     </TableCell>
                   </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                )}
+                {reviewersInfo?.map((reviewer) => {
+                  const name = `${reviewer.user.prefix ?? ''} ${reviewer.user.firstName} ${reviewer.user.lastName}`;
+                  const assignments = reviewer.user.reviewAssignments;
+                  const reviewerAssignments =
+                    reviewer.user.reviewAssignments.filter(
+                      (review) =>
+                        review.article.articleStatus === 'UNDER REVIEW'
+                    );
 
-          {filteredReviewers.length === 0 && (
+                  const reviews = reviewer.user.reviews;
+                  return (
+                    <TableRow key={reviewer.id}>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{name}</div>
+                          <div className="text-sm text-gray-500 flex items-center">
+                            <Mail className="mr-1 h-3 w-3" />
+                            {reviewer.user.email}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center text-sm">
+                          <Building className="mr-2 h-4 w-4 text-gray-400" />
+                          {reviewer.user.affiliation}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1 max-w-xs">
+                          {reviewer.user.expertise
+                            ?.split(',')
+                            .slice(0, 2)
+                            .map((exp, index) => (
+                              <Badge
+                                key={index}
+                                variant="secondary"
+                                className="text-xs"
+                              >
+                                {exp.trim()}
+                              </Badge>
+                            ))}
+                          {reviewer.user.expertise &&
+                            reviewer.user.expertise.split(',').length > 2 && (
+                              <Badge variant="outline" className="text-xs">
+                                +{reviewer.user.expertise.split(',').length - 2}
+                              </Badge>
+                            )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-center font-semibold">
+                          {reviews.length}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {assignments.length > 0 ? (
+                          <div className="space-y-1 max-w-xs">
+                            {reviewerAssignments
+                              .slice(0, 2)
+                              .map((assignment) => (
+                                <div key={assignment.id} className="text-xs">
+                                  <div className="flex items-center justify-between">
+                                    <div className="font-medium truncate flex-1">
+                                      {assignment.article.metadata.title}
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <Badge className="bg-yellow-50 text-yellow-600 text-xs">
+                                      {assignment.article.articleStatus}
+                                    </Badge>
+                                  </div>
+                                </div>
+                              ))}
+                            {reviewerAssignments.length > 2 && (
+                              <div className="text-xs text-gray-500">
+                                +{reviewerAssignments.length - 2} more
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-sm text-gray-500">
+                            No assignments
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end space-x-2">
+                          <Sheet
+                            open={
+                              isAssignReviewerOpen &&
+                              selectedReviewer?.id === reviewer.id
+                            }
+                            onOpenChange={(open) => {
+                              setIsAssignReviewerOpen(open);
+                              if (open) setSelectedReviewer(reviewer);
+                              else setSelectedReviewer(null);
+                            }}
+                          >
+                            <SheetTrigger asChild>
+                              <Button variant="outline" size="sm">
+                                <FileText className="h-4 w-4" />
+                              </Button>
+                            </SheetTrigger>
+                            <SheetContent className="z-50 bg-white w-[400px] sm:w-[540px]">
+                              <SheetHeader>
+                                <SheetTitle>
+                                  Manage Assignments - {name}
+                                </SheetTitle>
+                                <SheetDescription>
+                                  View and remove current assignments for this
+                                  reviewer
+                                </SheetDescription>
+                              </SheetHeader>
+
+                              <div className="space-y-4 mt-6">
+                                {reviewerAssignments.length > 0 ? (
+                                  <div className="space-y-3">
+                                    <h4 className="text-sm font-medium text-gray-900">
+                                      Current Assignments
+                                    </h4>
+                                    <ScrollArea className="h-[5500px] pr-4">
+                                      <div className="space-y-3">
+                                        {reviewerAssignments.map(
+                                          (assignment) => (
+                                            <Card
+                                              key={assignment.id}
+                                              className="p-4"
+                                            >
+                                              <div className="flex items-start justify-between">
+                                                <div className="flex-1">
+                                                  <h5 className="font-medium text-sm line-clamp-1">
+                                                    {
+                                                      assignment.article
+                                                        .metadata.title
+                                                    }
+                                                  </h5>
+                                                  <div className="flex items-center gap-2 mt-2">
+                                                    <span className="text-xs text-gray-500">
+                                                      Due:{' '}
+                                                      {format(
+                                                        new Date(
+                                                          assignment.dueDate
+                                                        ),
+                                                        'MMM dd, yyyy'
+                                                      )}
+                                                    </span>
+                                                    <span className="text-xs text-gray-500">
+                                                      •
+                                                    </span>
+                                                    <div className="text-xs text-gray-500">
+                                                      Assigned:{' '}
+                                                      {format(
+                                                        new Date(
+                                                          assignment.assignedDate
+                                                        ),
+                                                        'MMM dd, yyyy'
+                                                      )}
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <Button
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  className="h-8 w-8 p-0 hover:bg-red-100"
+                                                  onClick={() => {
+                                                    setOpenAlertDialog(true);
+                                                    setUserId(
+                                                      reviewer.userId as string
+                                                    );
+                                                    setArticleId(
+                                                      assignment.articleId
+                                                    );
+                                                  }}
+                                                  title="Remove assignment"
+                                                >
+                                                  <Trash2 className="h-4 w-4 text-red-500" />
+                                                </Button>
+                                              </div>
+                                            </Card>
+                                          )
+                                        )}
+                                      </div>
+                                    </ScrollArea>
+                                  </div>
+                                ) : (
+                                  <div className="text-center py-8">
+                                    <FileText className="mx-auto h-12 w-12 text-gray-400" />
+                                    <h4 className="mt-2 text-sm font-medium text-gray-900">
+                                      No assignments
+                                    </h4>
+                                    <p className="mt-1 text-sm text-gray-500">
+                                      This reviewer has no current assignments.
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </SheetContent>
+                          </Sheet>
+                          <Link href={`/users/${reviewer.user.id}`}>
+                            <Button variant="outline" size="sm">
+                              <User className="h-4 w-4" />
+                            </Button>
+                          </Link>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+              {!isPending && reviewersInfo?.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <div className="py-4">No reviewers found.</div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </Table>
+
+            {/* {filteredReviewers.length === 0 && (
             <div className="text-center py-8">
               <User className="mx-auto h-12 w-12 text-gray-400" />
               <h3 className="mt-2 text-sm font-semibold text-gray-900">
@@ -644,10 +334,19 @@ const ManageReviewers = () => {
                   : 'Get started by adding your first reviewer'}
               </p>
             </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+          )} */}
+          </CardContent>
+        </Card>
+      </div>
+      {openAlertDialog && (
+        <UnAssignAlertDialog
+          articleId={articleId}
+          isOpen={openAlertDialog}
+          setOpenAlertDialog={setOpenAlertDialog}
+          userId={userId}
+        />
+      )}
+    </>
   );
 };
 

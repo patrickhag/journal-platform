@@ -28,7 +28,9 @@ export type TPermissionItem =
   | 'ACCEPT_ARTICLE'
   | 'REJECT_ARTICLE'
   | 'INVITE_REVIEWERS'
-  | 'ASSIGN_REVIEWERS';
+  | 'ASSIGN_REVIEWERS'
+  | 'DEACTIVATE_USER'
+  | 'CHANGE_ROLE';
 
 type TPermission = {
   [role in (typeof USER_ROLES)[number]]: TPermissionItem[];
@@ -53,6 +55,8 @@ export const ROLE_PERMISSIONS: TPermission = {
     'ACCEPT_ARTICLE',
     'REJECT_ARTICLE',
     'VIEW_REVIEWS',
+    'CHANGE_ROLE',
+    'DEACTIVATE_USER',
   ],
   ADMIN: [
     'VIEW_PUBLIC_ARTICLES',

@@ -39,11 +39,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAddToEditorialBoard } from '@/hooks/useUsers';
 import Loader from './Loader';
+import { TUser } from '@/types';
 
 interface Props<T> {
-  data: T[];
+  data: TUser[];
   /* eslint-disable  @typescript-eslint/no-explicit-any */
-  columns: ColumnDef<T, any>[];
+  columns: ColumnDef<TUser>[];
 }
 
 export const TableData = <T extends { role?: string }>({

@@ -5,13 +5,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { auth } from '@/auth';
 import NewsletterSubscribeForm from './newsletter-subscribe-form';
 
 const Footer = async () => {
-  const session = await auth();
-  const userEmail = session?.user.email;
-
   return (
     <footer className="text-gray-700">
       <div className="w-[98%] mx-auto border-t my-5 pt-5">
@@ -33,29 +29,38 @@ const Footer = async () => {
             <h4 className="font-semibold text-lg text-gray-800">For authors</h4>
             <ul className="text-sm mt-2 space-y-1">
               <li>
-                <a href="#" className="hover:text-blue-600">
-                  Instructors to authors
-                </a>
+                <Link
+                  href="/manuals#guidelines"
+                  className="hover:text-blue-600"
+                >
+                  Instructions to authors
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-600">
+                <Link href="/manuals#policies" className="hover:text-blue-600">
                   Editorial policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-600">
+                <Link href="#" className="hover:text-blue-600">
                   Copyright agreement
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-600">
+                <Link
+                  href="/manuals/language-editing-authors"
+                  className="hover:text-blue-600"
+                >
                   Language editing for authors
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-600">
+                <Link
+                  href="/manuals/scientific-editing-services"
+                  className="hover:text-blue-600"
+                >
                   Scientific editing for authors
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -65,9 +70,9 @@ const Footer = async () => {
             <h4 className="font-semibold text-lg text-gray-800">About JAEPH</h4>
             <ul className="text-sm mt-2 space-y-1">
               <li>
-                <a href="/manuals#aboutUs" className="hover:text-blue-600">
+                <Link href="/manuals#aboutUs" className="hover:text-blue-600">
                   About us
-                </a>
+                </Link>
               </li>
               <li>
                 <Link href="/editorial-board" className="hover:text-blue-600">
@@ -78,7 +83,7 @@ const Footer = async () => {
                 <Popover>
                   <PopoverTrigger>Receive our newsletter</PopoverTrigger>
                   <PopoverContent align="start">
-                    <NewsletterSubscribeForm defaultEmail={userEmail} />
+                    <NewsletterSubscribeForm />
                   </PopoverContent>
                 </Popover>
               </li>
@@ -106,21 +111,24 @@ const Footer = async () => {
             <ul className="text-sm mt-2 space-y-1">
               <li>
                 Email:{' '}
-                <a href="mailto:info@airpd.org" className="text-blue-500">
+                <Link href="mailto:info@airpd.org" className="text-blue-500">
                   info@airpd.org
-                </a>
+                </Link>
               </li>
               <li>
                 WhatsApp-Phone:{' '}
-                <a href="https://wa.me/+250788589658" className="text-blue-500">
+                <Link
+                  href="https://wa.me/+250788589658"
+                  className="text-blue-500"
+                >
                   +250788589658
-                </a>
+                </Link>
               </li>
               <li>
                 Website:{' '}
-                <a href="https://www.airpd.org" className="text-blue-500">
+                <Link href="https://www.airpd.org" className="text-blue-500">
                   www.airpd.org
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -129,20 +137,20 @@ const Footer = async () => {
         {/* Middle Section */}
         <div className="mt-8 text-center text-sm text-gray-600">
           By using this website, you agree to our{' '}
-          <a
+          <Link
             href="/manuals#termsNconditions"
             className="hover:text-blue-600 hover:underline"
           >
             terms and conditions
-          </a>
+          </Link>
           ,{' '}
-          <a href="/privacy" className="hover:text-blue-600 hover:underline">
+          <Link href="/privacy" className="hover:text-blue-600 hover:underline">
             Privacy statement
-          </a>
+          </Link>
           , and{' '}
-          <a href="/cookies" className="hover:text-blue-600 hover:underline">
+          <Link href="/cookies" className="hover:text-blue-600 hover:underline">
             cookies policy
-          </a>
+          </Link>
           .
         </div>
         <hr className="mt-6" />
@@ -150,23 +158,23 @@ const Footer = async () => {
         <div className="mt-4 flex justify-between items-center text-sm text-gray-600">
           <span>© 2025 JAEPH. All rights reserved.</span>
           <div className="flex space-x-4">
-            <a
+            <Link
               href="https://twitter.com/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 hover:text-blue-700"
             >
               <FaTwitter size={24} />
-            </a>
+            </Link>
             {/* LinkedIn Icon */}
-            <a
+            <Link
               href="https://linkedin.com/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-700 hover:text-blue-900"
             >
               <FaLinkedin size={24} />
-            </a>
+            </Link>
           </div>
         </div>
       </div>

@@ -53,7 +53,6 @@ export async function POST(
             firstName: true,
             lastName: true,
             email: true,
-            role: true,
           },
         },
         editor: {

@@ -4,6 +4,7 @@ import {
   articleSubmissions,
   reviewAssignments,
   reviewers,
+  userRoles,
   users,
 } from '@/db/schema';
 import { sendInvitation } from '@/lib/emailTransporter';
@@ -61,9 +62,14 @@ export async function POST(req: NextRequest) {
           lastName,
           email: reviewerEmail,
           password: await bcrypt.hash(`@JAEPH${password}`, 10),
-          role: 'REVIEWER',
         })
         .returning({ id: users.id });
+
+      await db.insert(userRoles).values({
+        userId: newUser.id,
+        role: 'REVIEWER',
+      });
+      // newUser.id
       userId = newUser.id;
     } else {
       userId = existingUser.id;

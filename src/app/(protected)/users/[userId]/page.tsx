@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -38,31 +38,35 @@ import { useParams, useRouter } from 'next/navigation';
 import { useDeactivateUser, useGetUserInfo } from '@/hooks/useUsers';
 import { roleMap } from '@/lib/utils';
 import Loader from '@/components/Loader';
-import { UserStatusDialog } from '../UserStatusDialog';
+import { UserStatusDialog } from '../../editor/users/UserStatusDialog';
+import withPermissions from '@/components/WithPermission';
+import { useSession } from 'next-auth/react';
 
 const UserDetail = () => {
   const [selectedRole, setSelectedRole] = useState<string>('');
 
   const { userId } = useParams();
 
+  const { data } = useSession();
+
   const { data: userInfo } = useGetUserInfo(userId as string);
 
   const user = {
-    id: userInfo?.id || '',
-    name: `${userInfo?.firstName || ''} ${userInfo?.lastName || ''}`.trim(),
-    email: userInfo?.email || '',
-    role: userInfo?.role || '',
-    status: userInfo?.isActive ? 'Active' : 'Inactive',
-    joinDate: userInfo?.createdAt || '',
-    institution: userInfo?.affiliation || '',
-    specialty: userInfo?.expertise || 'N/A',
-    orcid: userInfo?.orcid || '',
-    country: userInfo?.country || '',
-    bio: userInfo?.bio || '',
-    expertise: userInfo?.expertise || 'N/A',
-    totalSubmissions: userInfo?.articles?.length || 0,
-    totalPublished: userInfo?.publishedArticles?.length || 0,
-    avatar: userInfo?.avatar || null,
+    id: userInfo?.user.id || '',
+    name: `${userInfo?.user.firstName || ''} ${userInfo?.user.lastName || ''}`.trim(),
+    email: userInfo?.user.email || '',
+    role: userInfo?.user.role || 'N/A',
+    status: userInfo?.user.isActive ? 'Active' : 'Inactive',
+    joinDate: userInfo?.user.createdAt || '',
+    institution: userInfo?.user.affiliation || 'N/A',
+    specialty: userInfo?.user.expertise || 'N/A',
+    orcid: userInfo?.user.orcid || 'N/A',
+    country: userInfo?.user.country || 'N/A',
+    bio: userInfo?.user.bio || 'N/A',
+    expertise: userInfo?.user.expertise || 'N/A',
+    totalSubmissions: userInfo?.user.articles?.length || 0,
+    totalPublished: userInfo?.user.publishedArticles?.length || 0,
+    avatar: userInfo?.user.avatar || null,
   };
 
   const [showStatusDialog, setShowStatusDialog] = useState(false);
@@ -93,7 +97,7 @@ const UserDetail = () => {
   };
 
   const handleConfirmedStatusChange = () => {
-    const newStatus = !userInfo?.isActive;
+    const newStatus = !userInfo?.user.isActive;
     const payload = {
       isActive: newStatus,
     };
@@ -116,93 +120,37 @@ const UserDetail = () => {
             </Button>
           </div>
           <div className="flex space-x-2">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline">
-                  <Edit className="mr-2 h-4 w-4" />
-                  Change Role
-                </Button>
-              </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Edit User Role</SheetTitle>
-                  <SheetDescription>
-                    Change the role for {user.name}
-                  </SheetDescription>
-                </SheetHeader>
-                <div className="py-4">
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-sm font-medium">
-                        Current Role
-                      </label>
-                      <p className="text-sm text-muted-foreground">
-                        {roleMap[user.role as string]}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium">New Role</label>
-                      <Select
-                        value={selectedRole}
-                        onValueChange={setSelectedRole}
-                      >
-                        <SelectTrigger className="mt-1">
-                          <SelectValue placeholder="Select a new role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="NORMAL_USER">Author</SelectItem>
-                          <SelectItem value="REVIEWER">Reviewer</SelectItem>
-                          <SelectItem value="ASSOCIATE_EDITOR">
-                            Editor
-                          </SelectItem>
-                          <SelectItem value="CHIEF_EDITOR">
-                            Chief Editor
-                          </SelectItem>
-                          <SelectItem value="Admin">Admin</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-                <SheetFooter>
-                  <SheetClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </SheetClose>
-                  <SheetClose asChild>
-                    <Button
-                      onClick={handleChangeUserInfo}
-                      disabled={!selectedRole || isPending}
-                    >
-                      {isPending ? (
-                        <Loader text="Changing..." />
-                      ) : (
-                        'Save Changes'
-                      )}
-                    </Button>
-                  </SheetClose>
-                </SheetFooter>
-              </SheetContent>
-            </Sheet>
-            <Button
-              onClick={handleStatusChange}
-              disabled={isPending}
-              className={`${
-                userInfo?.isActive
-                  ? 'bg-red-600 hover:bg-red-700'
-                  : 'bg-green-600 hover:bg-green-700'
-              }`}
-            >
-              <UserCog className="mr-2 h-5 w-5" />
-              {isPending ? (
-                <Loader
-                  text={
-                    userInfo?.isActive ? 'Deactivating...' : 'Activating...'
-                  }
-                />
-              ) : (
-                `${userInfo?.isActive ? 'Deactivate' : 'Activate'} User`
-              )}
-            </Button>
+            <ChangeRoleWithPermission
+              handleChangeUserInfo={handleChangeUserInfo}
+              isPending={isPending}
+              requiredPermissions={['CHANGE_ROLE']}
+              role={
+                data?.user.role as
+                  | 'NORMAL_USER'
+                  | 'CHIEF_EDITOR'
+                  | 'ADMIN'
+                  | 'REVIEWER'
+              }
+              selectedRole={selectedRole}
+              setSelectedRole={setSelectedRole}
+              userName={user.name}
+              userRole={user.role}
+              fallback={<></>}
+            />
+            <DeactivateUserPermission
+              handleStatusChange={handleStatusChange}
+              isActive={userInfo?.user.isActive ?? true}
+              isPending={isPending}
+              requiredPermissions={['DEACTIVATE_USER']}
+              role={
+                data?.user.role as
+                  | 'NORMAL_USER'
+                  | 'CHIEF_EDITOR'
+                  | 'ADMIN'
+                  | 'REVIEWER'
+              }
+              fallback={<></>}
+            />
           </div>
         </div>
 
@@ -232,7 +180,7 @@ const UserDetail = () => {
                   <div>
                     <h3 className="font-semibold text-lg">{user.name}</h3>
                     <Badge variant={'secondary'}>
-                      {roleMap[user.role as string]}
+                      {roleMap[userInfo?.role as string]}
                     </Badge>
                   </div>
                 </div>
@@ -338,7 +286,7 @@ const UserDetail = () => {
           open={showStatusDialog}
           onOpenChange={setShowStatusDialog}
           username={user.name}
-          currentStatus={userInfo?.isActive}
+          currentStatus={userInfo?.user.isActive}
           onConfirm={handleConfirmedStatusChange}
           isPending={isPending}
         />
@@ -348,3 +296,107 @@ const UserDetail = () => {
 };
 
 export default UserDetail;
+
+const ChangeRole = ({
+  handleChangeUserInfo,
+  selectedRole,
+  setSelectedRole,
+  isPending,
+  userName,
+  userRole,
+}: {
+  handleChangeUserInfo: () => void;
+  selectedRole: string;
+  setSelectedRole: Dispatch<SetStateAction<string>>;
+  isPending: boolean;
+  userName: string;
+  userRole: string;
+}) => {
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline">
+          <Edit className="mr-2 h-4 w-4" />
+          Change Role
+        </Button>
+      </SheetTrigger>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Edit User Role</SheetTitle>
+          <SheetDescription>Change the role for {userName}</SheetDescription>
+        </SheetHeader>
+        <div className="py-4">
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium">Current Role</label>
+              <p className="text-sm text-muted-foreground">
+                {roleMap[userRole]}
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium">New Role</label>
+              <Select value={selectedRole} onValueChange={setSelectedRole}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Select a new role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="NORMAL_USER">Author</SelectItem>
+                  <SelectItem value="REVIEWER">Reviewer</SelectItem>
+                  <SelectItem value="ASSOCIATE_EDITOR">Editor</SelectItem>
+                  <SelectItem value="CHIEF_EDITOR">Chief Editor</SelectItem>
+                  <SelectItem value="Admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+        <SheetFooter>
+          <SheetClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </SheetClose>
+          <SheetClose asChild>
+            <Button
+              onClick={handleChangeUserInfo}
+              disabled={!selectedRole || isPending}
+            >
+              {isPending ? <Loader text="Changing..." /> : 'Save Changes'}
+            </Button>
+          </SheetClose>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  );
+};
+
+const ChangeRoleWithPermission = withPermissions(ChangeRole);
+
+const DeactivateUser = ({
+  handleStatusChange,
+  isPending,
+  isActive,
+}: {
+  handleStatusChange: () => void;
+  isPending: boolean;
+  isActive: boolean;
+}) => {
+  return (
+    <Button
+      onClick={handleStatusChange}
+      disabled={isPending}
+      className={`${
+        isActive
+          ? 'bg-red-600 hover:bg-red-700'
+          : 'bg-green-600 hover:bg-green-700'
+      }`}
+    >
+      <UserCog className="mr-2 h-5 w-5" />
+      {isPending ? (
+        <Loader text={isActive ? 'Deactivating...' : 'Activating...'} />
+      ) : (
+        `${isActive ? 'Deactivate' : 'Activate'} User`
+      )}
+    </Button>
+  );
+};
+
+const DeactivateUserPermission = withPermissions(DeactivateUser);

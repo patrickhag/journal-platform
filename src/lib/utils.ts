@@ -111,3 +111,18 @@ export const getAssignmentStatusColor = (status: string) => {
       return 'bg-gray-100 text-gray-800';
   }
 };
+
+export const getReviewRecommendationColor = (recommendation: string) => {
+  switch (recommendation) {
+    case 'Accepted':
+      return 'bg-green-100 text-green-800';
+    case 'Minor Collection':
+      return 'bg-yellow-100 text-yellow-800';
+    case 'Major Collection':
+      return 'bg-orange-100 text-orange-800';
+    case 'Rejected':
+      return 'bg-red-100 text-red-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
+};

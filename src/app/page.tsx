@@ -12,8 +12,8 @@ export default async function Home() {
         {/* Hero section - full width without padding */}
         <RightSideBar />
         {/* Main content with padding */}
-        <main className="px-4 md:px-8 py-6">
-          <section className="flex flex-col gap-8">
+        <main className="px-4 md:px-8 py-4">
+          <section>
             <div className="grid sm:grid-cols-4 grid-cols-1 gap-2">
               <Collections />
               <LeftSideBar />

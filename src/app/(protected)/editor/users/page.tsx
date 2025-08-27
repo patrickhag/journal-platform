@@ -8,7 +8,31 @@ import {
 import { db } from '@/db/db';
 
 const UsersPage = async () => {
-  const users = await db.query.users.findMany();
+  const users = await db.query.userRoles
+    .findMany({
+      columns: {
+        role: true,
+      },
+      with: {
+        user: {
+          columns: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatar: true,
+            email: true,
+            affiliation: true,
+            createdAt: true,
+          },
+        },
+      },
+    })
+    .then((userRoles) =>
+      userRoles.map((userRole) => ({
+        ...userRole.user,
+        role: userRole.role,
+      }))
+    );
 
   return (
     <div className="container mx-auto py-7">

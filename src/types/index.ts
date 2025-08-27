@@ -364,25 +364,29 @@ export type TMostViewed = {
 
 export type TUserInfo = {
   id: string;
-  firstName: string;
-  lastName: string;
-  affiliation: string;
-  country: string;
   role: string;
-  email: string;
-  emailVerified: string | null; // ISO date string or null
-  isActive: boolean;
-  isPartOfEditorialBoard: boolean;
-  password: string;
-  avatar: string;
-  orcid: string;
-  bio: string;
-  expertise: string | null;
-  updatedAt: string | null; // ISO date string or null
-  prefix: string | null;
-  createdAt: string; // ISO date string
-  articles: { id: string }[];
-  publishedArticles: { id: string }[];
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    affiliation: string;
+    country: string;
+    role: string;
+    email: string;
+    emailVerified: string | null; // ISO date string or null
+    isActive: boolean;
+    isPartOfEditorialBoard: boolean;
+    password: string;
+    avatar: string;
+    orcid: string;
+    bio: string;
+    expertise: string | null;
+    updatedAt: string | null; // ISO date string or null
+    prefix: string | null;
+    createdAt: string; // ISO date string
+    articles: { id: string }[];
+    publishedArticles: { id: string }[];
+  };
 };
 
 export type TReviewers = {
@@ -421,4 +425,46 @@ export type PReview = {
       message: string;
     };
   };
+};
+
+export type TReviewerInfo = {
+  id: string;
+  userId: string;
+  role: string;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    affiliation: string | null;
+    expertise: string | null;
+    prefix: string | null;
+    reviews: {
+      id: string;
+    }[];
+    reviewAssignments: {
+      id: string;
+      articleId: string;
+      assignedDate: Date;
+      dueDate: Date;
+      article: {
+        id: string;
+        articleStatus: string;
+        metadata: {
+          title: string;
+        };
+      };
+    }[];
+  };
+};
+
+export type TUser = {
+  id: string | null;
+  firstName: string | null;
+  affiliation: string | null;
+  lastName: string | null;
+  email: string | null;
+  avatar: string | null;
+  createdAt: string | null;
+  role: string;
 };
