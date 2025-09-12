@@ -6,17 +6,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await auth();
-
-    if (
-      !(
-        session?.user.role === 'ASSOCIATE_EDITOR' ||
-        session?.user.role === 'CHIEF_EDITOR'
-      )
-    ) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-    }
-
     const foundPublishedArticles = await db.query.publishedArticles.findMany({
       where: or(
         eq(publishedArticles.status, 'AWAITING_DECISION'),

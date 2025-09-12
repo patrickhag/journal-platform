@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
-import { reviewAssignments, reviews, userRoles } from '@/db/schema';
+import { reviewAssignments, userRoles } from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -10,10 +10,13 @@ export async function GET(req: NextRequest) {
     if (
       !(
         session?.user.role === 'CHIEF_EDITOR' ||
-        session?.user.role === 'ASSOCIATE_EDITOR'
+        session?.user.role === 'STAFF_EDITOR'
       )
     ) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json(
+        { message: 'Unauthorized user' },
+        { status: 401 }
+      );
     }
 
     const reviewers = await db.query.userRoles.findMany({
@@ -81,7 +84,7 @@ export async function PATCH(req: NextRequest) {
     if (
       !(
         session?.user.role === 'CHIEF_EDITOR' ||
-        session?.user.role === 'ASSOCIATE_EDITOR'
+        session?.user.role === 'STAFF_EDITOR'
       )
     ) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

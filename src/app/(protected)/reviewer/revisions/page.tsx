@@ -110,7 +110,7 @@ const CompletedReviews = () => {
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div className="space-y-2">
-                  <CardTitle className="text-lg">
+                  <CardTitle className="text-lg line-clamp-1">
                     {review.articleTitle}
                   </CardTitle>
                   <p className="text-sm text-gray-600">by {review.author}</p>

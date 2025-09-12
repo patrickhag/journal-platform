@@ -222,13 +222,6 @@ export const articleSubmissions = pgTable('article_submissions', {
   requirements: text('requirements').array().notNull(),
   commentsForEditor: text('comments_for_editor'),
   articleStatus: varchar('article_status', { length: 50 }).default('SUBMITTED'),
-  proofFileUrl: text('proof_file_url')
-    .array()
-    .default(sql`'{}'::text[]`),
-  proofStatus: text('proof_status'),
-  proofNote: text('proof_note'),
-  publishedFile: text('publishedFile'),
-  doi: text('doi'),
   isEditorsPick: boolean('isEditorsPick'),
   createdAt: date('createdAt').defaultNow(),
   updatedAt: date('updatedAt').defaultNow(),
@@ -237,7 +230,6 @@ export const articleSubmissions = pgTable('article_submissions', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   issueId: text('issueId').references(() => issues.id),
-  editorId: text('editorId').references(() => editors.id),
 });
 
 export const finalSubmissions = pgTable('final_submissions', {
@@ -436,32 +428,117 @@ export const collectionsRelations = relations(collections, ({ many }) => ({
   }),
 }));
 
-export const editors = pgTable('editors', {
+export const editorAssignment = pgTable('editor_assignment', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   userId: text('userId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
+  articleId: text('articleId')
+    .notNull()
+    .references(() => articleSubmissions.id, { onDelete: 'cascade' }),
   assignedAt: timestamp('assignedAt').defaultNow(),
 });
 
-export const editorsRelations = relations(editors, ({ one, many }) => ({
-  user: one(users, {
-    fields: [editors.userId],
-    references: [users.id],
-  }),
-  articleSubmissions: many(articleSubmissions, {
-    relationName: 'assignedSubmissions',
-  }),
-}));
+export const editorAssignmentRelations = relations(
+  editorAssignment,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [editorAssignment.userId],
+      references: [users.id],
+      relationName: 'editor',
+    }),
+    articleSubmission: one(articleSubmissions, {
+      fields: [editorAssignment.articleId],
+      references: [articleSubmissions.id],
+      relationName: 'editorAssignment',
+    }),
+  })
+);
 
-// export const articleSubmissionsRelations = relations(articleSubmissions, ({ one }) => ({
-//   editor: one(editors, {
-//     fields: [articleSubmissions.editorId],
-//     references: [editors.id],
-//   }),
-// }));
+export const associateEditorAssignments = pgTable(
+  'associate_editor_assignments',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text('userId')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    articleId: text('articleId')
+      .notNull()
+      .references(() => articleSubmissions.id, { onDelete: 'cascade' }),
+    staffEditorId: text('staffEditorId')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    status: varchar('status', { length: 50 }),
+    fileIds: text('fileIds')
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    message: text('message'),
+    dueDate: timestamp('dueDate'),
+    assignedAt: timestamp('assignedAt').defaultNow(),
+  }
+);
+
+export const associateEditorAssignmentsRelations = relations(
+  associateEditorAssignments,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [associateEditorAssignments.userId],
+      references: [users.id],
+      relationName: 'editor',
+    }),
+    staffEditor: one(users, {
+      fields: [associateEditorAssignments.staffEditorId],
+      references: [users.id],
+      relationName: 'staffEditor',
+    }),
+    articleSubmissions: one(articleSubmissions, {
+      fields: [associateEditorAssignments.articleId],
+      references: [articleSubmissions.id],
+      relationName: 'associateEditorAssignment',
+    }),
+  })
+);
+
+export const associateEditorCorrections = pgTable(
+  'associateEditorCorrections',
+  {
+    id: text('id')
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    articleId: text('articleId').references(() => articleSubmissions.id, {
+      onDelete: 'cascade',
+    }),
+    fileIds: text('fileIds')
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    submittedAt: date('submittedAt').defaultNow(),
+    userId: text('userId')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+  }
+);
+
+export const associateEditorCorrectionsRelations = relations(
+  associateEditorCorrections,
+  ({ one }) => ({
+    articleSubmissions: one(articleSubmissions, {
+      fields: [associateEditorCorrections.articleId],
+      references: [articleSubmissions.id],
+      relationName: 'associateEditorAssignment',
+    }),
+    user: one(users, {
+      fields: [associateEditorCorrections.userId],
+      references: [users.id],
+      relationName: 'userCollections',
+    }),
+  })
+);
 
 export const collectionArticlesRelations = relations(
   collectionArticles,
@@ -491,7 +568,7 @@ export const publishedArticles = pgTable('published_articles', {
   slug: text('slug').unique().notNull(),
   doi: varchar('doi', { length: 100 }).unique(),
   status: varchar('status', { length: 20 }),
-  publishedAt: timestamp('published_at').defaultNow(),
+  publishedAt: timestamp('published_at'),
   pageRange: varchar('page_range', { length: 20 }),
   pdfUrl: text('pdf_url').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
@@ -591,11 +668,6 @@ export const articleSubmissionsRelations = relations(
       references: [users.id],
       relationName: 'articleSubmissions',
     }),
-    editor: one(editors, {
-      fields: [articleSubmissions.editorId],
-      references: [editors.id],
-      relationName: 'assignedSubmissions',
-    }),
     issue: one(issues, {
       fields: [articleSubmissions.issueId],
       references: [issues.id],
@@ -680,7 +752,7 @@ export const reviewAssignmentsRelations = relations(
   })
 );
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ many, one }) => ({
   articles: many(articleSubmissions, {
     relationName: 'articleSubmissions',
   }),
@@ -696,6 +768,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   publishedArticles: many(publishedArticles, {
     relationName: 'publishedArticles',
   }),
+  editor: one(editorAssignment),
 }));
 
 export const userRolesRelations = relations(userRoles, ({ one }) => ({

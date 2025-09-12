@@ -22,9 +22,12 @@ import { ThankAuthorEmailTemplate } from '@/components/emails/thank-you-email-te
 import { AssignEditorEmailTemplate } from '@/components/emails/inform-associate-editor';
 import { AssignReviewerEmailTemplate } from '@/components/emails/inform-reviewer-email-template';
 import { ArticleReadyForEICApprovalEmailTemplate } from '@/components/emails/inform-chief-editor-email-template';
-import { ReviewerResponseEmail } from '@/components/emails/inform-associate-editor-about';
+import { InformStaffEditorAboutInvitation } from '@/components/emails/inform-staff-editor-about-reviewer-invitation';
 import { ReviewerSubmittedEmail } from '@/components/emails/review-submitted-email';
 import { AuthorReplyToReviewEmail } from '@/components/emails/author-reply-to-review-email';
+import { SendAssociateEditorInvitation } from '@/components/emails/send-invite-associate-editor';
+import { InformStaffEditorAboutAssociateInvitation } from '@/components/emails/inform-staff-editor-about-associate-invitation';
+import { NotifyStaffEditorAboutAssociateEditorCorrection } from '@/components/emails/notifiy-staff-editor-about-ass-correction';
 
 export const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -134,6 +137,36 @@ export const sendInvitation = async ({
   await transporter.sendMail(options);
 };
 
+export const sendAssociateEditorInvitation = async ({
+  editorName,
+  articleTitle,
+  dueDate,
+  articleId,
+  editorEmail,
+}: {
+  editorName: string;
+  articleTitle: string;
+  dueDate: string;
+  articleId: string;
+  editorEmail: string;
+}) => {
+  const emailHtml = await render(
+    <SendAssociateEditorInvitation
+      editorName={editorName}
+      articleTitle={articleTitle}
+      articleId={articleId}
+      dueDate={dueDate}
+    />
+  );
+  const options = {
+    from: process.env.EMAIL_USER,
+    to: editorEmail,
+    subject: 'You have been invited to format a manuscript.',
+    html: emailHtml,
+  };
+  await transporter.sendMail(options);
+};
+
 export const sendVerifyToken = async ({
   email,
   token,
@@ -198,20 +231,47 @@ export const acceptManuscriptEmail = async ({
   await transporter.sendMail(options);
 };
 
+export const informStaffEditorAboutCorrection = async ({
+  staffEditorEmail,
+  associateEditorName,
+  articleTitle,
+  staffEditorName,
+}: {
+  staffEditorEmail: string;
+  associateEditorName: string;
+  articleTitle: string;
+  staffEditorName: string;
+}) => {
+  const emailHtml = await render(
+    <NotifyStaffEditorAboutAssociateEditorCorrection
+      articleTitle={articleTitle}
+      associateEditorName={associateEditorName}
+      staffEditorName={staffEditorName}
+    />
+  );
+  const options = {
+    from: process.env.EMAIL_USER,
+    to: staffEditorEmail,
+    subject: 'Staff Editor has edited the manuscript',
+    html: emailHtml,
+  };
+  await transporter.sendMail(options);
+};
+
 export const notifyAdmin = async ({
   article,
   authorName,
   subject,
   articleId,
   participant,
-  associateEditorEmail,
+  staffEditorEmail,
 }: {
   article: string;
   authorName: string;
   subject: string;
   articleId: string;
   participant: 'REVIEWER' | 'AUTHOR';
-  associateEditorEmail?: string;
+  staffEditorEmail?: string;
 }) => {
   try {
     const emailHtml = await render(
@@ -226,7 +286,7 @@ export const notifyAdmin = async ({
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: associateEditorEmail,
+      to: staffEditorEmail,
       subject: subject,
       html: emailHtml,
     });
@@ -563,14 +623,14 @@ export const informChiefEditorAboutAcceptance = async ({
   }
 };
 
-export const informAssociateEditor = async ({
-  associateEditorName,
+export const informStaffEditorAboutReviewerInvitation = async ({
+  staffEditorName,
   associateEditorEmail,
   reviewerName,
   articleTitle,
   status,
 }: {
-  associateEditorName: string;
+  staffEditorName: string;
   associateEditorEmail: string;
   reviewerName: string;
   articleTitle: string;
@@ -579,9 +639,9 @@ export const informAssociateEditor = async ({
 }) => {
   try {
     const emailHtml = await render(
-      <ReviewerResponseEmail
+      <InformStaffEditorAboutInvitation
         articleTitle={articleTitle}
-        associateEditorName={associateEditorName}
+        staffEditorName={staffEditorName}
         reviewerName={reviewerName}
         status={status}
       />
@@ -594,6 +654,46 @@ export const informAssociateEditor = async ({
         status === 'accepted'
           ? 'Reviwer has accepted the invitation to review the manuscript.'
           : 'Reviwer has declined the invitation to review the manuscript.',
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending admin notification:', error);
+    return { success: false, error };
+  }
+};
+
+export const informStaffEditorAboutAssociateInvitation = async ({
+  staffEditorName,
+  staffEditorEmail,
+  associateEditorName,
+  articleTitle,
+  status,
+}: {
+  staffEditorName: string;
+  staffEditorEmail: string;
+  associateEditorName: string;
+  articleTitle: string;
+  status: 'accepted' | 'rejected';
+}) => {
+  try {
+    const emailHtml = await render(
+      <InformStaffEditorAboutAssociateInvitation
+        articleTitle={articleTitle}
+        staffEditorName={staffEditorName}
+        associateEditorName={associateEditorName}
+        status={status}
+      />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: staffEditorEmail,
+      subject:
+        status === 'accepted'
+          ? 'Associate editor has accepted the invitation to edit the manuscript.'
+          : 'Associate editor has declined the invitation to edit the manuscript.',
       html: emailHtml,
     });
 

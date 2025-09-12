@@ -6,7 +6,7 @@ import { useState } from 'react';
 import AssignEditorModal from './AssignAssociateEditorModal';
 import { RejectManuscriptModal } from './RejectManuscriptModal';
 
-const AcceptOrReject = ({ articleId }: { articleId: string }) => {
+const AssignOrReject = ({ articleId }: { articleId: string }) => {
   const [open, setOpen] = useState(false);
   const [openRejectModal, setOpenRejectModal] = useState(false);
 
@@ -41,4 +41,4 @@ const AcceptOrReject = ({ articleId }: { articleId: string }) => {
   );
 };
 
-export const AcceptOrRejectComponent = withPermissions(AcceptOrReject);
+export const AssignOrRejectComponent = withPermissions(AssignOrReject);

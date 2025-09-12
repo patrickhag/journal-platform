@@ -4,7 +4,8 @@
       password: @123Baikoko
     * patrickhag09@gmail.com(editor-in-chief)
       password: @123Patrick
-    * jaypaty35@gmail.com(associate-editor)
+    * jaypaty35@gmail.com(staff-editor)
       password: @123JayPaty
     * ahmedsubwarati@gmail.com(reviewer)
       password: @123Subwarati
+

@@ -1,10 +1,7 @@
 'use server';
 
 import { signIn } from '@/auth';
-import { db } from '@/db/db';
-import { users } from '@/db/schema';
 import { loginSchema } from '@/schemas/auth.schema';
-import { eq } from 'drizzle-orm';
 import { AuthError } from 'next-auth';
 import { redirect, RedirectType } from 'next/navigation';
 import type z from 'zod';
@@ -35,10 +32,12 @@ export async function authenticate(
   switch (role) {
     case 'NORMAL_USER':
       return redirect('/submissions', RedirectType.replace);
-    case 'ASSOCIATE_EDITOR':
-      return redirect('/associate-editor/assigned', RedirectType.replace);
+    case 'STAFF_EDITOR':
+      return redirect('/staff-editor/assigned', RedirectType.replace);
     case 'REVIEWER':
-      return redirect('/reviewer', RedirectType.replace);
+      return redirect('/reviewer/assignments', RedirectType.replace);
+    case 'ASSOCIATE_EDITOR':
+      return redirect('/associate-editor/assignments', RedirectType.replace);
     case 'CHIEF_EDITOR':
     case 'ADMIN':
       return redirect('/editor/dashboard', RedirectType.replace);

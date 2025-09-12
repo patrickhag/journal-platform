@@ -4,6 +4,7 @@ export const USER_ROLES = [
   'REVIEWER',
   'ADMIN',
   'ASSOCIATE_EDITOR',
+  'STAFF_EDITOR',
 ] as const;
 export type USER_ROLE = (typeof USER_ROLES)[number];
 export type TPermissionItem =
@@ -83,6 +84,7 @@ export const ROLE_PERMISSIONS: TPermission = {
     'DELETE_OWN_ARTICLES',
   ],
   ASSOCIATE_EDITOR: ['INVITE_REVIEWERS', 'ASSIGN_REVIEWERS', 'VIEW_REVIEWS'],
+  STAFF_EDITOR: ['INVITE_REVIEWERS', 'ASSIGN_REVIEWERS', 'VIEW_REVIEWS'],
 };
 
 export type TUserPermissions = {

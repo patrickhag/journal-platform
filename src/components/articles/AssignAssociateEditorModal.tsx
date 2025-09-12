@@ -33,7 +33,6 @@ export default function AssignEditorModal({
 }: AssignEditorModalProps) {
   const [selectedEditorId, setSelectedEditorId] = useState<string>('');
   const { data: availableEditors } = useGetEditors();
-  console.log('availableEditors:', availableEditors);
   const { mutate, isPending } = useAssignEditor();
 
   const selectedEditor = availableEditors?.find(
@@ -44,10 +43,11 @@ export default function AssignEditorModal({
     if (selectedEditor) {
       const data = {
         articleId,
-        userId: selectedEditor.id,
-        editorName: `${selectedEditor.firstName} ${selectedEditor.lastName}`,
-        editorEmail: selectedEditor.email as string,
+        userId: selectedEditor.user.id,
+        editorName: `${selectedEditor.user.firstName} ${selectedEditor.user.lastName}`,
+        editorEmail: selectedEditor.user.email,
       };
+      console.log('data:', data);
       mutate(data, {
         onSettled: () => {
           onClose();
@@ -91,7 +91,7 @@ export default function AssignEditorModal({
                       <SelectItem key={editor.id} value={editor.id}>
                         <div className="flex items-center justify-between w-full">
                           <span>
-                            {editor.firstName} {editor.lastName}
+                            {editor.user.firstName} {editor.user.lastName}
                           </span>
                         </div>
                       </SelectItem>
@@ -107,16 +107,16 @@ export default function AssignEditorModal({
                     </div>
                     <div className="space-y-1 text-sm">
                       <p>
-                        <strong>Name:</strong> {selectedEditor.firstName}{' '}
-                        {selectedEditor.lastName}
+                        <strong>Name:</strong> {selectedEditor.user.firstName}{' '}
+                        {selectedEditor.user.lastName}
                       </p>
                       <p>
                         <strong>Affiliation:</strong>{' '}
-                        {selectedEditor.affiliation}
+                        {selectedEditor.user.affiliation}
                       </p>
                       <p>
                         <strong>Bio:</strong>{' '}
-                        {selectedEditor.bio?.slice(0, 120)}...
+                        {selectedEditor.user.bio?.slice(0, 120)}...
                       </p>
                     </div>
                   </div>
@@ -141,19 +141,21 @@ export default function AssignEditorModal({
                   >
                     <div>
                       <p className="font-medium">
-                        {editor.firstName} {editor.lastName}
+                        {editor.user.firstName} {editor.user.lastName}
                       </p>
-                      <p className="text-xs text-gray-500">{editor.country}</p>
+                      <p className="text-xs text-gray-500">
+                        {editor.user.country}
+                      </p>
                     </div>
                     <div className="text-right">
                       <p className="text-sm">ORCID</p>
                       <a
-                        href={editor.orcid as string}
+                        href={editor.user.orcid as string}
                         className="text-xs text-gray-500"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        {editor.orcid}
+                        {editor.user.orcid}
                       </a>
                     </div>
                   </div>

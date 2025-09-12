@@ -33,7 +33,7 @@ export default async function NotificationsModal() {
     );
 
   const hdrs = await headers();
-  const currentPath = hdrs.get('x-pathname') ?? '/';
+  const currentPath = hdrs.get('x-pathname');
 
   return (
     <DropdownMenu>
@@ -78,7 +78,7 @@ export default async function NotificationsModal() {
             <CardFooter>
               <MarkNotificationAsReadButton
                 id={session?.user?.id as string}
-                pathname={currentPath}
+                pathname={currentPath as string}
               />
             </CardFooter>
           </Card>

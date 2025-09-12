@@ -171,7 +171,7 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
           className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Owner
+          Author
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </div>
       ),

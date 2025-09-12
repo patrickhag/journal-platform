@@ -17,6 +17,7 @@ import {
   MonitorSpeaker,
   Newspaper,
   PlusCircle,
+  ShieldUser,
   Users,
 } from 'lucide-react';
 
@@ -48,6 +49,11 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             icon: FileText,
           },
           { href: '/editor/users', label: 'Manage Users', icon: Users },
+          {
+            href: '/editor/manage-editors',
+            label: 'Manage Editors',
+            icon: ShieldUser,
+          },
           {
             href: '/editor/collections',
             label: 'Manage Collections',
@@ -88,7 +94,7 @@ const Sidebar = ({ userRole }: SidebarProps) => {
           },
           {
             href: '/reviewer/revisions',
-            label: 'My Reviews',
+            label: 'Sent Reviews',
             icon: FileText,
           },
           {
@@ -100,17 +106,30 @@ const Sidebar = ({ userRole }: SidebarProps) => {
       case 'associate_editor':
         return [
           {
-            href: '/associate-editor/assigned',
+            href: '/associate-editor/assignments',
+            label: 'Assignments',
+            icon: CheckSquare,
+          },
+          {
+            href: '/associate-editor/collections',
+            label: 'Sent Collections',
+            icon: FileText,
+          },
+        ];
+      case 'staff_editor':
+        return [
+          {
+            href: '/staff-editor/assigned',
             label: 'Assigned to me',
             icon: CheckSquare,
           },
           {
-            href: '/associate-editor/reviewers',
+            href: '/staff-editor/reviewers',
             label: 'Manage Reviewers',
             icon: Users,
           },
           {
-            href: '/associate-editor/publish',
+            href: '/staff-editor/publish',
             label: 'Publish Manuscript',
             icon: Newspaper,
           },

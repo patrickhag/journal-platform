@@ -63,6 +63,17 @@ export const useGetMetricsInteractions = () => {
   });
 };
 
+export const useGetMostViewed = () => {
+  return useQuery({
+    queryKey: ['most-viewed'],
+    queryFn: async () => {
+      const { data } = await axios.get<TMostViewed>(`/api/metrics/most-viewed`);
+      return data || [];
+    },
+    refetchOnWindowFocus: false,
+  });
+};
+
 export const useGetMetricInteraction = (slug: string) => {
   return useQuery({
     queryKey: ['metric'],

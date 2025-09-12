@@ -1,6 +1,11 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
-import { articleSubmissions, editors, userRoles, users } from '@/db/schema';
+import {
+  articleSubmissions,
+  editorAssignments,
+  userRoles,
+  users,
+} from '@/db/schema';
 import { notifyAssociateEditor } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -8,23 +13,28 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(req: NextRequest) {
   try {
     const session = await auth();
-    if (
-      !(session?.user.role === 'ADMIN' || session?.user.role === 'CHIEF_EDITOR')
-    ) {
+    if (session?.user.role !== 'CHIEF_EDITOR') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const associateEditors = await db.query.users.findMany({
+    const associateEditorUsers = await db.query.userRoles.findMany({
+      where: eq(userRoles.role, 'STAFF_EDITOR'),
       with: {
-        roles: {
-          where: eq(userRoles.role, 'ASSOCIATE_EDITOR'),
+        user: {
+          columns: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            orcid: true,
+            expertise: true,
+            country: true,
+            affiliation: true,
+            bio: true,
+            email: true,
+          },
         },
       },
     });
-
-    const associateEditorUsers = associateEditors.filter(
-      (user) => user.roles.length > 0
-    );
 
     return NextResponse.json(associateEditorUsers);
   } catch (error) {
@@ -49,17 +59,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const extractractedEditorId = await db
-      .insert(editors)
+    await db
+      .insert(editorAssignments)
       .values({
         userId,
+        articleId,
       })
-      .returning({ editorId: editors.id });
-
-    await db
-      .update(articleSubmissions)
-      .set({ editorId: extractractedEditorId[0].editorId })
-      .where(eq(articleSubmissions.id, articleId));
+      .returning({ editorId: editorAssignments.id });
 
     const article = await db.query.articleSubmissions.findFirst({
       columns: {

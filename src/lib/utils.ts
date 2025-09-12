@@ -93,6 +93,7 @@ export const roleMap: Record<string, string> = {
   NORMAL_USER: 'Author',
   CHIEF_EDITOR: 'Chief Editor',
   ASSOCIATE_EDITOR: 'Associate Editor',
+  STAFF_EDITOR: 'Staff Editor',
   ADMIN: 'Admin',
   REVIEWER: 'Reviewer',
 };
@@ -125,4 +126,16 @@ export const getReviewRecommendationColor = (recommendation: string) => {
     default:
       return 'bg-gray-100 text-gray-800';
   }
+};
+
+export const getUrgencyColor = (daysRemaining: number, status: string) => {
+  if (status === 'COMPLETED') return '!bg-green-100 !text-green-800';
+  if (daysRemaining <= 3) return '!bg-amber-100 !text-amber-800';
+  return '!bg-blue-100 !text-blue-800';
+};
+
+export const calculateDaysRemaining = (dueDate: string): number => {
+  const today = new Date();
+  const due = new Date(dueDate);
+  return Math.ceil((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 };

@@ -3,7 +3,7 @@ import { type PropsWithChildren } from 'react';
 
 export default function Layout({ children }: PropsWithChildren) {
   return (
-    <Protected allowedRoles={['ASSOCIATE_EDITOR']}>
+    <Protected allowedRoles={['STAFF_EDITOR']}>
       <div>{children}</div>
     </Protected>
   );

@@ -81,3 +81,12 @@ export const adSchema = z.object({
 });
 
 export type AdFormSchema = z.infer<typeof adSchema>;
+
+export const inviteSchema = z.object({
+  message: z
+    .string()
+    .min(1, { message: 'Invitation message is required.' })
+    .max(2000, { message: 'Message should not exceed 2000 characters.' }),
+});
+
+export type InviteFormData = z.infer<typeof inviteSchema>;

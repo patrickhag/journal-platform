@@ -1,5 +1,5 @@
 import { TUsers } from '@/db/schema';
-import { TReviewers, TUserInfo } from '@/types';
+import { TReviewers, TSUser, TUserInfo } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
@@ -7,6 +7,16 @@ import { toast } from 'sonner';
 export const useGetUsers = () => {
   return useQuery({
     queryKey: ['users'],
+    queryFn: async () => {
+      const { data } = await axios.get(`/api/users`);
+      return data;
+    },
+  });
+};
+
+export const useGetAllEditors = () => {
+  return useQuery({
+    queryKey: ['editors'],
     queryFn: async () => {
       const { data } = await axios.get(`/api/users`);
       return data;
@@ -28,7 +38,7 @@ export const useGetEditors = () => {
   return useQuery({
     queryKey: ['users'],
     queryFn: async () => {
-      const { data } = await axios.get<TUsers[]>(`/api/editor/editors/`);
+      const { data } = await axios.get<TSUser[]>(`/api/editor/editors/`);
       return data || [];
     },
   });
@@ -115,8 +125,6 @@ type TEditorPayloadData = {
 };
 
 export const useAssignEditor = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async (data: TEditorPayloadData) => {
       const response = await axios.post<{ message: string }>(
@@ -151,6 +159,33 @@ export const useDeactivateUser = (userId: string) => {
   return useMutation({
     mutationFn: async (data: DeactivateUser) => {
       const response = await axios.patch<{ message: string }>(
+        `/api/users/user/${userId}`,
+        data
+      );
+      return response;
+    },
+    onSuccess: ({ data }) => {
+      if (data) {
+        queryClient.invalidateQueries({ queryKey: ['user', userId] });
+        toast.info(data.message);
+      }
+    },
+    onError: (error: Error | AxiosError) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data.message
+        : error.message;
+
+      toast.error(message || 'Failed to update user');
+    },
+  });
+};
+
+export const useChangeUserRole = (userId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: DeactivateUser) => {
+      const response = await axios.put<{ message: string }>(
         `/api/users/user/${userId}`,
         data
       );

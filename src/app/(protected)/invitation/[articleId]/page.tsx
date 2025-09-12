@@ -5,7 +5,7 @@ import {
   notifications,
   reviewAssignments,
 } from '@/db/schema';
-import { informAssociateEditor } from '@/lib/emailTransporter';
+import { informStaffEditorAboutReviewerInvitation } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 
@@ -41,7 +41,7 @@ export default async function AcceptPage({ params, searchParams }: PageProps) {
   const associateEditorInfo = await db.query.articleSubmissions.findFirst({
     where: eq(articleSubmissions.id, articleId),
     with: {
-      editor: {
+      editorAssignment: {
         with: {
           user: {
             columns: {
@@ -62,10 +62,10 @@ export default async function AcceptPage({ params, searchParams }: PageProps) {
   });
 
   const associateEditorName =
-    associateEditorInfo?.editor?.user.firstName +
+    associateEditorInfo?.editorAssignment?.user.firstName +
     ' ' +
-    associateEditorInfo?.editor?.user.lastName;
-  const associateEditorId = associateEditorInfo?.editor?.user.id;
+    associateEditorInfo?.editorAssignment?.user.lastName;
+  const associateEditorId = associateEditorInfo?.editorAssignment?.user.id;
   const reviewerNames =
     reviewer?.user?.firstName + ' ' + reviewer?.user?.lastName;
   const articleTitle = associateEditorInfo?.metadata.title;
@@ -83,9 +83,10 @@ export default async function AcceptPage({ params, searchParams }: PageProps) {
       })
       .where(eq(articleSubmissions.id, articleId));
 
-    await informAssociateEditor({
-      associateEditorName: associateEditorName,
-      associateEditorEmail: associateEditorInfo?.editor?.user.email as string,
+    await informStaffEditorAboutReviewerInvitation({
+      staffEditorName: associateEditorName,
+      associateEditorEmail: associateEditorInfo?.editorAssignment?.user
+        .email as string,
       reviewerName: reviewerNames as string,
       articleTitle: articleTitle as string,
       status: 'accepted',
@@ -96,11 +97,12 @@ export default async function AcceptPage({ params, searchParams }: PageProps) {
       userId: associateEditorId,
     });
 
-    redirect(`/reviewer`);
+    redirect(`/reviewer/assignments`);
   } else if (isAcceptedOrDeclined === false) {
-    await informAssociateEditor({
-      associateEditorName: associateEditorName,
-      associateEditorEmail: associateEditorInfo?.editor?.user.email as string,
+    await informStaffEditorAboutReviewerInvitation({
+      staffEditorName: associateEditorName,
+      associateEditorEmail: associateEditorInfo?.editorAssignment?.user
+        .email as string,
       reviewerName: reviewerNames as string,
       articleTitle: articleTitle as string,
       status: 'rejected',

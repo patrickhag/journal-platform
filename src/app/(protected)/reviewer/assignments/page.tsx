@@ -9,7 +9,12 @@ import { useGetReviewerAssignments } from '@/hooks/useReviews';
 import { useRouter } from 'next/navigation';
 import ReviewModal from '@/components/articles/Review';
 import ArticleCardSkeleton from '../components/ReviewCardSkeleton';
-import { cn, getAssignmentStatusColor } from '@/lib/utils';
+import {
+  calculateDaysRemaining,
+  cn,
+  getAssignmentStatusColor,
+  getUrgencyColor,
+} from '@/lib/utils';
 
 export default function ReviewerDashboard() {
   const { data, isPending } = useGetReviewerAssignments();
@@ -32,24 +37,12 @@ export default function ReviewerDashboard() {
     setReviewModal({ isOpen: false });
   };
 
-  const calculateDaysRemaining = (dueDate: string): number => {
-    const today = new Date();
-    const due = new Date(dueDate);
-    return Math.ceil((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-  };
-
-  const getUrgencyColor = (daysRemaining: number, status: string) => {
-    if (status === 'COMPLETED') return '!bg-green-100 !text-green-800';
-    if (daysRemaining <= 3) return '!bg-amber-100 !text-amber-800';
-    return '!bg-blue-100 !text-blue-800';
-  };
-
-  const filteredAssignments = reviewerAssignments?.filter((assignment) => {
-    const daysRemaining = calculateDaysRemaining(assignment.dueDate);
-    return (
-      assignment.article.articleStatus === 'PUBLISHED' || daysRemaining >= 0
-    );
-  });
+  // const filteredAssignments = reviewerAssignments?.filter((assignment) => {
+  //   const daysRemaining = calculateDaysRemaining(assignment.dueDate);
+  //   return (
+  //     assignment.article.articleStatus === 'PUBLISHED' || daysRemaining >= 0
+  //   );
+  // });
 
   const router = useRouter();
 
@@ -69,7 +62,7 @@ export default function ReviewerDashboard() {
         <CardContent>
           {isPending && [1, 2, 3].map((i) => <ArticleCardSkeleton key={i} />)}
           <div className="space-y-4">
-            {filteredAssignments?.map((assignment) => {
+            {reviewerAssignments?.map((assignment) => {
               const { id, status, assignedDate, dueDate, article } = assignment;
 
               const daysRemaining = calculateDaysRemaining(dueDate);
@@ -85,7 +78,7 @@ export default function ReviewerDashboard() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
-                        <h3 className="font-semibold text-lg text-gray-900">
+                        <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
                           {title}
                         </h3>
                       </div>
@@ -140,23 +133,23 @@ export default function ReviewerDashboard() {
                         <Eye className="mr-2 h-4 w-4" />
                         View Article
                       </Button>
-                      {!isPublished && status === 'ACCEPTED' && (
-                        <Button
-                          size="sm"
-                          className="bg-blue-600 hover:bg-blue-700"
-                          onClick={() => handleSubmitReview(article.id)}
-                        >
-                          <Upload className="mr-2 h-4 w-4" />
-                          Submit Review
-                        </Button>
-                      )}
+                      {/* {!isPublished && status === 'ACCEPTED' && ( */}
+                      <Button
+                        size="sm"
+                        className="bg-blue-600 hover:bg-blue-700"
+                        onClick={() => handleSubmitReview(article.id)}
+                      >
+                        <Upload className="mr-2 h-4 w-4" />
+                        Submit Review
+                      </Button>
+                      {/* )} */}
                     </div>
                   </div>
                 </div>
               );
             })}
 
-            {!isPending && filteredAssignments?.length === 0 && (
+            {!isPending && reviewerAssignments?.length === 0 && (
               <p className="text-sm text-gray-500">
                 You have no active assignments.
               </p>

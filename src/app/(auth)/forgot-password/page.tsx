@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
-import { CheckCircleIcon, EyeClosedIcon, EyeOff } from 'lucide-react';
+import { CheckCircleIcon, Eye, EyeClosedIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -133,7 +133,7 @@ export default function ResetPasswordPage() {
                         }
                       >
                         {passwordType === 'password' ? (
-                          <EyeOff size={20} />
+                          <Eye size={20} />
                         ) : (
                           <EyeClosedIcon size={20} />
                         )}

@@ -39,16 +39,6 @@ export async function POST(req: Request) {
             email: true,
           },
         },
-        editor: {
-          with: {
-            user: {
-              columns: {
-                id: true,
-                email: true,
-              },
-            },
-          },
-        },
       },
       where: eq(articleSubmissions.id, articleId),
     });
@@ -66,7 +56,7 @@ export async function POST(req: Request) {
       userType: 'reviewer',
     });
 
-    // send email to associate-editor also
+    // send email to staff-editor also
     if (status === 'Accepted') {
       await notifyAdmin({
         article: articleTitle as string,
@@ -74,7 +64,7 @@ export async function POST(req: Request) {
         subject: 'New Review Submitted',
         participant: 'REVIEWER',
         articleId: article?.id as string,
-        associateEditorEmail: article?.editor?.user.email as string,
+        // associateEditorEmail: article?.editor?.user.email as string,
       });
     }
 

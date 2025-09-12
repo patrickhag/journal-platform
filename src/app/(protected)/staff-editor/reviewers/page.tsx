@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Card,
   CardContent,
@@ -27,7 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Search, Mail, Building, FileText, User, Trash2 } from 'lucide-react';
+import { Mail, Building, FileText, User, Trash2 } from 'lucide-react';
 import { useGetReviewersInfo } from '@/hooks/useReviews';
 import Link from 'next/link';
 import { TReviewerInfo } from '@/types';
@@ -36,7 +35,6 @@ import { format } from 'date-fns';
 import { UnAssignAlertDialog } from '../components/UnAssignReviewerDialog';
 
 const ManageReviewers = () => {
-  const [searchTerm, setSearchTerm] = useState('');
   const [isAssignReviewerOpen, setIsAssignReviewerOpen] = useState(false);
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
   const [articleId, setArticleId] = useState('');
@@ -44,7 +42,7 @@ const ManageReviewers = () => {
   const [selectedReviewer, setSelectedReviewer] =
     useState<TReviewerInfo | null>(null);
 
-  const { data: reviewersInfo, isPending } = useGetReviewersInfo();
+  const { data: reviewersInfo = [], isPending } = useGetReviewersInfo();
 
   return (
     <>
@@ -55,23 +53,7 @@ const ManageReviewers = () => {
             <h1 className="text-2xl font-bold text-gray-900">
               Manage Reviewers
             </h1>
-            <p className="text-gray-600">
-              Create reviewer accounts, assign manuscripts, and track review
-              progress
-            </p>
           </div>
-        </div>
-
-        {/* Search */}
-
-        <div className="relative">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Search reviewers by name, email, affiliation, or expertise..."
-            className="pl-10"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
         </div>
 
         {/* Reviewers Table */}
@@ -106,14 +88,16 @@ const ManageReviewers = () => {
                 )}
                 {reviewersInfo?.map((reviewer) => {
                   const name = `${reviewer.user.prefix ?? ''} ${reviewer.user.firstName} ${reviewer.user.lastName}`;
-                  const assignments = reviewer.user.reviewAssignments;
-                  const reviewerAssignments =
+                  const underReviewAssignments =
                     reviewer.user.reviewAssignments.filter(
                       (review) =>
                         review.article.articleStatus === 'UNDER REVIEW'
                     );
-
                   const reviews = reviewer.user.reviews;
+                  console.log(
+                    'underReviewAssignments:',
+                    underReviewAssignments
+                  );
                   return (
                     <TableRow key={reviewer.id}>
                       <TableCell>
@@ -159,9 +143,10 @@ const ManageReviewers = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        {assignments.length > 0 ? (
+                        {underReviewAssignments &&
+                        underReviewAssignments.length > 0 ? (
                           <div className="space-y-1 max-w-xs">
-                            {reviewerAssignments
+                            {underReviewAssignments
                               .slice(0, 2)
                               .map((assignment) => (
                                 <div key={assignment.id} className="text-xs">
@@ -177,16 +162,16 @@ const ManageReviewers = () => {
                                   </div>
                                 </div>
                               ))}
-                            {reviewerAssignments.length > 2 && (
+                            {underReviewAssignments.length > 2 && (
                               <div className="text-xs text-gray-500">
-                                +{reviewerAssignments.length - 2} more
+                                +{underReviewAssignments.length - 2} more
                               </div>
                             )}
                           </div>
                         ) : (
-                          <span className="text-sm text-gray-500">
+                          <div className="text-sm text-gray-500">
                             No assignments
-                          </span>
+                          </div>
                         )}
                       </TableCell>
                       <TableCell className="text-right">
@@ -219,14 +204,14 @@ const ManageReviewers = () => {
                               </SheetHeader>
 
                               <div className="space-y-4 mt-6">
-                                {reviewerAssignments.length > 0 ? (
+                                {underReviewAssignments.length > 0 ? (
                                   <div className="space-y-3">
                                     <h4 className="text-sm font-medium text-gray-900">
                                       Current Assignments
                                     </h4>
                                     <ScrollArea className="h-[5500px] pr-4">
                                       <div className="space-y-3">
-                                        {reviewerAssignments.map(
+                                        {underReviewAssignments.map(
                                           (assignment) => (
                                             <Card
                                               key={assignment.id}
@@ -321,20 +306,6 @@ const ManageReviewers = () => {
                 </TableRow>
               )}
             </Table>
-
-            {/* {filteredReviewers.length === 0 && (
-            <div className="text-center py-8">
-              <User className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-semibold text-gray-900">
-                No reviewers found
-              </h3>
-              <p className="mt-1 text-sm text-gray-500">
-                {searchTerm
-                  ? 'Try adjusting your search criteria'
-                  : 'Get started by adding your first reviewer'}
-              </p>
-            </div>
-          )} */}
           </CardContent>
         </Card>
       </div>

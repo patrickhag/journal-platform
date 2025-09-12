@@ -23,7 +23,7 @@ import { authenticate } from '@/actions/authenticate';
 import { useSearchParams } from 'next/navigation';
 import Loader from '@/components/Loader';
 import Link from 'next/link';
-import RoleSelector from '@/components/RoleSelector';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 export default function LoginComponent() {
   const [showPassword, setShowPassword] = useState(false);
@@ -88,20 +88,6 @@ export default function LoginComponent() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <RoleSelector
-                      selectedRole={field.value}
-                      onRoleSelect={field.onChange}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -152,11 +138,84 @@ export default function LoginComponent() {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Select your role</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        className="flex flex-wrap gap-4"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem
+                            value="NORMAL_USER"
+                            id="NORMAL_USER"
+                          />
+                          <FormLabel
+                            htmlFor="NORMAL_USER"
+                            className="text-sm font-normal"
+                          >
+                            Author
+                          </FormLabel>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="REVIEWER" id="REVIEWER" />
+                          <FormLabel
+                            htmlFor="REVIEWER"
+                            className="text-sm font-normal"
+                          >
+                            Reviewer
+                          </FormLabel>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem
+                            value="ASSOCIATE_EDITOR"
+                            id="ASSOCIATE_EDITOR"
+                          />
+                          <FormLabel
+                            htmlFor="ASSOCIATE_EDITOR"
+                            className="text-sm font-normal"
+                          >
+                            Associate Editor
+                          </FormLabel>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem
+                            value="STAFF_EDITOR"
+                            id="STAFF_EDITOR"
+                          />
+                          <FormLabel
+                            htmlFor="STAFF_EDITOR"
+                            className="text-sm font-normal"
+                          >
+                            Staff Editor
+                          </FormLabel>
+                        </div>
 
-              <div className="flex items-center justify-between">
-                <div className="space-y-1 leading-none">
-                  <FormLabel className="text-sm">Keep me logged in</FormLabel>
-                </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem
+                            value="CHIEF_EDITOR"
+                            id="CHIEF_EDITOR"
+                          />
+                          <FormLabel
+                            htmlFor="CHIEF_EDITOR"
+                            className="text-sm font-normal"
+                          >
+                            Chief Editor
+                          </FormLabel>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="text-end">
                 <Link href="/forgot-password">
                   <button
                     type="button"

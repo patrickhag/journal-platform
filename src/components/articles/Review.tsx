@@ -127,7 +127,9 @@ export default function ReviewModal({
               name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Status</FormLabel>
+                  <FormLabel>
+                    Status <span className="text-red-700">*</span>
+                  </FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}

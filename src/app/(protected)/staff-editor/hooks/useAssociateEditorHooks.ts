@@ -6,9 +6,8 @@ export const useAssignedAssociateEditor = () => {
   return useQuery({
     queryKey: ['associateEditorAssignments'],
     queryFn: async () => {
-      const { data } = await axios.get<TAssociateEditorAssignment[]>(
-        `/api/associate-editor`
-      );
+      const { data } =
+        await axios.get<TAssociateEditorAssignment[]>(`/api/staff-editor`);
       return data;
     },
   });

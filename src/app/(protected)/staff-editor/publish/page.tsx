@@ -12,7 +12,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FileText, Plus } from 'lucide-react';
 import { useGetAcceptedArticles } from '@/hooks/useArticles';
-import { TPublishedArticle } from '@/types';
 import PublishManuscriptSheet from './components/PublishManuscript';
 import Link from 'next/link';
 
@@ -26,11 +25,7 @@ const PublishedArticles = () => {
     articleId: '',
     articleTitle: '',
   });
-  const { data: acceptedManuscripts } = useGetAcceptedArticles();
-
-  // const [selectedPublishedArticle, setselectedPublishedArticle] =
-  useState<TPublishedArticle | null>(null);
-  // const [editSheetOpen, setEditSheetOpen] = useState(false);
+  const { data: acceptedManuscripts, isPending } = useGetAcceptedArticles();
 
   const handlePublishManuscript = (articleId: string, articleTitle: string) => {
     setSheetOpen({ open: true, articleId, articleTitle });
@@ -56,6 +51,7 @@ const PublishedArticles = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {isPending && <p>Loading...</p>}
             <div className="space-y-4">
               {acceptedManuscripts?.map((manuscript) => {
                 const authorNames = `${manuscript.metadata.prefix}. ${manuscript.user.firstName} ${manuscript.user.lastName}`;

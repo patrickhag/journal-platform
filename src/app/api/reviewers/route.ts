@@ -1,11 +1,6 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
-import {
-  articleSubmissions,
-  reviewAssignments,
-  userRoles,
-  users,
-} from '@/db/schema';
+import { articleSubmissions, reviewAssignments, userRoles } from '@/db/schema';
 import { sendInvitation } from '@/lib/emailTransporter';
 import { format } from 'date-fns';
 import { and, eq } from 'drizzle-orm';
@@ -17,7 +12,7 @@ export async function GET(req: NextRequest) {
     if (
       !(
         session?.user.role === 'CHIEF_EDITOR' ||
-        session?.user.role === 'ASSOCIATE_EDITOR'
+        session?.user.role === 'STAFF_EDITOR'
       )
     ) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -61,7 +56,7 @@ export async function POST(req: NextRequest) {
     if (
       !(
         session?.user.role === 'CHIEF_EDITOR' ||
-        session?.user.role === 'ASSOCIATE_EDITOR'
+        session?.user.role === 'STAFF_EDITOR'
       )
     ) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });

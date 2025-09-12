@@ -3,6 +3,9 @@ import {
   MessageResponse,
   PReview,
   TArticlesReview,
+  TAssociateEditorAssignments,
+  TAssociateEditorCollection,
+  TAssociateEditors,
   TReview,
   TReviewerAssignment,
   TReviewerInfo,
@@ -273,7 +276,7 @@ export const useGetReviewersInfo = () => {
     queryKey: ['reviewersInfo'],
     queryFn: async () => {
       const { data } = await axios.get<TReviewerInfo[]>(`/api/reviewers/all`);
-      return data;
+      return data || [];
     },
   });
 };
@@ -297,6 +300,105 @@ export const useUnAssignReviewer = () => {
         : error.message;
 
       toast.error(message || 'Failed to unassign reviewer');
+    },
+  });
+};
+
+export const useGetAssociateEditors = () => {
+  return useQuery({
+    queryKey: ['associateEditors'],
+    queryFn: async () => {
+      const { data } = await axios.get<TAssociateEditors[]>(
+        `/api/associate-editor/`
+      );
+      return data || [];
+    },
+  });
+};
+
+export const useGetAssociateEditorsAssignments = () => {
+  return useQuery({
+    queryKey: ['associateEditorsAssignments'],
+    queryFn: async () => {
+      const { data } = await axios.get<TAssociateEditorAssignments[]>(
+        `/api/associate-editor/assignments`
+      );
+      return data || [];
+    },
+  });
+};
+
+export const useAssignAssociateEditor = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: {
+      articleId: string;
+      userId: string;
+      editorName: string;
+      editorEmail: string;
+      date: Date;
+      articleTitle: string;
+      staffEditorId: string;
+      fileIds: string[];
+      message: string;
+    }) => {
+      return axios.post<MessageResponse>('/api/associate-editor/', data);
+    },
+    onSuccess: ({ data }) => {
+      if (data.message) {
+        queryClient.invalidateQueries({ queryKey: ['reviewersInfo'] });
+        toast.success(data.message);
+      }
+    },
+    onError: (error: Error | AxiosError) => {
+      console.error('Review submission error:', error);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : error.message;
+
+      toast.error(message || 'Failed to unassign reviewer');
+    },
+  });
+};
+
+export const useSubmitCollection = () => {
+  return useMutation({
+    mutationFn: async (data: {
+      fileIds: string[];
+      articleId: string;
+      staffEditorName: string;
+      articleTitle: string | undefined;
+      staffEditorEmail: string | undefined;
+    }) => {
+      return axios.post<MessageResponse>(
+        '/api/associate-editor/assignments',
+        data
+      );
+    },
+    onSuccess: ({ data }) => {
+      if (data.message) {
+        toast.success(data.message);
+      }
+    },
+    onError: (error: Error | AxiosError) => {
+      console.error('Review submission error:', error);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : error.message;
+
+      toast.error(message || 'Failed to submit review');
+    },
+  });
+};
+
+export const useGetAssociateEditorsCollections = (articleId: string) => {
+  return useQuery({
+    queryKey: ['associateEditorCollections'],
+    queryFn: async () => {
+      const { data } = await axios.get<TAssociateEditorCollection[]>(
+        `/api/associate-editor/assignments/${articleId}`
+      );
+      return data || [];
     },
   });
 };

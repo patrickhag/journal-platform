@@ -1,17 +1,11 @@
 import type * as React from 'react';
 import { Tailwind, Container, Section, Text } from '@react-email/components';
 
-export const ReviewerResponseEmail: React.FC<{
+export const NotifyStaffEditorAboutAssociateEditorCorrection: React.FC<{
+  staffEditorName: string;
   associateEditorName: string;
-  reviewerName: string;
   articleTitle: string;
-  status: 'accepted' | 'rejected';
-}> = ({ associateEditorName, reviewerName, articleTitle, status }) => {
-  const decisionText =
-    status === 'accepted'
-      ? 'has accepted the review invitation'
-      : 'has declined the review invitation';
-
+}> = ({ staffEditorName, associateEditorName, articleTitle }) => {
   return (
     <Tailwind>
       <Container className="bg-white border border-gray-200 max-w-xl mx-auto my-8 p-6 text-left">
@@ -23,12 +17,12 @@ export const ReviewerResponseEmail: React.FC<{
 
         <Section className="px-6 py-4">
           <Text className="text-gray-800 text-base mb-4">
-            Dear {associateEditorName},
+            Dear {staffEditorName},
           </Text>
 
           <Text className="text-gray-700 mb-4">
-            This is to inform you that <strong>{reviewerName}</strong>{' '}
-            {decisionText} for the manuscript titled:
+            This is to inform you that <strong>{associateEditorName}</strong>{' '}
+            has submitted a correction for the manuscript titled:
             <br />
             <em>“{articleTitle}”</em>.
           </Text>

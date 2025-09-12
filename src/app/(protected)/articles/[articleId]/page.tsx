@@ -10,7 +10,7 @@ import GoBackButton from '@/components/articles/GoBackButton';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { AcceptOrRejectComponent } from '@/components/articles/AcceptOrReject';
+import { AssignOrRejectComponent } from '@/components/articles/AssignOrReject';
 import { Button } from '@/components/ui/button';
 import { ArrowUpRight } from 'lucide-react';
 import withPermissions from '@/components/WithPermission';
@@ -181,7 +181,7 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
           </Card>
         )}
         {article?.articleStatus !== 'PUBLISHED' && (
-          <AcceptOrRejectComponent
+          <AssignOrRejectComponent
             role={
               (currentUserRole ?? 'ADMIN') as
                 | 'NORMAL_USER'

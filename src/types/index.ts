@@ -217,7 +217,7 @@ export type TAssociateEditorAssignment = {
     reviews: {
       id: true;
     }[];
-  }[];
+  };
 };
 
 export type TIssues = {
@@ -364,28 +364,44 @@ export type TMostViewed = {
 
 export type TUserInfo = {
   id: string;
-  role: string;
+  role: 'NORMAL_USER';
   user: {
     id: string;
     firstName: string;
     lastName: string;
     affiliation: string;
     country: string;
-    role: string;
     email: string;
-    emailVerified: string | null; // ISO date string or null
+    emailVerified: string;
     isActive: boolean;
     isPartOfEditorialBoard: boolean;
     password: string;
     avatar: string;
     orcid: string;
     bio: string;
-    expertise: string | null;
-    updatedAt: string | null; // ISO date string or null
-    prefix: string | null;
-    createdAt: string; // ISO date string
-    articles: { id: string }[];
-    publishedArticles: { id: string }[];
+    expertise: null | string;
+    updatedAt: null | string;
+    prefix: null | string;
+    createdAt: string;
+    articles: Array<{
+      id: string;
+      createdAt: string;
+      articleStatus: string;
+      metadata: {
+        title: string;
+      };
+    }>;
+    publishedArticles: Array<{
+      id: string;
+      publishedAt: string;
+      slug: string;
+      article: {
+        id: string;
+        metadata: {
+          title: string;
+        };
+      };
+    }>;
   };
 };
 
@@ -467,4 +483,67 @@ export type TUser = {
   avatar: string | null;
   createdAt: string | null;
   role: string;
+};
+
+export type TSUser = {
+  role: string;
+  id: string;
+  userId: string;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    orcid: string;
+    expertise: string;
+    country: string;
+    affiliation: string;
+    email: string;
+    bio: string;
+  };
+};
+
+export type TAssociateEditorAssignments = {
+  id: string;
+  assignedAt: string;
+  dueDate: string;
+  fileIds: string[] | null;
+  message: string;
+  staffEditor: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
+  articleSubmissions: {
+    id: string;
+    articleStatus: 'UNDER REVIEW' | string;
+    metadata: {
+      title: string;
+    };
+  };
+};
+
+export type TAssociateEditors = {
+  id: string;
+  role: string;
+  userId: string;
+  user: {
+    id: string;
+    prefix: string | null;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+    affiliation: string | null;
+    bio: string | null;
+    expertise: string | null;
+  };
+};
+
+export type TAssociateEditorCollection = {
+  id: string;
+  submittedAt: string;
+  fileIds: string[];
+  user: {
+    firstName: string;
+    lastName: string;
+  };
 };
