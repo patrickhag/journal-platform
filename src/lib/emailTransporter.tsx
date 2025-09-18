@@ -28,6 +28,7 @@ import { AuthorReplyToReviewEmail } from '@/components/emails/author-reply-to-re
 import { SendAssociateEditorInvitation } from '@/components/emails/send-invite-associate-editor';
 import { InformStaffEditorAboutAssociateInvitation } from '@/components/emails/inform-staff-editor-about-associate-invitation';
 import { NotifyStaffEditorAboutAssociateEditorCorrection } from '@/components/emails/notifiy-staff-editor-about-ass-correction';
+import { SubscriberEmail } from '@/components/emails/sendSubscriberEmail';
 
 export const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -769,6 +770,31 @@ export const authorInformReviewer = async ({
       from: process.env.EMAIL_USER,
       to: reviewerEmail,
       subject: 'Author has replied to your the review on JAEPH.',
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending notification:', error);
+    return { success: false, error };
+  }
+};
+export const sendEmailToSubscribers = async ({
+  subscriberEmail,
+  subject,
+  message,
+}: {
+  subscriberEmail: string;
+  subject: string;
+  message: string;
+}) => {
+  try {
+    const emailHtml = await render(<SubscriberEmail email={message} />);
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: subscriberEmail,
+      subject: subject,
       html: emailHtml,
     });
 

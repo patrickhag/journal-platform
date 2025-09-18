@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
-import { editorAssignments } from '@/db/schema';
+import { editorAssignment } from '@/db/schema';
 import { auth } from '@/auth';
 import { desc, eq } from 'drizzle-orm';
 
@@ -10,20 +10,23 @@ export async function GET(req: NextRequest) {
 
     const editorId = session?.user.id;
 
-    if (!(session?.user.role === 'STAFF_EDITOR')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    // if (!(session?.user.role === 'STAFF_EDITOR')) {
+    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // }
 
-    const associateEditorsAssigments =
-      await db.query.editorAssignments.findMany({
-        where: eq(editorAssignments.userId, editorId as string),
-        orderBy: desc(editorAssignments.assignedAt),
+    const associateEditorsAssigments = await db.query.editorAssignment.findMany(
+      {
+        where: eq(
+          editorAssignment.userId,
+          '4c7fed47-9110-41cc-bd5d-e9a0b6b1c9ea'
+        ),
+        orderBy: desc(editorAssignment.assignedAt),
         columns: {
           id: true,
           assignedAt: true,
         },
         with: {
-          articleSubmissions: {
+          articleSubmission: {
             columns: {
               id: true,
               articleStatus: true,
@@ -48,7 +51,8 @@ export async function GET(req: NextRequest) {
             },
           },
         },
-      });
+      }
+    );
 
     return NextResponse.json(associateEditorsAssigments);
   } catch (error) {

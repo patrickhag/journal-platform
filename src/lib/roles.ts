@@ -2,7 +2,6 @@ export const USER_ROLES = [
   'NORMAL_USER',
   'CHIEF_EDITOR',
   'REVIEWER',
-  'ADMIN',
   'ASSOCIATE_EDITOR',
   'STAFF_EDITOR',
 ] as const;
@@ -58,23 +57,6 @@ export const ROLE_PERMISSIONS: TPermission = {
     'VIEW_REVIEWS',
     'CHANGE_ROLE',
     'DEACTIVATE_USER',
-  ],
-  ADMIN: [
-    'VIEW_PUBLIC_ARTICLES',
-    'EDIT_OWN_ARTICLES',
-    'EDIT_OTHERS_ARTICLES',
-    'DELETE_OWN_ARTICLES',
-    'DELETE_OTHERS_ARTICLES',
-    'PUBLISH_ARTICLES',
-    'MANAGE_USERS',
-    'DELETE_JOURNAL', // Admin can delete any journal
-    'UPDATE_JOURNAL', // Admin can update any journal
-    'DELETE_CONTRIBUTOR', // Admin can delete contributors
-    'MANAGE_REVIEWERS', // Admin can manage all reviews (CRUD for all reviews)
-    'UPDATE_REVIEW', // Admin can update any review
-    'DELETE_REVIEW', // Admin can delete any review
-    'PUBLISH_ARTICLES', // Editors can publish articles
-    'VIEW_REVIEWS',
   ],
   REVIEWER: [
     'VIEW_PUBLIC_ARTICLES',

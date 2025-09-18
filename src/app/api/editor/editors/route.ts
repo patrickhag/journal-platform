@@ -1,11 +1,6 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
-import {
-  articleSubmissions,
-  editorAssignments,
-  userRoles,
-  users,
-} from '@/db/schema';
+import { articleSubmissions, editorAssignment, userRoles } from '@/db/schema';
 import { notifyAssociateEditor } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -60,12 +55,12 @@ export async function POST(req: NextRequest) {
     }
 
     await db
-      .insert(editorAssignments)
+      .insert(editorAssignment)
       .values({
         userId,
         articleId,
       })
-      .returning({ editorId: editorAssignments.id });
+      .returning({ editorId: editorAssignment.id });
 
     const article = await db.query.articleSubmissions.findFirst({
       columns: {

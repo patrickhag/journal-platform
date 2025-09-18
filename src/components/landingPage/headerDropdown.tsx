@@ -29,7 +29,7 @@ export default function HeaderDropdown({
         redirect('/submissions');
         break;
       case 'ASSOCIATE_EDITOR':
-        redirect('/associate-editor/assigned');
+        redirect('/staff-editor/assigned');
         break;
       case 'CHIEF_EDITOR':
         redirect('/editor/dashboard');

@@ -161,7 +161,7 @@ export default function ReviewerDashboard() {
 
         {!isPending && reviewerAssignments?.length === 0 && (
           <p className="text-sm text-gray-500">
-            You have no active assignments.
+            You have no deadline assignments.
           </p>
         )}
       </div>

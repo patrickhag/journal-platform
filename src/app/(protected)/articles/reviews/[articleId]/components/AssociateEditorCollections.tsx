@@ -73,7 +73,7 @@ export const AssociateEditorCollections = ({
                 <div className="flex flex-col items-center justify-center h-full pt-24 text-center text-muted-foreground">
                   <FileSearch2 className="w-12 h-12 mb-4 text-muted-foreground" />
                   <p className="text-sm">
-                    No reviews have been submitted for this article yet.
+                    No collections have been submitted for this manuscript yet.
                   </p>
                 </div>
               )}

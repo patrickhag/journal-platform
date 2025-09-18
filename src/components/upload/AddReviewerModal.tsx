@@ -23,11 +23,17 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { reviewerSchema } from '@/schemas/reviewer';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { startTransition, useActionState, useState } from 'react';
+import { useActionState, useState, useTransition } from 'react';
 import { safeParse, serialize } from 'zod-urlsearchparams';
 import { addReviewerAction } from '@/actions/addReviewer';
+import Loader from '../Loader';
 
 type ReviewerFormValues = z.infer<typeof reviewerSchema>;
+
+type ReviewerActionResult = {
+  success: boolean;
+  message: string;
+};
 
 export default function AddReviewerModal({
   typeOfPage,
@@ -58,20 +64,28 @@ export default function AddReviewerModal({
     input: new URLSearchParams(searchParams.toString()),
   });
 
+  const [isPending, startTransition] = useTransition();
+
   const reviewers = reviewersValidation.data?.reviewers || [];
-  const [, formAction] = useActionState(addReviewerAction, undefined);
+  const [, formAction] = useActionState<
+    ReviewerActionResult,
+    z.infer<typeof reviewerSchema> & { articleId: string }
+  >(addReviewerAction, { success: false, message: '' });
 
   const { articleId } = useParams();
 
-  function handleSubmit(data: ReviewerFormValues) {
-    if (autoSave) {
-      startTransition(() => {
-        if (articleId) {
-          formAction({ ...data, articleId: articleId as string });
-        }
+  async function handleSubmit(data: ReviewerFormValues) {
+    if (autoSave && articleId) {
+      const res = await addReviewerAction(undefined, {
+        ...data,
+        articleId: articleId as string,
       });
-      return;
+      if (res.success) {
+        form.reset();
+        setOpen(false);
+      }
     }
+
     reviewers.push(data);
     const serializedData = serialize({
       data: { reviewers },
@@ -81,9 +95,9 @@ export default function AddReviewerModal({
     });
 
     const params = new URLSearchParams(searchParams.toString());
-
     params.delete('reviewers');
     router.replace(`?${params.toString()}&${serializedData.toString()}`);
+
     form.reset();
     setOpen(false);
   }
@@ -186,7 +200,7 @@ export default function AddReviewerModal({
                     </FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Briefly describe why this individual is suitable to review your work"
+                        placeholder="e.g., Machine Learning, Data Science (comma-separated)"
                         className="resize-none"
                         {...field}
                       />
@@ -203,8 +217,8 @@ export default function AddReviewerModal({
                 >
                   Cancel
                 </Button>
-                <Button type="submit" onClick={() => setOpen(false)}>
-                  Add
+                <Button type="submit" disabled={isPending}>
+                  {isPending ? <Loader text="Adding..." /> : 'Add'}
                 </Button>
               </div>
             </form>

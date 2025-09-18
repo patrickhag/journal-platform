@@ -67,7 +67,7 @@ function ArticleCard({
             <div className="flex items-start justify-between">
               {/* Left Section: Title, Dates, Status */}
               <div className="flex-1">
-                <h3 className="font-semibold text-lg text-gray-900 mb-2">
+                <h3 className="font-semibold text-lg text-gray-900 mb-2 line-clamp-1">
                   {transformedArticle.title}
                 </h3>
 

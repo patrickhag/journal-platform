@@ -12,9 +12,6 @@ export async function GET(req: NextRequest) {
         updatedAt: true,
         articleStatus: true,
         acceptedAt: true,
-        proofStatus: true,
-        proofFileUrl: true,
-        proofNote: true,
       },
       with: {
         user: {

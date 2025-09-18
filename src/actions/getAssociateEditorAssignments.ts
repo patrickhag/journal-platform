@@ -25,6 +25,7 @@ export const getAssociateEditorAssignments = async (userId: string) => {
       articleSubmissions: {
         columns: {
           id: true,
+          articleStatus: true,
         },
         with: {
           metadata: {

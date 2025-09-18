@@ -1,16 +1,15 @@
-import { TArticle } from '@/schemas/reviewer';
+import { TManuscripts } from '@/schemas/reviewer';
 import { IArticle, MessageResponse } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
 export const useGetUserArticles = (
-  userId: string,
   debouncedSearchQuery: string,
   selectedStatus: string
 ) => {
   const fetchArticles = async () => {
-    const response = await axios.get<TArticle[]>(`/api/articles/${userId}`, {
+    const response = await axios.get<TManuscripts>(`/api/articles/user`, {
       params: {
         searchQuery: debouncedSearchQuery,
         articleStatus: selectedStatus,
@@ -23,11 +22,10 @@ export const useGetUserArticles = (
 
     return response.data;
   };
-  return useQuery<TArticle[], Error>({
-    queryKey: ['manuscripts', userId, debouncedSearchQuery, selectedStatus],
+  return useQuery<TManuscripts, Error>({
+    queryKey: ['manuscripts', debouncedSearchQuery, selectedStatus],
     queryFn: fetchArticles,
     refetchOnWindowFocus: false,
-    enabled: !!userId,
   });
 };
 

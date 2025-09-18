@@ -9,9 +9,22 @@ export async function addReviewerAction(
   _: unknown,
   formData: z.infer<typeof reviewerSchema> & { articleId: string }
 ) {
-  await db
-    .insert(reviewers)
-    .values({ ...formData })
-    .execute();
-  revalidatePath('/articles/' + formData.articleId);
+  try {
+    await db
+      .insert(reviewers)
+      .values({ ...formData })
+      .execute();
+    revalidatePath('/articles/' + formData.articleId);
+
+    return {
+      success: true,
+      message: 'Reviewer added successfully!',
+    };
+  } catch (error) {
+    console.error('Error adding reviewer:', error);
+    return {
+      success: false,
+      message: 'Failed to add reviewer. Please try again.',
+    };
+  }
 }

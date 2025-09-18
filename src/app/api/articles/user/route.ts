@@ -5,17 +5,13 @@ import { and, eq, desc } from 'drizzle-orm';
 import { ARTICLE_STATUS } from '@/lib/consts';
 import { auth } from '@/auth';
 
-type Params = { userId: string };
-
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<Params> }
-) {
+export async function GET(req: NextRequest) {
   try {
-    const { userId } = await params;
     const session = await auth();
 
-    if (!userId || !session?.user?.role) {
+    const userId = session?.user.id;
+
+    if (!session?.user?.role) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -28,7 +24,7 @@ export async function GET(
       : undefined;
 
     const whereClause = and(
-      eq(articleSubmissions.userId, userId),
+      eq(articleSubmissions.userId, userId as string),
       ...(articleStatus
         ? [eq(articleSubmissions.articleStatus, articleStatus)]
         : [])
@@ -70,7 +66,7 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(articles);
+    return NextResponse.json({ articles, userName: session?.user.name });
   } catch (error) {
     console.error('Error fetching articles:', error);
     return NextResponse.json(

@@ -79,3 +79,37 @@ export const useGetFeedbacks = () => {
     },
   });
 };
+
+export const useGetSubscribers = () => {
+  return useQuery({
+    queryKey: ['subscribers'],
+    queryFn: async () => {
+      const { data } = await axios.get<
+        {
+          email: string;
+          subscribedAt: Date;
+        }[]
+      >(`/api/subscribers`);
+      return data;
+    },
+  });
+};
+
+export const useSendEmails = () => {
+  return useMutation({
+    mutationFn: async (data: { message: string; subject: string }) => {
+      return axios.post<{ message: string }>(`/api/subscribers`, data);
+    },
+    onSuccess: ({ data }) => {
+      toast.info(data.message);
+    },
+    onError: (error: Error | AxiosError) => {
+      console.log('Mutation error:', error);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data.message
+        : error.message;
+
+      toast.error(message || 'Failed to send email');
+    },
+  });
+};

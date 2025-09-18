@@ -25,12 +25,12 @@ export async function GET(req: NextRequest) {
             expertise: true,
           },
           with: {
-            editors: {
+            editor: {
               columns: {
                 assignedAt: true,
               },
               with: {
-                articleSubmissions: {
+                articleSubmission: {
                   columns: {
                     id: true,
                     articleStatus: true,

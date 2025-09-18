@@ -114,7 +114,7 @@ export default function ReviewsPage() {
                 </CardHeader>
                 <CardContent className="p-6">
                   {isPending ? (
-                    <p>Loading reviews...</p>
+                    <p className="text-muted-foreground">Loading reviews...</p>
                   ) : (
                     <ScrollArea className="h-[600px] pr-4">
                       <div className="space-y-6">
@@ -195,7 +195,7 @@ export default function ReviewsPage() {
                           <div className="flex flex-col items-center justify-center h-full pt-24 text-center text-muted-foreground">
                             <FileSearch2 className="w-12 h-12 mb-4 text-muted-foreground" />
                             <p className="text-sm">
-                              No reviews have been submitted for this article
+                              No reviews have been submitted for this manuscript
                               yet.
                             </p>
                           </div>

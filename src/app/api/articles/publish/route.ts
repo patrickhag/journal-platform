@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
     if (
       !(
-        session?.user.role === 'ASSOCIATE_EDITOR' ||
+        session?.user.role === 'STAFF_EDITOR' ||
         session?.user.role === 'CHIEF_EDITOR'
       )
     ) {
@@ -55,11 +55,12 @@ export async function POST(req: Request) {
       pageRange,
       pdfUrl,
       slug: slugify(title),
+      status: 'AWAITING_DECISION',
     });
 
     await db
       .update(articleSubmissions)
-      .set({ articleStatus: 'AWAITING_DECICION' })
+      .set({ articleStatus: 'AWAITING_DECISION' })
       .where(eq(articleSubmissions.id, articleId));
 
     return NextResponse.json({

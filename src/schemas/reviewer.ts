@@ -69,7 +69,7 @@ export const reviewSchema = z.object({
   ]),
 });
 
-export type TArticle = {
+type TArticle = {
   section: string;
   id: string;
   createdAt: string;
@@ -86,6 +86,11 @@ export type TArticle = {
     decision: string;
     editorfileId: string;
   }[];
+}[];
+
+export type TManuscripts = {
+  userName: string;
+  articles: TArticle;
 };
 
 export type ReviewFormData = z.infer<typeof reviewSchema>;

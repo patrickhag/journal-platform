@@ -11,15 +11,26 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, Filter, Eye } from 'lucide-react';
-import { useGetContacts, useGetFeedbacks } from '@/hooks/useContacts';
+import { Calendar, Filter, Eye, Users, Send, Mail } from 'lucide-react';
+import {
+  useGetContacts,
+  useGetFeedbacks,
+  useGetSubscribers,
+  useSendEmails,
+} from '@/hooks/useContacts';
 import { useState } from 'react';
 import ViewInquiryModal from './component/ViewInquiryModal';
+import { format } from 'date-fns';
+import { RichTextEditor } from '@/components/RichTextEditor';
+import { Input } from '@/components/ui/input';
+import Loader from '@/components/Loader';
 
 const ManageInquiries = () => {
   const { data: contacts, isPending } = useGetContacts();
-  const { data: feedbacks, isPending: isFeedbacksDataPending } =
-    useGetFeedbacks();
+  const { data: feedbacks } = useGetFeedbacks();
+  const [newsletterMessage, setNewsletterMessage] = useState('');
+  const [subject, setSubject] = useState('');
+  const { data: subscribers } = useGetSubscribers();
 
   const [modalType, setModalType] = useState<'contact' | 'feedback' | null>(
     null
@@ -41,10 +52,20 @@ const ManageInquiries = () => {
     return `${stars} (${rating}/5)`;
   };
 
+  const { mutate, isPending: isSendingEmail } = useSendEmails();
+
   const handleViewClick = (item: any, type: 'contact' | 'feedback') => {
     setSelectedData(item);
     setModalType(type);
     setIsModalOpen(true);
+  };
+
+  const handleSendNewsletter = () => {
+    const data = {
+      subject,
+      message: newsletterMessage,
+    };
+    mutate(data);
   };
 
   return (
@@ -63,6 +84,7 @@ const ManageInquiries = () => {
         <TabsList>
           <TabsTrigger value="contacts">Contacts</TabsTrigger>
           <TabsTrigger value="feedbacks">Feedbacks</TabsTrigger>
+          <TabsTrigger value="newsletter">Newsletter</TabsTrigger>
         </TabsList>
 
         <TabsContent value="contacts">
@@ -174,9 +196,6 @@ const ManageInquiries = () => {
                             <p className="font-medium">
                               {item.name || `No name provided`}
                             </p>
-                            <p className="text-sm text-muted-foreground">
-                              {item.email}
-                            </p>
                             {item.email && (
                               <p className="text-xs text-muted-foreground">
                                 {item.email}
@@ -230,7 +249,101 @@ const ManageInquiries = () => {
             </CardContent>
           </Card>
         </TabsContent>
+        {/* Newsletter Tab */}
+        <TabsContent value="newsletter">
+          <div className="space-y-6">
+            {/* Email Composition */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Send className="w-5 h-5" />
+                  Send Newsletter
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label
+                    htmlFor="newsletter-message"
+                    className="block text-sm font-medium mb-2"
+                  >
+                    Message to send to all subscribers ({subscribers?.length}{' '}
+                    recipients)
+                  </label>
+                  <Input
+                    id="newsletter-message"
+                    type="text"
+                    placeholder="Enter email subject..."
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    className="my-3"
+                  />
+                  <RichTextEditor
+                    placeholder="Write your newsletter message here..."
+                    description={newsletterMessage}
+                    onChange={(e) => setNewsletterMessage(e)}
+                  />
+                </div>
+                <Button
+                  disabled={!newsletterMessage.trim() || isSendingEmail}
+                  className="w-full"
+                  onClick={handleSendNewsletter}
+                >
+                  <Send className="w-4 h-4 mr-2" />
+                  {isSendingEmail ? (
+                    <Loader text="Sending..." />
+                  ) : (
+                    'Send Newsletter to All Subscribers'
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Newsletter Subscribers Table */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  Newsletter Subscribers
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Email Address</TableHead>
+                        <TableHead>Subscribed Date</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {subscribers?.map((subscriber, index) => (
+                        <TableRow key={index}>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Mail className="w-4 h-4 text-muted-foreground" />
+                              {subscriber.email}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1">
+                              <Calendar className="w-4 h-4 text-muted-foreground" />
+                              {format(
+                                new Date(subscriber.subscribedAt),
+                                'MMM dd, yyyy'
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
       </Tabs>
+
       {/* Modal */}
       {modalType && (
         <ViewInquiryModal

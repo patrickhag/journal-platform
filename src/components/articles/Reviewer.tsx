@@ -93,7 +93,7 @@ export default function Reviewer({
         <p className="text-base">{expertise}</p>
       </div>
       {(currentUserRole === 'CHIEF_EDITOR' ||
-        currentUserRole === 'ASSOCIATE_EDITOR') && (
+        currentUserRole === 'STAFF_EDITOR') && (
         <Button variant={'outline'} onClick={() => setDialogOpen(true)}>
           {' '}
           <span className="flex items-center">

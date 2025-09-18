@@ -55,7 +55,7 @@ export async function POST(
             email: true,
           },
         },
-        editor: {
+        editorAssignment: {
           with: {
             user: {
               columns: {
@@ -79,13 +79,15 @@ export async function POST(
       articleTitle: article?.metadata.title as string,
       type: 'AUTHOR',
       associateEditorName:
-        article?.editor?.user.firstName + ' ' + article?.editor?.user.lastName,
-      associateEditorEmail: article?.editor?.user.email as string,
+        article?.editorAssignment?.user.firstName +
+        ' ' +
+        article?.editorAssignment?.user.lastName,
+      associateEditorEmail: article?.editorAssignment?.user.email as string,
     });
 
     await db.insert(notifications).values({
       message: `Author with the manuscript ${article?.metadata.title} has revised the manuscript`,
-      userId: article?.editor?.user.id,
+      userId: article?.editorAssignment?.user.id,
     });
 
     return NextResponse.json({

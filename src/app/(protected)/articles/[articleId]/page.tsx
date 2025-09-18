@@ -1,4 +1,5 @@
 import { auth } from '@/auth';
+
 import Files from '@/components/articles/Files';
 import Metadata from '@/components/articles/Metadata';
 import Reviewer from '@/components/articles/Reviewer';
@@ -46,8 +47,8 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
               currentUserRole as
                 | 'NORMAL_USER'
                 | 'CHIEF_EDITOR'
-                | 'ADMIN'
                 | 'REVIEWER'
+                | 'STAFF_EDITOR'
             }
             requiredPermissions={['VIEW_REVIEWS']}
             fallback={<></>}
@@ -151,8 +152,8 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
                     currentUserRole as
                       | 'NORMAL_USER'
                       | 'CHIEF_EDITOR'
-                      | 'ADMIN'
                       | 'REVIEWER'
+                      | 'STAFF_EDITOR'
                   }
                   fallback={<></>}
                 />
@@ -162,8 +163,8 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
                     currentUserRole as
                       | 'NORMAL_USER'
                       | 'CHIEF_EDITOR'
-                      | 'ADMIN'
                       | 'REVIEWER'
+                      | 'STAFF_EDITOR'
                   }
                   fallback={<></>}
                 />
@@ -186,8 +187,8 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
               (currentUserRole ?? 'ADMIN') as
                 | 'NORMAL_USER'
                 | 'CHIEF_EDITOR'
-                | 'ADMIN'
                 | 'REVIEWER'
+                | 'STAFF_EDITOR'
             }
             requiredPermissions={['REJECT_ARTICLE']}
             fallback=""

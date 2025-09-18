@@ -11,8 +11,8 @@ const ROLE_ROUTES: Record<USER_ROLE, string> = {
   NORMAL_USER: '/submissions',
   REVIEWER: '/reviewer/assignments',
   CHIEF_EDITOR: '/editor/dashboard',
-  ADMIN: '/editor',
-  ASSOCIATE_EDITOR: '/associate-editor/assigned',
+  ASSOCIATE_EDITOR: '/associate-editor/assignments',
+  STAFF_EDITOR: '/staff-editor/assigned',
 } as const;
 
 function getRedirectRoute(role: USER_ROLE): string {
@@ -25,7 +25,7 @@ function getRoleDisplayName(role: USER_ROLE): string {
     REVIEWER: 'Reviewer',
     CHIEF_EDITOR: 'Chief Editor',
     ASSOCIATE_EDITOR: 'Associate Editor',
-    ADMIN: 'Administrator',
+    STAFF_EDITOR: 'Staff Editor',
   };
   return roleNames[role] || 'Author';
 }

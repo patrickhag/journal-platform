@@ -140,8 +140,8 @@ const UserDetail = () => {
                 data?.user.role as
                   | 'NORMAL_USER'
                   | 'CHIEF_EDITOR'
-                  | 'ADMIN'
                   | 'REVIEWER'
+                  | 'STAFF_EDITOR'
               }
               selectedRole={selectedRole}
               setSelectedRole={setSelectedRole}
@@ -158,7 +158,7 @@ const UserDetail = () => {
                 data?.user.role as
                   | 'NORMAL_USER'
                   | 'CHIEF_EDITOR'
-                  | 'ADMIN'
+                  | 'STAFF_EDITOR'
                   | 'REVIEWER'
               }
               fallback={<></>}

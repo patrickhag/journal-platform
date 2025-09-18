@@ -202,7 +202,7 @@ export type TReviewerAssignment = {
 export type TAssociateEditorAssignment = {
   id: string;
   assignedAt: string;
-  articleSubmissions: {
+  articleSubmission: {
     id: string;
     articleStatus: string;
     createdAt: string;

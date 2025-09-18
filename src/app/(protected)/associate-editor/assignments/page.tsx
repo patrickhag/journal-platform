@@ -18,11 +18,14 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import UploadCorrection from '../components/UploadCorrection';
+import { useSession } from 'next-auth/react';
 
 function AssociateEditorDashboard() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { data: assignments, isPending } = useGetAssociateEditorsAssignments();
+  const session = useSession();
+  console.log('user:', session.data?.user);
   const [openSubmitCollection, setOpenSubmitCollection] = useState(false);
 
   const [selectedAssignment, setSelectedAssignment] =

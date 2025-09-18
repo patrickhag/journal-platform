@@ -54,7 +54,6 @@ export default function AssignAssociateEditor({
   const [date, setDate] = useState<Date>();
   const [warning, setWarning] = useState<string>('');
   const { data: associateEditors } = useGetAssociateEditors();
-  associateEditors;
   const [message, setMessage] = useState('');
 
   const { articleId } = useParams();

@@ -700,6 +700,11 @@ export const articleSubmissionsRelations = relations(
     authorRevisions: many(authorRevisions, {
       relationName: 'authorRevisions',
     }),
+    editorAssignment: one(editorAssignment, {
+      fields: [articleSubmissions.id],
+      references: [editorAssignment.articleId],
+      relationName: 'editorAssignment',
+    }),
   })
 );
 

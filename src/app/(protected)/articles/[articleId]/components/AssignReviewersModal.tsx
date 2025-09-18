@@ -61,6 +61,9 @@ export default function AssignRevieweModal() {
       mutate(data, {
         onSettled: () => {
           setOpen(false);
+          setSelectedReviewerId('');
+          setDate(undefined);
+          setWarning('');
         },
       });
       setWarning('');

@@ -30,7 +30,6 @@ export default function UploadCorrection({
   selectedAssignment: TAssociateEditorAssignments | null;
 }) {
   const searchParams = useSearchParams();
-
   const filesValidation = safeParse({
     schema: filesSchema,
     input: new URLSearchParams(searchParams.toString()),

@@ -47,7 +47,7 @@ export default function AssociateEditorDashboard() {
             {Array.isArray(associateEditorsAssigments) &&
               associateEditorsAssigments.length > 0 &&
               associateEditorsAssigments.map((assignment, index) => {
-                const authorName = `${assignment.articleSubmissions.metadata?.prefix ?? ''}. ${assignment.articleSubmissions.user.firstName} ${assignment.articleSubmissions.user.lastName}`;
+                const authorName = `${assignment.articleSubmission.metadata?.prefix ?? ''}. ${assignment.articleSubmission.user.firstName} ${assignment.articleSubmission.user.lastName}`;
 
                 return (
                   <div
@@ -58,7 +58,7 @@ export default function AssociateEditorDashboard() {
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-2">
                           <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
-                            {assignment.articleSubmissions.metadata?.title}
+                            {assignment.articleSubmission?.metadata?.title}
                           </h3>
                         </div>
 
@@ -76,7 +76,7 @@ export default function AssociateEditorDashboard() {
                           <span>
                             Submitted:{' '}
                             {format(
-                              new Date(assignment.articleSubmissions.createdAt),
+                              new Date(assignment.articleSubmission.createdAt),
                               'MMM dd, yyyy'
                             )}
                           </span>
@@ -84,20 +84,20 @@ export default function AssociateEditorDashboard() {
 
                         <div className="flex items-center space-x-4">
                           <Badge variant={'outline'}>
-                            {assignment.articleSubmissions.articleStatus}
+                            {assignment.articleSubmission.articleStatus}
                           </Badge>
                         </div>
                       </div>
 
                       <div className="flex space-x-2 ml-4">
-                        {assignment.articleSubmissions.reviews?.length > 0 && (
+                        {assignment.articleSubmission.reviews?.length > 0 && (
                           <Button
                             variant="outline"
                             size="sm"
                             className="bg-amber-600 hover:bg-amber-700 text-white hover:text-white"
                             onClick={() =>
                               router.push(
-                                `/articles/reviews/${assignment.articleSubmissions.id}`
+                                `/articles/reviews/${assignment.articleSubmission.id}`
                               )
                             }
                           >
@@ -110,7 +110,7 @@ export default function AssociateEditorDashboard() {
                           size="sm"
                           onClick={() =>
                             router.push(
-                              `/articles/${assignment.articleSubmissions.id}`
+                              `/articles/${assignment.articleSubmission.id}`
                             )
                           }
                         >

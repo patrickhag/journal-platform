@@ -2,10 +2,11 @@
   # USERS
     * baikoko708@gmail(author)
       password: @123Baikoko
-    * patrickhag09@gmail.com(editor-in-chief)
+    * patrickhag09@gmail.com(chief-editor)
       password: @123Patrick
     * jaypaty35@gmail.com(staff-editor)
       password: @123JayPaty
     * ahmedsubwarati@gmail.com(reviewer)
       password: @123Subwarati
-
+    * jewepij134@cspaus.com
+      password: @123Darrion

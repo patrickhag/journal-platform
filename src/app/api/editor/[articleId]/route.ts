@@ -71,7 +71,7 @@ export async function POST(
             email: true,
           },
         },
-        editor: {
+        editorAssignment: {
           with: {
             user: {
               columns: {
@@ -101,6 +101,13 @@ export async function POST(
             '🎉 Congratulations, your manuscript has been accepted by Associate editor.',
           userId: article?.user.id,
         });
+        await db
+          .update(articleSubmissions)
+          .set({
+            articleStatus: 'ACCEPTED',
+            acceptedAt: new Date().toISOString().split('T')[0],
+          })
+          .where(eq(articleSubmissions.id, articleId));
         break;
       case decision === 'REQUEST_REVISION':
         await db.insert(notifications).values({

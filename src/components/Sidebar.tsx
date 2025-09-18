@@ -90,7 +90,12 @@ const Sidebar = ({ userRole }: SidebarProps) => {
           {
             href: '/reviewer/assignments',
             label: 'My Assignments',
-            icon: CheckSquare,
+            icon: Files,
+          },
+          {
+            href: '/reviewer/deadlines',
+            label: 'Upcoming Deadlines',
+            icon: Clock,
           },
           {
             href: '/reviewer/revisions',
@@ -98,9 +103,9 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             icon: FileText,
           },
           {
-            href: '/reviewer/deadlines',
-            label: 'Upcoming Deadlines',
-            icon: Clock,
+            href: '/reviewer/finalised',
+            label: 'Finalised Assignments',
+            icon: CheckSquare,
           },
         ];
       case 'associate_editor':
@@ -112,7 +117,7 @@ const Sidebar = ({ userRole }: SidebarProps) => {
           },
           {
             href: '/associate-editor/collections',
-            label: 'Sent Collections',
+            label: 'Sent Assignments',
             icon: FileText,
           },
         ];

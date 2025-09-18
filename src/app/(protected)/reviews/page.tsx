@@ -74,15 +74,6 @@ const ReviewsReceived = () => {
     return review?.reviewedAt;
   };
 
-  // Helper function to get reviewer's full name
-  const getReviewerName = (review: any) => {
-    if (review.user) {
-      const { firstName, lastName, prefix } = review.user;
-      return `${prefix ? prefix + ' ' : ''}${firstName} ${lastName}`;
-    }
-    return 'Unknown Reviewer';
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -155,16 +146,14 @@ const ReviewsReceived = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {selectedManuscript.reviews.map((review) => (
+              {selectedManuscript.reviews.map((review, index) => (
                 <div
                   key={review.id}
                   className="border rounded-lg p-4 space-y-3"
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <h4 className="font-semibold">
-                        {getReviewerName(review)}
-                      </h4>
+                      <h4 className="font-semibold">Reviewer {index + 1}</h4>
                       <p className="text-sm text-gray-600">
                         Reviewed:{' '}
                         {new Date(review.reviewedAt).toLocaleDateString()}

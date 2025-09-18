@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 import { eq } from 'drizzle-orm';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { EyeIcon, File } from 'lucide-react';
+import { Download, File } from 'lucide-react';
 import AddArticleFiles from './AddArticleFiles';
 
 async function Files({
@@ -59,7 +59,7 @@ async function Files({
                   rel="noopener noreferrer"
                 >
                   <span className="flex items-center">
-                    <EyeIcon className="mr-2 text-gray-600" /> View
+                    <Download className="mr-2 text-gray-600" /> Download
                   </span>
                 </Link>
               </Button>
