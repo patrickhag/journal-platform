@@ -97,7 +97,7 @@ const LeftSideBar = async () => {
               {mostViewed?.map((item) => (
                 <li key={item.id} className="text-sm text-gray-600">
                   <Link
-                    href={item.publishedArticle.slug}
+                    href={item.publishedArticle.slug as string}
                     className="block hover:text-blue-600"
                   >
                     {item.publishedArticle.article.metadata.title}

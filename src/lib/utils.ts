@@ -100,7 +100,7 @@ export const roleMap: Record<string, string> = {
 
 export const getAssignmentStatusColor = (status: string) => {
   switch (status) {
-    case 'INVITED':
+    case 'UNDER REVIEW':
       return 'bg-blue-100 text-blue-800'; // pending
     case 'ACCEPTED':
       return 'bg-green-100 text-green-800'; // confirmed

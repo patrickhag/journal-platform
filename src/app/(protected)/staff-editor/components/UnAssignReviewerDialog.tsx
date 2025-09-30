@@ -9,7 +9,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { useUnAssignReviewer } from '@/hooks/useReviews';
+import { useReviewerFunctions } from '@/hooks/useReviews';
 import { UserMinus } from 'lucide-react';
 
 export function UnAssignAlertDialog({
@@ -23,7 +23,7 @@ export function UnAssignAlertDialog({
   userId: string;
   articleId: string;
 }) {
-  const { mutate, isPending } = useUnAssignReviewer();
+  const { mutate, isPending } = useReviewerFunctions();
 
   const handleUnassignReviewer = () => {
     const payloadData = {
@@ -38,12 +38,7 @@ export function UnAssignAlertDialog({
   };
 
   return (
-    <AlertDialog
-      onOpenChange={(isOpen) => {
-        setOpenAlertDialog(isOpen);
-      }}
-      open={isOpen}
-    >
+    <AlertDialog onOpenChange={setOpenAlertDialog} open={isOpen}>
       <AlertDialogTrigger asChild>
         <Button variant="outline">Unassign Reviewer</Button>
       </AlertDialogTrigger>

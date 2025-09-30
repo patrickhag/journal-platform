@@ -2,7 +2,6 @@ import { auth } from '@/auth';
 import { db } from '@/db/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {

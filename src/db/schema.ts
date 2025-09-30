@@ -473,10 +473,6 @@ export const associateEditorAssignments = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     status: varchar('status', { length: 50 }),
-    fileIds: text('fileIds')
-      .array()
-      .notNull()
-      .default(sql`'{}'::text[]`),
     message: text('message'),
     dueDate: timestamp('dueDate'),
     assignedAt: timestamp('assignedAt').defaultNow(),
@@ -489,7 +485,7 @@ export const associateEditorAssignmentsRelations = relations(
     user: one(users, {
       fields: [associateEditorAssignments.userId],
       references: [users.id],
-      relationName: 'editor',
+      relationName: 'userAssociateEditorAssignments',
     }),
     staffEditor: one(users, {
       fields: [associateEditorAssignments.staffEditorId],
@@ -499,7 +495,7 @@ export const associateEditorAssignmentsRelations = relations(
     articleSubmissions: one(articleSubmissions, {
       fields: [associateEditorAssignments.articleId],
       references: [articleSubmissions.id],
-      relationName: 'associateEditorAssignment',
+      relationName: 'associateEditorAssignmentArticle',
     }),
   })
 );
@@ -526,10 +522,8 @@ export const associateEditorCorrections = pgTable(
 
 export const associateEditorCorrectionsRelations = relations(
   associateEditorCorrections,
-  ({ one }) => ({
-    articleSubmissions: one(articleSubmissions, {
-      fields: [associateEditorCorrections.articleId],
-      references: [articleSubmissions.id],
+  ({ one, many }) => ({
+    articleSubmissions: many(articleSubmissions, {
       relationName: 'associateEditorAssignment',
     }),
     user: one(users, {
@@ -565,12 +559,13 @@ export const publishedArticles = pgTable('published_articles', {
     .references(() => articleSubmissions.id, { onDelete: 'cascade' }),
   issueId: text('issue_id').references(() => issues.id),
   userId: text('user_id').references(() => users.id),
-  slug: text('slug').unique().notNull(),
+  slug: text('slug').unique(),
   doi: varchar('doi', { length: 100 }).unique(),
   status: varchar('status', { length: 20 }),
   publishedAt: timestamp('published_at'),
   pageRange: varchar('page_range', { length: 20 }),
-  pdfUrl: text('pdf_url').notNull(),
+  pdfUrl: text('pdf_url'),
+  isEditorsPick: boolean('isEditorsPick'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at'),
 });
@@ -615,8 +610,6 @@ export const ads = pgTable('ads', {
   title: text('title').notNull(),
   imageUrl: text('image_url').notNull(),
   linkUrl: text('link_url').notNull(),
-  startDate: date('start_date').notNull(),
-  endDate: date('end_date').notNull(),
   isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at').defaultNow(),
 });
@@ -705,6 +698,9 @@ export const articleSubmissionsRelations = relations(
       references: [editorAssignment.articleId],
       relationName: 'editorAssignment',
     }),
+    associateEditorAssignments: many(associateEditorAssignments, {
+      relationName: 'associateEditorAssignmentArticle',
+    }),
   })
 );
 
@@ -774,6 +770,12 @@ export const usersRelations = relations(users, ({ many, one }) => ({
     relationName: 'publishedArticles',
   }),
   editor: one(editorAssignment),
+  associateEditorAssignments: many(associateEditorAssignments, {
+    relationName: 'userAssociateEditorAssignments',
+  }),
+  associateEditorCorrections: many(associateEditorCorrections, {
+    relationName: 'associateEditorCorrections',
+  }),
 }));
 
 export const userRolesRelations = relations(userRoles, ({ one }) => ({

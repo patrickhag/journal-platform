@@ -10,21 +10,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { Switch } from '@/components/ui/switch';
-import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon } from 'lucide-react';
-
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
-
-import { useState } from 'react';
 import { AdFormSchema, adSchema } from '@/lib/schemas';
 import { DragAndDropFileInput } from '@/components/upload/FileInput';
 import { FileList } from '@/components/upload/FileList';
@@ -41,8 +29,6 @@ interface CreateAdDialogProps {
 }
 
 export function CreateAdDialog({ isOpen, setIsOpen }: CreateAdDialogProps) {
-  const [isDateOpen, setIsDateOpen] = useState(false);
-
   const {
     register,
     handleSubmit,
@@ -54,8 +40,6 @@ export function CreateAdDialog({ isOpen, setIsOpen }: CreateAdDialogProps) {
     defaultValues: {
       title: '',
       linkUrl: '',
-      startDate: undefined,
-      endDate: undefined,
       isActive: true,
     },
   });
@@ -88,8 +72,6 @@ export function CreateAdDialog({ isOpen, setIsOpen }: CreateAdDialogProps) {
     });
   };
 
-  const startDate = watch('startDate');
-  const endDate = watch('endDate');
   const isActive = watch('isActive');
 
   return (
@@ -119,78 +101,13 @@ export function CreateAdDialog({ isOpen, setIsOpen }: CreateAdDialogProps) {
             <Label htmlFor="linkUrl">Link URL</Label>
             <Input
               id="linkUrl"
-              placeholder="https://example.com"
+              placeholder="Where the user will be redirected to."
               {...register('linkUrl')}
             />
             {errors.linkUrl && (
               <p className="text-sm text-red-500">{errors.linkUrl.message}</p>
             )}
           </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Start Date</Label>
-              <Popover open={isDateOpen} onOpenChange={setIsDateOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className={cn(
-                      'w-full justify-start text-left font-normal',
-                      !startDate && 'text-muted-foreground'
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {startDate ? format(startDate, 'PPP') : 'Pick a date'}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={startDate}
-                    onSelect={(date) => date && setValue('startDate', date)}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              {errors.startDate && (
-                <p className="text-sm text-red-500">
-                  {errors.startDate.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <Label>End Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className={cn(
-                      'w-full justify-start text-left font-normal',
-                      !endDate && 'text-muted-foreground'
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {endDate ? format(endDate, 'PPP') : 'Pick a date'}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={endDate}
-                    onSelect={(date) => date && setValue('endDate', date)}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              {errors.endDate && (
-                <p className="text-sm text-red-500">{errors.endDate.message}</p>
-              )}
-            </div>
-          </div>
-
           <div className="flex items-center space-x-2">
             <Switch
               id="isActive"

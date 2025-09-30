@@ -4,12 +4,12 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { AlertTriangle, Eye, Upload } from 'lucide-react';
+import { AlertTriangle, Calendar, Clock, Eye, Upload } from 'lucide-react';
 import { useGetReviewerAssignments } from '@/hooks/useReviews';
 import { useRouter } from 'next/navigation';
 import ReviewModal from '@/components/articles/Review';
 import ArticleCardSkeleton from '../components/ReviewCardSkeleton';
-import { cn, getAssignmentStatusColor } from '@/lib/utils';
+import { calculateDaysRemaining } from '@/lib/utils';
 
 export default function ReviewerDashboard() {
   const { data, isPending } = useGetReviewerAssignments();
@@ -30,18 +30,6 @@ export default function ReviewerDashboard() {
 
   const onClose = () => {
     setReviewModal({ isOpen: false });
-  };
-
-  const calculateDaysRemaining = (dueDate: string): number => {
-    const today = new Date();
-    const due = new Date(dueDate);
-    return Math.ceil((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-  };
-
-  const getUrgencyColor = (daysRemaining: number, status: string) => {
-    if (status === 'COMPLETED') return '!bg-green-100 !text-green-800';
-    if (daysRemaining <= 3) return '!bg-amber-100 !text-amber-800';
-    return '!bg-blue-100 !text-blue-800';
   };
 
   const router = useRouter();
@@ -85,6 +73,7 @@ export default function ReviewerDashboard() {
           const isPublished = article.articleStatus === 'PUBLISHED';
           const author = `${article.metadata?.prefix ?? ''}. ${article.user.firstName} ${article.user.lastName}`;
           const title = article.metadata?.title;
+          const articleStatus = assignment.article.articleStatus;
 
           return (
             <div
@@ -94,38 +83,36 @@ export default function ReviewerDashboard() {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
-                    <h3 className="font-semibold text-lg text-gray-900">
+                    <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
                       {title}
                     </h3>
                   </div>
 
-                  <p className="text-gray-600 mb-3">by {author}</p>
+                  <p className="text-gray-600 mb-3">Author: {author}</p>
 
                   <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
-                    <span>
-                      Assigned: {new Date(assignedDate).toLocaleDateString()}
-                    </span>
-                    <span>•</span>
-                    <span>Due: {new Date(dueDate).toLocaleDateString()}</span>
+                    <div className="flex items-center space-x-1">
+                      <Calendar className="h-4 w-4 text-gray-400" />
+                      <span>
+                        Assigned:{' '}
+                        {new Date(assignment.assignedDate).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Clock className="h-4 w-4 text-gray-400" />
+                      <span>
+                        Due: {new Date(assignment.dueDate).toLocaleDateString()}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="flex items-center space-x-4">
                     <Badge
                       variant={'outline'}
-                      className={cn(
-                        'lowercase',
-                        getAssignmentStatusColor(status)
-                      )}
+                      className="bg-yellow-100 text-yellow-800"
                     >
-                      invitation {status}
+                      {articleStatus}
                     </Badge>
-                    {!isPublished && (
-                      <Badge className={getUrgencyColor(daysRemaining, status)}>
-                        {daysRemaining === 0
-                          ? 'Due today'
-                          : `${daysRemaining} days remaining`}
-                      </Badge>
-                    )}
                     {isPublished && (
                       <Badge className="bg-gray-100 text-gray-700">
                         PUBLISHED

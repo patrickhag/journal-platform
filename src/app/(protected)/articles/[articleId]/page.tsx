@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { AssignOrRejectComponent } from '@/components/articles/AssignOrReject';
 import { Button } from '@/components/ui/button';
-import { ArrowUpRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import withPermissions from '@/components/WithPermission';
 import AddReviewerModal from '@/components/upload/AddReviewerModal';
 import AssignRevieweModal from './components/AssignReviewersModal';
@@ -52,6 +52,19 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
             }
             requiredPermissions={['VIEW_REVIEWS']}
             fallback={<></>}
+          />
+          <AllParticipantsLinkPermission
+            articleId={articleId}
+            role={
+              currentUserRole as
+                | 'NORMAL_USER'
+                | 'CHIEF_EDITOR'
+                | 'REVIEWER'
+                | 'STAFF_EDITOR'
+                | 'ASSOCIATE_EDITOR'
+            }
+            requiredPermissions={['VIEW_ALL_PARTICIPANTS']}
+            fallback=""
           />
         </div>
         {/* metadata & contributors */}
@@ -137,7 +150,9 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
         {session?.user.role !== 'REVIEWER' && (
           <Card className="my-3">
             <CardHeader>
-              <CardTitle className="text-[#1a237e]">Reviewers</CardTitle>
+              <CardTitle className="text-[#1a237e]">
+                Proposed Reviewers
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex justify-between">
@@ -200,14 +215,25 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
   );
 }
 
-const ReveiwArticleLink = ({ articleId }: { articleId: string }) => (
+const ReviewsArticleLink = ({ articleId }: { articleId: string }) => (
   <Button variant="link" size="sm" className="gap-1 flex items-center">
     <Link href={`/articles/reviews/${articleId}`}> Reviews</Link>
-    <ArrowUpRight className="w-2 h-2" />
+    <ChevronRight className="w-2 h-2" />
   </Button>
 );
 
-const ReviewsArticleLinkPermission = withPermissions(ReveiwArticleLink);
+const AllParticipantsLink = ({ articleId }: { articleId: string }) => (
+  <Button variant="link" size="sm" className="gap-1 flex items-center">
+    <Link href={`/articles/all-participants/${articleId}`}>
+      All Participants
+    </Link>
+    <ChevronRight className="w-2 h-2" />
+  </Button>
+);
+
+const ReviewsArticleLinkPermission = withPermissions(ReviewsArticleLink);
+
+const AllParticipantsLinkPermission = withPermissions(AllParticipantsLink);
 
 const AssignReviewerLink = () => <AssignRevieweModal />;
 

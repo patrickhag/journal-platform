@@ -547,3 +547,87 @@ export type TAssociateEditorCollection = {
     lastName: string;
   };
 };
+
+export type TAssignment = {
+  id: string;
+  dueDate: string;
+  article: {
+    id: string;
+    articleStatus: string;
+    metadata: {
+      title: string;
+      prefix: string;
+    };
+    files: {
+      publicId: string;
+      originalName: string;
+    }[];
+    user: {
+      firstName: string;
+      lastName: string;
+    };
+    reviews: {
+      id: string;
+      fileIds: string[];
+      message: string;
+      status: string;
+      reviewedAt: string; // ISO date string
+    }[];
+  };
+};
+
+export type Params = { articleId: string };
+
+export type TAssociateEditorAssignmentsInfo = {
+  id: string;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    affiliation: string;
+    expertise: string;
+    prefix: string | null;
+    associateEditorAssignments: {
+      id: string;
+      articleId: string;
+      assignedAt: Date;
+      dueDate: Date;
+      articleSubmissions: {
+        articleStatus: string;
+        metadata: {
+          title: string;
+        };
+      };
+    }[];
+  };
+};
+
+export type TParticipants = {
+  staffEditor: {
+    firstName: string;
+    lastName: string;
+    prefix: string | null;
+    expertise: string | null;
+  } | null;
+  reviewers: {
+    id: string;
+    status: string;
+    user: {
+      firstName: string;
+      lastName: string;
+      prefix: string | null;
+      expertise: string | null;
+    };
+  }[];
+  associateEditors: {
+    id: string;
+    status: string;
+    user: {
+      firstName: string;
+      lastName: string;
+      prefix: string | null;
+      expertise: string | null;
+    };
+  }[];
+};

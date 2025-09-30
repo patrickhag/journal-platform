@@ -1,11 +1,8 @@
-// /api/ads/[id]/route.ts
-
 import { db } from '@/db/db';
 import { ads } from '@/db/schema';
 import { NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { auth } from '@/auth';
-import { z } from 'zod';
 
 type Params = { id: string };
 
@@ -21,8 +18,7 @@ export async function PATCH(
     }
 
     const { id } = await params;
-    const { title, imageUrl, startDate, endDate, isActive, linkUrl } =
-      await req.json();
+    const { title, imageUrl, isActive, linkUrl } = await req.json();
 
     const updated = await db
       .update(ads)
@@ -30,8 +26,6 @@ export async function PATCH(
         title: title,
         imageUrl: imageUrl,
         linkUrl: linkUrl,
-        startDate: startDate,
-        endDate: endDate,
         isActive: isActive,
       })
       .where(eq(ads.id, id))

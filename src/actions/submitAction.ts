@@ -13,8 +13,8 @@ import {
   users,
 } from '@/db/schema';
 import {
-  notifyContibutor,
   notifyAdmin,
+  notifyContibutor,
   thankAuthorAboutSubmission,
 } from '@/lib/emailTransporter';
 
@@ -118,15 +118,16 @@ export async function submitAction(_: unknown, formData: FormData) {
         founders: result.data.founders,
         ethicalReference: result.data.ethicalReference,
       });
+
+      // notify editor-in-chief email
+      await notifyAdmin({
+        article: metadataValidations.title,
+        authorName: session.user.name,
+        subject: 'New Article Submission',
+        articleId: articleSubmissionIds[0].id,
+        participant: 'AUTHOR',
+      });
     });
-    // notify editor-in-chief email
-    // await notifyAdmin({
-    //   article: metadataValidations.title,
-    //   authorName: session.user.name,
-    //   subject: 'New Article Submission',
-    //   articleId: articleSubmissionIds[0].id,
-    //   participant: 'AUTHOR',
-    // });
 
     // thank author email
     await thankAuthorAboutSubmission({

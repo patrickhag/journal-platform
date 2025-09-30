@@ -13,34 +13,13 @@ export function ArticleSection({ articles }: { articles: TArticle[] }) {
   return (
     <>
       {articles.map((article, index) => (
-        <ArticleCard key={article.id} article={article} index={index} />
+        <ArticleCard key={index} article={article} />
       ))}
     </>
   );
 }
 
-function ArticleCard({
-  article,
-}: {
-  article: {
-    id: string;
-    section: string;
-    userId: string;
-    proofStatus: string;
-    createdAt: string;
-    updatedAt: string;
-    articleStatus: string;
-    metadata: {
-      title: string;
-    };
-    editorActions: Array<{
-      editorfileId: string;
-      decision: string;
-      message: string;
-    }>;
-  };
-  index: number;
-}) {
+function ArticleCard({ article }: { article: TArticle }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const onClose = () => setIsOpen(false);
@@ -111,7 +90,7 @@ function ArticleCard({
         articleTitle={transformedArticle.title}
         isOpen={isOpen}
         onClose={onClose}
-        editorActions={article.editorActions}
+        editorActions={article.editorActions || []}
       />
     </>
   );

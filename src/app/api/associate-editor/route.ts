@@ -93,7 +93,6 @@ export async function POST(req: NextRequest) {
       articleId,
       userId,
       dueDate: new Date(date),
-      fileIds,
       status: 'INVITED',
       staffEditorId,
       message,
@@ -127,5 +126,52 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (
+      !(
+        session?.user.role === 'CHIEF_EDITOR' ||
+        session?.user.role === 'STAFF_EDITOR'
+      )
+    ) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { userId, articleId } = await req.json();
+
+    if (!(userId || articleId)) {
+      return NextResponse.json(
+        { message: 'Invalid userId or articleId' },
+        { status: 400 }
+      );
+    }
+
+    const isItDeleted = await db
+      .delete(associateEditorAssignments)
+      .where(
+        and(
+          eq(associateEditorAssignments.articleId, articleId),
+          eq(associateEditorAssignments.userId, userId)
+        )
+      )
+      .returning();
+
+    if (isItDeleted.length > 0) {
+      return NextResponse.json(
+        { message: 'Associate editor successfully unassigned' },
+        { status: 200 }
+      );
+    }
+  } catch (error) {
+    console.error('Error updating articles:', error);
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }

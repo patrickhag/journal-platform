@@ -1,5 +1,5 @@
 import { TUsers } from '@/db/schema';
-import { TReviewers, TSUser, TUserInfo } from '@/types';
+import { TParticipants, TReviewers, TSUser, TUserInfo } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
@@ -224,6 +224,18 @@ export const useAddToEditorialBoard = () => {
         ? error.response?.data.message
         : error.message;
       toast.error(message || 'Failed to pick article(s)');
+    },
+  });
+};
+
+export const useGetParticipants = (articleId: string) => {
+  return useQuery({
+    queryKey: ['participants'],
+    queryFn: async () => {
+      const { data } = await axios.get<TParticipants>(
+        `/api/users/participants/${articleId}`
+      );
+      return data;
     },
   });
 };

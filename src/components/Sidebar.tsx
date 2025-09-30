@@ -50,11 +50,6 @@ const Sidebar = ({ userRole }: SidebarProps) => {
           },
           { href: '/editor/users', label: 'Manage Users', icon: Users },
           {
-            href: '/editor/manage-editors',
-            label: 'Manage Editors',
-            icon: ShieldUser,
-          },
-          {
             href: '/editor/collections',
             label: 'Manage Collections',
             icon: Files,
@@ -132,6 +127,11 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             href: '/staff-editor/reviewers',
             label: 'Manage Reviewers',
             icon: Users,
+          },
+          {
+            href: '/staff-editor/manage-editors',
+            label: 'Manage Editors',
+            icon: ShieldUser,
           },
           {
             href: '/staff-editor/publish',

@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import withPermissions from '../WithPermission';
 import { useState } from 'react';
-import AssignEditorModal from './AssignAssociateEditorModal';
+import AssignStaffEditorModal from './AssignStaffEditorModal';
 import { RejectManuscriptModal } from './RejectManuscriptModal';
 
 const AssignOrReject = ({ articleId }: { articleId: string }) => {
@@ -19,7 +19,7 @@ const AssignOrReject = ({ articleId }: { articleId: string }) => {
           className="bg-green-500 hover:bg-green-600"
           onClick={() => setOpen(true)}
         >
-          Assign Editor
+          Assign Staff Editor
         </Button>
         <Button
           className="bg-red-500 hover:bg-red-600"
@@ -28,7 +28,7 @@ const AssignOrReject = ({ articleId }: { articleId: string }) => {
           Reject Manuscript
         </Button>
       </div>
-      <AssignEditorModal
+      <AssignStaffEditorModal
         isOpen={open}
         onClose={onClose}
         articleId={articleId}

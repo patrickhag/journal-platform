@@ -4,22 +4,19 @@ import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Eye, Upload } from 'lucide-react';
+import { FileText, Eye, Upload, Calendar, Clock, PenLine } from 'lucide-react';
 import { useGetReviewerAssignments } from '@/hooks/useReviews';
 import { useRouter } from 'next/navigation';
 import ReviewModal from '@/components/articles/Review';
 import ArticleCardSkeleton from '../components/ReviewCardSkeleton';
-import {
-  calculateDaysRemaining,
-  cn,
-  getAssignmentStatusColor,
-  getUrgencyColor,
-} from '@/lib/utils';
+import Link from 'next/link';
 
 export default function ReviewerDashboard() {
   const { data, isPending } = useGetReviewerAssignments();
 
   const reviewerAssignments = data?.assignedArticles;
+
+  console.log('reviewerAssignments:', reviewerAssignments);
 
   const [reviewModal, setReviewModal] = useState<{
     isOpen: boolean;
@@ -63,12 +60,12 @@ export default function ReviewerDashboard() {
           {isPending && [1, 2, 3].map((i) => <ArticleCardSkeleton key={i} />)}
           <div className="space-y-4">
             {reviewerAssignments?.map((assignment) => {
-              const { id, status, assignedDate, dueDate, article } = assignment;
+              const { id, article } = assignment;
 
-              const daysRemaining = calculateDaysRemaining(dueDate);
               const isPublished = article.articleStatus === 'PUBLISHED';
               const author = `${article.metadata?.prefix ?? ''}. ${article.user.firstName} ${article.user.lastName}`;
               const title = article.metadata?.title;
+              const articleStatus = assignment.article.articleStatus;
 
               return (
                 <div
@@ -83,39 +80,37 @@ export default function ReviewerDashboard() {
                         </h3>
                       </div>
 
-                      <p className="text-gray-600 mb-3">by {author}</p>
+                      <p className="text-gray-600 mb-3">Author: {author}</p>
                       {!isPublished && (
                         <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
-                          <span>
-                            Assigned:{' '}
-                            {new Date(assignedDate).toLocaleDateString()}
-                          </span>
-                          <span>•</span>
-                          <span>
-                            Due: {new Date(dueDate).toLocaleDateString()}
-                          </span>
+                          <div className="flex items-center space-x-1">
+                            <Calendar className="h-4 w-4 text-gray-400" />
+                            <span>
+                              Assigned:{' '}
+                              {new Date(
+                                assignment.assignedDate
+                              ).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Clock className="h-4 w-4 text-gray-400" />
+                            <span>
+                              Due:{' '}
+                              {new Date(
+                                assignment.dueDate
+                              ).toLocaleDateString()}
+                            </span>
+                          </div>
                         </div>
                       )}
 
                       <div className="flex items-center space-x-4">
                         <Badge
                           variant={'outline'}
-                          className={cn(
-                            'lowercase',
-                            getAssignmentStatusColor(status)
-                          )}
+                          className="bg-yellow-100 text-yellow-800"
                         >
-                          invitation {status}
+                          {articleStatus}
                         </Badge>
-                        {!isPublished && (
-                          <Badge
-                            className={getUrgencyColor(daysRemaining, status)}
-                          >
-                            {daysRemaining === 0
-                              ? 'Due today'
-                              : `${daysRemaining} days remaining`}
-                          </Badge>
-                        )}
                         {isPublished && (
                           <Badge className="bg-gray-100 text-gray-700">
                             PUBLISHED
@@ -134,14 +129,15 @@ export default function ReviewerDashboard() {
                         View Article
                       </Button>
                       {/* {!isPublished && status === 'ACCEPTED' && ( */}
-                      <Button
-                        size="sm"
-                        className="bg-blue-600 hover:bg-blue-700"
-                        onClick={() => handleSubmitReview(article.id)}
-                      >
-                        <Upload className="mr-2 h-4 w-4" />
-                        Submit Review
-                      </Button>
+                      <Link href={`/reviewer/${assignment.id}`}>
+                        <Button
+                          size="sm"
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
+                          <PenLine className="mr-2 h-4 w-4" />
+                          Review Article
+                        </Button>
+                      </Link>
                       {/* )} */}
                     </div>
                   </div>

@@ -29,6 +29,7 @@ import { SendAssociateEditorInvitation } from '@/components/emails/send-invite-a
 import { InformStaffEditorAboutAssociateInvitation } from '@/components/emails/inform-staff-editor-about-associate-invitation';
 import { NotifyStaffEditorAboutAssociateEditorCorrection } from '@/components/emails/notifiy-staff-editor-about-ass-correction';
 import { SubscriberEmail } from '@/components/emails/sendSubscriberEmail';
+import { RemindReviewer } from '@/components/emails/remind-reviewer';
 
 export const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -89,6 +90,39 @@ export const notifyContibutor = async ({
     from: process.env.EMAIL_USER,
     to: toEmail,
     subject,
+    html: emailHtml,
+  };
+  const result = await transporter.sendMail(options);
+  if (result.accepted.length === 0) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+export const remindReviewerAboutRevision = async ({
+  toEmail,
+  articleTitle,
+  reviewerName,
+  dueDate,
+}: {
+  toEmail: string;
+  articleTitle: string;
+  reviewerName: string;
+  dueDate: string;
+}) => {
+  const emailHtml = await render(
+    <RemindReviewer
+      articleTitle={articleTitle}
+      reviewerName={reviewerName}
+      dueDate={dueDate}
+    />
+  );
+
+  const options = {
+    from: process.env.EMAIL_USER,
+    to: toEmail,
+    subject: 'Reminder: Please review your assigned manuscript',
     html: emailHtml,
   };
   const result = await transporter.sendMail(options);

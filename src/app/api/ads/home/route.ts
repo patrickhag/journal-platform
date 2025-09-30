@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
 import { ads } from '@/db/schema';
-import { lte, gte, and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 
 export async function GET(req: NextRequest) {
   try {
     const now = new Date().toISOString().split('T')[0];
 
     const adverts = await db.query.ads.findMany({
-      where: and(eq(ads.isActive, true), gte(ads.endDate, now)),
+      where: eq(ads.isActive, true),
     });
 
     return NextResponse.json(adverts);

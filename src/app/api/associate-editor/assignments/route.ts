@@ -25,7 +25,6 @@ export async function GET(req: NextRequest) {
           id: true,
           assignedAt: true,
           dueDate: true,
-          fileIds: true,
           message: true,
         },
         with: {

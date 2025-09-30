@@ -13,30 +13,20 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { CreateAdDialog } from './components/CreateAdDialog';
-import { useDeleteAd, useGetEditorAds } from '@/hooks/useAds';
+import { useGetEditorAds } from '@/hooks/useAds';
 import { EditAdDialog } from './components/EditAdDialog';
 import { TAd } from '@/db/schema';
 import Loader from '@/components/Loader';
+import { DeleteAdDialog } from './components/DeleteAdDialog';
 
 const ManageAds = () => {
-  const { data: ads } = useGetEditorAds();
+  const { data: ads, isPending } = useGetEditorAds();
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialog, setIsDeleteDialog] = useState(false);
   const [editingAd, setEditingAd] = useState<TAd | null>(null);
-  const [deletingAdId, setDeletingAdId] = useState<string | null>(null);
-
-  const { mutate, isPending } = useDeleteAd();
-
-  const handleDeleteAd = (id: string) => {
-    setDeletingAdId(id);
-
-    mutate(id, {
-      onSettled: () => {
-        setDeletingAdId(null);
-      },
-    });
-  };
+  const [deletingAdId, setDeletingAdId] = useState('');
 
   return (
     <>
@@ -64,7 +54,6 @@ const ManageAds = () => {
               <TableRow>
                 <TableHead>Image</TableHead>
                 <TableHead>Title</TableHead>
-                <TableHead>Duration</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -98,12 +87,6 @@ const ManageAds = () => {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="text-sm">
-                        <div>{ad.startDate}</div>
-                        <div className="text-gray-500">to {ad.endDate}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
                       <Badge variant={ad.isActive ? 'default' : 'secondary'}>
                         {ad.isActive ? 'Active' : 'Inactive'}
                       </Badge>
@@ -124,9 +107,11 @@ const ManageAds = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleDeleteAd(ad.id)}
+                          onClick={() => {
+                            setDeletingAdId(ad.id);
+                            setIsDeleteDialog(true);
+                          }}
                           className="text-red-600 hover:text-red-700"
-                          disabled={deletingAdId === ad.id}
                         >
                           {deletingAdId === ad.id ? (
                             <Loader />
@@ -148,6 +133,13 @@ const ManageAds = () => {
           advert={editingAd}
           isOpen={isEditDialogOpen}
           setIsOpen={setIsEditDialogOpen}
+        />
+      )}
+      {isDeleteDialog && (
+        <DeleteAdDialog
+          open={isDeleteDialog}
+          adId={deletingAdId}
+          onOpenChange={setIsDeleteDialog}
         />
       )}
     </>

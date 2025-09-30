@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { User, CheckCircle, CalendarIcon } from 'lucide-react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import {
@@ -31,13 +31,9 @@ import {
   useAssignAssociateEditor,
   useGetAssociateEditors,
 } from '@/hooks/useReviews';
-import { DragAndDropFileInput } from '@/components/upload/FileInput';
-import { FileList } from '@/components/upload/FileList';
 import Loader from '@/components/Loader';
 import { useClearURL } from '@/components/ClearURL';
 import { useSession } from 'next-auth/react';
-import { safeParse } from 'zod-urlsearchparams';
-import { filesSchema } from '@/schemas/reviewer';
 import { Textarea } from '@/components/ui/textarea';
 
 export default function AssignAssociateEditor({
@@ -54,6 +50,8 @@ export default function AssignAssociateEditor({
   const [date, setDate] = useState<Date>();
   const [warning, setWarning] = useState<string>('');
   const { data: associateEditors } = useGetAssociateEditors();
+
+  console.log('associateEditors:', associateEditors);
   const [message, setMessage] = useState('');
 
   const { articleId } = useParams();
@@ -65,16 +63,6 @@ export default function AssignAssociateEditor({
   const selectedEditor = associateEditors?.find(
     (editor) => editor.id === selectedEditorId
   );
-
-  const searchParams = useSearchParams();
-
-  const filesValidation = safeParse({
-    schema: filesSchema,
-    input: new URLSearchParams(searchParams.toString()),
-  });
-
-  const files = filesValidation.data?.files || [];
-  const fileIds = files.map((f) => f.publicId);
 
   const clearUrl = useClearURL();
 
@@ -93,7 +81,6 @@ export default function AssignAssociateEditor({
         date,
         articleTitle,
         staffEditorId: staffEditorId as string,
-        fileIds,
         message,
       };
 
@@ -119,13 +106,6 @@ export default function AssignAssociateEditor({
             Select an associate editor to edit this manuscript.
           </DialogDescription>
         </DialogHeader>
-
-        {/* Files Section */}
-        <div className="space-y-4 mb-6">
-          <p className="font-semibold">Attach Files</p>
-          <DragAndDropFileInput />
-          <FileList isEditNeeded={true} />
-        </div>
 
         {/* Editors Section */}
         <div className="space-y-6">

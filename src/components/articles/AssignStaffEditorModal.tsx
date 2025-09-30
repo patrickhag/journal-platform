@@ -26,7 +26,7 @@ interface AssignEditorModalProps {
   articleId: string;
 }
 
-export default function AssignEditorModal({
+export default function AssignStaffEditorModal({
   isOpen,
   onClose,
   articleId,
@@ -47,7 +47,6 @@ export default function AssignEditorModal({
         editorName: `${selectedEditor.user.firstName} ${selectedEditor.user.lastName}`,
         editorEmail: selectedEditor.user.email,
       };
-      console.log('data:', data);
       mutate(data, {
         onSettled: () => {
           onClose();

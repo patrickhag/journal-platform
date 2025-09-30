@@ -52,17 +52,19 @@ async function Files({
                   </p>
                 </div>
               </div>
-              <Button variant="secondary" size="sm">
-                <Link
-                  href={file.publicId}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span className="flex items-center">
-                    <Download className="mr-2 text-gray-600" /> Download
-                  </span>
-                </Link>
-              </Button>
+              <div className="flex justify-between gap-3">
+                <Button variant="secondary" size="sm">
+                  <Link
+                    href={file.publicId}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className="flex items-center">
+                      <Download className="mr-2 text-gray-600" /> Download
+                    </span>
+                  </Link>
+                </Button>
+              </div>
             </div>
           ))}
         </CardContent>

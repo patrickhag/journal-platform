@@ -7,8 +7,6 @@ type TPayloadData = {
   isActive: boolean;
   title: string;
   linkUrl: string;
-  startDate: Date;
-  endDate: Date;
   fileId: string;
 };
 

@@ -7,6 +7,7 @@ import { PutBlobResult } from '@vercel/blob';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { serialize, safeParse } from 'zod-urlsearchparams';
 import { filesSchema } from '@/schemas/reviewer';
+import { MessageResponse } from '@/types';
 
 export const useUploadArticleFiles = (
   setFiles: (files: File[] | null) => void
@@ -94,6 +95,29 @@ export const useUploadReviewerFiles = () => {
         : error.message;
 
       toast.error(message || 'Failed to upload file');
+    },
+  });
+};
+
+export const useTransferFileToPublished = () => {
+  return useMutation({
+    mutationFn: async (data: { fileId: string; articleId: string }) => {
+      const response = await axios.post<MessageResponse>(
+        `/api/users/manuscript-users/${data.articleId}`,
+        data
+      );
+      return response.data;
+    },
+    onSuccess: ({ message }) => {
+      toast.success(message);
+    },
+    onError: (error: Error | AxiosError) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data.error
+        : error.message;
+      toast.error(
+        message || 'Failed to transfer file to published preparation'
+      );
     },
   });
 };

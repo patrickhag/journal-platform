@@ -1,0 +1,70 @@
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+import { UserMinus } from 'lucide-react';
+import { useAssociateEditorFunctions } from '../../hooks/useAssociateEditorHooks';
+import Loader from '@/components/Loader';
+
+export function UnAssignEditorAlertDialog({
+  isOpen,
+  setOpenAlertDialog,
+  userId,
+  articleId,
+}: {
+  isOpen: boolean;
+  setOpenAlertDialog: (open: boolean) => void;
+  userId: string;
+  articleId: string;
+}) {
+  const { mutate, isPending } = useAssociateEditorFunctions();
+
+  const handleUnassignEditor = () => {
+    const payloadData = {
+      articleId,
+      userId,
+    };
+    mutate(payloadData, {
+      onSettled: () => {
+        setOpenAlertDialog(false);
+      },
+    });
+  };
+
+  return (
+    <AlertDialog onOpenChange={setOpenAlertDialog} open={isOpen}>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline">Unassign Editor</Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Unassign Editor</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to unassign this associate editor? This action
+            can be reversed by assigning a new editor.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={() => setOpenAlertDialog(false)}>
+            Cancel
+          </AlertDialogCancel>
+          <Button
+            onClick={handleUnassignEditor}
+            disabled={isPending}
+            className="bg-red-500 hover:bg-red-600 focus:ring-red-500 text-white rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+          >
+            <UserMinus className="h-4 w-4 mr-1" />
+            {isPending ? <Loader text="Unassigning..." /> : 'Unassign'}
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}

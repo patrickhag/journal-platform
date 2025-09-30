@@ -1,6 +1,7 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
 import { reviewAssignments, userRoles } from '@/db/schema';
+import { remindReviewerAboutRevision } from '@/lib/emailTransporter';
 import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -39,7 +40,6 @@ export async function GET(req: NextRequest) {
               },
             },
             reviewAssignments: {
-              where: eq(reviewAssignments.status, 'ACCEPTED'),
               columns: {
                 id: true,
                 articleId: true,
@@ -90,12 +90,57 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { userId, articleId } = await req.json();
+    const { userId, articleId, isItNotification } = await req.json();
 
     if (!(userId || articleId)) {
       return NextResponse.json(
         { message: 'Invalid userId or articleId' },
         { status: 400 }
+      );
+    }
+
+    const reviewer = await db.query.reviewAssignments.findFirst({
+      columns: {
+        dueDate: true,
+      },
+      where: and(
+        eq(reviewAssignments.userId, userId),
+        eq(reviewAssignments.articleId, articleId)
+      ),
+      with: {
+        user: {
+          columns: {
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+        article: {
+          columns: {
+            id: true,
+          },
+          with: {
+            metadata: {
+              columns: {
+                title: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (isItNotification) {
+      // send email to the reviewer
+      await remindReviewerAboutRevision({
+        toEmail: reviewer?.user?.email as string,
+        articleTitle: reviewer?.article?.metadata.title as string,
+        reviewerName: `${reviewer?.user?.firstName} ${reviewer?.user?.lastName}`,
+        dueDate: reviewer?.dueDate as string,
+      });
+      return NextResponse.json(
+        { message: 'Reviewer successfully notified' },
+        { status: 200 }
       );
     }
 
@@ -111,7 +156,7 @@ export async function PATCH(req: NextRequest) {
 
     if (isItDeleted.length > 0) {
       return NextResponse.json(
-        { message: 'Reviewer successfully unassigned from the article' },
+        { message: 'Reviewer successfully unassigned' },
         { status: 200 }
       );
     }

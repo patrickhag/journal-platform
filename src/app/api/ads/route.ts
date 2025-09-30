@@ -41,8 +41,6 @@ export async function POST(req: NextRequest) {
       title: body.title,
       imageUrl: body.fileId,
       linkUrl: body.linkUrl,
-      startDate: body.startDate,
-      endDate: body.endDate,
       isActive: body.isActive,
     };
 

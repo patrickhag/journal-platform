@@ -10,6 +10,7 @@ import {
   Eye,
   File,
   FileSearch2,
+  Forward,
   Repeat,
   UserCheck,
 } from 'lucide-react';
@@ -114,7 +115,7 @@ export default function ReviewsPage() {
                 </CardHeader>
                 <CardContent className="p-6">
                   {isPending ? (
-                    <p className="text-muted-foreground">Loading reviews...</p>
+                    <p className="text-muted-foreground">Loading ...</p>
                   ) : (
                     <ScrollArea className="h-[600px] pr-4">
                       <div className="space-y-6">
@@ -155,15 +156,24 @@ export default function ReviewsPage() {
                                                 </h5>
                                               </div>
                                             </div>
-                                            <Button
-                                              variant="ghost"
-                                              size="sm"
-                                              asChild
-                                            >
-                                              <a href={fileUrl} download>
-                                                <Eye className="h-4 w-4" />
-                                              </a>
-                                            </Button>
+                                            <div className="flex justify-between">
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                asChild
+                                              >
+                                                <a href={fileUrl} download>
+                                                  <Eye className="h-4 w-4" />
+                                                </a>
+                                              </Button>
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                asChild
+                                              >
+                                                <Forward className="h-4 w-4" />
+                                              </Button>
+                                            </div>
                                           </div>
                                         ))}
                                       </div>

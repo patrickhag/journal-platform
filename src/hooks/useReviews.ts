@@ -3,6 +3,7 @@ import {
   MessageResponse,
   PReview,
   TArticlesReview,
+  TAssignment,
   TAssociateEditorAssignments,
   TAssociateEditorCollection,
   TAssociateEditors,
@@ -15,6 +16,8 @@ import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
 export const useCreateReview = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (data: ReviewFormData) => {
       return axios.post<MessageResponse>('/api/reviews', data);
@@ -22,6 +25,9 @@ export const useCreateReview = () => {
     onSuccess: ({ data }) => {
       if (data.message) {
         toast.success(data.message);
+        queryClient.invalidateQueries({
+          queryKey: ['reviewerAssignments', 'particularAssignment'],
+        });
       }
     },
     onError: (error: Error | AxiosError) => {
@@ -281,10 +287,14 @@ export const useGetReviewersInfo = () => {
   });
 };
 
-export const useUnAssignReviewer = () => {
+export const useReviewerFunctions = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: { userId: string; articleId: string }) => {
+    mutationFn: async (data: {
+      userId?: string;
+      articleId?: string;
+      isItNotification?: boolean;
+    }) => {
       return axios.patch<MessageResponse>('/api/reviewers/all', data);
     },
     onSuccess: ({ data }) => {
@@ -339,7 +349,6 @@ export const useAssignAssociateEditor = () => {
       date: Date;
       articleTitle: string;
       staffEditorId: string;
-      fileIds: string[];
       message: string;
     }) => {
       return axios.post<MessageResponse>('/api/associate-editor/', data);
@@ -397,6 +406,18 @@ export const useGetAssociateEditorsCollections = (articleId: string) => {
     queryFn: async () => {
       const { data } = await axios.get<TAssociateEditorCollection[]>(
         `/api/associate-editor/assignments/${articleId}`
+      );
+      return data || [];
+    },
+  });
+};
+
+export const useGetParticularAssignment = (assignmentId: string) => {
+  return useQuery({
+    queryKey: ['particularAssignment'],
+    queryFn: async () => {
+      const { data } = await axios.get<TAssignment>(
+        `/api/reviewers/${assignmentId}`
       );
       return data || [];
     },

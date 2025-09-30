@@ -1,8 +1,9 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { File, Download, FileSearch2 } from 'lucide-react';
+import { File, Download, FileSearch2, Repeat } from 'lucide-react';
 import { useGetAssociateEditorsCollections } from '@/hooks/useReviews';
+import ForwardFileModal from '@/components/articles/ForwardFileDialog';
 
 export const AssociateEditorCollections = ({
   articleId,
@@ -19,7 +20,7 @@ export const AssociateEditorCollections = ({
       </CardHeader>
       <CardContent className="p-6">
         {isPending ? (
-          <p className="text-muted-foreground">Loading...</p>
+          <p className="text-muted-foreground">Loading ...</p>
         ) : (
           <ScrollArea className="h-[600px] pr-4">
             <div className="space-y-6">
@@ -52,19 +53,29 @@ export const AssociateEditorCollections = ({
                                     </h5>
                                   </div>
                                 </div>
-                                <Button variant="ghost" size="sm" asChild>
-                                  <a href={fileUrl} download>
-                                    <Download className="h-4 w-4" />
-                                  </a>
-                                </Button>
+                                <div className="flex justify-between">
+                                  <Button variant="ghost" size="sm" asChild>
+                                    <a href={fileUrl} download>
+                                      <Download className="h-4 w-4" />
+                                    </a>
+                                  </Button>
+                                  <ForwardFileModal
+                                    fileName={fileUrl}
+                                    articleId={articleId}
+                                  />
+                                </div>
                               </div>
                             ))}
                           </div>
                         </div>
                       )}
 
-                      <div className="mt-4 text-sm text-muted-foreground">
+                      <div className="flex justify-between mt-4 text-sm text-muted-foreground">
                         Submitted on: {review.submittedAt}
+                        <Button size="sm" variant="outline">
+                          <Repeat />
+                          Request Re-correction
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -73,7 +84,7 @@ export const AssociateEditorCollections = ({
                 <div className="flex flex-col items-center justify-center h-full pt-24 text-center text-muted-foreground">
                   <FileSearch2 className="w-12 h-12 mb-4 text-muted-foreground" />
                   <p className="text-sm">
-                    No collections have been submitted for this manuscript yet.
+                    No corrections have been submitted for this manuscript yet.
                   </p>
                 </div>
               )}

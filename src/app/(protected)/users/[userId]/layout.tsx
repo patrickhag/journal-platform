@@ -6,7 +6,14 @@ export default async function ParticularUserLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <Protected allowedRoles={['CHIEF_EDITOR', 'ASSOCIATE_EDITOR']}>
+    <Protected
+      allowedRoles={[
+        'CHIEF_EDITOR',
+        'ASSOCIATE_EDITOR',
+        'STAFF_EDITOR',
+        'NORMAL_USER',
+      ]}
+    >
       <div>{children}</div>
     </Protected>
   );

@@ -60,18 +60,18 @@ const UserDetail = () => {
   const { data: userInfo } = useGetUserInfo(userId as string);
 
   const user = {
-    id: userInfo?.user.id || '',
-    name: `${userInfo?.user.firstName || ''} ${userInfo?.user.lastName || ''}`.trim(),
-    email: userInfo?.user.email || '',
-    role: userInfo?.role || 'N/A',
+    id: userInfo?.user.id,
+    name: `${userInfo?.user.firstName} ${userInfo?.user.lastName}`.trim(),
+    email: userInfo?.user.email,
+    role: userInfo?.role,
     status: userInfo?.user.isActive ? 'Active' : 'Inactive',
-    joinDate: userInfo?.user.createdAt || '',
-    institution: userInfo?.user.affiliation || 'N/A',
-    specialty: userInfo?.user.expertise || 'N/A',
-    orcid: userInfo?.user.orcid || 'N/A',
-    country: userInfo?.user.country || 'N/A',
-    bio: userInfo?.user.bio || 'N/A',
-    expertise: userInfo?.user.expertise || 'N/A',
+    joinDate: userInfo?.user.createdAt,
+    institution: userInfo?.user.affiliation || 'No institution provided',
+    specialty: userInfo?.user.expertise || 'No specialty provided',
+    orcid: userInfo?.user.orcid || 'No orcid provided',
+    country: userInfo?.user.country || 'No country provided',
+    bio: userInfo?.user.bio || 'No bio provided',
+    expertise: userInfo?.user.expertise || 'No expertise provided',
     totalSubmissions: userInfo?.user.articles?.length || 0,
     totalPublished: userInfo?.user.publishedArticles?.length || 0,
     avatar: userInfo?.user.avatar || null,
@@ -91,11 +91,11 @@ const UserDetail = () => {
       : 'bg-gray-100 text-gray-800';
   };
 
-  const { mutate, isPending } = useDeactivateUser(user.id);
+  const { mutate, isPending } = useDeactivateUser(user.id as string);
   const {
     mutate: changeUserRoleMutation,
     isPending: isChangingUserRolePending,
-  } = useChangeUserRole(user.id);
+  } = useChangeUserRole(user.id as string);
 
   const handleChangeUserInfo = () => {
     const payload = {
@@ -128,7 +128,7 @@ const UserDetail = () => {
           <div className="flex items-center space-x-4">
             <Button variant="outline" onClick={handleGoBack}>
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Users
+              Go Back
             </Button>
           </div>
           <div className="flex space-x-2">
@@ -146,7 +146,7 @@ const UserDetail = () => {
               selectedRole={selectedRole}
               setSelectedRole={setSelectedRole}
               userName={user.name}
-              userRole={user.role}
+              userRole={user.role as string}
               fallback={<></>}
             />
             <DeactivateUserPermission

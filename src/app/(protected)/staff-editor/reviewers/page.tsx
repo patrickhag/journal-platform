@@ -26,22 +26,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Mail, Building, FileText, User, Trash2 } from 'lucide-react';
+import { Mail, Building, FileText, User, Trash2, Bell } from 'lucide-react';
 import { useGetReviewersInfo } from '@/hooks/useReviews';
 import Link from 'next/link';
-import { TReviewerInfo } from '@/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { format } from 'date-fns';
 import { UnAssignAlertDialog } from '../components/UnAssignReviewerDialog';
+import { RemindReviewersDialog } from '../components/RemindReviewersDialog';
 
 const ManageReviewers = () => {
-  const [isAssignReviewerOpen, setIsAssignReviewerOpen] = useState(false);
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
   const [articleId, setArticleId] = useState('');
   const [userId, setUserId] = useState('');
-  const [selectedReviewer, setSelectedReviewer] =
-    useState<TReviewerInfo | null>(null);
-
+  const [openNotificationDialog, setOpenNotificationDialog] = useState(false);
   const { data: reviewersInfo = [], isPending } = useGetReviewersInfo();
 
   return (
@@ -94,10 +90,6 @@ const ManageReviewers = () => {
                         review.article.articleStatus === 'UNDER REVIEW'
                     );
                   const reviews = reviewer.user.reviews;
-                  console.log(
-                    'underReviewAssignments:',
-                    underReviewAssignments
-                  );
                   return (
                     <TableRow key={reviewer.id}>
                       <TableCell>
@@ -176,23 +168,13 @@ const ManageReviewers = () => {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end space-x-2">
-                          <Sheet
-                            open={
-                              isAssignReviewerOpen &&
-                              selectedReviewer?.id === reviewer.id
-                            }
-                            onOpenChange={(open) => {
-                              setIsAssignReviewerOpen(open);
-                              if (open) setSelectedReviewer(reviewer);
-                              else setSelectedReviewer(null);
-                            }}
-                          >
+                          <Sheet>
                             <SheetTrigger asChild>
                               <Button variant="outline" size="sm">
                                 <FileText className="h-4 w-4" />
                               </Button>
                             </SheetTrigger>
-                            <SheetContent className="z-50 bg-white w-[400px] sm:w-[540px]">
+                            <SheetContent className="sm:max-w-none w-[450px]">
                               <SheetHeader>
                                 <SheetTitle>
                                   Manage Assignments - {name}
@@ -217,55 +199,74 @@ const ManageReviewers = () => {
                                               key={assignment.id}
                                               className="p-4"
                                             >
-                                              <div className="flex items-start justify-between">
+                                              <div className="flex items-start justify-between gap-2">
                                                 <div className="flex-1">
-                                                  <h5 className="font-medium text-sm line-clamp-1">
-                                                    {
-                                                      assignment.article
-                                                        .metadata.title
-                                                    }
-                                                  </h5>
-                                                  <div className="flex items-center gap-2 mt-2">
+                                                  <Link
+                                                    href={`/articles/${assignment.article.id}`}
+                                                    target="_blank"
+                                                    className="hover:underline"
+                                                  >
+                                                    <h5 className="font-medium text-sm line-clamp-1">
+                                                      {
+                                                        assignment.article
+                                                          .metadata.title
+                                                      }
+                                                    </h5>
+                                                  </Link>
+                                                  <div className="flex items-center mt-2 gap-2">
                                                     <span className="text-xs text-gray-500">
                                                       Due:{' '}
-                                                      {format(
-                                                        new Date(
-                                                          assignment.dueDate
-                                                        ),
-                                                        'MMM dd, yyyy'
-                                                      )}
+                                                      {
+                                                        assignment.dueDate as unknown as string
+                                                      }
                                                     </span>
                                                     <span className="text-xs text-gray-500">
                                                       •
                                                     </span>
                                                     <div className="text-xs text-gray-500">
                                                       Assigned:{' '}
-                                                      {format(
-                                                        new Date(
-                                                          assignment.assignedDate
-                                                        ),
-                                                        'MMM dd, yyyy'
-                                                      )}
+                                                      {
+                                                        assignment.assignedDate as unknown as string
+                                                      }
                                                     </div>
                                                   </div>
                                                 </div>
-                                                <Button
-                                                  variant="ghost"
-                                                  size="sm"
-                                                  className="h-8 w-8 p-0 hover:bg-red-100"
-                                                  onClick={() => {
-                                                    setOpenAlertDialog(true);
-                                                    setUserId(
-                                                      reviewer.userId as string
-                                                    );
-                                                    setArticleId(
-                                                      assignment.articleId
-                                                    );
-                                                  }}
-                                                  title="Remove assignment"
-                                                >
-                                                  <Trash2 className="h-4 w-4 text-red-500" />
-                                                </Button>
+                                                <div className="flex items-center">
+                                                  <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="h-8 w-8 p-0 hover:bg-red-100"
+                                                    onClick={() => {
+                                                      setOpenAlertDialog(true);
+                                                      setUserId(
+                                                        reviewer.userId as string
+                                                      );
+                                                      setArticleId(
+                                                        assignment.articleId
+                                                      );
+                                                    }}
+                                                  >
+                                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                                  </Button>
+                                                  <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="h-8 w-8 p-0 hover:bg-blue-100"
+                                                    onClick={() => {
+                                                      setOpenNotificationDialog(
+                                                        true
+                                                      );
+                                                      setUserId(
+                                                        reviewer.userId as string
+                                                      );
+                                                      setArticleId(
+                                                        assignment.articleId
+                                                      );
+                                                    }}
+                                                  >
+                                                    <Bell className="h-4 w-4 text-blue-500" />
+                                                  </Button>
+                                                </div>
                                               </div>
                                             </Card>
                                           )
@@ -314,6 +315,14 @@ const ManageReviewers = () => {
           articleId={articleId}
           isOpen={openAlertDialog}
           setOpenAlertDialog={setOpenAlertDialog}
+          userId={userId}
+        />
+      )}
+      {openNotificationDialog && (
+        <RemindReviewersDialog
+          articleId={articleId}
+          isOpen={openNotificationDialog}
+          setOpenAlertDialog={setOpenNotificationDialog}
           userId={userId}
         />
       )}

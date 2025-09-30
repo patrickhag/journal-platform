@@ -5,6 +5,7 @@ export const publicRoutes = [
   '/articles/issues/',
   '/collections/:slug',
   '/forgot-password',
+  '/error',
 ];
 export const authRoutes = [
   '/login',

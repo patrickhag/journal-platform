@@ -30,7 +30,8 @@ export type TPermissionItem =
   | 'INVITE_REVIEWERS'
   | 'ASSIGN_REVIEWERS'
   | 'DEACTIVATE_USER'
-  | 'CHANGE_ROLE';
+  | 'CHANGE_ROLE'
+  | 'VIEW_ALL_PARTICIPANTS';
 
 type TPermission = {
   [role in (typeof USER_ROLES)[number]]: TPermissionItem[];
@@ -57,6 +58,7 @@ export const ROLE_PERMISSIONS: TPermission = {
     'VIEW_REVIEWS',
     'CHANGE_ROLE',
     'DEACTIVATE_USER',
+    'VIEW_ALL_PARTICIPANTS',
   ],
   REVIEWER: [
     'VIEW_PUBLIC_ARTICLES',
@@ -66,7 +68,12 @@ export const ROLE_PERMISSIONS: TPermission = {
     'DELETE_OWN_ARTICLES',
   ],
   ASSOCIATE_EDITOR: ['INVITE_REVIEWERS', 'ASSIGN_REVIEWERS', 'VIEW_REVIEWS'],
-  STAFF_EDITOR: ['INVITE_REVIEWERS', 'ASSIGN_REVIEWERS', 'VIEW_REVIEWS'],
+  STAFF_EDITOR: [
+    'INVITE_REVIEWERS',
+    'ASSIGN_REVIEWERS',
+    'VIEW_REVIEWS',
+    'VIEW_ALL_PARTICIPANTS',
+  ],
 };
 
 export type TUserPermissions = {
