@@ -64,7 +64,7 @@ const PublishedArticles = () => {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
                           <Link href={`/articles/${manuscript.id}`}>
-                            <h3 className="font-semibold cursor-pointer hover:underline">
+                            <h3 className="font-semibold cursor-pointer hover:underline line-clamp-1">
                               {manuscript.metadata.title}
                             </h3>
                           </Link>

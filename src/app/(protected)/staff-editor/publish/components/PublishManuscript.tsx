@@ -24,11 +24,7 @@ import { useGetIssues } from '@/hooks/usePublishArticle';
 
 import { DragAndDropFileInput } from '@/components/upload/FileInput';
 import { FileList } from '@/components/upload/FileList';
-import { useSearchParams } from 'next/navigation';
-import { safeParse } from 'zod-urlsearchparams';
-import { filesSchema } from '@/schemas/reviewer';
 import { usePublishArticle } from '@/hooks/useArticles';
-import { useClearURL } from '@/components/ClearURL';
 import Loader from '@/components/Loader';
 import {
   Sheet,
@@ -37,7 +33,6 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@/components/ui/sheet';
-import { useState } from 'react';
 
 const publishArticleSchema = z.object({
   issueId: z.string().min(1, 'Issue is required'),
@@ -71,30 +66,10 @@ export default function PublishManuscriptDialog({
     },
   });
 
-  const searchParams = useSearchParams();
-
-  const filesValidation = safeParse({
-    schema: filesSchema,
-    input: new URLSearchParams(searchParams.toString()),
-  });
-
-  const files = filesValidation.data?.files || [];
-  const fileIds = files.map((f) => f.publicId);
-
-  const clearUrl = useClearURL();
-
-  const { mutate, isPending } = usePublishArticle(clearUrl);
-  const [fileError, setFileError] = useState('');
+  const { mutate, isPending } = usePublishArticle();
 
   const onSubmit = (values: PublishArticle) => {
-    if (!fileIds.length) {
-      setFileError('You must upload a file before publishing.');
-      return;
-    }
-
-    setFileError('');
     const payloadData = {
-      pdfUrl: fileIds[0],
       articleId,
       title,
       ...values,
@@ -117,7 +92,6 @@ export default function PublishManuscriptDialog({
         </p>
         <DragAndDropFileInput />
         <FileList isEditNeeded />
-        {fileError && <p className="text-sm text-red-500 mt-2">{fileError}</p>}
 
         <Form {...form}>
           <form

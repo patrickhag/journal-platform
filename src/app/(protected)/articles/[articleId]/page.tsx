@@ -185,6 +185,7 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
                 />
               </div>
               <Separator />
+              {/* PROPOSED REVIEWERS */}
               {reviewrs.map((r, index) => (
                 <Reviewer
                   reviewer={r}

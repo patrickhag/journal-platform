@@ -47,7 +47,6 @@ export const useGetAcceptedArticles = () => {
 };
 
 type TPublishArticle = {
-  pdfUrl: string;
   articleId: string;
   title: string;
   doi?: string;
@@ -55,7 +54,7 @@ type TPublishArticle = {
   pageRange: string;
 };
 
-export const usePublishArticle = (clearUrl: () => void) => {
+export const usePublishArticle = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -71,7 +70,6 @@ export const usePublishArticle = (clearUrl: () => void) => {
         queryKey: ['toBePublishedArticles', 'publishedArticles'],
       });
       toast.success(message);
-      clearUrl();
     },
     onError: (error: Error | AxiosError) => {
       const message = axios.isAxiosError(error)

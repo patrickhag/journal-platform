@@ -19,7 +19,7 @@ import {
   ReviewerReReviewEmailTemplate,
 } from '@/components/emails/author-revised-manuscript';
 import { ThankAuthorEmailTemplate } from '@/components/emails/thank-you-email-template';
-import { AssignEditorEmailTemplate } from '@/components/emails/inform-associate-editor';
+import { StaffEditorEmailTemplate } from '@/components/emails/inform-associate-editor';
 import { AssignReviewerEmailTemplate } from '@/components/emails/inform-reviewer-email-template';
 import { ArticleReadyForEICApprovalEmailTemplate } from '@/components/emails/inform-chief-editor-email-template';
 import { InformStaffEditorAboutInvitation } from '@/components/emails/inform-staff-editor-about-reviewer-invitation';
@@ -525,20 +525,20 @@ export const notifyEditorAboutRevision = async ({
   await transporter.sendMail(options);
 };
 
-export const notifyAssociateEditor = async ({
+export const notifyStaffEditor = async ({
   articleTitle,
   authorNames,
-  associateEditorEmail,
+  staffEditorEmail,
   editorName,
 }: {
   articleTitle: string;
   authorNames: string;
-  associateEditorEmail: string;
+  staffEditorEmail: string;
   editorName: string;
 }) => {
   try {
     const emailHtml = await render(
-      <AssignEditorEmailTemplate
+      <StaffEditorEmailTemplate
         articleTitle={articleTitle}
         authorName={authorNames}
         editorName={editorName}
@@ -547,8 +547,8 @@ export const notifyAssociateEditor = async ({
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: associateEditorEmail,
-      subject: 'You have been assigned as Associate Editor to an article',
+      to: staffEditorEmail,
+      subject: 'You have been assigned as Staff Editor to an article',
       html: emailHtml,
     });
 

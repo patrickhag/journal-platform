@@ -37,6 +37,7 @@ export default function AssociateEditorDashboard() {
                 <AssignmentCardSkeleton />
                 <AssignmentCardSkeleton />
                 <AssignmentCardSkeleton />
+                <AssignmentCardSkeleton />
               </>
             )}
             {!isPending && associateEditorsAssigments?.length === 0 && (

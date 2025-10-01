@@ -1,7 +1,7 @@
 import type * as React from 'react';
 import { Tailwind, Text, Container, Section } from '@react-email/components';
 
-export const AssignEditorEmailTemplate: React.FC<{
+export const StaffEditorEmailTemplate: React.FC<{
   editorName: string;
   articleTitle: string;
   authorName: string;
@@ -42,9 +42,7 @@ export const AssignEditorEmailTemplate: React.FC<{
           <Text className="text-gray-700 my-4">
             You can access the submission and take necessary editorial actions
             by follwoing with this{' '}
-            <a
-              href={`${process.env.NEXT_PUBLIC_URL}/associate-editor/assigned`}
-            >
+            <a href={`${process.env.NEXT_PUBLIC_URL}/staff-editor/assigned`}>
               link
             </a>
             . If you have any questions or need assistance, feel free to reach

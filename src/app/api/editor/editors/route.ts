@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
 import { articleSubmissions, editorAssignment, userRoles } from '@/db/schema';
-import { notifyAssociateEditor } from '@/lib/emailTransporter';
+import { notifyStaffEditor } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -82,17 +82,17 @@ export async function POST(req: NextRequest) {
       where: eq(articleSubmissions.id, articleId),
     });
 
-    const isEditorInformed = await notifyAssociateEditor({
+    const isEditorInformed = await notifyStaffEditor({
       articleTitle: article?.metadata.title as string,
       authorNames: article?.user.firstName + ' ' + article?.user.lastName,
       editorName,
-      associateEditorEmail: editorEmail,
+      staffEditorEmail: editorEmail,
     });
 
     if (isEditorInformed.success) {
       return NextResponse.json(
         {
-          message: 'Associate editor assigned and informed successfully',
+          message: 'Staff editor assigned and informed successfully',
         },
         { status: 201 }
       );

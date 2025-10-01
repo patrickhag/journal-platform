@@ -26,17 +26,6 @@ export default function Reviewer({
 }) {
   const { data } = useSession();
 
-  // const hasUserAcceptedInvitation = await db.query.reviewAssignments.findMany({
-  //   columns: {
-  //     status: true,
-  //     reviewerId: true,
-  //   },
-  //   where: eq(reviewAssignments.articleId, articleId),
-  // });
-
-  // const reviewerStatus = hasUserAcceptedInvitation.find(
-  //   (invitation) => invitation.reviewerId === reviewerId
-  // );
   const [isDialogOpen, setDialogOpen] = useState(false);
 
   const reviewerStatus = 'Sent';

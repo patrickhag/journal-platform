@@ -64,7 +64,6 @@ type TInviteData = {
 export const useInviteReviewer = () => {
   return useMutation({
     mutationFn: async (data: TInviteData) => {
-      console.log('payload-data:', data);
       const response = await axios.post<{ message: string }>(
         `/api/reviewers/invitation`,
         data

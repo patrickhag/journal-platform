@@ -31,11 +31,18 @@ const ForwardFileModal = ({ fileName, articleId }: ForwardFileModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [action, setAction] = useState<string>('publish');
 
-  const { mutate: transferFileToPublished, isPending: isForwarding } =
+  const { mutate: transferFileToPublishedMutation, isPending: isForwarding } =
     useTransferFileToPublished();
 
   const handleForward = () => {
-    transferFileToPublished({ fileId: fileName, articleId });
+    transferFileToPublishedMutation(
+      { fileId: fileName, articleId },
+      {
+        onSuccess: () => {
+          setIsOpen(false);
+        },
+      }
+    );
   };
 
   return (
