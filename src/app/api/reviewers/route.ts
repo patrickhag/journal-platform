@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
       articleId: articleId,
       toEmail: reviewerEmail,
       isAlreadyUser: true,
-      dueDate: format(new Date(date as string), 'MMMM d, yyyy'),
+      dueDate: new Date(date as string).toISOString().split('T')[0],
       articleTitle: article?.metadata.title as string,
       abstract: article?.metadata.abstract as string,
     });

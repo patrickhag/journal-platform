@@ -16,7 +16,7 @@ export default function App() {
   const [volumeOpen, setVolumeOpen] = useState(false);
   const [issueOpen, setIssueOpen] = useState(false);
 
-  const { data: volumes } = useGetVolumes();
+  const { data: volumes, isPending: isVolumesPending } = useGetVolumes();
   const createVolumeMutation = useCreateVolume(setVolumeOpen);
 
   const handleVolumeSubmit = (data: VolumeType) => {
@@ -67,7 +67,10 @@ export default function App() {
           </div>
 
           <TabsContent value="volumes" className="space-y-4">
-            <VolumeList volumes={Array.isArray(volumes) ? volumes : []} />
+            <VolumeList
+              volumes={Array.isArray(volumes) ? volumes : []}
+              isVolumesPending={isVolumesPending}
+            />
           </TabsContent>
 
           <TabsContent value="issues" className="space-y-4">

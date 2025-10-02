@@ -7,21 +7,22 @@ import { Badge } from '@/components/ui/badge';
 import {
   ArrowLeft,
   FileText,
-  Download,
   User,
   Calendar,
   History,
   SquarePen,
+  Eye,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useGetParticularAssignment } from '@/hooks/useReviews';
 import { useParams } from 'next/navigation';
 import ReviewModal from '@/components/articles/Review';
+import ReviewerAssignmentSkeleton from '../components/ReviewerAssignmentSkeleton';
 
 const ReviewAssignment = () => {
   const { assignmentId } = useParams();
 
-  const { data: particularAssignment } = useGetParticularAssignment(
+  const { data: particularAssignment, isPending } = useGetParticularAssignment(
     assignmentId as string
   );
 
@@ -40,6 +41,12 @@ const ReviewAssignment = () => {
   const onClose = () => {
     setReviewModal({ isOpen: false });
   };
+
+  // Show skeleton while loading
+  if (isPending) {
+    return <ReviewerAssignmentSkeleton />;
+  }
+
   const authorName = `${particularAssignment?.article.metadata.prefix} ${particularAssignment?.article.user.firstName} ${particularAssignment?.article.user.lastName}`;
 
   return (
@@ -49,6 +56,16 @@ const ReviewAssignment = () => {
         <Button variant="ghost" className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Go Back
+        </Button>
+        <Button
+          type="submit"
+          className="bg-primary hover:bg-primary/90"
+          onClick={() =>
+            handleSubmitReview(particularAssignment?.article.id as string)
+          }
+        >
+          <SquarePen className="mr-2 h-4 w-4" />
+          Submit Review
         </Button>
       </div>
       {/* Assignment Info */}
@@ -96,8 +113,8 @@ const ReviewAssignment = () => {
               </div>
               <Link href={file.publicId}>
                 <Button size="sm" variant="outline">
-                  <Download className="mr-2 h-4 w-4" />
-                  Download
+                  <Eye className="mr-2 h-4 w-4" />
+                  View
                 </Button>
               </Link>
             </div>
@@ -137,18 +154,7 @@ const ReviewAssignment = () => {
             </CardContent>
           </Card>
         )}
-      <div className="pt-6 text-end m-5">
-        <Button
-          type="submit"
-          className="bg-primary hover:bg-primary/90"
-          onClick={() =>
-            handleSubmitReview(particularAssignment?.article.id as string)
-          }
-        >
-          <SquarePen className="mr-2 h-4 w-4" />
-          Submit Review
-        </Button>
-      </div>
+
       {reviewModal.isOpen && (
         <ReviewModal
           open={reviewModal.isOpen}

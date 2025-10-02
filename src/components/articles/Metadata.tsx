@@ -150,6 +150,7 @@ export default async function Metadata({
         </CardContent>
       </Card>
 
+      {/* CONTRIBUTORS */}
       {foundContributors.length > 0 && (
         <Card className="my-3">
           <CardHeader>
@@ -196,7 +197,7 @@ export default async function Metadata({
                         <p className="my-1">
                           {c.orcid ? (
                             <Link
-                              href={c.orcid}
+                              href={`https://orcid.org/${c.orcid}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className={cn(

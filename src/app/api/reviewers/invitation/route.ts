@@ -32,6 +32,8 @@ export async function POST(req: NextRequest) {
       .select({
         id: reviewers.id,
         names: reviewers.names,
+        expertise: reviewers.expertise,
+        affiliation: reviewers.affiliation,
       })
       .from(reviewers)
       .where(eq(reviewers.email, reviewerEmail))
@@ -41,7 +43,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Reviewer not found' });
     }
 
-    const { names, id: reviewerId } = foundReviewer[0];
+    const { names, id: reviewerId, expertise, affiliation } = foundReviewer[0];
     const nameParts = names.split(' ');
     const firstName = nameParts.length > 2 ? nameParts[1] : nameParts[0];
     const lastName = nameParts.length > 2 ? nameParts[2] : nameParts[1];
@@ -62,6 +64,8 @@ export async function POST(req: NextRequest) {
           lastName,
           email: reviewerEmail,
           password: await bcrypt.hash(`@JAEPH${password}`, 10),
+          expertise,
+          affiliation,
         })
         .returning({ id: users.id });
 
@@ -88,14 +92,14 @@ export async function POST(req: NextRequest) {
         { message: 'Reviewer has already been assigned to this article' },
         { status: 409 }
       );
+    } else {
+      await db.insert(reviewAssignments).values({
+        articleId,
+        reviewerId,
+        dueDate,
+        userId,
+      });
     }
-
-    await db.insert(reviewAssignments).values({
-      articleId,
-      reviewerId,
-      dueDate,
-      userId,
-    });
 
     const article = await db.query.articleSubmissions.findFirst({
       columns: {

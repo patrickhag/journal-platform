@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { NextResponse, NextRequest } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { sendPasswordResetEmail } from '@/lib/emailTransporter';
-import { AuthError } from 'next-auth';
+import crypto from 'crypto';
 
 export async function POST(req: NextRequest) {
   try {
@@ -24,8 +24,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const token = Math.random().toString(36).substring(2, 15);
+    const token = crypto.randomUUID();
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    console.log('token: 👉', token);
+
+    // Delete any existing password reset records for this email
+    await db.delete(passwordResets).where(eq(passwordResets.identifier, email));
 
     await db.insert(passwordResets).values({
       expires: new Date(Date.now() + RESET_PASSWORD_EXPIRATION_TIME),
@@ -34,41 +39,20 @@ export async function POST(req: NextRequest) {
       password: hashedPassword,
     });
 
-    const emailSent = await sendPasswordResetEmail({
+    await sendPasswordResetEmail({
       subject: 'Password Change Confirmation for JAEPH',
       toEmail: email,
       url: `${process.env
         .NEXT_PUBLIC_URL!}/api/auth/reset-password?id=${token}`,
-      name: user[0].firstName!,
+      name: user[0].firstName as string,
     });
 
-    if (emailSent) {
-      return NextResponse.json({
-        message: 'Password confirmation sent to your email.',
-        success: true,
-      });
-    }
-
-    return NextResponse.json(
-      { message: 'Failed to send email', success: false },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      message: 'Password confirmation sent to your email.',
+      success: true,
+    });
   } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return NextResponse.json(
-            { message: 'Invalid credentials.', success: false },
-            { status: 401 }
-          );
-        default:
-          return NextResponse.json(
-            { message: 'Something went wrong during sign-in.', success: false },
-            { status: 500 }
-          );
-      }
-    }
-
+    console.error('Password reset error:', error);
     return NextResponse.json(
       {
         message: 'An unexpected error occurred during resetting.',
@@ -99,7 +83,7 @@ export const GET = async (request: NextRequest) => {
   }
 
   const expirationTime = userRequest.expires.getTime();
-  if (expirationTime < Date.now() - RESET_PASSWORD_EXPIRATION_TIME) {
+  if (expirationTime < Date.now()) {
     return redirect(
       '/forgot-password?msg=Token has expired. Please request again'
     );
@@ -110,5 +94,9 @@ export const GET = async (request: NextRequest) => {
     .set({ password: userRequest.password })
     .where(eq(users.email, userRequest.identifier))
     .execute();
+
+  // Clean up the password reset record after successful update
+  await db.delete(passwordResets).where(eq(passwordResets.token, token));
+
   return redirect('/login');
 };
