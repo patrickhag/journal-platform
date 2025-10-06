@@ -69,11 +69,21 @@ export async function POST(req: NextRequest) {
         })
         .returning({ id: users.id });
 
-      await db.insert(userRoles).values({
-        userId: newUser.id,
-        role: 'REVIEWER',
+      // Check if the user already has the 'REVIEWER' role before assigning it
+      const existingRole = await db.query.userRoles.findFirst({
+        where: and(
+          eq(userRoles.userId, newUser.id),
+          eq(userRoles.role, 'REVIEWER')
+        ),
       });
-      // newUser.id
+
+      if (!existingRole) {
+        await db.insert(userRoles).values({
+          userId: newUser.id,
+          role: 'REVIEWER',
+        });
+      }
+
       userId = newUser.id;
     } else {
       userId = existingUser.id;

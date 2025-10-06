@@ -15,7 +15,7 @@ export async function GET(
     if (
       !(
         session?.user.role === 'CHIEF_EDITOR' ||
-        session?.user.role === 'ASSOCIATE_EDITOR'
+        session?.user.role === 'STAFF_EDITOR'
       )
     ) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

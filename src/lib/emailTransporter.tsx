@@ -6,7 +6,6 @@ import { SendInvitation } from '@/components/emails/sendInvite';
 import { SendVerifyEmail } from '@/components/emails/verify';
 import { NotifyAdminEmail } from '@/components/emails/notify-admin';
 import { render } from '@react-email/components';
-import nodemailer from 'nodemailer';
 import {
   ArticleAcceptedEmailTemplate,
   ArticleRejectedEmailTemplate,
@@ -30,20 +29,7 @@ import { InformStaffEditorAboutAssociateInvitation } from '@/components/emails/i
 import { NotifyStaffEditorAboutAssociateEditorCorrection } from '@/components/emails/notifiy-staff-editor-about-ass-correction';
 import { SubscriberEmail } from '@/components/emails/sendSubscriberEmail';
 import { RemindReviewer } from '@/components/emails/remind-reviewer';
-
-export const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-});
+import { transporter } from './emailConfig';
 
 export const sendPasswordResetEmail = async ({
   subject,
@@ -56,16 +42,36 @@ export const sendPasswordResetEmail = async ({
   subject: string;
   name: string;
 }) => {
-  const emailHtml = await render(<EmailPasswordReset url={url} name={name} />);
-  const options = {
-    from: process.env.EMAIL_USER,
-    to: toEmail,
-    subject,
-    html: emailHtml,
-  };
+  try {
+    const emailHtml = await render(
+      <EmailPasswordReset url={url} name={name} />
+    );
+    const options = {
+      from: process.env.EMAIL_USER,
+      to: toEmail,
+      subject,
+      html: emailHtml,
+    };
 
-  await transporter.sendMail(options);
-  return true;
+    const result = await transporter.sendMail(options);
+
+    return {
+      success: true,
+      messageId: result.messageId,
+      accepted: result.accepted,
+    };
+  } catch (error) {
+    console.error('Error sending password reset email:', {
+      error: error instanceof Error ? error.message : error,
+      toEmail,
+      timestamp: new Date().toISOString(),
+    });
+
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+    };
+  }
 };
 
 export const notifyContibutor = async ({

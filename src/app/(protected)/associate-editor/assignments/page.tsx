@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Eye, Upload, FileText, File } from 'lucide-react';
 import { useGetAssociateEditorsAssignments } from '@/hooks/useReviews';
 import { Badge } from '@/components/ui/badge';
-import { calculateDaysRemaining, getUrgencyColor } from '@/lib/utils';
 import { TAssociateEditorAssignments } from '@/types';
 import {
   Dialog,
@@ -18,14 +17,14 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import UploadCorrection from '../components/UploadCorrection';
-import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 function AssociateEditorDashboard() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { data: assignments, isPending } = useGetAssociateEditorsAssignments();
-  const session = useSession();
-  console.log('user:', session.data?.user);
+
+  console.log('assignments:', assignments);
   const [openSubmitCollection, setOpenSubmitCollection] = useState(false);
 
   const [selectedAssignment, setSelectedAssignment] =
@@ -77,9 +76,6 @@ function AssociateEditorDashboard() {
                 assignments?.map((assignment) => {
                   const isPublished =
                     assignment.articleSubmissions.articleStatus === 'PUBLISHED';
-                  const daysRemaining = calculateDaysRemaining(
-                    assignment.dueDate
-                  );
                   return (
                     <div
                       key={assignment.id}
@@ -88,9 +84,15 @@ function AssociateEditorDashboard() {
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center space-x-3 mb-2">
-                            <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
-                              {assignment.articleSubmissions.metadata.title}
-                            </h3>
+                            <Link
+                              href={`/articles/${assignment.articleSubmissions.id}`}
+                              target="_blank"
+                              className="hover:underline"
+                            >
+                              <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
+                                {assignment.articleSubmissions.metadata.title}
+                              </h3>
+                            </Link>
                           </div>
                           {!isPublished && (
                             <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
@@ -110,12 +112,8 @@ function AssociateEditorDashboard() {
                             </div>
                           )}
                           {!isPublished && (
-                            <Badge
-                              className={getUrgencyColor(daysRemaining, status)}
-                            >
-                              {daysRemaining === 0
-                                ? 'Due today'
-                                : `${daysRemaining} days remaining`}
+                            <Badge>
+                              {assignment.articleSubmissions.articleStatus}
                             </Badge>
                           )}
                           {isPublished && (
@@ -139,18 +137,10 @@ function AssociateEditorDashboard() {
                               </Button>
                             </DialogTrigger>
                             <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                              <DialogHeader>
-                                <DialogTitle className="line-clamp-2">
-                                  {
-                                    selectedAssignment?.articleSubmissions
-                                      .metadata.title
-                                  }
-                                </DialogTitle>
-                              </DialogHeader>
                               {selectedAssignment && (
                                 <div className="space-y-6">
                                   <div>
-                                    <h4 className="text-lg font-semibold mb-3">
+                                    <h4 className="text-md font-medium mb-3">
                                       Comments of staff editor
                                     </h4>
                                     <div className="prose max-w-none">
@@ -163,7 +153,7 @@ function AssociateEditorDashboard() {
                                     {selectedAssignment.fileIds &&
                                       selectedAssignment.fileIds.length > 0 && (
                                         <>
-                                          <h4 className="text-lg font-semibold mb-3">
+                                          <h4 className="text-md font-medium mb-3">
                                             Annotated File
                                           </h4>
                                           <div>
@@ -177,7 +167,7 @@ function AssociateEditorDashboard() {
                                                     <div className="flex items-center gap-3">
                                                       <File className="h-4 w-4 text-green-500" />
                                                       <div>
-                                                        <h5 className="text-sm font-medium">
+                                                        <h5 className="text-xs font-medium">
                                                           File {idx + 1}
                                                         </h5>
                                                       </div>
@@ -218,7 +208,7 @@ function AssociateEditorDashboard() {
                             }}
                           >
                             <Upload className="mr-2 h-4 w-4" />
-                            Submit Collection
+                            Submit Correction
                           </Button>
                         </div>
                       </div>

@@ -111,8 +111,13 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             icon: CheckSquare,
           },
           {
-            href: '/associate-editor/collections',
+            href: '/associate-editor/sent-assignments',
             label: 'Sent Assignments',
+            icon: FileText,
+          },
+          {
+            href: '/associate-editor/finalised-assignments',
+            label: 'Finalised Assignments',
             icon: FileText,
           },
         ];

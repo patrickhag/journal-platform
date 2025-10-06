@@ -41,19 +41,7 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
       <div className="container mx-auto p-6">
         <div className="flex justify-between">
           <GoBackButton />
-          <ReviewsArticleLinkPermission
-            articleId={articleId}
-            role={
-              currentUserRole as
-                | 'NORMAL_USER'
-                | 'CHIEF_EDITOR'
-                | 'REVIEWER'
-                | 'STAFF_EDITOR'
-            }
-            requiredPermissions={['VIEW_REVIEWS']}
-            fallback={<></>}
-          />
-          <AllParticipantsLinkPermission
+          <ArticleLinksPermission
             articleId={articleId}
             role={
               currentUserRole as
@@ -216,25 +204,30 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
   );
 }
 
-const ReviewsArticleLink = ({ articleId }: { articleId: string }) => (
-  <Button variant="link" size="sm" className="gap-1 flex items-center">
-    <Link href={`/articles/reviews/${articleId}`}> Reviews</Link>
-    <ChevronRight className="w-2 h-2" />
-  </Button>
-);
-
-const AllParticipantsLink = ({ articleId }: { articleId: string }) => (
-  <Button variant="link" size="sm" className="gap-1 flex items-center">
-    <Link href={`/articles/all-participants/${articleId}`}>
-      All Participants
+const ArticleLinks = ({ articleId }: { articleId: string }) => (
+  <div className="flex gap-2">
+    <Link
+      href={`/articles/reviews/${articleId}`}
+      className="hover:underline cursor-pointer"
+    >
+      <Button size="sm" className="gap-1 flex items-center">
+        Reviews
+        <ChevronRight className="w-2 h-2" />
+      </Button>
     </Link>
-    <ChevronRight className="w-2 h-2" />
-  </Button>
+    <Link
+      href={`/articles/all-participants/${articleId}`}
+      className="hover:underline cursor-pointer"
+    >
+      <Button size="sm" className="gap-1 flex items-center">
+        All Participants
+        <ChevronRight className="w-2 h-2" />
+      </Button>
+    </Link>
+  </div>
 );
 
-const ReviewsArticleLinkPermission = withPermissions(ReviewsArticleLink);
-
-const AllParticipantsLinkPermission = withPermissions(AllParticipantsLink);
+const ArticleLinksPermission = withPermissions(ArticleLinks);
 
 const AssignReviewerLink = () => <AssignRevieweModal />;
 

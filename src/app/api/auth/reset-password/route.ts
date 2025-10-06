@@ -27,8 +27,6 @@ export async function POST(req: NextRequest) {
     const token = crypto.randomUUID();
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    console.log('token: 👉', token);
-
     // Delete any existing password reset records for this email
     await db.delete(passwordResets).where(eq(passwordResets.identifier, email));
 
@@ -39,13 +37,24 @@ export async function POST(req: NextRequest) {
       password: hashedPassword,
     });
 
-    await sendPasswordResetEmail({
+    const emailResult = await sendPasswordResetEmail({
       subject: 'Password Change Confirmation for JAEPH',
       toEmail: email,
       url: `${process.env
         .NEXT_PUBLIC_URL!}/api/auth/reset-password?id=${token}`,
       name: user[0].firstName as string,
     });
+
+    if (!emailResult.success) {
+      console.error('Failed to send password reset email:', emailResult.error);
+      return NextResponse.json(
+        {
+          message: 'Failed to send password reset email. Please try again.',
+          success: false,
+        },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       message: 'Password confirmation sent to your email.',

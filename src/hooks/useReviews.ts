@@ -10,6 +10,7 @@ import {
   TReview,
   TReviewerAssignment,
   TReviewerInfo,
+  AddReviewerFormValues,
 } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
@@ -360,12 +361,12 @@ export const useAssignAssociateEditor = () => {
       }
     },
     onError: (error: Error | AxiosError) => {
-      console.error('Review submission error:', error);
+      console.error('Associate editor assignment error:', error);
       const message = axios.isAxiosError(error)
         ? error.response?.data?.message
         : error.message;
 
-      toast.error(message || 'Failed to unassign reviewer');
+      toast.error(message || 'Failed to assign associate editor');
     },
   });
 };
@@ -390,12 +391,12 @@ export const useSubmitCollection = () => {
       }
     },
     onError: (error: Error | AxiosError) => {
-      console.error('Review submission error:', error);
+      console.error('Correction submission error:', error);
       const message = axios.isAxiosError(error)
         ? error.response?.data?.message
         : error.message;
 
-      toast.error(message || 'Failed to submit review');
+      toast.error(message || 'Failed to submit correction');
     },
   });
 };
@@ -420,6 +421,29 @@ export const useGetParticularAssignment = (assignmentId: string) => {
         `/api/reviewers/${assignmentId}`
       );
       return data || [];
+    },
+  });
+};
+
+export const useAddReviewer = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: AddReviewerFormValues) => {
+      return axios.post<MessageResponse>('/api/users/reviewers', data);
+    },
+    onSuccess: ({ data }) => {
+      if (data.message) {
+        toast.success(data.message);
+        queryClient.invalidateQueries({ queryKey: ['reviewersInfo'] });
+      }
+    },
+    onError: (error: Error | AxiosError) => {
+      console.error('Review submission error:', error);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : error.message;
+
+      toast.error(message || 'Failed to add reviewer');
     },
   });
 };

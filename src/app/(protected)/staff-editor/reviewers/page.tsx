@@ -26,18 +26,28 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Mail, Building, FileText, User, Trash2, Bell } from 'lucide-react';
+import {
+  Mail,
+  Building,
+  FileText,
+  Trash2,
+  Bell,
+  UserPlus,
+  FilePlus,
+} from 'lucide-react';
 import { useGetReviewersInfo } from '@/hooks/useReviews';
 import Link from 'next/link';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { UnAssignAlertDialog } from '../components/UnAssignReviewerDialog';
 import { RemindReviewersDialog } from '../components/RemindReviewersDialog';
+import AddReviewerSheetModal from '@/components/staff-editor/AddReviewerSheetModal';
 
 const ManageReviewers = () => {
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
   const [articleId, setArticleId] = useState('');
   const [userId, setUserId] = useState('');
   const [openNotificationDialog, setOpenNotificationDialog] = useState(false);
+  const [openAddReviewerModal, setOpenAddReviewerModal] = useState(false);
   const { data: reviewersInfo = [], isPending } = useGetReviewersInfo();
 
   return (
@@ -45,11 +55,16 @@ const ManageReviewers = () => {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Manage Reviewers
-            </h1>
-          </div>
+          <h1 className="text-2xl font-bold text-gray-900">Manage Reviewers</h1>
+          <Button
+            variant="outline"
+            size="lg"
+            className="mb-2"
+            onClick={() => setOpenAddReviewerModal(true)}
+          >
+            <UserPlus className="h-4 w-4" />
+            Add Reviewer
+          </Button>
         </div>
 
         {/* Reviewers Table */}
@@ -58,10 +73,12 @@ const ManageReviewers = () => {
             <CardTitle>
               Reviewers {`(${reviewersInfo ? reviewersInfo?.length : 'N/A'})`}
             </CardTitle>
+
             <CardDescription>
               Manage reviewer accounts and track their assignments
             </CardDescription>
           </CardHeader>
+
           <CardContent>
             <Table>
               <TableHeader>
@@ -94,7 +111,12 @@ const ManageReviewers = () => {
                     <TableRow key={reviewer.id}>
                       <TableCell>
                         <div>
-                          <div className="font-medium">{name}</div>
+                          <Link
+                            className="font-medium hover:underline"
+                            href={`/users/${reviewer.user.id}`}
+                          >
+                            {name}
+                          </Link>
                           <div className="text-sm text-gray-500 flex items-center">
                             <Mail className="mr-1 h-3 w-3" />
                             {reviewer.user.email}
@@ -288,11 +310,9 @@ const ManageReviewers = () => {
                               </div>
                             </SheetContent>
                           </Sheet>
-                          <Link href={`/users/${reviewer.user.id}`}>
-                            <Button variant="outline" size="sm">
-                              <User className="h-4 w-4" />
-                            </Button>
-                          </Link>
+                          <Button variant="outline" size="sm">
+                            <FilePlus className="h-4 w-4" />
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -326,6 +346,10 @@ const ManageReviewers = () => {
           userId={userId}
         />
       )}
+      <AddReviewerSheetModal
+        open={openAddReviewerModal}
+        onOpenChange={setOpenAddReviewerModal}
+      />
     </>
   );
 };

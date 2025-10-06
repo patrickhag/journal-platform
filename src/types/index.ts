@@ -1,4 +1,5 @@
 import { metadataSchema } from '@/components/upload/ContributorsForm';
+import { reviewerSchema } from '@/schemas/reviewer';
 import { User } from 'next-auth';
 import { z } from 'zod';
 
@@ -631,3 +632,5 @@ export type TParticipants = {
     };
   }[];
 };
+
+export type AddReviewerFormValues = z.infer<typeof reviewerSchema>;

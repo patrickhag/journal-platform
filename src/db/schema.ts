@@ -76,8 +76,8 @@ export const userRoles = pgTable('user_roles', {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   userId: text('user_id')
-    .references(() => users.id)
-    .notNull(),
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
   role: varchar('role', { length: 50 }).notNull(),
 });
 

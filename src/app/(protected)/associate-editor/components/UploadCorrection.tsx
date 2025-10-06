@@ -71,7 +71,7 @@ export default function UploadCorrection({
       <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-[#1a237e]">
-            Submit a collection
+            Submit a correction
           </DialogTitle>
         </DialogHeader>
         <div className="text-sm">Annotate file(s)</div>
@@ -81,7 +81,7 @@ export default function UploadCorrection({
         <div className="space-y-3">
           <Button
             type="submit"
-            disabled={isPending}
+            disabled={isPending || files.length === 0}
             onClick={onSubmit}
             className="bg-indigo-500 hover:bg-indigo-600 w-full"
           >
