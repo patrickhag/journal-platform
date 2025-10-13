@@ -28,7 +28,7 @@ import {
 import type { contributorFormSchema } from '@/schemas/upload';
 import { RedirectType, redirect } from 'next/navigation';
 import type * as z from 'zod';
-import { eq } from 'drizzle-orm';
+import { eq, ilike } from 'drizzle-orm';
 
 export async function submitAction(_: unknown, formData: FormData) {
   const data = Object.fromEntries(formData.entries());
@@ -58,8 +58,6 @@ export async function submitAction(_: unknown, formData: FormData) {
     data.contributorValidations.toString()
   ) as z.infer<typeof contributorFormSchema>[];
 
-  let isError = false;
-
   try {
     const session = await auth();
     if (!session) {
@@ -71,6 +69,19 @@ export async function submitAction(_: unknown, formData: FormData) {
       .select({ email: users.email })
       .from(users)
       .where(eq(users.id, userId));
+
+    // Check for duplicate title BEFORE any database inserts
+    const existingMetadata = await db
+      .select()
+      .from(metadata)
+      .where(ilike(metadata.title, metadataValidations.title));
+
+    if (existingMetadata.length > 0) {
+      return {
+        message: 'Seems like you have already submitted this manuscript.',
+        errorType: 'duplicate',
+      };
+    }
 
     await db.transaction(async (trx) => {
       const articleSubmissionIds = await trx
@@ -104,6 +115,7 @@ export async function submitAction(_: unknown, formData: FormData) {
       await insert(reviewerValidations, reviewers);
       await insert(filesValidations, files);
       await insert(contributorValidations, contributors);
+
       await trx.insert(metadata).values({
         ...metadataValidations,
         articleId: articleSubmissionIds[0].id,
@@ -149,11 +161,35 @@ export async function submitAction(_: unknown, formData: FormData) {
       });
     }
 
-    isError = true;
+    redirect('/submissions', RedirectType.push);
   } catch (error) {
-    console.error('Weeerror', error);
-    return { message: 'Failed to submit' };
-  }
+    console.error('submission-error', error);
 
-  if (isError) redirect('/submissions', RedirectType.push);
+    // Determine error type based on error message
+    let errorType = 'submission_failed';
+
+    if (error instanceof Error) {
+      if (
+        error.message.includes('duplicate') ||
+        error.message.includes('already exists')
+      ) {
+        errorType = 'duplicate';
+      } else if (
+        error.message.includes('validation') ||
+        error.message.includes('invalid')
+      ) {
+        errorType = 'validation_error';
+      } else if (
+        error.message.includes('network') ||
+        error.message.includes('timeout')
+      ) {
+        errorType = 'network_error';
+      }
+    }
+
+    return {
+      message: 'Failed to submit. Please try again.',
+      errorType,
+    };
+  }
 }

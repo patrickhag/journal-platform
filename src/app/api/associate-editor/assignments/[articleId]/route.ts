@@ -21,6 +21,7 @@ export async function GET(
     ) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    
     const associateCollections =
       await db.query.associateEditorCorrections.findMany({
         where: eq(associateEditorCorrections.articleId, articleId),

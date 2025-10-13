@@ -3,7 +3,7 @@ import { db } from '@/db/db';
 import { reviewAssignments, reviews } from '@/db/schema';
 import { auth } from '@/auth';
 import { articleSubmissions, notifications } from '@/db/schema';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, like } from 'drizzle-orm';
 import { notifyAdmin, informingAuthorNReviewer } from '@/lib/emailTransporter';
 
 export async function POST(req: Request) {
@@ -101,8 +101,11 @@ export async function GET(req: NextRequest) {
         { status: 401 }
       );
     }
+    const { searchParams } = new URL(req.url);
 
-    const assignedArticles = await db.query.reviewAssignments.findMany({
+    const search = searchParams.get('search');
+
+    let assignedArticles = await db.query.reviewAssignments.findMany({
       columns: {
         id: true,
         assignedDate: true,
@@ -138,6 +141,15 @@ export async function GET(req: NextRequest) {
       },
     });
     // Filter articles that are past their due date and not published
+
+    if (search) {
+      assignedArticles = assignedArticles.filter((article) =>
+        article.article?.metadata.title
+          .toLowerCase()
+          .includes(search.toLowerCase())
+      );
+    }
+
     const dueArticles = assignedArticles.filter((article) => {
       const dueDate = new Date(article.dueDate as string);
       const currentDate = new Date();

@@ -31,6 +31,7 @@ export type TPermissionItem =
   | 'ASSIGN_REVIEWERS'
   | 'DEACTIVATE_USER'
   | 'CHANGE_ROLE'
+  | 'VIEW_ALL_FINAL_FINAL_QUESTIONS'
   | 'VIEW_ALL_PARTICIPANTS';
 
 type TPermission = {
@@ -59,6 +60,7 @@ export const ROLE_PERMISSIONS: TPermission = {
     'CHANGE_ROLE',
     'DEACTIVATE_USER',
     'VIEW_ALL_PARTICIPANTS',
+    'VIEW_ALL_FINAL_FINAL_QUESTIONS',
   ],
   REVIEWER: [
     'VIEW_PUBLIC_ARTICLES',
@@ -73,6 +75,7 @@ export const ROLE_PERMISSIONS: TPermission = {
     'ASSIGN_REVIEWERS',
     'VIEW_REVIEWS',
     'VIEW_ALL_PARTICIPANTS',
+    'VIEW_ALL_FINAL_FINAL_QUESTIONS',
   ],
 };
 

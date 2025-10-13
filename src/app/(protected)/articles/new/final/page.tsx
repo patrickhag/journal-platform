@@ -26,17 +26,40 @@ import {
 import { contributorFormSchema } from '@/schemas/upload';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { RedirectType, redirect, useSearchParams } from 'next/navigation';
-import { startTransition, useActionState } from 'react';
+import { startTransition, useActionState, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import * as zu from 'zod-urlsearchparams';
+import { useRouter } from 'next/navigation';
 
 const Page = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [errorMessage, formAction, isPending] = useActionState(
     submitAction,
     undefined
   );
+  const [redirectCountdown, setRedirectCountdown] = useState<number | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (errorMessage?.message) {
+      setRedirectCountdown(5);
+      const interval = setInterval(() => {
+        setRedirectCountdown((prev) => {
+          if (prev && prev > 1) return prev - 1;
+          if (prev === 1) {
+            router.push('/submissions');
+          }
+          return prev;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [errorMessage, router]);
+
   const form = useForm<z.infer<typeof finalSubmissionSchema>>({
     resolver: zodResolver(finalSubmissionSchema),
     defaultValues: {
@@ -65,16 +88,19 @@ const Page = () => {
     input: new URLSearchParams(others),
     schema: articleSubmitionSchema,
   });
+
   const filesValidations = zu.safeParse({
     input: new URLSearchParams(others),
     schema: filesSchema,
   });
+
   const contributorValidations = zu.safeParse({
     input: new URLSearchParams(others),
     schema: z.object({
       contributors: z.array(contributorFormSchema),
     }),
   });
+
   return (
     <Form {...form}>
       <form
@@ -114,7 +140,15 @@ const Page = () => {
       >
         {errorMessage?.message && (
           <Alert variant={'destructive'} className="my-4">
-            {errorMessage?.message}
+            <div className="space-y-4">
+              <p>{errorMessage.message}</p>
+              {redirectCountdown !== null && (
+                <p className="text-sm text-gray-600">
+                  You're being redirected to submissions page in{' '}
+                  {redirectCountdown} seconds...
+                </p>
+              )}
+            </div>
           </Alert>
         )}
         <h2 className="mb-4 text-xl font-semibold">Final submission</h2>
@@ -236,7 +270,8 @@ const Page = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="block mb-2">
-                  Has this study provided informed consent?
+                  Has this study provided informed consent?{' '}
+                  <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
                   <RadioGroup className="flex space-x-4" {...field}>

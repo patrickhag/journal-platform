@@ -13,8 +13,8 @@ export const metadataSchema = z.object({
   subtitle: z.string({ required_error: 'Subtitle must be provided' }),
   abstract: z
     .string({ required_error: 'Abstract must be provided' })
-    .refine((value) => value.trim().split(/\s+/).length >= 250, {
-      message: 'Abstract must contain at between 250 and 300 words',
+    .refine((value) => value.trim().split(/\s+/).length > 300, {
+      message: 'Abstract must contain at least 300 words.',
     }),
   topics: z.array(z.string().min(3)),
 });

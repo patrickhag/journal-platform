@@ -28,15 +28,19 @@ const AssignOrReject = ({ articleId }: { articleId: string }) => {
           Reject Manuscript
         </Button>
       </div>
-      <AssignStaffEditorModal
-        isOpen={open}
-        onClose={onClose}
-        articleId={articleId}
-      />
-      <RejectManuscriptModal
-        onOpenChange={setOpenRejectModal}
-        open={openRejectModal}
-      />
+      {open && (
+        <AssignStaffEditorModal
+          isOpen={open}
+          onClose={onClose}
+          articleId={articleId}
+        />
+      )}
+      {openRejectModal && (
+        <RejectManuscriptModal
+          onOpenChange={setOpenRejectModal}
+          open={openRejectModal}
+        />
+      )}
     </>
   );
 };

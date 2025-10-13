@@ -523,8 +523,10 @@ export const associateEditorCorrections = pgTable(
 export const associateEditorCorrectionsRelations = relations(
   associateEditorCorrections,
   ({ one, many }) => ({
-    articleSubmissions: many(articleSubmissions, {
-      relationName: 'associateEditorAssignment',
+    article: one(articleSubmissions, {
+      fields: [associateEditorCorrections.articleId],
+      references: [articleSubmissions.id],
+      relationName: 'associateEditorCorrections',
     }),
     user: one(users, {
       fields: [associateEditorCorrections.userId],
@@ -650,7 +652,6 @@ export const feedbacks = pgTable('feedbacks', {
   feedbackMessage: text('feedback_message').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
-
 /*** RELATIONS ***/
 
 export const articleSubmissionsRelations = relations(
@@ -700,6 +701,9 @@ export const articleSubmissionsRelations = relations(
     }),
     associateEditorAssignments: many(associateEditorAssignments, {
       relationName: 'associateEditorAssignmentArticle',
+    }),
+    associateEditorCorrections: many(associateEditorCorrections, {
+      relationName: 'associateEditorCorrections',
     }),
   })
 );

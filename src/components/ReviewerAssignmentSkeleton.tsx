@@ -4,7 +4,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowLeft, FileText, User, Calendar, History } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const ReviewerAssignmentSkeleton = () => {
+const ReviewerAssignmentSkeleton = ({
+  isNotAssociate,
+}: {
+  isNotAssociate?: boolean;
+}) => {
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
       {/* Header */}
@@ -42,40 +46,42 @@ const ReviewerAssignmentSkeleton = () => {
       </Card>
 
       {/* Files Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <FileText className="mr-2 h-5 w-5 text-gray-400" />
-            Manuscript Files
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {/* File Item 1 */}
-          <div className="flex items-center justify-between p-3 border rounded-lg">
-            <div className="flex items-center">
-              <FileText className="mr-2 h-4 w-4 text-gray-400" />
-              <Skeleton className="h-4 w-48" />
+      {isNotAssociate && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <FileText className="mr-2 h-5 w-5 text-gray-400" />
+              Manuscript Files
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {/* File Item 1 */}
+            <div className="flex items-center justify-between p-3 border rounded-lg">
+              <div className="flex items-center">
+                <FileText className="mr-2 h-4 w-4 text-gray-400" />
+                <Skeleton className="h-4 w-48" />
+              </div>
+              <Skeleton className="h-8 w-20" />
             </div>
-            <Skeleton className="h-8 w-20" />
-          </div>
 
-          {/* File Item 2 */}
-          <div className="flex items-center justify-between p-3 border rounded-lg">
-            <div className="flex items-center">
-              <FileText className="mr-2 h-4 w-4 text-gray-400" />
-              <Skeleton className="h-4 w-32" />
+            {/* File Item 2 */}
+            <div className="flex items-center justify-between p-3 border rounded-lg">
+              <div className="flex items-center">
+                <FileText className="mr-2 h-4 w-4 text-gray-400" />
+                <Skeleton className="h-4 w-32" />
+              </div>
+              <Skeleton className="h-8 w-20" />
             </div>
-            <Skeleton className="h-8 w-20" />
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Previous Reviews Section */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
             <History className="mr-2 h-5 w-5 text-gray-400" />
-            Previous Review History
+            Previous {isNotAssociate ? 'Review' : 'Correction'} History
           </CardTitle>
         </CardHeader>
         <CardContent>

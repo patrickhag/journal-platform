@@ -17,7 +17,7 @@ import Link from 'next/link';
 import { useGetParticularAssignment } from '@/hooks/useReviews';
 import { useParams } from 'next/navigation';
 import ReviewModal from '@/components/articles/Review';
-import ReviewerAssignmentSkeleton from '../components/ReviewerAssignmentSkeleton';
+import ReviewerAssignmentSkeleton from '../../../../components/ReviewerAssignmentSkeleton';
 
 const ReviewAssignment = () => {
   const { assignmentId } = useParams();
@@ -53,7 +53,7 @@ const ReviewAssignment = () => {
     <div className="max-w-7xl mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <Button variant="ghost" className="mb-4">
+        <Button className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Go Back
         </Button>
@@ -74,7 +74,7 @@ const ReviewAssignment = () => {
           <CardTitle className="flex items-start justify-between">
             <div>
               <Link href={`/articles/${particularAssignment?.article.id}`}>
-                <h1 className="text-2xl font-bold mb-2 hover:underline line-clamp-1">
+                <h1 className="text-lg font-bold mb-2 hover:underline line-clamp-1">
                   {particularAssignment?.article.metadata.title}
                 </h1>
               </Link>

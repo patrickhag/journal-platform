@@ -189,131 +189,126 @@ const ManageReviewers = () => {
                         )}
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex justify-end space-x-2">
-                          <Sheet>
-                            <SheetTrigger asChild>
-                              <Button variant="outline" size="sm">
-                                <FileText className="h-4 w-4" />
-                              </Button>
-                            </SheetTrigger>
-                            <SheetContent className="sm:max-w-none w-[450px]">
-                              <SheetHeader>
-                                <SheetTitle>
-                                  Manage Assignments - {name}
-                                </SheetTitle>
-                                <SheetDescription>
-                                  View and remove current assignments for this
-                                  reviewer
-                                </SheetDescription>
-                              </SheetHeader>
+                        <Sheet>
+                          <SheetTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              <FileText className="h-4 w-4" />
+                            </Button>
+                          </SheetTrigger>
+                          <SheetContent className="sm:max-w-none w-[450px]">
+                            <SheetHeader>
+                              <SheetTitle>
+                                Manage Assignments - {name}
+                              </SheetTitle>
+                              <SheetDescription>
+                                View and remove current assignments for this
+                                reviewer
+                              </SheetDescription>
+                            </SheetHeader>
 
-                              <div className="space-y-4 mt-6">
-                                {underReviewAssignments.length > 0 ? (
-                                  <div className="space-y-3">
-                                    <h4 className="text-sm font-medium text-gray-900">
-                                      Current Assignments
-                                    </h4>
-                                    <ScrollArea className="h-[5500px] pr-4">
-                                      <div className="space-y-3">
-                                        {underReviewAssignments.map(
-                                          (assignment) => (
-                                            <Card
-                                              key={assignment.id}
-                                              className="p-4"
-                                            >
-                                              <div className="flex items-start justify-between gap-2">
-                                                <div className="flex-1">
-                                                  <Link
-                                                    href={`/articles/${assignment.article.id}`}
-                                                    target="_blank"
-                                                    className="hover:underline"
-                                                  >
-                                                    <h5 className="font-medium text-sm line-clamp-1">
-                                                      {
-                                                        assignment.article
-                                                          .metadata.title
-                                                      }
-                                                    </h5>
-                                                  </Link>
-                                                  <div className="flex items-center mt-2 gap-2">
-                                                    <span className="text-xs text-gray-500">
-                                                      Due:{' '}
-                                                      {
-                                                        assignment.dueDate as unknown as string
-                                                      }
-                                                    </span>
-                                                    <span className="text-xs text-gray-500">
-                                                      •
-                                                    </span>
-                                                    <div className="text-xs text-gray-500">
-                                                      Assigned:{' '}
-                                                      {
-                                                        assignment.assignedDate as unknown as string
-                                                      }
-                                                    </div>
+                            <div className="space-y-4 mt-6">
+                              {underReviewAssignments.length > 0 ? (
+                                <div className="space-y-3">
+                                  <h4 className="text-sm font-medium text-gray-900">
+                                    Current Assignments
+                                  </h4>
+                                  <ScrollArea className="h-[5500px] pr-4">
+                                    <div className="space-y-3">
+                                      {underReviewAssignments.map(
+                                        (assignment) => (
+                                          <Card
+                                            key={assignment.id}
+                                            className="p-4"
+                                          >
+                                            <div className="flex items-start justify-between gap-2">
+                                              <div className="flex-1">
+                                                <Link
+                                                  href={`/articles/${assignment.article.id}`}
+                                                  target="_blank"
+                                                  className="hover:underline"
+                                                >
+                                                  <h5 className="font-medium text-sm line-clamp-1">
+                                                    {
+                                                      assignment.article
+                                                        .metadata.title
+                                                    }
+                                                  </h5>
+                                                </Link>
+                                                <div className="flex items-center mt-2 gap-2">
+                                                  <span className="text-xs text-gray-500">
+                                                    Due:{' '}
+                                                    {
+                                                      assignment.dueDate as unknown as string
+                                                    }
+                                                  </span>
+                                                  <span className="text-xs text-gray-500">
+                                                    •
+                                                  </span>
+                                                  <div className="text-xs text-gray-500">
+                                                    Assigned:{' '}
+                                                    {
+                                                      assignment.assignedDate as unknown as string
+                                                    }
                                                   </div>
                                                 </div>
-                                                <div className="flex items-center">
-                                                  <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="h-8 w-8 p-0 hover:bg-red-100"
-                                                    onClick={() => {
-                                                      setOpenAlertDialog(true);
-                                                      setUserId(
-                                                        reviewer.userId as string
-                                                      );
-                                                      setArticleId(
-                                                        assignment.articleId
-                                                      );
-                                                    }}
-                                                  >
-                                                    <Trash2 className="h-4 w-4 text-red-500" />
-                                                  </Button>
-                                                  <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="h-8 w-8 p-0 hover:bg-blue-100"
-                                                    onClick={() => {
-                                                      setOpenNotificationDialog(
-                                                        true
-                                                      );
-                                                      setUserId(
-                                                        reviewer.userId as string
-                                                      );
-                                                      setArticleId(
-                                                        assignment.articleId
-                                                      );
-                                                    }}
-                                                  >
-                                                    <Bell className="h-4 w-4 text-blue-500" />
-                                                  </Button>
-                                                </div>
                                               </div>
-                                            </Card>
-                                          )
-                                        )}
-                                      </div>
-                                    </ScrollArea>
-                                  </div>
-                                ) : (
-                                  <div className="text-center py-8">
-                                    <FileText className="mx-auto h-12 w-12 text-gray-400" />
-                                    <h4 className="mt-2 text-sm font-medium text-gray-900">
-                                      No assignments
-                                    </h4>
-                                    <p className="mt-1 text-sm text-gray-500">
-                                      This reviewer has no current assignments.
-                                    </p>
-                                  </div>
-                                )}
-                              </div>
-                            </SheetContent>
-                          </Sheet>
-                          <Button variant="outline" size="sm">
-                            <FilePlus className="h-4 w-4" />
-                          </Button>
-                        </div>
+                                              <div className="flex items-center">
+                                                <Button
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  className="h-8 w-8 p-0 hover:bg-red-100"
+                                                  onClick={() => {
+                                                    setOpenAlertDialog(true);
+                                                    setUserId(
+                                                      reviewer.userId as string
+                                                    );
+                                                    setArticleId(
+                                                      assignment.articleId
+                                                    );
+                                                  }}
+                                                >
+                                                  <Trash2 className="h-4 w-4 text-red-500" />
+                                                </Button>
+                                                <Button
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  className="h-8 w-8 p-0 hover:bg-blue-100"
+                                                  onClick={() => {
+                                                    setOpenNotificationDialog(
+                                                      true
+                                                    );
+                                                    setUserId(
+                                                      reviewer.userId as string
+                                                    );
+                                                    setArticleId(
+                                                      assignment.articleId
+                                                    );
+                                                  }}
+                                                >
+                                                  <Bell className="h-4 w-4 text-blue-500" />
+                                                </Button>
+                                              </div>
+                                            </div>
+                                          </Card>
+                                        )
+                                      )}
+                                    </div>
+                                  </ScrollArea>
+                                </div>
+                              ) : (
+                                <div className="text-center py-8">
+                                  <FileText className="mx-auto h-12 w-12 text-gray-400" />
+                                  <h4 className="mt-2 text-sm font-medium text-gray-900">
+                                    No assignments
+                                  </h4>
+                                  <p className="mt-1 text-sm text-gray-500">
+                                    This reviewer has no current assignments.
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </SheetContent>
+                        </Sheet>
                       </TableCell>
                     </TableRow>
                   );

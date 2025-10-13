@@ -11,6 +11,7 @@ import {
   TReviewerAssignment,
   TReviewerInfo,
   AddReviewerFormValues,
+  TAssociateAssignment,
 } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
@@ -75,7 +76,7 @@ export const useGetReviewerAssignments = () => {
   return useQuery({
     queryKey: ['reviewerAssignments'],
     queryFn: async () => {
-      const { data } = await axios.get(`/api/reviews/`);
+      const { data } = await axios.get(`http://localhost:3000/api/reviews/`);
       const assignedArticles = data.assignedArticles as TReviewerAssignment;
       const dueArticles = data.dueArticles as TReviewerAssignment;
       return { assignedArticles, dueArticles };
@@ -419,6 +420,20 @@ export const useGetParticularAssignment = (assignmentId: string) => {
     queryFn: async () => {
       const { data } = await axios.get<TAssignment>(
         `/api/reviewers/${assignmentId}`
+      );
+      return data || [];
+    },
+  });
+};
+
+export const useGetAssociateEditorParticularAssignment = (
+  assignmentId: string
+) => {
+  return useQuery({
+    queryKey: ['associateEditorparticularAssignment'],
+    queryFn: async () => {
+      const { data } = await axios.get<TAssociateAssignment>(
+        `/api/associate-editor/${assignmentId}`
       );
       return data || [];
     },

@@ -577,6 +577,29 @@ export type TAssignment = {
   };
 };
 
+export type TAssociateAssignment = {
+  id: string;
+  assignedAt: string;
+  dueDate: string;
+  message: string;
+  articleSubmissions: {
+    id: string;
+    articleStatus: string;
+    associateEditorCorrections: {
+      fileIds: string[];
+      submittedAt: string;
+    }[];
+    user: {
+      firstName: string;
+      lastName: string;
+    };
+    metadata: {
+      prefix?: string;
+      title: string;
+    };
+  };
+};
+
 export type Params = { articleId: string };
 
 export type TAssociateEditorAssignmentsInfo = {

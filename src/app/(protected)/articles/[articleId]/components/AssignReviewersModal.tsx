@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { User, CheckCircle, CalendarIcon } from 'lucide-react';
+import { User, CheckCircle, CalendarIcon, UserRoundPlus } from 'lucide-react';
 import { useAssignReviewer, useGetReviewers } from '@/hooks/useUsers';
 import Loader from '@/components/Loader';
 import { useParams } from 'next/navigation';
@@ -29,8 +29,10 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
+import withPermissions from '@/components/WithPermission';
+import { DialogTrigger } from '@radix-ui/react-dialog';
 
-export default function AssignRevieweModal() {
+const AssignRevieweModal = () => {
   const [selectedReviewerId, setSelectedReviewerId] = useState<string>('');
   const { data: availableReviwers } = useGetReviewers();
   const { mutate, isPending } = useAssignReviewer();
@@ -72,14 +74,16 @@ export default function AssignRevieweModal() {
 
   return (
     <>
-      <Button
-        className="text-blue-500 hover:text-blue-600 underline"
-        onClick={() => setOpen(true)}
-        variant={'link'}
-      >
-        Assign a reviewer
-      </Button>
       <Dialog open={open} onOpenChange={setOpen}>
+        <Button
+          variant={'ghost'}
+          className="m-5"
+          onClick={() => setOpen(true)}
+          title="Assign Reviewer"
+        >
+          <UserRoundPlus size={25} />
+        </Button>
+        <DialogTrigger asChild></DialogTrigger>
         <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -196,4 +200,6 @@ export default function AssignRevieweModal() {
       </Dialog>
     </>
   );
-}
+};
+export const AssignRevieweModalWithPermission =
+  withPermissions(AssignRevieweModal);

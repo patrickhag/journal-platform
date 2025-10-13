@@ -29,6 +29,19 @@ export const useGetUserArticles = (
   });
 };
 
+export const useGetFinalSubmissions = (articleId: string) => {
+  console.log('articleId:', articleId);
+  return useQuery({
+    queryKey: ['finalSubmissions'],
+    queryFn: async () => {
+      const { data } = await axios.get(
+        `/api/articles/finalSubmissions/${articleId}`
+      );
+      return data;
+    },
+  });
+};
+
 export const useGetAcceptedArticles = () => {
   const fetchArticles = async (): Promise<IArticle[]> => {
     const response = await axios.get<IArticle[]>(`/api/articles`);

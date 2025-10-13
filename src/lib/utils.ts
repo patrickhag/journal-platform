@@ -1,7 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
-import { redirect } from 'next/navigation';
-import { Dispatch, SetStateAction } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { format, parseISO } from 'date-fns';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -53,6 +52,11 @@ export const getReviewAssignmentsStatusStyle = (status: string) => {
       return 'text-gray-900 bg-gray-100'; // Unknown/Pending
   }
 };
+
+export function formatDateToYMD(isoString: string) {
+  const date = parseISO(isoString);
+  return format(date, 'yyyy-MM-dd');
+}
 
 export const slugify = (value: string) =>
   value
@@ -138,4 +142,29 @@ export const calculateDaysRemaining = (dueDate: string): number => {
   const today = new Date();
   const due = new Date(dueDate);
   return Math.ceil((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+};
+
+export const redirectUserBasedOnRole = (role: string): string => {
+  let linkUrl: string;
+
+  switch (role) {
+    case 'NORMAL_USER':
+      linkUrl = '/submissions';
+      break;
+    case 'REVIEWER':
+    case 'STAFF_EDITOR':
+      linkUrl = '/reviewer/assignments';
+      break;
+    case 'ASSOCIATE_EDITOR':
+      linkUrl = '/associate-editor/assignments';
+      break;
+    case 'CHIEF_EDITOR':
+      linkUrl = '/editor/dashboard';
+      break;
+    default:
+      linkUrl = '/';
+      break;
+  }
+
+  return linkUrl;
 };

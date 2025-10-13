@@ -9,13 +9,7 @@ import { Eye, Upload, FileText, File } from 'lucide-react';
 import { useGetAssociateEditorsAssignments } from '@/hooks/useReviews';
 import { Badge } from '@/components/ui/badge';
 import { TAssociateEditorAssignments } from '@/types';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import UploadCorrection from '../components/UploadCorrection';
 import Link from 'next/link';
 
@@ -24,7 +18,6 @@ function AssociateEditorDashboard() {
   const router = useRouter();
   const { data: assignments, isPending } = useGetAssociateEditorsAssignments();
 
-  console.log('assignments:', assignments);
   const [openSubmitCollection, setOpenSubmitCollection] = useState(false);
 
   const [selectedAssignment, setSelectedAssignment] =
@@ -199,17 +192,17 @@ function AssociateEditorDashboard() {
                               )}
                             </DialogContent>
                           </Dialog>
-                          <Button
-                            size="sm"
-                            className="bg-blue-600 hover:bg-blue-700"
-                            onClick={() => {
-                              setOpenSubmitCollection(true);
-                              setSelectedAssignment(assignment);
-                            }}
+                          <Link
+                            href={`/associate-editor/article/${assignment.id}`}
                           >
-                            <Upload className="mr-2 h-4 w-4" />
-                            Submit Correction
-                          </Button>
+                            <Button
+                              size="sm"
+                              className="bg-blue-600 hover:bg-blue-700"
+                            >
+                              <Upload className="mr-2 h-4 w-4" />
+                              Submit Correction
+                            </Button>
+                          </Link>
                         </div>
                       </div>
                     </div>

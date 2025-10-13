@@ -7,6 +7,7 @@ import { reviews } from '@/db/schema';
 export async function GET(req: NextRequest) {
   try {
     const session = await auth();
+
     const completedReviews = await db.query.reviews.findMany({
       where: eq(reviews.userId, session?.user.id as string),
       columns: {

@@ -33,7 +33,7 @@ export async function authenticate(
     case 'NORMAL_USER':
       return redirect('/submissions', RedirectType.replace);
     case 'STAFF_EDITOR':
-      return redirect('/staff-editor/assigned', RedirectType.replace);
+      return redirect('/staff-editor/assignments', RedirectType.replace);
     case 'REVIEWER':
       return redirect('/reviewer/assignments', RedirectType.replace);
     case 'ASSOCIATE_EDITOR':

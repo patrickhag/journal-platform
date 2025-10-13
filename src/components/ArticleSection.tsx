@@ -74,7 +74,11 @@ function ArticleCard({ article }: { article: TArticle }) {
               {/* Right Section: Action Buttons */}
               <div className="flex space-x-2 ml-4">
                 <Link href={`/articles/${transformedArticle.id}`}>
-                  <Button variant="outline" size="sm">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="cursor-pointer"
+                  >
                     <Eye className="mr-1 h-4 w-4" />
                     View Details
                   </Button>

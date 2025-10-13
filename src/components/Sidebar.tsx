@@ -93,11 +93,6 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             icon: Clock,
           },
           {
-            href: '/reviewer/revisions',
-            label: 'Sent Reviews',
-            icon: FileText,
-          },
-          {
             href: '/reviewer/finalised',
             label: 'Finalised Assignments',
             icon: CheckSquare,
@@ -111,11 +106,6 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             icon: CheckSquare,
           },
           {
-            href: '/associate-editor/sent-assignments',
-            label: 'Sent Assignments',
-            icon: FileText,
-          },
-          {
             href: '/associate-editor/finalised-assignments',
             label: 'Finalised Assignments',
             icon: FileText,
@@ -124,7 +114,7 @@ const Sidebar = ({ userRole }: SidebarProps) => {
       case 'staff_editor':
         return [
           {
-            href: '/staff-editor/assigned',
+            href: '/staff-editor/assignments',
             label: 'Assigned to me',
             icon: CheckSquare,
           },

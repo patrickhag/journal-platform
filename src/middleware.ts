@@ -7,6 +7,7 @@ import {
 } from './routes';
 import { NextResponse } from 'next/server';
 import { authOptions } from './auth';
+import { redirectUserBasedOnRole } from './lib/utils';
 
 const { auth } = NextAuth(authOptions);
 
@@ -17,6 +18,8 @@ export default auth((req) => {
 
   const headers = new Headers(req.headers);
   headers.set('x-pathname', pathname);
+
+  const userRole = req.auth?.user?.role;
 
   const isApiAuthRoute = apiAuthPrefix.some((prefix) => {
     const dynamicRoute = prefix.replace(/\[.*?\]/g, '[^/]+');
@@ -47,10 +50,12 @@ export default auth((req) => {
       '/contact-us',
     ].some((prefix) => pathname.startsWith(prefix));
 
-  // Handle auth routes
+  // Handle Role redirection when session is active
   if (isAuthRoute) {
     if (isLoggedIn) {
-      return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
+      return Response.redirect(
+        new URL(redirectUserBasedOnRole(userRole as string), nextUrl)
+      );
     }
     return NextResponse.next();
   }

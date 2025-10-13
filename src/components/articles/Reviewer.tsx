@@ -8,12 +8,10 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 export default function Reviewer({
-  reviewer: { id: reviewerId, email, names, affiliation, phone, expertise },
+  reviewer: { email, names, affiliation, phone, expertise },
   index,
-  articleId,
 }: {
   reviewer: {
-    id: string;
     affiliation: string;
     email: string;
     names: string;

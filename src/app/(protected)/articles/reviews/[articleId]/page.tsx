@@ -10,7 +10,6 @@ import {
   Eye,
   File,
   FileSearch2,
-  Forward,
   Repeat,
   UserCheck,
 } from 'lucide-react';
@@ -149,31 +148,23 @@ export default function ReviewsPage() {
                                             className="flex items-center justify-between p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors mb-3"
                                           >
                                             <div className="flex items-center gap-3">
-                                              <File className="h-4 w-4 text-red-500" />
+                                              <File className="h-4 w-4 text-green-500" />
                                               <div>
                                                 <h5 className="text-sm font-medium">
                                                   File {idx + 1}
                                                 </h5>
                                               </div>
                                             </div>
-                                            <div className="flex justify-between">
-                                              <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                asChild
-                                              >
-                                                <a href={fileUrl} download>
-                                                  <Eye className="h-4 w-4" />
-                                                </a>
-                                              </Button>
-                                              <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                asChild
-                                              >
-                                                <Forward className="h-4 w-4" />
-                                              </Button>
-                                            </div>
+
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              asChild
+                                            >
+                                              <a href={fileUrl} download>
+                                                <Eye className="h-4 w-4" />
+                                              </a>
+                                            </Button>
                                           </div>
                                         ))}
                                       </div>

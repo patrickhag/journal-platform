@@ -4,7 +4,6 @@ import { PlusCircle, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useGetUserArticles } from '@/hooks/useArticles';
-import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Input } from '@/components/ui/input';
@@ -19,6 +18,7 @@ import { ARTICLE_STATUS } from '@/lib/consts';
 import { ArticleSection } from '@/components/ArticleSection';
 import { Label } from '@/components/ui/label';
 import { ArticleSkeleton } from '@/components/articles/ArticleSkeleton';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,25 +34,31 @@ export default function Dashboard() {
     <div className="space-y-8">
       {/* Header Section */}
       <div className="space-y-2">
-        <h2 className="text-2xl text-[#141A26] font-bold">
-          Welcome back, {manuscripts?.userName}
-        </h2>
-        {!isPending && (
-          <p className="text-muted-foreground">
-            {manuscripts && manuscripts.articles.length > 0 ? (
-              <>
+        {isPending ? (
+          <>
+            {/* Skeleton placeholders */}
+            <Skeleton className="h-7 w-48 rounded-md" />
+            <Skeleton className="h-5 w-72 rounded-md" />
+          </>
+        ) : manuscripts ? (
+          <>
+            <h2 className="text-2xl text-[#141A26] font-bold">
+              Welcome back, {manuscripts?.userName}
+            </h2>
+            {manuscripts.articles.length > 0 ? (
+              <p className="text-muted-foreground">
                 You’ve got{' '}
                 <span className="font-semibold">
                   {manuscripts.articles.length} manuscript
                   {manuscripts.articles.length === 1 ? '' : 's'}
                 </span>
                 .
-              </>
+              </p>
             ) : (
-              'You haven’t submitted any manuscripts yet.'
+              <span>You haven’t submitted any manuscripts yet.</span>
             )}
-          </p>
-        )}
+          </>
+        ) : null}
       </div>
 
       {/* Controls */}
@@ -110,8 +116,8 @@ export default function Dashboard() {
               </div>
             ))}
           </>
-        ) : manuscripts?.articles && manuscripts?.articles.length > 0 ? (
-          <ArticleSection articles={manuscripts?.articles} />
+        ) : manuscripts?.articles && manuscripts.articles.length > 0 ? (
+          <ArticleSection articles={manuscripts.articles} />
         ) : (
           <div className="text-center py-12">
             <div className="bg-card border border-border rounded-xl p-8 max-w-md mx-auto">

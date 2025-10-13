@@ -16,7 +16,8 @@ import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import withPermissions from '@/components/WithPermission';
 import AddReviewerModal from '@/components/upload/AddReviewerModal';
-import AssignRevieweModal from './components/AssignReviewersModal';
+import { AssignRevieweModalWithPermission } from './components/AssignReviewersModal';
+import { FinalSubmissionCardWithPermissions } from './components/AddsOnInformationExample';
 
 async function page({ params }: { params: Promise<{ articleId: string }> }) {
   const session = await auth();
@@ -55,10 +56,10 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
             fallback=""
           />
         </div>
-        {/* metadata & contributors */}
+        {/* METADATA & CONTRIBUTORS */}
         <Metadata articleId={articleId} role={currentUserRole!} />
 
-        {/* author info */}
+        {/* AUTHOR INFORMATION */}
         <Card className="my-3">
           <CardHeader>
             <CardTitle className="text-lg font-semibold text-[#1a237e]">
@@ -126,7 +127,7 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
           </CardContent>
         </Card>
 
-        {/* files */}
+        {/* FILES */}
         <Files
           articleId={articleId}
           role={currentUserRole!}
@@ -134,57 +135,61 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
           articleStatus={article?.articleStatus as string}
         />
 
-        {/* reviewers */}
+        {/* REVIEWERS */}
         {session?.user.role !== 'REVIEWER' && (
           <Card className="my-3">
-            <CardHeader>
-              <CardTitle className="text-[#1a237e]">
-                Proposed Reviewers
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+            <div className="flex justify-between items-center">
+              <CardHeader>
+                <CardTitle className="text-lg text-[#1a237e]">
+                  Proposed Reviewers
+                </CardTitle>
+              </CardHeader>
+              <AssignRevieweModalWithPermission
+                requiredPermissions={['ASSIGN_REVIEWERS']}
+                role={
+                  currentUserRole as
+                    | 'NORMAL_USER'
+                    | 'CHIEF_EDITOR'
+                    | 'REVIEWER'
+                    | 'STAFF_EDITOR'
+                }
+                fallback={''}
+              />
+            </div>
+            <CardContent className="space-y-5">
               <div className="flex justify-between">
                 {reviewrs.length === 0 && (
                   <p className="text-sm">
                     Author has not proposed any reviewer.
                   </p>
                 )}
-                <AssignReviewerLinkPermission
-                  requiredPermissions={['ASSIGN_REVIEWERS']}
-                  role={
-                    currentUserRole as
-                      | 'NORMAL_USER'
-                      | 'CHIEF_EDITOR'
-                      | 'REVIEWER'
-                      | 'STAFF_EDITOR'
-                  }
-                  fallback={<></>}
-                />
-                <AddReviewersLinkPermission
-                  requiredPermissions={['INVITE_REVIEWERS']}
-                  role={
-                    currentUserRole as
-                      | 'NORMAL_USER'
-                      | 'CHIEF_EDITOR'
-                      | 'REVIEWER'
-                      | 'STAFF_EDITOR'
-                  }
-                  fallback={<></>}
-                />
               </div>
-              <Separator />
               {/* PROPOSED REVIEWERS */}
               {reviewrs.map((r, index) => (
-                <Reviewer
-                  reviewer={r}
-                  index={index}
-                  key={r.id}
-                  articleId={article?.id as string}
-                />
+                <>
+                  <Reviewer
+                    reviewer={r}
+                    index={index}
+                    key={r.id}
+                    articleId={article?.id as string}
+                  />
+                  {index !== reviewrs.length - 1 && <Separator />}
+                </>
               ))}
             </CardContent>
           </Card>
         )}
+        <FinalSubmissionCardWithPermissions
+          role={
+            (currentUserRole ?? 'ADMIN') as
+              | 'NORMAL_USER'
+              | 'CHIEF_EDITOR'
+              | 'REVIEWER'
+              | 'STAFF_EDITOR'
+          }
+          requiredPermissions={['VIEW_ALL_FINAL_FINAL_QUESTIONS']}
+          fallback=""
+        />
         {article?.articleStatus !== 'PUBLISHED' && (
           <AssignOrRejectComponent
             role={
@@ -228,15 +233,5 @@ const ArticleLinks = ({ articleId }: { articleId: string }) => (
 );
 
 const ArticleLinksPermission = withPermissions(ArticleLinks);
-
-const AssignReviewerLink = () => <AssignRevieweModal />;
-
-const AddReviewersLink = () => (
-  <AddReviewerModal typeOfPage="review" autoSave />
-);
-
-const AddReviewersLinkPermission = withPermissions(AddReviewersLink);
-
-const AssignReviewerLinkPermission = withPermissions(AssignReviewerLink);
 
 export default page;
