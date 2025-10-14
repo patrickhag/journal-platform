@@ -29,6 +29,13 @@ export async function GET(
         },
         orderBy: desc(associateEditorAssignments.assignedAt),
         with: {
+          staffEditor: {
+            columns: {
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
           articleSubmissions: {
             columns: {
               id: true,
@@ -37,7 +44,7 @@ export async function GET(
             with: {
               associateEditorCorrections: {
                 columns: {
-                  fileIds: true,
+                  fileId: true,
                   submittedAt: true,
                 },
               },

@@ -28,13 +28,6 @@ export async function GET(req: NextRequest) {
           message: true,
         },
         with: {
-          staffEditor: {
-            columns: {
-              firstName: true,
-              lastName: true,
-              email: true,
-            },
-          },
           articleSubmissions: {
             columns: {
               id: true,
@@ -66,7 +59,7 @@ export async function POST(req: Request) {
   try {
     const {
       articleId,
-      fileIds,
+      fileId,
       staffEditorName,
       articleTitle,
       staffEditorEmail,
@@ -82,7 +75,7 @@ export async function POST(req: Request) {
 
     await db.insert(associateEditorCorrections).values({
       articleId,
-      fileIds,
+      fileId,
       userId: session?.user.id,
     });
 

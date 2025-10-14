@@ -76,7 +76,7 @@ export const useGetReviewerAssignments = () => {
   return useQuery({
     queryKey: ['reviewerAssignments'],
     queryFn: async () => {
-      const { data } = await axios.get(`http://localhost:3000/api/reviews/`);
+      const { data } = await axios.get(`/api/reviews/`);
       const assignedArticles = data.assignedArticles as TReviewerAssignment;
       const dueArticles = data.dueArticles as TReviewerAssignment;
       return { assignedArticles, dueArticles };
@@ -373,9 +373,10 @@ export const useAssignAssociateEditor = () => {
 };
 
 export const useSubmitCollection = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: {
-      fileIds: string[];
+      fileId: string;
       articleId: string;
       staffEditorName: string;
       articleTitle: string | undefined;
@@ -389,6 +390,9 @@ export const useSubmitCollection = () => {
     onSuccess: ({ data }) => {
       if (data.message) {
         toast.success(data.message);
+        queryClient.invalidateQueries({
+          queryKey: ['associateEditorparticularAssignment'],
+        });
       }
     },
     onError: (error: Error | AxiosError) => {

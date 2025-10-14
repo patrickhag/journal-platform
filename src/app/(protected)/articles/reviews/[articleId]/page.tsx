@@ -161,18 +161,21 @@ export default function ReviewsPage() {
                                               size="sm"
                                               asChild
                                             >
-                                              <a href={fileUrl} download>
+                                              <Link
+                                                href={fileUrl}
+                                                target="_blank"
+                                              >
                                                 <Eye className="h-4 w-4" />
-                                              </a>
+                                              </Link>
                                             </Button>
                                           </div>
                                         ))}
                                       </div>
                                     </div>
                                   )}
-                                <div className="flex justify-between gap-2">
+                                <div className="flex items-center justify-between gap-2">
                                   <div className="mt-4 text-sm text-muted-foreground">
-                                    Submitted on: {review.reviewedAt}
+                                    Reviewed on: {review.reviewedAt}
                                   </div>
                                   <Button
                                     size="sm"

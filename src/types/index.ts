@@ -542,7 +542,7 @@ export type TAssociateEditors = {
 export type TAssociateEditorCollection = {
   id: string;
   submittedAt: string;
-  fileIds: string[];
+  fileId: string;
   user: {
     firstName: string;
     lastName: string;
@@ -582,11 +582,16 @@ export type TAssociateAssignment = {
   assignedAt: string;
   dueDate: string;
   message: string;
+  staffEditor: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
   articleSubmissions: {
     id: string;
     articleStatus: string;
     associateEditorCorrections: {
-      fileIds: string[];
+      fileId: string;
       submittedAt: string;
     }[];
     user: {

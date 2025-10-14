@@ -213,13 +213,6 @@ function AssociateEditorDashboard() {
           </CardContent>
         </Card>
       </div>
-      {openSubmitCollection && (
-        <UploadCorrection
-          open={openSubmitCollection}
-          setOpenSubmitCollection={setOpenSubmitCollection}
-          selectedAssignment={selectedAssignment}
-        />
-      )}
     </>
   );
 }

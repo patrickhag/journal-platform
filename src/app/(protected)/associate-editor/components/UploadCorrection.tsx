@@ -18,7 +18,7 @@ import { useClearURL } from '@/components/ClearURL';
 import { DragAndDropFileInput } from '@/components/upload/FileInput';
 import { FileList } from '@/components/upload/FileList';
 import { Dispatch, SetStateAction } from 'react';
-import { TAssociateEditorAssignments } from '@/types';
+import { TAssociateAssignment } from '@/types';
 
 export default function UploadCorrection({
   open,
@@ -27,7 +27,7 @@ export default function UploadCorrection({
 }: {
   open: boolean;
   setOpenSubmitCollection: Dispatch<SetStateAction<boolean>>;
-  selectedAssignment: TAssociateEditorAssignments | null;
+  selectedAssignment: TAssociateAssignment | undefined;
 }) {
   const searchParams = useSearchParams();
   const filesValidation = safeParse({
@@ -37,6 +37,7 @@ export default function UploadCorrection({
 
   const files = filesValidation.data?.files || [];
   const fileIds = files.map((f) => f.publicId);
+  const fileId = fileIds[0];
 
   const { mutate, isPending } = useSubmitCollection();
 
@@ -52,7 +53,7 @@ export default function UploadCorrection({
 
   const onSubmit = () => {
     const data = {
-      fileIds,
+      fileId,
       articleId: articleId as string,
       staffEditorName,
       staffEditorEmail,
