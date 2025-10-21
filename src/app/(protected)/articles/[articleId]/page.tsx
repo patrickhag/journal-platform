@@ -15,7 +15,6 @@ import { AssignOrRejectComponent } from '@/components/articles/AssignOrReject';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import withPermissions from '@/components/WithPermission';
-import AddReviewerModal from '@/components/upload/AddReviewerModal';
 import { AssignRevieweModalWithPermission } from './components/AssignReviewersModal';
 import { FinalSubmissionCardWithPermissions } from './components/AddsOnInformationExample';
 

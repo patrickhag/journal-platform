@@ -1,5 +1,5 @@
 import { db } from '@/db/db';
-import { associateEditorAssignments } from '@/db/schema';
+import { articleSubmissions, associateEditorAssignments } from '@/db/schema';
 import { informStaffEditorAboutAssociateInvitation } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
@@ -14,7 +14,7 @@ export default async function AcceptPage({ searchParams }: PageProps) {
   const search = await searchParams;
   const articleId = search.articleId;
   const invitationSign = search.accept_invite;
-  const isAcceptedOrDeclined = !!invitationSign;
+  const isAcceptedOrDeclined = !!Number(invitationSign);
 
   const foundArticle = await db.query.associateEditorAssignments.findFirst({
     where: eq(associateEditorAssignments.articleId, articleId as string),

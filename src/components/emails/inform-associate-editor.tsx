@@ -41,8 +41,8 @@ export const StaffEditorEmailTemplate: React.FC<{
 
           <Text className="text-gray-700 my-4">
             You can access the submission and take necessary editorial actions
-            by follwoing with this{' '}
-            <a href={`${process.env.NEXT_PUBLIC_URL}/staff-editor/assigned`}>
+            by following with this{' '}
+            <a href={`${process.env.NEXT_PUBLIC_URL}/staff-editor/assignments`}>
               link
             </a>
             . If you have any questions or need assistance, feel free to reach

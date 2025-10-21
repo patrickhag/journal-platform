@@ -119,82 +119,88 @@ export default function ReviewsPage() {
                     <ScrollArea className="h-[600px] pr-4">
                       <div className="space-y-6">
                         {reviewData && reviewData?.reviews?.length > 0 ? (
-                          reviewData.reviews.map((review) => (
-                            <Card key={review.id}>
-                              <CardHeader>
-                                <div className="flex items-center justify-between">
-                                  <div>
-                                    <h3 className="font-semibold">
-                                      {review.user.firstName}{' '}
-                                      {review.user.lastName}
-                                    </h3>
-                                  </div>
-                                  <Badge>{review.status}</Badge>
-                                </div>
-                              </CardHeader>
-                              <CardContent>
-                                <p className="text-sm mb-4">{review.message}</p>
-                                {/* Annotated Files */}
-                                {review.fileIds &&
-                                  review.fileIds.length > 0 && (
-                                    <div className="mt-4">
-                                      <h4 className="text-sm font-medium mb-3">
-                                        Annotated Files
-                                      </h4>
-                                      <div className="space-y-2">
-                                        {review.fileIds.map((fileUrl, idx) => (
-                                          <div
-                                            key={idx}
-                                            className="flex items-center justify-between p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors mb-3"
-                                          >
-                                            <div className="flex items-center gap-3">
-                                              <File className="h-4 w-4 text-green-500" />
-                                              <div>
-                                                <h5 className="text-sm font-medium">
-                                                  File {idx + 1}
-                                                </h5>
-                                              </div>
-                                            </div>
-
-                                            <Button
-                                              variant="ghost"
-                                              size="sm"
-                                              asChild
-                                            >
-                                              <Link
-                                                href={fileUrl}
-                                                target="_blank"
-                                              >
-                                                <Eye className="h-4 w-4" />
-                                              </Link>
-                                            </Button>
-                                          </div>
-                                        ))}
-                                      </div>
+                          reviewData.reviews.map((review) => {
+                            const reviewerName = `${review.user.prefix ?? ''} ${review.user.firstName} ${review.user.lastName}`;
+                            return (
+                              <Card key={review.id}>
+                                <CardHeader>
+                                  <div className="flex items-center justify-between">
+                                    <div>
+                                      <h3 className="font-semibold">
+                                        {reviewerName}
+                                      </h3>
                                     </div>
-                                  )}
-                                <div className="flex items-center justify-between gap-2">
-                                  <div className="mt-4 text-sm text-muted-foreground">
-                                    Reviewed on: {review.reviewedAt}
+                                    <Badge>{review.status}</Badge>
                                   </div>
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() =>
-                                      handleReReviewRequest(
-                                        review.userId,
-                                        reviewersName,
-                                        review.user.email
-                                      )
-                                    }
-                                  >
-                                    <Repeat />
-                                    Request Re-Review
-                                  </Button>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          ))
+                                </CardHeader>
+                                <CardContent>
+                                  <p className="text-sm mb-4">
+                                    {review.message}
+                                  </p>
+                                  {/* Annotated Files */}
+                                  {review.fileIds &&
+                                    review.fileIds.length > 0 && (
+                                      <div className="mt-4">
+                                        <h4 className="text-sm font-medium mb-3">
+                                          Annotated Files
+                                        </h4>
+                                        <div className="space-y-2">
+                                          {review.fileIds.map(
+                                            (fileUrl, idx) => (
+                                              <div
+                                                key={idx}
+                                                className="flex items-center justify-between p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors mb-3"
+                                              >
+                                                <div className="flex items-center gap-3">
+                                                  <File className="h-4 w-4 text-green-500" />
+                                                  <div>
+                                                    <h5 className="text-sm font-medium">
+                                                      File {idx + 1}
+                                                    </h5>
+                                                  </div>
+                                                </div>
+
+                                                <Button
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  asChild
+                                                >
+                                                  <Link
+                                                    href={fileUrl}
+                                                    target="_blank"
+                                                  >
+                                                    <Eye className="h-4 w-4" />
+                                                  </Link>
+                                                </Button>
+                                              </div>
+                                            )
+                                          )}
+                                        </div>
+                                      </div>
+                                    )}
+                                  <div className="flex items-center justify-between gap-2">
+                                    <div className="mt-4 text-sm text-muted-foreground">
+                                      Reviewed on: {review.reviewedAt}
+                                    </div>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() =>
+                                        handleReReviewRequest(
+                                          review.userId,
+                                          reviewersName,
+                                          review.user.email
+                                        )
+                                      }
+                                    >
+                                      <Repeat />
+                                      Request Re-Review
+                                    </Button>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            );
+                          })
                         ) : (
                           <div className="flex flex-col items-center justify-center h-full pt-24 text-center text-muted-foreground">
                             <FileSearch2 className="w-12 h-12 mb-4 text-muted-foreground" />

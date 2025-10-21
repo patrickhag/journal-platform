@@ -8,11 +8,9 @@ export async function GET(req: NextRequest) {
   try {
     const session = await auth();
 
-    const editorId = session?.user.id;
-
-    // if (!(session?.user.role === 'STAFF_EDITOR')) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
+    if (!(session?.user.role === 'STAFF_EDITOR')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const associateEditorsAssigments = await db.query.editorAssignment.findMany(
       {

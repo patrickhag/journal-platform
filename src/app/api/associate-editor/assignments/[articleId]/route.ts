@@ -29,12 +29,15 @@ export async function GET(
           id: true,
           submittedAt: true,
           fileId: true,
+          status: true,
         },
         with: {
           user: {
             columns: {
+              prefix: true,
               firstName: true,
               lastName: true,
+              email: true,
             },
           },
         },

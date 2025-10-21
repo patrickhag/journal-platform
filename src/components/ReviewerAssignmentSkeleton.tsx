@@ -18,6 +18,10 @@ const ReviewerAssignmentSkeleton = ({
             <ArrowLeft className="mr-2 h-4 w-4" />
             Go Back
           </Button>
+          {/* Submit Review Button */}
+          <div className="pt-6 text-end m-5">
+            <Skeleton className="h-10 w-32 ml-auto" />
+          </div>
         </div>
       </div>
 
@@ -77,7 +81,7 @@ const ReviewerAssignmentSkeleton = ({
       )}
 
       {/* Previous Reviews Section */}
-      <Card>
+      <Card className="mb-3">
         <CardHeader>
           <CardTitle className="flex items-center">
             <History className="mr-2 h-5 w-5 text-gray-400" />
@@ -85,23 +89,20 @@ const ReviewerAssignmentSkeleton = ({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-lg p-4 bg-muted/50 mb-3">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center space-x-2">
-                <Skeleton className="h-5 w-20 rounded-full" />
+          {[1, 2, 3].map((_, i) => (
+            <div className="border rounded-lg p-4 bg-muted/50 mb-3" key={i}>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center space-x-2">
+                  <Skeleton className="h-5 w-20 rounded-full" />
+                </div>
+                <Skeleton className="h-4 w-24" />
               </div>
-              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4 mt-1" />
             </div>
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-3/4 mt-1" />
-          </div>
+          ))}
         </CardContent>
       </Card>
-
-      {/* Submit Review Button */}
-      <div className="pt-6 text-end m-5">
-        <Skeleton className="h-10 w-32 ml-auto" />
-      </div>
     </div>
   );
 };

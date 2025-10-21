@@ -510,7 +510,9 @@ export const associateEditorCorrections = pgTable(
       onDelete: 'cascade',
     }),
     fileId: text('fileId').notNull(),
+    status: varchar('status', { length: 50 }).default('SUBMITTED'),
     submittedAt: date('submittedAt').defaultNow(),
+    approvedAt: date('approvedAt'),
     userId: text('userId')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),

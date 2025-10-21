@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
-import { reviewAssignments, reviews } from '@/db/schema';
+import { notifications, reviewAssignments, reviews } from '@/db/schema';
 import { auth } from '@/auth';
-import { articleSubmissions, notifications } from '@/db/schema';
-import { and, desc, eq, like } from 'drizzle-orm';
-import { notifyAdmin, informingAuthorNReviewer } from '@/lib/emailTransporter';
+import { articleSubmissions } from '@/db/schema';
+import { and, desc, eq } from 'drizzle-orm';
+import {
+  informingAuthorNReviewer,
+  notifyStaffEditorAboutReviewStatus,
+} from '@/lib/emailTransporter';
 
 export async function POST(req: Request) {
   try {
@@ -20,6 +23,13 @@ export async function POST(req: Request) {
       status: status,
       userId,
     });
+
+    if (status === 'Major Collection' || status === 'Minor Collection') {
+      await db
+        .update(articleSubmissions)
+        .set({ articleStatus: 'CORRECTION' })
+        .where(eq(articleSubmissions.id, articleId));
+    }
 
     const article = await db.query.articleSubmissions.findFirst({
       columns: {
@@ -39,6 +49,16 @@ export async function POST(req: Request) {
             email: true,
           },
         },
+        editorAssignment: {
+          with: {
+            user: {
+              columns: {
+                email: true,
+                prefix: true,
+              },
+            },
+          },
+        },
       },
       where: eq(articleSubmissions.id, articleId),
     });
@@ -46,6 +66,9 @@ export async function POST(req: Request) {
     const articleTitle = article?.metadata.title;
     const authorName = article?.user.firstName + ' ' + article?.user.lastName;
     const authorEmail = article?.user.email;
+    const staffEditorEmail = article?.editorAssignment.user.email;
+
+    console.log('staffEditorEmail:', staffEditorEmail);
 
     // send email to author
     await informingAuthorNReviewer({
@@ -57,18 +80,17 @@ export async function POST(req: Request) {
     });
 
     // send email to staff-editor also
-    if (status === 'Accepted') {
-      await notifyAdmin({
-        article: articleTitle as string,
-        authorName: session?.user?.name as string,
-        subject: 'New Review Submitted',
-        participant: 'REVIEWER',
+    if (status === 'Accepted' || status === 'Rejected') {
+      await notifyStaffEditorAboutReviewStatus({
+        articleTitle: articleTitle as string,
+        authorNames: authorName,
+        staffEditorEmail: staffEditorEmail as string,
         articleId: article?.id as string,
-        // associateEditorEmail: article?.editor?.user.email as string,
+        status: status,
       });
     }
 
-    // send in-app notification for author
+    // SEND IN-APP NOTIFICATION TO THE AUTHOR
     await db.insert(notifications).values({
       message: `New review submitted for your article named "${articleTitle}"`,
       userId: article?.user.id,

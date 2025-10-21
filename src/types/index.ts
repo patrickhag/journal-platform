@@ -153,8 +153,8 @@ export type TReview =
         title: string;
       };
       user: {
-        firstName: true;
-        lastName: true;
+        firstName: string;
+        lastName: string;
       };
       reviews: {
         message: string;
@@ -168,6 +168,7 @@ export type TReview =
           firstName: string;
           lastName: string;
           email: string;
+          prefix: string;
         };
       }[];
       editorActions: {
@@ -543,15 +544,19 @@ export type TAssociateEditorCollection = {
   id: string;
   submittedAt: string;
   fileId: string;
+  status: CorrectionStatus;
   user: {
     firstName: string;
     lastName: string;
+    email: string;
+    prefix: string;
   };
 };
 
 export type TAssignment = {
   id: string;
   dueDate: string;
+  status: string;
   article: {
     id: string;
     articleStatus: string;
@@ -577,6 +582,11 @@ export type TAssignment = {
   };
 };
 
+export type CorrectionStatus =
+  | 'SUBMITTED'
+  | 'RE_CORRECTION_REQUESTED'
+  | 'APPROVED';
+
 export type TAssociateAssignment = {
   id: string;
   assignedAt: string;
@@ -593,6 +603,7 @@ export type TAssociateAssignment = {
     associateEditorCorrections: {
       fileId: string;
       submittedAt: string;
+      status: CorrectionStatus;
     }[];
     user: {
       firstName: string;
@@ -662,3 +673,20 @@ export type TParticipants = {
 };
 
 export type AddReviewerFormValues = z.infer<typeof reviewerSchema>;
+
+export type TFinalizedAssignment = {
+  id: string;
+  status: 'FINALIZED';
+  article: {
+    id: string;
+    articleStatus: string;
+    metadata: {
+      title: string;
+      prefix?: string;
+    };
+    user: {
+      firstName: string;
+      lastName: string;
+    };
+  };
+};

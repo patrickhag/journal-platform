@@ -21,9 +21,9 @@ export function StatusBadge({
           status === 'ARCHIVED',
         'bg-purple-50 text-purple-600 border-purple-600/20':
           status === 'PUBLISHED',
-        'bg-teal-50 text-teal-600 border-teal-600/20': status === 'APPROVED',
+        'bg-teal-50 text-teal-600 border-teal-600/20': status === 'UNDER PRESS',
         'bg-amber-50 text-amber-600 border-amber-600/20':
-          status === 'MINOR ISSUE',
+          status === 'CORRECTION',
         'bg-rose-50 text-rose-600 border-rose-600/20': status === 'MAJOR ISSUE',
       })}
     >
@@ -36,8 +36,8 @@ export function StatusBadge({
             'bg-yellow-600': status === 'UNDER REVIEW',
             'bg-orange-600': status === 'ARCHIVED',
             'bg-purple-600': status === 'PUBLISHED',
-            'bg-teal-600': status === 'APPROVED',
-            'bg-amber-600': status === 'MINOR ISSUE',
+            'bg-teal-600': status === 'UNDER PRESS',
+            'bg-amber-600': status === 'CORRECTION',
             'bg-rose-600': status === 'MAJOR ISSUE',
           })}
         />

@@ -1,6 +1,10 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
-import { associateEditorAssignments, userRoles } from '@/db/schema';
+import {
+  articleSubmissions,
+  associateEditorAssignments,
+  userRoles,
+} from '@/db/schema';
 import { sendAssociateEditorInvitation } from '@/lib/emailTransporter';
 import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -55,7 +59,6 @@ export async function POST(req: NextRequest) {
       editorEmail,
       date,
       userId,
-      fileIds,
       articleTitle,
       staffEditorId,
       message,
@@ -97,6 +100,15 @@ export async function POST(req: NextRequest) {
       staffEditorId,
       message,
     });
+
+    // UPDATE ARTICLE STATUS TO `UNDER PRESS` AND ADD THE `ACCEPTED AT` DATE
+    await db
+      .update(articleSubmissions)
+      .set({
+        articleStatus: 'UNDER PRESS',
+        acceptedAt: new Date().toISOString().split('T')[0],
+      })
+      .where(eq(articleSubmissions.id, articleId));
 
     // send email to editor
     await sendAssociateEditorInvitation({

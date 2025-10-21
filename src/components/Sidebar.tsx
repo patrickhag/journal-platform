@@ -6,12 +6,14 @@ import { cn } from '@/lib/utils';
 import {
   BarChart3,
   Calendar,
+  CheckCircle,
   CheckSquare,
   ClipboardCheck,
   Clock,
   FileCog,
   Files,
   FileText,
+  Hourglass,
   Mail,
   MessageSquare,
   MonitorSpeaker,
@@ -38,7 +40,10 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             label: 'New Submission',
             icon: PlusCircle,
           },
-          { href: '/reviews', label: 'Reviews Received', icon: MessageSquare },
+          { href: '/under-review', label: 'Under Review', icon: Hourglass },
+          { href: '/reviews', label: 'Correction', icon: MessageSquare },
+          { href: '/under-press', label: 'Under Press', icon: Newspaper },
+          { href: '/published', label: 'Published', icon: CheckCircle },
         ];
       case 'chief_editor':
         return [
@@ -93,7 +98,7 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             icon: Clock,
           },
           {
-            href: '/reviewer/finalised',
+            href: '/reviewer/finalized',
             label: 'Finalised Assignments',
             icon: CheckSquare,
           },
@@ -106,7 +111,7 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             icon: CheckSquare,
           },
           {
-            href: '/associate-editor/finalised-assignments',
+            href: '/associate-editor/finalized',
             label: 'Finalised Assignments',
             icon: FileText,
           },
@@ -115,7 +120,7 @@ const Sidebar = ({ userRole }: SidebarProps) => {
         return [
           {
             href: '/staff-editor/assignments',
-            label: 'Assigned to me',
+            label: 'Assignments',
             icon: CheckSquare,
           },
           {

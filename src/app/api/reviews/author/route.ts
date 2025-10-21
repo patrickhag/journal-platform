@@ -15,7 +15,8 @@ export async function GET(req: NextRequest) {
     const reviewersReviews = await db.query.articleSubmissions.findMany({
       where: and(
         eq(articleSubmissions.userId, userId as string),
-        eq(articleSubmissions.articleStatus, 'UNDER REVIEW')
+        eq(articleSubmissions.articleStatus, 'CORRECTION')
+        // eq(articleSubmissions.articleStatus, 'CORRECTION')
       ),
       columns: {
         id: true,

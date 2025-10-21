@@ -11,11 +11,8 @@ interface LayoutProps {
 
 export default async function Layout({ children }: LayoutProps) {
   const session = await auth();
-  if (!session?.user?.id) {
-    return <div>You must be logged in to view this page.</div>;
-  }
 
-  const userRole = session.user.role?.toLowerCase();
+  const userRole = session?.user.role?.toLowerCase();
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -24,7 +21,7 @@ export default async function Layout({ children }: LayoutProps) {
       </div>
 
       <div className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 z-40 border-r bg-gray-50">
-        <Sidebar userRole={userRole} />
+        <Sidebar userRole={userRole as string} />
       </div>
 
       <div className="ml-64 pt-16 min-h-screen">

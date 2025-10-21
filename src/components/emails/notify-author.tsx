@@ -31,15 +31,15 @@ export const ArticleAcceptedEmailTemplate = ({
 
         <Text className="text-gray-700 my-4">
           We are pleased to inform you that your article titled &quot;
-          {articleTitle}&quot; has been accepted and has now entered the
-          proofreading stage of the publication process.
+          {articleTitle}&quot; has been accepted and has now entered the under
+          press stage.
         </Text>
 
         <Text className="text-gray-700 my-4">
-          At this stage, we kindly ask you to review the annotated file provided
-          by the editor. This is your final opportunity to check for any
-          typographical, grammatical, or formatting errors before the article is
-          formally published.
+          At this stage, we kindly ask you to review the annotated file if it
+          was provided by the editor. This is your final opportunity to check
+          for any typographical, grammatical, or formatting errors before the
+          article is formally published.
         </Text>
 
         {fileIds && (

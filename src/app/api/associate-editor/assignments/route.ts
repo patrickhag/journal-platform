@@ -5,7 +5,7 @@ import {
   associateEditorCorrections,
 } from '@/db/schema';
 import { informStaffEditorAboutCorrection } from '@/lib/emailTransporter';
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -15,12 +15,14 @@ export async function GET(req: NextRequest) {
     if (session?.user.role !== 'ASSOCIATE_EDITOR') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
     const assignedArticles = await db.query.associateEditorAssignments.findMany(
       {
         where: and(
           eq(associateEditorAssignments.userId, session?.user.id as string),
           eq(associateEditorAssignments.status, 'ACCEPTED')
         ),
+        orderBy: desc(associateEditorAssignments.assignedAt),
         columns: {
           id: true,
           assignedAt: true,

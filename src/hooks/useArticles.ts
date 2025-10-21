@@ -39,6 +39,7 @@ export const useGetFinalSubmissions = (articleId: string) => {
       );
       return data;
     },
+    refetchOnWindowFocus: false,
   });
 };
 

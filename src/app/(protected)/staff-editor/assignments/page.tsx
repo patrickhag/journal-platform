@@ -8,6 +8,7 @@ import { useAssignedAssociateEditor } from '../hooks/useAssociateEditorHooks';
 import { AssignmentCardSkeleton } from '../components/AssignmentCardSkeleton';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
+import Link from 'next/link';
 
 export default function AssociateEditorDashboard() {
   const { data: associateEditorsAssigments = [], isPending } =
@@ -106,18 +107,14 @@ export default function AssociateEditorDashboard() {
                             View Reviews
                           </Button>
                         )}
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            router.push(
-                              `/articles/${assignment.articleSubmission.id}`
-                            )
-                          }
+                        <Link
+                          href={`/articles/${assignment.articleSubmission.id}`}
                         >
-                          <Eye className="mr-2 h-4 w-4" />
-                          View Article
-                        </Button>
+                          <Button variant="outline" size="sm">
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Article
+                          </Button>
+                        </Link>
                       </div>
                     </div>
                   </div>

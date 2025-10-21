@@ -18,13 +18,16 @@ type PageProps = {
   }>;
 };
 
-export default async function AcceptPage({ params, searchParams }: PageProps) {
+export default async function InvitationPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { articleId } = await params;
 
   const userId = (await auth())?.user?.id;
   const search = await searchParams;
   const invitationSign = search.accept_invite;
-  const isAcceptedOrDeclined = !!invitationSign;
+  const isAcceptedOrDeclined = !!Number(invitationSign);
 
   const reviewer = await db.query.reviewAssignments.findFirst({
     where: eq(reviewAssignments.userId, userId as string),
@@ -65,7 +68,9 @@ export default async function AcceptPage({ params, searchParams }: PageProps) {
     associateEditorInfo?.editorAssignment?.user.firstName +
     ' ' +
     associateEditorInfo?.editorAssignment?.user.lastName;
+
   const associateEditorId = associateEditorInfo?.editorAssignment?.user.id;
+
   const reviewerNames =
     reviewer?.user?.firstName + ' ' + reviewer?.user?.lastName;
   const articleTitle = associateEditorInfo?.metadata.title;
@@ -98,7 +103,7 @@ export default async function AcceptPage({ params, searchParams }: PageProps) {
     });
 
     redirect(`/reviewer/assignments`);
-  } else if (isAcceptedOrDeclined === false) {
+  } else if (!isAcceptedOrDeclined) {
     await informStaffEditorAboutReviewerInvitation({
       staffEditorName: associateEditorName,
       associateEditorEmail: associateEditorInfo?.editorAssignment?.user
@@ -112,6 +117,7 @@ export default async function AcceptPage({ params, searchParams }: PageProps) {
       message: `Reviwer ${reviewerNames} has declined the invitation of reviewing the manuscript.`,
       userId: associateEditorId,
     });
+    redirect(`/`);
   }
 
   return <p>Redirecting...</p>;

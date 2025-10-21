@@ -5,21 +5,23 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, User, Calendar, SquarePen, File, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { useGetAssociateEditorParticularAssignment } from '@/hooks/useReviews';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import ReviewerAssignmentSkeleton from '@/components/ReviewerAssignmentSkeleton';
 import { Badge } from '@/components/ui/badge';
-import { formatDateToYMD } from '@/lib/utils';
+import {
+  formatAssignmentCorrectionsStatus,
+  formatDateToYMD,
+} from '@/lib/utils';
 import { useState } from 'react';
 import UploadCorrection from '../../components/UploadCorrection';
 
 const ParticularAssociateAssignment = () => {
   const { assignmentId } = useParams();
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const { data: particularAssignment, isPending } =
     useGetAssociateEditorParticularAssignment(assignmentId as string);
-
-  console.log('particularAssignment:', particularAssignment);
 
   if (isPending) {
     return <ReviewerAssignmentSkeleton />;
@@ -32,7 +34,7 @@ const ParticularAssociateAssignment = () => {
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <Button className="mb-4">
+          <Button className="mb-4" onClick={() => router.back()}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Go Back
           </Button>
@@ -97,11 +99,6 @@ const ParticularAssociateAssignment = () => {
                             Correction #{index + 1}
                           </Badge>
                         </div>
-                        <span className="text-sm text-muted-foreground">
-                          {new Date(
-                            correction.submittedAt
-                          ).toLocaleDateString()}
-                        </span>
                       </div>
 
                       {/* Message Section (if available) */}
@@ -112,28 +109,33 @@ const ParticularAssociateAssignment = () => {
                       )}
 
                       {/* File Section */}
-                      {correction.fileId ? (
-                        <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors mb-3">
-                          <div className="flex items-center gap-3">
-                            <File className="h-4 w-4 text-green-500" />
-                            <div>
-                              <h5 className="text-sm font-medium">
-                                Correction file
-                              </h5>
-                            </div>
+                      <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors mb-3">
+                        <div className="flex items-center gap-3">
+                          <File className="h-4 w-4 text-green-500" />
+                          <div>
+                            <h5 className="text-sm font-medium">
+                              Correction file
+                            </h5>
                           </div>
-
-                          <Button variant="ghost" size="sm" asChild>
-                            <Link href={correction.fileId} target="_blank">
-                              <Eye className="h-4 w-4" />
-                            </Link>
-                          </Button>
                         </div>
-                      ) : (
-                        <p className="text-sm text-muted-foreground italic">
-                          No file uploaded for this correction.
-                        </p>
-                      )}
+
+                        <Button variant="ghost" size="sm" asChild>
+                          <Link href={correction.fileId} target="_blank">
+                            <Eye className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-muted-foreground">
+                          Submitted on:{' '}
+                          {new Date(
+                            correction.submittedAt
+                          ).toLocaleDateString()}
+                        </span>
+                        <Badge>
+                          {formatAssignmentCorrectionsStatus[correction.status]}
+                        </Badge>
+                      </div>
                     </div>
                   )
                 )}

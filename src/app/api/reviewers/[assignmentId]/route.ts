@@ -30,6 +30,7 @@ export async function GET(
       columns: {
         id: true,
         dueDate: true,
+        status: true,
       },
       orderBy: desc(reviewAssignments.assignedDate),
       with: {

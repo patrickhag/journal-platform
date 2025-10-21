@@ -18,7 +18,6 @@ import {
   ReviewerReReviewEmailTemplate,
 } from '@/components/emails/author-revised-manuscript';
 import { ThankAuthorEmailTemplate } from '@/components/emails/thank-you-email-template';
-import { StaffEditorEmailTemplate } from '@/components/emails/inform-associate-editor';
 import { AssignReviewerEmailTemplate } from '@/components/emails/inform-reviewer-email-template';
 import { ArticleReadyForEICApprovalEmailTemplate } from '@/components/emails/inform-chief-editor-email-template';
 import { InformStaffEditorAboutInvitation } from '@/components/emails/inform-staff-editor-about-reviewer-invitation';
@@ -30,6 +29,10 @@ import { NotifyStaffEditorAboutAssociateEditorCorrection } from '@/components/em
 import { SubscriberEmail } from '@/components/emails/sendSubscriberEmail';
 import { RemindReviewer } from '@/components/emails/remind-reviewer';
 import { transporter } from './emailConfig';
+import { NotifyStaffEditorAboutReviewerAcceptance } from '@/components/emails/notify-staff-editor-about-review-acceptance';
+import { StaffEditorEmailTemplate } from '@/components/emails/inform-associate-editor';
+import { NotifyReviewerAboutFinalizedAssignment } from '@/components/emails/notify-reviewer-about-finalised-status';
+import { AssociateEditorStatusEmail } from '@/components/emails/inform-associate-editor-about-correction';
 
 export const sendPasswordResetEmail = async ({
   subject,
@@ -297,7 +300,7 @@ export const informStaffEditorAboutCorrection = async ({
   const options = {
     from: process.env.EMAIL_USER,
     to: staffEditorEmail,
-    subject: 'Staff Editor has edited the manuscript',
+    subject: 'Associate Editor has edited the manuscript',
     html: emailHtml,
   };
   await transporter.sendMail(options);
@@ -333,6 +336,40 @@ export const notifyAdmin = async ({
       from: process.env.EMAIL_USER,
       to: staffEditorEmail,
       subject: subject,
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending admin notification:', error);
+    return { success: false, error };
+  }
+};
+
+export const notifyStaffEditor = async ({
+  articleTitle,
+  authorNames,
+  staffEditorEmail,
+  editorName,
+}: {
+  articleTitle: string;
+  authorNames: string;
+  staffEditorEmail: string;
+  editorName: string;
+}) => {
+  try {
+    const emailHtml = await render(
+      <StaffEditorEmailTemplate
+        articleTitle={articleTitle}
+        authorName={authorNames}
+        editorName={editorName}
+      />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: staffEditorEmail,
+      subject: 'You have been assigned as Staff Editor to an article',
       html: emailHtml,
     });
 
@@ -535,30 +572,89 @@ export const notifyEditorAboutRevision = async ({
   await transporter.sendMail(options);
 };
 
-export const notifyStaffEditor = async ({
+export const notifyStaffEditorAboutReviewStatus = async ({
   articleTitle,
   authorNames,
   staffEditorEmail,
-  editorName,
+  articleId,
+  status,
 }: {
   articleTitle: string;
   authorNames: string;
   staffEditorEmail: string;
-  editorName: string;
+  articleId: string;
+  status: 'Accepted' | 'Rejected';
 }) => {
   try {
+    let isAccepted;
+    switch (status) {
+      case 'Accepted':
+        isAccepted = true;
+        break;
+      case 'Rejected':
+        isAccepted = false;
+        break;
+      default:
+        throw new Error('Invalid status type');
+    }
     const emailHtml = await render(
-      <StaffEditorEmailTemplate
+      <NotifyStaffEditorAboutReviewerAcceptance
         articleTitle={articleTitle}
         authorName={authorNames}
-        editorName={editorName}
+        isAccepted={isAccepted as boolean}
+        articleId={articleId}
       />
     );
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: staffEditorEmail,
-      subject: 'You have been assigned as Staff Editor to an article',
+      subject: 'Reviewer decision',
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending admin notification:', error);
+    return { success: false, error };
+  }
+};
+
+export const notifyAllReviewersAboutFinalStatus = async ({
+  articleTitle,
+  authorNames,
+  reviewerEmail,
+  status,
+}: {
+  articleTitle: string;
+  authorNames: string;
+  reviewerEmail: string;
+  status: 'ACCEPT' | 'REJECT';
+}) => {
+  try {
+    let isAccepted;
+    switch (status) {
+      case 'ACCEPT':
+        isAccepted = true;
+        break;
+      case 'REJECT':
+        isAccepted = false;
+        break;
+      default:
+        throw new Error('Invalid status type');
+    }
+    const emailHtml = await render(
+      <NotifyReviewerAboutFinalizedAssignment
+        articleTitle={articleTitle}
+        authorName={authorNames}
+        isAccepted={isAccepted as boolean}
+      />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: reviewerEmail,
+      subject: 'Editorial decision',
       html: emailHtml,
     });
 
@@ -823,6 +919,50 @@ export const authorInformReviewer = async ({
     return { success: false, error };
   }
 };
+
+export const notifyAssociateEditor = async ({
+  associateEditorEmail,
+  associateEditorName,
+  articleTitle,
+  articleId,
+  status,
+  message,
+}: {
+  associateEditorEmail: string;
+  associateEditorName: string;
+  articleTitle: string;
+  articleId: string;
+  status: 'APPROVED' | 'RE_CORRECTION_REQUESTED';
+  message?: string;
+}) => {
+  try {
+    const emailHtml = await render(
+      <AssociateEditorStatusEmail
+        associateEditorName={associateEditorName}
+        articleTitle={articleTitle}
+        articleId={articleId}
+        status={status}
+        message={message}
+      />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: associateEditorEmail,
+      subject:
+        status === 'APPROVED'
+          ? `Your corrections for "${articleTitle}" have been approved`
+          : `Further action required: "${articleTitle}"`,
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending notification:', error);
+    return { success: false, error };
+  }
+};
+
 export const sendEmailToSubscribers = async ({
   subscriberEmail,
   subject,

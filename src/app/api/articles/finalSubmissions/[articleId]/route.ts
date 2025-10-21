@@ -12,8 +12,6 @@ export async function GET(
   try {
     const { articleId } = await params;
 
-    console.log('articleId:', articleId);
-
     const result = await db.query.finalSubmissions.findFirst({
       where: eq(finalSubmissions.articleId, articleId),
     });

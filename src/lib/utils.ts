@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { format, parseISO } from 'date-fns';
+import { CorrectionStatus } from '@/types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -57,6 +58,15 @@ export function formatDateToYMD(isoString: string) {
   const date = parseISO(isoString);
   return format(date, 'yyyy-MM-dd');
 }
+
+export const formatAssignmentCorrectionsStatus: Record<
+  CorrectionStatus,
+  string
+> = {
+  SUBMITTED: 'Submitted',
+  RE_CORRECTION_REQUESTED: 'Revision',
+  APPROVED: 'Approved',
+};
 
 export const slugify = (value: string) =>
   value

@@ -7,16 +7,7 @@ import { useGetUserArticles } from '@/hooks/useArticles';
 import { useState } from 'react';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { ARTICLE_STATUS } from '@/lib/consts';
 import { ArticleSection } from '@/components/ArticleSection';
-import { Label } from '@/components/ui/label';
 import { ArticleSkeleton } from '@/components/articles/ArticleSkeleton';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -62,43 +53,24 @@ export default function Dashboard() {
       </div>
 
       {/* Controls */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 p-6 bg-card border border-border rounded-xl shadow-sm">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-1">
-          <div className="flex items-center gap-3">
-            <Label className="text-sm font-medium whitespace-nowrap">
-              Filter by status:
-            </Label>
-            <Select
-              onValueChange={(e) => setSelectedValue(e)}
-              value={selectedValue}
-            >
-              <SelectTrigger className="w-[180px] bg-background border-border">
-                <SelectValue placeholder="All Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                {ARTICLE_STATUS.map((status) => (
-                  <SelectItem value={status} key={status}>
-                    {status}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="relative w-full max-w-sm">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search articles..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-background border-border"
-            />
-          </div>
+      <div className="flex items-center justify-between gap-4 p-4 bg-card border border-border rounded-xl shadow-sm">
+        {/* Search Box */}
+        <div className="relative flex-1 max-w-2xl">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Search articles..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 bg-background border-border w-full"
+          />
         </div>
 
-        <Button asChild className="bg-[#212c9e] hover:bg-[#1A237E]">
+        {/* Submit Button */}
+        <Button
+          asChild
+          className="bg-[#212c9e] hover:bg-[#1A237E] whitespace-nowrap"
+        >
           <Link href="/articles/new/start">
             <PlusCircle className="w-4 h-4 mr-2" />
             Submit New Article

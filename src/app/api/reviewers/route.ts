@@ -111,6 +111,7 @@ export async function POST(req: NextRequest) {
       where: eq(articleSubmissions.id, articleId),
     });
 
+    // INFORM REVIEWER
     await sendInvitation({
       reviewerNames: reviewerName,
       articleId: articleId,

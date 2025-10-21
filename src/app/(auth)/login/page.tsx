@@ -47,7 +47,7 @@ export default function LoginComponent() {
       startTransition(() => {
         formAction({
           ...data,
-          redirect: searchparams.get('redirect') || undefined,
+          redirect: searchparams.get('from') || undefined,
         });
       });
     },

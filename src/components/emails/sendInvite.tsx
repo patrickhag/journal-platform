@@ -103,7 +103,7 @@ export const SendInvitation: React.FC<{
                 <td align="center" className="w-1/2 pr-[8px]">
                   <Button
                     className="box-border w-full rounded-md border border-gray-300 bg-gray-900 text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition"
-                    href={`${process.env.NEXT_PUBLIC_URL}/invitation/${articleId}?accept_invite=1`}
+                    href={`${process.env.NEXT_PUBLIC_URL}/reviewer-accept-invitation/${articleId}`}
                   >
                     Accept Invitation
                   </Button>

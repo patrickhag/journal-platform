@@ -9,6 +9,7 @@ import { useGetParticipants } from '@/hooks/useUsers';
 import { useParams } from 'next/navigation';
 import { TParticipants } from '@/types';
 import ParticipantsLoader from '@/components/ParticipantsLoader';
+import Link from 'next/link';
 
 // Types for display components
 interface DisplayParticipant {
@@ -151,8 +152,6 @@ const AllParticipants = () => {
     {} as Record<string, DisplayParticipant[]>
   );
 
-  console.log('apiParticipants:', apiParticipants);
-
   const roleOrder = ['staff_editor', 'associate_editor', 'reviewer'];
   const roleLabels = {
     staff_editor: 'Staff Editors',
@@ -221,7 +220,7 @@ const AllParticipants = () => {
         {participants.length === 0 && (
           <div className="text-center py-8">
             <div className="text-muted-foreground">
-              No participants found for this article
+              No participants assigned to this article
             </div>
           </div>
         )}

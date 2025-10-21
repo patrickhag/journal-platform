@@ -12,6 +12,7 @@ import {
   TReviewerInfo,
   AddReviewerFormValues,
   TAssociateAssignment,
+  TFinalizedAssignment,
 } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
@@ -80,6 +81,18 @@ export const useGetReviewerAssignments = () => {
       const assignedArticles = data.assignedArticles as TReviewerAssignment;
       const dueArticles = data.dueArticles as TReviewerAssignment;
       return { assignedArticles, dueArticles };
+    },
+  });
+};
+
+export const useGetFinalizedAssignments = () => {
+  return useQuery({
+    queryKey: ['finalizedAssignments'],
+    queryFn: async () => {
+      const { data } = await axios.get<TFinalizedAssignment[]>(
+        `/api/reviewers/finalized`
+      );
+      return data;
     },
   });
 };
@@ -340,6 +353,18 @@ export const useGetAssociateEditorsAssignments = () => {
   });
 };
 
+export const useGetAssociateEditorsFinalizedAssignments = () => {
+  return useQuery({
+    queryKey: ['finalizedAssociateEditorsAssignments'],
+    queryFn: async () => {
+      const { data } = await axios.get<TAssociateEditorAssignments[]>(
+        `/api/associate-editor/finalized`
+      );
+      return data || [];
+    },
+  });
+};
+
 export const useAssignAssociateEditor = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -367,7 +392,7 @@ export const useAssignAssociateEditor = () => {
         ? error.response?.data?.message
         : error.message;
 
-      toast.error(message || 'Failed to assign associate editor');
+      toast.info(message || 'Failed to assign associate editor');
     },
   });
 };
@@ -420,7 +445,7 @@ export const useGetAssociateEditorsCollections = (articleId: string) => {
 
 export const useGetParticularAssignment = (assignmentId: string) => {
   return useQuery({
-    queryKey: ['particularAssignment'],
+    queryKey: ['particularAssignment', assignmentId],
     queryFn: async () => {
       const { data } = await axios.get<TAssignment>(
         `/api/reviewers/${assignmentId}`
@@ -463,6 +488,38 @@ export const useAddReviewer = () => {
         : error.message;
 
       toast.error(message || 'Failed to add reviewer');
+    },
+  });
+};
+
+type TCorrection = {
+  status: string;
+  note: string;
+};
+
+export const useRequestRecorrection = (correctionId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: TCorrection) => {
+      const response = await axios.patch<MessageResponse>(
+        `/api/associate-editor/corrections/${correctionId}`,
+        data
+      );
+      return response.data;
+    },
+    onSuccess: ({ message }) => {
+      queryClient.invalidateQueries({
+        queryKey: ['associateEditorCollections'],
+      });
+      toast.success(message);
+    },
+    onError: (error: Error | AxiosError) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data.message
+        : error.message;
+
+      toast.error(message || 'Failed to update issue');
     },
   });
 };

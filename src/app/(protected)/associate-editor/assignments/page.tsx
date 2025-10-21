@@ -10,15 +10,12 @@ import { useGetAssociateEditorsAssignments } from '@/hooks/useReviews';
 import { Badge } from '@/components/ui/badge';
 import { TAssociateEditorAssignments } from '@/types';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import UploadCorrection from '../components/UploadCorrection';
 import Link from 'next/link';
 
 function AssociateEditorDashboard() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { data: assignments, isPending } = useGetAssociateEditorsAssignments();
-
-  const [openSubmitCollection, setOpenSubmitCollection] = useState(false);
 
   const [selectedAssignment, setSelectedAssignment] =
     useState<TAssociateEditorAssignments | null>(null);

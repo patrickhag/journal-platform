@@ -46,6 +46,7 @@ export async function GET(
                 columns: {
                   fileId: true,
                   submittedAt: true,
+                  status: true,
                 },
               },
               user: {

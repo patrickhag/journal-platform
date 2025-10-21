@@ -57,16 +57,18 @@ const ReviewAssignment = () => {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Go Back
         </Button>
-        <Button
-          type="submit"
-          className="bg-primary hover:bg-primary/90"
-          onClick={() =>
-            handleSubmitReview(particularAssignment?.article.id as string)
-          }
-        >
-          <SquarePen className="mr-2 h-4 w-4" />
-          Submit Review
-        </Button>
+        {particularAssignment?.status !== 'FINALIZED' && (
+          <Button
+            type="submit"
+            className="bg-primary hover:bg-primary/90"
+            onClick={() =>
+              handleSubmitReview(particularAssignment?.article.id as string)
+            }
+          >
+            <SquarePen className="mr-2 h-4 w-4" />
+            Submit Review
+          </Button>
+        )}
       </div>
       {/* Assignment Info */}
       <Card>

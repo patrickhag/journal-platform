@@ -6,14 +6,16 @@ import {
   editorActions,
   notifications,
   publishedArticles,
+  reviewAssignments,
   reviewRevisions,
 } from '@/db/schema';
 import {
+  notifyAllReviewersAboutFinalStatus,
   notifyEditorAboutRevision,
   notifyUser,
   notifyUserAboutEditorDecision,
 } from '@/lib/emailTransporter';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 type Params = { articleId: string };
@@ -94,41 +96,81 @@ export async function POST(
       fileIds: fileId,
     });
 
-    switch (decision) {
-      case decision === 'ACCEPT':
-        await db.insert(notifications).values({
-          message:
-            '🎉 Congratulations, your manuscript has been accepted by Associate editor.',
-          userId: article?.user.id,
+    // QUERY ALL REVIEWERS ASSIGNED TO THIS ARTICLE IN CASE THE ARTICLE IS `ACCEPTED`
+
+    const reviewAssignmentsReviewers =
+      await db.query.reviewAssignments.findMany({
+        where: and(
+          eq(reviewAssignments.articleId, articleId),
+          eq(reviewAssignments.status, 'ACCEPTED')
+        ),
+        with: {
+          user: {
+            columns: {
+              email: true,
+            },
+          },
+        },
+      });
+
+    const authorNames = article?.user.firstName + ' ' + article?.user.lastName;
+
+    const assignedReviewers = reviewAssignmentsReviewers.map((r) => r.user);
+
+    // UPDATE ALL REVIEW ASSIGNMENT STATUSES & INFORM THEM
+    if (decision === 'ACCEPT' || decision === 'REJECT') {
+      await db
+        .update(reviewAssignments)
+        .set({
+          status: 'FINALIZED',
+        })
+        .where(eq(reviewAssignments.articleId, articleId));
+
+      assignedReviewers.map(async (a) => {
+        await notifyAllReviewersAboutFinalStatus({
+          articleTitle: article?.metadata.title as string,
+          authorNames: authorNames,
+          status: decision,
+          reviewerEmail: a?.email as string,
         });
-        await db
-          .update(articleSubmissions)
-          .set({
-            articleStatus: 'ACCEPTED',
-            acceptedAt: new Date().toISOString().split('T')[0],
-          })
-          .where(eq(articleSubmissions.id, articleId));
-        break;
-      case decision === 'REQUEST_REVISION':
-        await db.insert(notifications).values({
-          message:
-            'Associate-editor has requested a revision of your manuscript.',
-          userId: article?.user.id,
-        });
-      case decision === 'REJECT':
-        await db.insert(notifications).values({
-          message:
-            'The Peer-review team has rejected your manuscript. Check your email for more info.',
-          userId: article?.user.id,
-        });
-        break;
-      default:
-        break;
+      });
     }
+
+    // switch (decision) {
+    //   case decision === 'ACCEPT':
+    //     await db.insert(notifications).values({
+    //       message:
+    //         '🎉 Congratulations, your manuscript has been accepted by Associate editor.',
+    //       userId: article?.user.id,
+    //     });
+    //     await db
+    //       .update(articleSubmissions)
+    //       .set({
+    //         articleStatus: 'UNDER PRESS',
+    //         acceptedAt: new Date().toISOString().split('T')[0],
+    //       })
+    //       .where(eq(articleSubmissions.id, articleId));
+
+    //     break;
+    //   case decision === 'REQUEST_REVISION':
+    //     await db.insert(notifications).values({
+    //       message:
+    //         'Associate-editor has requested a revision of your manuscript.',
+    //       userId: article?.user.id,
+    //     });
+    //   case decision === 'REJECT':
+    //     await db.insert(notifications).values({
+    //       message:
+    //         'The Peer-review team has rejected your manuscript. Check your email for more info.',
+    //       userId: article?.user.id,
+    //     });
+    //     break;
+    //   default:
+    //     break;
+    // }
 
     // const associateEditorName =
     //   article?.editor?.user.firstName + ' ' + article?.editor?.user.lastName;
-    // const authorNames = article?.user.firstName + ' ' + article?.user.lastName;
 
     // if (decision === 'ACCEPT') {
     //   await informChiefEditorAboutAcceptance({

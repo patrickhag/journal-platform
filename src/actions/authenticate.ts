@@ -28,6 +28,11 @@ export async function authenticate(
     }
     return 'An unexpected error occurred. Please try again.';
   }
+
+  if (formData.redirect) {
+    return redirect(formData.redirect, RedirectType.replace);
+  }
+
   const role = formData.role;
   switch (role) {
     case 'NORMAL_USER':
