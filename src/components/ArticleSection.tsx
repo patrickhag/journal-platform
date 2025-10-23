@@ -6,7 +6,7 @@ import { Eye } from 'lucide-react';
 import { TArticle } from '@/schemas/reviewer';
 import { StatusBadge } from './status-badge';
 import { useState } from 'react';
-import UploadRevisionModal from '@/app/(protected)/submissions/components/UploadRevisionModal';
+import UploadRevisionModal from '@/app/(protected)/author/submissions/components/UploadRevisionModal';
 import Link from 'next/link';
 
 export function ArticleSection({ articles }: { articles: TArticle[] }) {

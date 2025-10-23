@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { User, CheckCircle } from 'lucide-react';
-import { useAssignEditor, useGetEditors } from '@/hooks/useUsers';
+import { useAssignEditor, useGetStaffEditors } from '@/hooks/useUsers';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Loader from '@/components/Loader';
 
@@ -32,7 +32,7 @@ export default function AssignStaffEditorModal({
   articleId,
 }: AssignEditorModalProps) {
   const [selectedEditorId, setSelectedEditorId] = useState<string>('');
-  const { data: availableEditors } = useGetEditors();
+  const { data: availableEditors } = useGetStaffEditors();
   const { mutate, isPending } = useAssignEditor();
 
   const selectedEditor = availableEditors?.find(
@@ -70,7 +70,7 @@ export default function AssignStaffEditorModal({
 
         <div className="space-y-6">
           <div className="space-y-4">
-            <h3 className="font-semibold">Select Editor</h3>
+            <h3 className="font-semibold">Select Staff Editor</h3>
 
             {availableEditors?.length === 0 ? (
               <div className="text-center p-4 text-gray-500">
@@ -102,7 +102,9 @@ export default function AssignStaffEditorModal({
                   <div className="border rounded-lg p-4 bg-blue-50">
                     <div className="flex items-center gap-2 mb-2">
                       <CheckCircle className="h-4 w-4 text-blue-600" />
-                      <strong className="text-blue-800">Selected Editor</strong>
+                      <strong className="text-blue-800">
+                        Selected Staff Editor
+                      </strong>
                     </div>
                     <div className="space-y-1 text-sm">
                       <p>

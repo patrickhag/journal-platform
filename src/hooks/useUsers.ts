@@ -34,7 +34,7 @@ export const useGetUserInfo = (userId: string) => {
   });
 };
 
-export const useGetEditors = () => {
+export const useGetStaffEditors = () => {
   return useQuery({
     queryKey: ['users'],
     queryFn: async () => {

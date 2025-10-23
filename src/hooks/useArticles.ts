@@ -25,12 +25,10 @@ export const useGetUserArticles = (
   return useQuery<TManuscripts, Error>({
     queryKey: ['manuscripts', debouncedSearchQuery, selectedStatus],
     queryFn: fetchArticles,
-    refetchOnWindowFocus: false,
   });
 };
 
 export const useGetFinalSubmissions = (articleId: string) => {
-  console.log('articleId:', articleId);
   return useQuery({
     queryKey: ['finalSubmissions'],
     queryFn: async () => {

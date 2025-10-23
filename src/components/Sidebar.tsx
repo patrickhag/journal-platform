@@ -34,16 +34,28 @@ const Sidebar = ({ userRole }: SidebarProps) => {
     switch (userRole) {
       case 'normal_user':
         return [
-          { href: '/submissions', label: 'My Submissions', icon: FileText },
           {
-            href: '/articles/new/start',
+            href: '/author/submissions',
+            label: 'My Submissions',
+            icon: FileText,
+          },
+          {
+            href: '/author/new/start',
             label: 'New Submission',
             icon: PlusCircle,
           },
-          { href: '/under-review', label: 'Under Review', icon: Hourglass },
-          { href: '/reviews', label: 'Correction', icon: MessageSquare },
-          { href: '/under-press', label: 'Under Press', icon: Newspaper },
-          { href: '/published', label: 'Published', icon: CheckCircle },
+          {
+            href: '/author/under-review',
+            label: 'Under Review',
+            icon: Hourglass,
+          },
+          { href: '/author/reviews', label: 'Correction', icon: MessageSquare },
+          {
+            href: '/author/under-press',
+            label: 'Under Press',
+            icon: Newspaper,
+          },
+          { href: '/author/published', label: 'Published', icon: CheckCircle },
         ];
       case 'chief_editor':
         return [

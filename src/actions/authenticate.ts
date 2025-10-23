@@ -36,7 +36,7 @@ export async function authenticate(
   const role = formData.role;
   switch (role) {
     case 'NORMAL_USER':
-      return redirect('/submissions', RedirectType.replace);
+      return redirect('/author/submissions', RedirectType.replace);
     case 'STAFF_EDITOR':
       return redirect('/staff-editor/assignments', RedirectType.replace);
     case 'REVIEWER':
@@ -47,6 +47,6 @@ export async function authenticate(
     case 'ADMIN':
       return redirect('/editor/dashboard', RedirectType.replace);
     default:
-      return redirect('/submissions', RedirectType.replace);
+      return redirect('/', RedirectType.replace);
   }
 }

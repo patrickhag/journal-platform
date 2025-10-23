@@ -68,8 +68,6 @@ export async function POST(req: Request) {
     const authorEmail = article?.user.email;
     const staffEditorEmail = article?.editorAssignment.user.email;
 
-    console.log('staffEditorEmail:', staffEditorEmail);
-
     // send email to author
     await informingAuthorNReviewer({
       articleTitle: articleTitle as string,

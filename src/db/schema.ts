@@ -379,7 +379,6 @@ export const authorRevisions = pgTable('author_revisions', {
     .default(sql`'{}'::text[]`),
   submittedAt: timestamp('submittedAt').defaultNow(),
   authorId: text('authorId').references(() => users.id),
-  reviewerId: text('reviewerId').references(() => users.id),
   message: text('message'),
 });
 

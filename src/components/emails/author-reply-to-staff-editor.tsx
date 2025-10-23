@@ -1,13 +1,13 @@
-import type * as React from 'react';
+import * as React from 'react';
 import { Tailwind, Text, Container, Section } from '@react-email/components';
 
-export const AuthorReplyToReviewEmail: React.FC<{
-  reviewerName: string;
+export const AuthorReplyToStaffEditorEmail: React.FC<{
+  staffEditorName: string;
   authorName: string;
   articleTitle: string;
   articleLink: string;
-  message: string;
-}> = ({ reviewerName, authorName, articleTitle, articleLink, message }) => {
+  message?: string;
+}> = ({ staffEditorName, authorName, articleTitle, articleLink, message }) => {
   return (
     <Tailwind>
       <Container className="bg-white border border-gray-200 max-w-xl mx-auto my-8 p-6 text-left">
@@ -21,11 +21,12 @@ export const AuthorReplyToReviewEmail: React.FC<{
         {/* Body */}
         <Section className="px-6 py-4">
           <Text className="text-lg font-medium text-gray-800">
-            Dear {reviewerName},
+            Dear {staffEditorName},
           </Text>
 
           <Text className="text-gray-700 my-4">
-            {authorName} has replied to your review on the article titled{' '}
+            The author <strong>{authorName}</strong> has submitted a reply to
+            the reviewer comments for the manuscript titled{' '}
             <a
               href={`${process.env.NEXT_PUBLIC_URL}/articles/${articleLink}`}
               className="text-blue-600 underline"
@@ -37,14 +38,26 @@ export const AuthorReplyToReviewEmail: React.FC<{
             .
           </Text>
 
-          <Text className="text-gray-700 my-4">Here’s their message:</Text>
-
-          <Section className="bg-gray-50 border border-gray-200 p-4 rounded-md my-4">
-            <Text className="text-gray-800 whitespace-pre-wrap">{message}</Text>
-          </Section>
+          {message && (
+            <>
+              <Text className="text-gray-700 my-4">
+                Here’s the author’s message or note:
+              </Text>
+              <Section className="bg-gray-50 border border-gray-200 p-4 rounded-md my-4">
+                <Text className="text-gray-800 whitespace-pre-wrap">
+                  {message}
+                </Text>
+              </Section>
+            </>
+          )}
 
           <Text className="text-gray-700 mt-6">
-            Thank you once again for your valuable contribution to JAEPH.
+            You can review the author’s response and proceed with the next
+            editorial steps using the link above.
+          </Text>
+
+          <Text className="text-gray-700 mt-6">
+            Thank you for overseeing the review process at JAEPH.
           </Text>
         </Section>
 

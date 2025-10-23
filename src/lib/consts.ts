@@ -243,6 +243,7 @@ export const ARTICLE_STATUS = [
   'ACCEPTED',
   'MINOR ISSUE',
   'MAJOR ISSUE',
+  'UNDER PRESS',
 ] as const;
 
 export type ArticleStatus = (typeof ARTICLE_STATUS)[number];

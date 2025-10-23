@@ -12,19 +12,30 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Eye, Download, Reply } from 'lucide-react';
+import { Eye, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import AuthorReplyModal from './components/AuthorReplyModal';
 import { useGetAuthorsReviews } from '@/hooks/useReviews';
 import { ReviewersReview, TArticlesReview } from '@/types';
 import Link from 'next/link';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 
 const ReviewsReceived = () => {
   const { data: manuscripts, isPending } = useGetAuthorsReviews();
 
+  console.log('manuscripts:', manuscripts);
+
   const [selectedManuscript, setSelectedManuscript] =
     useState<TArticlesReview | null>(null);
-  const [replyModalOpen, setReplyModalOpen] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  // const [replyModalOpen, setReplyModalOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState<ReviewersReview | null>(
     null
   );
@@ -51,6 +62,7 @@ const ReviewsReceived = () => {
 
   const handleViewReviews = (manuscript: TArticlesReview) => {
     setSelectedManuscript(manuscript);
+    setIsSheetOpen(true);
   };
 
   const handleDownloadReview = () => {
@@ -59,11 +71,7 @@ const ReviewsReceived = () => {
 
   const handleReplyToReview = (review: ReviewersReview) => {
     setSelectedReview(review);
-    setReplyModalOpen(true);
-  };
-
-  const canReplyToReview = (status: string) => {
-    return status === 'Minor Collection' || status === 'Major Revision';
+    // setReplyModalOpen(true);
   };
 
   const getReviewsInfo = (
@@ -102,8 +110,10 @@ const ReviewsReceived = () => {
               <TableBody>
                 {manuscripts?.map((manuscript) => (
                   <TableRow key={manuscript.id}>
-                    <TableCell className="font-medium">
-                      {manuscript.metadata.title}
+                    <TableCell className="font-medium hover:underline">
+                      <Link href={`/articles/${manuscript.id}`} target="_blank">
+                        {manuscript.metadata.title}
+                      </Link>
                     </TableCell>
                     <TableCell>
                       {getReviewsInfo(manuscript.reviews, manuscript)}
@@ -133,90 +143,86 @@ const ReviewsReceived = () => {
               </TableBody>
             </Table>
           )}
+          {!isPending && manuscripts?.length === 0 && (
+            <p className="my-3">No manuscripts found here.</p>
+          )}
         </CardContent>
       </Card>
 
-      {/* Review Details */}
-      {selectedManuscript && (
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              Reviews for: {selectedManuscript.metadata.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {selectedManuscript.reviews.map((review, index) => (
-                <div
-                  key={review.id}
-                  className="border rounded-lg p-4 space-y-3"
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-semibold">Reviewer {index + 1}</h4>
-                      <p className="text-sm text-gray-600">
-                        Reviewed:{' '}
-                        {new Date(review.reviewedAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {getRecommendationBadge(review.status)}
-                    </div>
-                  </div>
+      {/* Sheet for Reviews */}
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <SheetContent
+          side="right"
+          className="w-full sm:max-w-2xl flex flex-col h-full"
+        >
+          {/* Scrollable content area */}
+          <div className="flex-1 overflow-y-auto">
+            <SheetHeader>
+              <SheetTitle>
+                {selectedManuscript
+                  ? `Reviews for: ${selectedManuscript.metadata.title}`
+                  : 'Reviews'}
+              </SheetTitle>
+              <SheetDescription>
+                Review details and reviewer feedback
+              </SheetDescription>
+            </SheetHeader>
 
-                  <div>
-                    <h5 className="font-medium mb-2">Comments:</h5>
-                    <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded">
-                      {review.message}
-                    </p>
-                  </div>
+            {selectedManuscript && (
+              <div className="space-y-4 mt-6">
+                {selectedManuscript.reviews.map((review, index) => (
+                  <Card key={review.id} className="border rounded-lg">
+                    <CardHeader>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-semibold">
+                            Reviewer {index + 1}
+                          </h4>
+                          <p className="text-sm text-gray-600">
+                            Reviewed:{' '}
+                            {new Date(review.reviewedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        {getRecommendationBadge(review.status)}
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div>
+                        <h5 className="font-medium mb-2">Comments:</h5>
+                        <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded">
+                          {review.message}
+                        </p>
+                      </div>
 
-                  <div className="flex justify-between items-center">
-                    <div className="flex gap-2">
-                      {review.fileIds.length > 0 && (
-                        <Link href={review.fileIds[0]}>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDownloadReview()}
-                            className="flex items-center gap-2"
-                          >
-                            <Download className="h-4 w-4" />
-                            Download Review
-                          </Button>
-                        </Link>
-                      )}
-                      {canReplyToReview(review.status) && (
-                        <Button
-                          size="sm"
-                          onClick={() => handleReplyToReview(review)}
-                          className="flex items-center gap-2"
-                        >
-                          <Reply className="h-4 w-4" />
-                          Reply to Review
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                      <div className="flex gap-2">
+                        {review.fileIds.length > 0 && (
+                          <Link href={review.fileIds[0]}>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDownloadReview()}
+                              className="flex items-center gap-2"
+                            >
+                              <Download className="h-4 w-4" />
+                              Download Review
+                            </Button>
+                          </Link>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <SheetFooter className="sticky bottom-0 bg-white mt-4 py-4 flex justify-end gap-2">
+            <AuthorReplyModal />
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
 
       {/* Reply Modal */}
-      {selectedReview && (
-        <AuthorReplyModal
-          isOpen={replyModalOpen}
-          onClose={() => {
-            setReplyModalOpen(false);
-            setSelectedReview(null);
-          }}
-          review={selectedReview}
-          manuscriptTitle={selectedManuscript?.metadata.title || ''}
-        />
-      )}
     </div>
   );
 };

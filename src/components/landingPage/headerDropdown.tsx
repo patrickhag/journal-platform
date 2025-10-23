@@ -26,7 +26,7 @@ export default function HeaderDropdown({
 
     switch (role) {
       case 'NORMAL_USER':
-        redirect('/submissions');
+        redirect('/author/submissions');
         break;
       case 'ASSOCIATE_EDITOR':
         redirect('/staff-editor/assigned');
@@ -44,7 +44,7 @@ export default function HeaderDropdown({
 
   return (
     <div className="flex items-center gap-4">
-      <Link href="/articles/new/start">
+      <Link href="/author/new/start">
         <Button className="text-white px-3 py-2 rounded bg-[#212c9e] hover:bg-[#1A237E]">
           Submit your research
         </Button>

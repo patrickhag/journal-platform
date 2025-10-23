@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
-import { authorRevisions, reviews, users } from '@/db/schema';
+import { authorRevisions, reviews } from '@/db/schema';
 import { auth } from '@/auth';
 import { articleSubmissions } from '@/db/schema';
 import { and, desc, eq } from 'drizzle-orm';
-import { authorInformReviewer } from '@/lib/emailTransporter';
+import { authorInformStaffEditor } from '@/lib/emailTransporter';
 
 export async function GET(req: NextRequest) {
   try {
@@ -16,7 +16,6 @@ export async function GET(req: NextRequest) {
       where: and(
         eq(articleSubmissions.userId, userId as string),
         eq(articleSubmissions.articleStatus, 'CORRECTION')
-        // eq(articleSubmissions.articleStatus, 'CORRECTION')
       ),
       columns: {
         id: true,
@@ -65,14 +64,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: Request) {
   try {
-    const {
-      articleId,
-      message,
-      reviewerEmail,
-      reviewerName,
-      articleTitle,
-      reviewerId,
-    } = await req.json();
+    const { articleId, message, reviewerEmail, articleTitle } =
+      await req.json();
 
     const session = await auth();
     const authorName = session?.user?.name;
@@ -81,20 +74,18 @@ export async function POST(req: Request) {
       articleId,
       authorId: session?.user?.id,
       message,
-      reviewerId,
     };
 
     await db.insert(authorRevisions).values(insertInfo);
 
     // send email to reviewer
-    await authorInformReviewer({
-      articleTitle: articleTitle as string,
-      articleLink: articleId,
-      authorName: authorName as string,
-      message,
-      reviewerEmail,
-      reviewerName,
-    });
+    // await authorInformReviewer({
+    //   articleTitle: articleTitle as string,
+    //   articleLink: articleId,
+    //   authorName: authorName as string,
+    //   message,
+    //   reviewerEmail,
+    // });
 
     return NextResponse.json(
       { message: 'Reply sent successfully and reviewer informed' },

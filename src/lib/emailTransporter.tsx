@@ -22,7 +22,6 @@ import { AssignReviewerEmailTemplate } from '@/components/emails/inform-reviewer
 import { ArticleReadyForEICApprovalEmailTemplate } from '@/components/emails/inform-chief-editor-email-template';
 import { InformStaffEditorAboutInvitation } from '@/components/emails/inform-staff-editor-about-reviewer-invitation';
 import { ReviewerSubmittedEmail } from '@/components/emails/review-submitted-email';
-import { AuthorReplyToReviewEmail } from '@/components/emails/author-reply-to-review-email';
 import { SendAssociateEditorInvitation } from '@/components/emails/send-invite-associate-editor';
 import { InformStaffEditorAboutAssociateInvitation } from '@/components/emails/inform-staff-editor-about-associate-invitation';
 import { NotifyStaffEditorAboutAssociateEditorCorrection } from '@/components/emails/notifiy-staff-editor-about-ass-correction';
@@ -33,6 +32,7 @@ import { NotifyStaffEditorAboutReviewerAcceptance } from '@/components/emails/no
 import { StaffEditorEmailTemplate } from '@/components/emails/inform-associate-editor';
 import { NotifyReviewerAboutFinalizedAssignment } from '@/components/emails/notify-reviewer-about-finalised-status';
 import { AssociateEditorStatusEmail } from '@/components/emails/inform-associate-editor-about-correction';
+import { AuthorReplyToStaffEditorEmail } from '@/components/emails/author-reply-to-staff-editor';
 
 export const sendPasswordResetEmail = async ({
   subject,
@@ -880,26 +880,26 @@ export const informingAuthorNReviewer = async ({
   }
 };
 
-export const authorInformReviewer = async ({
-  reviewerEmail,
-  reviewerName,
+export const authorInformStaffEditor = async ({
+  staffEditorName,
   authorName,
   articleTitle,
   articleLink,
   message,
+  staffEditorEmail,
 }: {
-  reviewerName: string;
+  staffEditorName: string;
   authorName: string;
   articleTitle: string;
   articleLink: string;
-  reviewerEmail: string;
   message: string;
+  staffEditorEmail: string;
 }) => {
   try {
     const emailHtml = await render(
-      <AuthorReplyToReviewEmail
+      <AuthorReplyToStaffEditorEmail
+        staffEditorName={staffEditorName}
         articleTitle={articleTitle}
-        reviewerName={reviewerName}
         articleLink={articleLink}
         authorName={authorName}
         message={message}
@@ -908,14 +908,14 @@ export const authorInformReviewer = async ({
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: reviewerEmail,
-      subject: 'Author has replied to your the review on JAEPH.',
+      to: staffEditorEmail,
+      subject: `Author reply received for "${articleTitle}"`,
       html: emailHtml,
     });
 
     return { success: true };
   } catch (error) {
-    console.error('Error sending notification:', error);
+    console.error('Error sending author reply notification:', error);
     return { success: false, error };
   }
 };
