@@ -28,7 +28,7 @@ const Page = async ({
       </CardContent>
       <div className="my-8 max-[350px]:my-12 sm:my-6 mx-6">
         <Paginator
-          nextLink="/articles/new/attach-files"
+          nextLink="/author/new/attach-files"
           query={query}
         ></Paginator>
       </div>

@@ -26,8 +26,8 @@ const Page = async ({
 
       <Paginator
         query={query}
-        backLink="/articles/new/start"
-        nextLink="/articles/new/meta"
+        backLink="/author/new/start"
+        nextLink="/author/new/meta"
       ></Paginator>
     </>
   );

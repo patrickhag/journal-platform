@@ -26,8 +26,8 @@ const Page = async ({
         </div>
       </Card>
       <Paginator
-        backLink="/articles/new/meta"
-        nextLink="/articles/new/final"
+        backLink="/author/new/meta"
+        nextLink="/author/new/final"
         query={query}
       ></Paginator>
     </>
