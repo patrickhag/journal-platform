@@ -7,7 +7,7 @@ import axios, { AxiosError } from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-export const useAssignedAssociateEditor = () => {
+export const useGetAssignedStaffEditor = () => {
   return useQuery({
     queryKey: ['associateEditorAssignments'],
     queryFn: async () => {

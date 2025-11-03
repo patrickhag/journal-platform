@@ -339,7 +339,6 @@ export const editorActions = pgTable('editor_actions', {
     .notNull(),
   decision: text('decision').notNull(),
   message: text('message').notNull(),
-  editorfileId: text('editorfileId'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -386,16 +385,26 @@ export const reviewRevisions = pgTable('review_revisions', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  articleId: text('articleId').references(() => articleSubmissions.id, {
+  reviewId: text('reviewId').references(() => reviews.id, {
     onDelete: 'cascade',
   }),
   fileIds: text('fileIds')
     .array()
     .default(sql`'{}'::text[]`),
-  reviewerId: text('reviewerId').references(() => users.id),
-  note: text('note'),
-  reviewedAt: timestamp('reviewedAt').defaultNow(),
+  message: text('message').notNull(),
+  requestedAt: date('requestedAt').defaultNow(),
 });
+
+export const reviewRevisionsRelations = relations(
+  reviewRevisions,
+  ({ one }) => ({
+    review: one(reviews, {
+      fields: [reviewRevisions.reviewId],
+      references: [reviews.id],
+      relationName: 'reviewRevisions',
+    }),
+  })
+);
 
 export const collections = pgTable('collections', {
   id: text('id')
@@ -475,6 +484,7 @@ export const associateEditorAssignments = pgTable(
     message: text('message'),
     dueDate: timestamp('dueDate'),
     assignedAt: timestamp('assignedAt').defaultNow(),
+    finalizedAt: timestamp('finalizedAt'),
   }
 );
 
@@ -714,7 +724,7 @@ export const reviewersRelations = relations(reviewers, ({ one }) => ({
   }),
 }));
 
-export const reviewsRelations = relations(reviews, ({ one }) => ({
+export const reviewsRelations = relations(reviews, ({ one, many }) => ({
   article: one(articleSubmissions, {
     fields: [reviews.articleId],
     references: [articleSubmissions.id],
@@ -724,6 +734,9 @@ export const reviewsRelations = relations(reviews, ({ one }) => ({
     fields: [reviews.userId],
     references: [users.id],
     relationName: 'userReviews',
+  }),
+  reviewRevisions: many(reviewRevisions, {
+    relationName: 'reviewRevisions',
   }),
 }));
 

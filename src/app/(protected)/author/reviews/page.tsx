@@ -12,8 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Eye, Download } from 'lucide-react';
-import { toast } from 'sonner';
+import { Eye } from 'lucide-react';
 import AuthorReplyModal from './components/AuthorReplyModal';
 import { useGetAuthorsReviews } from '@/hooks/useReviews';
 import { ReviewersReview, TArticlesReview } from '@/types';
@@ -26,52 +25,18 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import { ReviewCard } from '@/components/ReviewCard';
 
 const ReviewsReceived = () => {
   const { data: manuscripts, isPending } = useGetAuthorsReviews();
 
-  console.log('manuscripts:', manuscripts);
-
   const [selectedManuscript, setSelectedManuscript] =
     useState<TArticlesReview | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  // const [replyModalOpen, setReplyModalOpen] = useState(false);
-  const [selectedReview, setSelectedReview] = useState<ReviewersReview | null>(
-    null
-  );
-
-  const getRecommendationBadge = (status: string) => {
-    const config = {
-      Accepted: { variant: 'default' as const, label: 'Accepted' },
-      'Minor Collection': {
-        variant: 'secondary' as const,
-        label: 'Minor Collection',
-      },
-      'Major Revision': {
-        variant: 'destructive' as const,
-        label: 'Major Revision',
-      },
-      Rejected: { variant: 'destructive' as const, label: 'Rejected' },
-    };
-
-    const badgeConfig = config[status as keyof typeof config];
-    return badgeConfig ? (
-      <Badge variant={badgeConfig.variant}>{badgeConfig.label}</Badge>
-    ) : null;
-  };
 
   const handleViewReviews = (manuscript: TArticlesReview) => {
     setSelectedManuscript(manuscript);
     setIsSheetOpen(true);
-  };
-
-  const handleDownloadReview = () => {
-    toast('Review document is being downloaded.');
-  };
-
-  const handleReplyToReview = (review: ReviewersReview) => {
-    setSelectedReview(review);
-    // setReplyModalOpen(true);
   };
 
   const getReviewsInfo = (
@@ -171,58 +136,23 @@ const ReviewsReceived = () => {
             {selectedManuscript && (
               <div className="space-y-4 mt-6">
                 {selectedManuscript.reviews.map((review, index) => (
-                  <Card key={review.id} className="border rounded-lg">
-                    <CardHeader>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h4 className="font-semibold">
-                            Reviewer {index + 1}
-                          </h4>
-                          <p className="text-sm text-gray-600">
-                            Reviewed:{' '}
-                            {new Date(review.reviewedAt).toLocaleDateString()}
-                          </p>
-                        </div>
-                        {getRecommendationBadge(review.status)}
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div>
-                        <h5 className="font-medium mb-2">Comments:</h5>
-                        <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded">
-                          {review.message}
-                        </p>
-                      </div>
-
-                      <div className="flex gap-2">
-                        {review.fileIds.length > 0 && (
-                          <Link href={review.fileIds[0]}>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleDownloadReview()}
-                              className="flex items-center gap-2"
-                            >
-                              <Download className="h-4 w-4" />
-                              Download Review
-                            </Button>
-                          </Link>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <ReviewCard
+                    key={review.id}
+                    review={review}
+                    showDownloadButton={true}
+                    showViewButton={true}
+                    reviewerDisplayName={`Reviewer ${index + 1}`}
+                  />
                 ))}
               </div>
             )}
           </div>
 
           <SheetFooter className="sticky bottom-0 bg-white mt-4 py-4 flex justify-end gap-2">
-            <AuthorReplyModal />
+            <AuthorReplyModal articleId={selectedManuscript?.id || ''} />
           </SheetFooter>
         </SheetContent>
       </Sheet>
-
-      {/* Reply Modal */}
     </div>
   );
 };

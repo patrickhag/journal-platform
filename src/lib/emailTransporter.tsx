@@ -550,12 +550,10 @@ export const notifyEditorAboutRevision = async ({
       );
       break;
     case 'REVIEWER':
-      subject = 'Manuscript Revision Complete - Re-review Request';
+      subject = 'Manuscript Revision Requested';
       emailHtml = await render(
         <ReviewerReReviewEmailTemplate
-          articleLink={articleLink}
           articleTitle={articleTitle}
-          authorName={authorName}
           reviewerName={reviewerName as string}
         />
       );
@@ -610,6 +608,37 @@ export const notifyStaffEditorAboutReviewStatus = async ({
       from: process.env.EMAIL_USER,
       to: staffEditorEmail,
       subject: 'Reviewer decision',
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending admin notification:', error);
+    return { success: false, error };
+  }
+};
+
+export const notifyReviewerAboutReReview = async ({
+  reviewerName,
+  articleTitle,
+  reviewerEmail,
+}: {
+  reviewerName: string;
+  articleTitle: string;
+  reviewerEmail: string;
+}) => {
+  try {
+    const emailHtml = await render(
+      <ReviewerReReviewEmailTemplate
+        reviewerName={reviewerName}
+        articleTitle={articleTitle}
+      />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: reviewerEmail,
+      subject: 'Manuscript Revision Requested',
       html: emailHtml,
     });
 

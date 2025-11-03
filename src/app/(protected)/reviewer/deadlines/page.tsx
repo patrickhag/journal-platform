@@ -9,7 +9,6 @@ import { useGetReviewerAssignments } from '@/hooks/useReviews';
 import { useRouter } from 'next/navigation';
 import ReviewModal from '@/components/articles/Review';
 import ArticleCardSkeleton from '../components/ReviewCardSkeleton';
-import { calculateDaysRemaining } from '@/lib/utils';
 
 export default function ReviewerDashboard() {
   const { data, isPending } = useGetReviewerAssignments();
@@ -64,12 +63,11 @@ export default function ReviewerDashboard() {
           </Card>
         )}
 
-      {isPending && [1, 2, 3].map((i) => <ArticleCardSkeleton key={i} />)}
+      {isPending && [1, 2, 3, 4, 5].map((i) => <ArticleCardSkeleton key={i} />)}
       <div className="space-y-4">
         {reviewerAssignments?.map((assignment) => {
-          const { id, status, assignedDate, dueDate, article } = assignment;
+          const { id, status, article } = assignment;
 
-          const daysRemaining = calculateDaysRemaining(dueDate);
           const isPublished = article.articleStatus === 'PUBLISHED';
           const author = `${article.metadata?.prefix ?? ''}. ${article.user.firstName} ${article.user.lastName}`;
           const title = article.metadata?.title;
@@ -147,7 +145,7 @@ export default function ReviewerDashboard() {
         })}
 
         {!isPending && reviewerAssignments?.length === 0 && (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 italic">
             You have no deadline assignments.
           </p>
         )}

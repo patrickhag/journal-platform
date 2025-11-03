@@ -178,3 +178,8 @@ export const redirectUserBasedOnRole = (role: string): string => {
 
   return linkUrl;
 };
+
+export const formatDate = (date: Date | string) => {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  return format(d, 'MMM d, yyyy');
+};

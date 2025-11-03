@@ -33,6 +33,21 @@ export async function PATCH(
 
     const { status, note } = await req.json();
 
+    // if the status has already approved, return an error
+    const correctionInfo = await db.query.associateEditorCorrections.findFirst({
+      where: eq(associateEditorCorrections.id, correctionId),
+      columns: {
+        status: true,
+      },
+    });
+
+    if (status === 'REVISION' && correctionInfo?.status === 'APPROVED') {
+      return NextResponse.json(
+        { message: 'Article has already been approved' },
+        { status: 409 }
+      );
+    }
+
     const articleInfo = await db.query.associateEditorCorrections.findFirst({
       where: eq(associateEditorCorrections.id, correctionId),
       with: {
@@ -71,15 +86,17 @@ export async function PATCH(
       .set({ status })
       .where(eq(associateEditorCorrections.id, correctionId));
 
-    await db
-      .update(associateEditorAssignments)
-      .set({ status: 'FINALIZED' })
-      .where(
-        and(
-          eq(associateEditorAssignments.userId, associateEditorId as string),
-          eq(associateEditorAssignments.articleId, articleLink as string)
-        )
-      );
+    if (status === 'APPROVED') {
+      await db
+        .update(associateEditorAssignments)
+        .set({ status: 'FINALIZED', finalizedAt: new Date() })
+        .where(
+          and(
+            eq(associateEditorAssignments.userId, associateEditorId as string),
+            eq(associateEditorAssignments.articleId, articleLink as string)
+          )
+        );
+    }
 
     await notifyAssociateEditor({
       associateEditorEmail: associateEditorEmail as string,

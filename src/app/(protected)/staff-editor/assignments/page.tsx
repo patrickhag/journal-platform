@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FileText, Eye, Hourglass } from 'lucide-react';
-import { useAssignedAssociateEditor } from '../hooks/useAssociateEditorHooks';
+import { useGetAssignedStaffEditor } from '../hooks/useAssociateEditorHooks';
 import { AssignmentCardSkeleton } from '../components/AssignmentCardSkeleton';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
@@ -12,7 +12,7 @@ import Link from 'next/link';
 
 export default function AssociateEditorDashboard() {
   const { data: associateEditorsAssigments = [], isPending } =
-    useAssignedAssociateEditor();
+    useGetAssignedStaffEditor();
 
   const router = useRouter();
 

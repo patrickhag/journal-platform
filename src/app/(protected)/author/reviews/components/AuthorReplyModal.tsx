@@ -11,24 +11,20 @@ import {
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useAuthorReplyReviewer } from '@/hooks/useReviews';
+import { useAuthorReplyStaffEditor } from '@/hooks/useReviews';
 import Loader from '@/components/Loader';
 import { DragAndDropFileInput } from '@/components/upload/FileInput';
 import { FileList } from '@/components/upload/FileList';
 import { filesSchema } from '@/schemas/reviewer';
 import { safeParse } from 'zod-urlsearchparams';
 import { useSearchParams } from 'next/navigation';
+import { collectionsRelations } from '@/db/schema';
 
-// interface AuthorReplyModalProps {
-//   manuscriptTitle: string;
-// }
-
-const AuthorReplyModal = () => {
+const AuthorReplyModal: React.FC<{ articleId: string }> = ({ articleId }) => {
   const [reply, setReply] = useState('');
   const [isOpen, setIsOpen] = useState(false);
 
-  // const reviewerName = review.user.firstName + ' ' + review.user.lastName;
-  const { mutate, isPending } = useAuthorReplyReviewer();
+  const { mutate, isPending } = useAuthorReplyStaffEditor();
 
   const searchParams = useSearchParams();
 
@@ -46,17 +42,17 @@ const AuthorReplyModal = () => {
   };
 
   const handleSubmit = async () => {
-    // const payloadData = {
-    //   reviewerId: review.user.id,
-    //   articleId: review.articleId,
-    //   message: reply,
-    //   reviewerEmail: review.user.email,
-    //   reviewerName,
-    //   articleTitle: manuscriptTitle,
-    // };
-    // mutate(payloadData, {
-    //   onSettled: () => {},
-    // });
+    const payloadData = {
+      articleId,
+      message: reply,
+      fileIds,
+    };
+
+    mutate(payloadData, {
+      onSettled: () => {
+        handleClose();
+      },
+    });
   };
 
   return (
@@ -94,7 +90,7 @@ const AuthorReplyModal = () => {
           <Button variant="outline" onClick={handleClose}>
             Cancel
           </Button>
-          <Button disabled={isPending || !reply.trim()}>
+          <Button disabled={isPending || !reply.trim()} onClick={handleSubmit}>
             {isPending ? <Loader text="Replying..." /> : 'Send Reply'}
           </Button>
         </DialogFooter>

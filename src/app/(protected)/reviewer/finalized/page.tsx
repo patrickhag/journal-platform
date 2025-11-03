@@ -27,8 +27,8 @@ export default function FinalizedAssignments() {
 
       {!isPending &&
         (!finalizedAssignments || finalizedAssignments.length === 0) && (
-          <p className="text-center text-gray-500 mt-6">
-            No assignments available at the moment.
+          <p className="text-sm text-gray-500 italic">
+            You have no finalized assignments.
           </p>
         )}
 

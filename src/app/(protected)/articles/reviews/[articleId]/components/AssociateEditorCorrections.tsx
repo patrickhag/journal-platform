@@ -8,7 +8,7 @@ import { AssociateEditorCorrectionStatusModal } from './RequestAssociateRecorrec
 import { formatAssignmentCorrectionsStatus } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 
-export const AssociateEditorCollections = ({
+export const AssociateEditorCorrections = ({
   articleId,
 }: {
   articleId: string;

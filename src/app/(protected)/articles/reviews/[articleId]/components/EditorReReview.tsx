@@ -34,19 +34,21 @@ import { useClearURL } from '@/components/ClearURL';
 interface EditorReReviewProps {
   isOpen: boolean;
   onClose: () => void;
-  articleId: string;
-  reviewerId: string;
+  reviewId: string;
   reviewerName: string;
   reviewerEmail: string;
+  articleTitle: string;
+  articleId: string;
 }
 
 const EditorReReviewModal = ({
   isOpen,
   onClose,
-  articleId,
-  reviewerId,
+  reviewId,
   reviewerName,
   reviewerEmail,
+  articleTitle,
+  articleId,
 }: EditorReReviewProps) => {
   const form = useForm<DecisionFormData>({
     resolver: zodResolver(reReviewSchema),
@@ -67,25 +69,32 @@ const EditorReReviewModal = ({
   const files = filesValidation.data?.files || [];
   const fileIds = files.map((f) => f.publicId);
 
-  const { mutate, isPending } = useSendReRevision(articleId);
+  const { mutate, isPending } = useSendReRevision();
 
   const handleSubmit = (data: ReReviewFormData) => {
     const { message } = data;
-    mutate(
-      { fileIds, message, reviewerId, reviewerName, reviewerEmail },
-      {
-        onSettled: () => {
-          form.reset();
-          onClose();
-          clearURL();
-        },
-      }
-    );
+    const payload = {
+      message,
+      fileIds,
+      reviewerName,
+      reviewerEmail,
+      reviewId,
+      articleTitle,
+      articleId,
+    };
+
+    mutate(payload, {
+      onSettled: () => {
+        form.reset();
+        onClose();
+        clearURL();
+      },
+    });
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Request Re-Review</DialogTitle>
           <DialogDescription>

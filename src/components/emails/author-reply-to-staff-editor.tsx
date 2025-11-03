@@ -26,7 +26,7 @@ export const AuthorReplyToStaffEditorEmail: React.FC<{
 
           <Text className="text-gray-700 my-4">
             The author <strong>{authorName}</strong> has submitted a reply to
-            the reviewer comments for the manuscript titled{' '}
+            the corrections/review for the manuscript titled{' '}
             <a
               href={`${process.env.NEXT_PUBLIC_URL}/articles/${articleLink}`}
               className="text-blue-600 underline"
@@ -41,7 +41,7 @@ export const AuthorReplyToStaffEditorEmail: React.FC<{
           {message && (
             <>
               <Text className="text-gray-700 my-4">
-                Here’s the author’s message or note:
+                Here’s the author’s message:
               </Text>
               <Section className="bg-gray-50 border border-gray-200 p-4 rounded-md my-4">
                 <Text className="text-gray-800 whitespace-pre-wrap">
@@ -53,7 +53,15 @@ export const AuthorReplyToStaffEditorEmail: React.FC<{
 
           <Text className="text-gray-700 mt-6">
             You can review the author’s response and proceed with the next
-            editorial steps using the link above.
+            editorial steps using the link below: &nbsp;
+            <a
+              href={`${process.env.NEXT_PUBLIC_URL}/articles/reviews/${articleLink}`}
+              className="text-blue-600 underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View Author's Corrections
+            </a>
           </Text>
 
           <Text className="text-gray-700 mt-6">

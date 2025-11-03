@@ -73,11 +73,8 @@ export const AssociateEditorCorrectionStatusModal: React.FC<Props> = ({
             </div>
 
             <div className="flex items-center space-x-2">
-              <RadioGroupItem
-                value="RE_CORRECTION_REQUESTED"
-                id="RE_CORRECTION_REQUESTED"
-              />
-              <Label htmlFor="RE_CORRECTION_REQUESTED">Revision</Label>
+              <RadioGroupItem value="REVISION" id="REVISION" />
+              <Label htmlFor="REVISION">Revision</Label>
             </div>
           </RadioGroup>
 

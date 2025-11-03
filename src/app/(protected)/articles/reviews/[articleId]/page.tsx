@@ -8,10 +8,11 @@ import {
   CheckSquare,
   ChevronLeft,
   Eye,
-  File,
   FileSearch2,
+  FileText,
   Repeat,
   UserCheck,
+  CornerDownRight,
 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useGetReviews } from '@/hooks/useReviews';
@@ -20,22 +21,22 @@ import EditorDecisionModal from './components/EditorDecisionModal';
 import EditorReReviewModal from './components/EditorReReview';
 import Link from 'next/link';
 import InviteAssociateEditorModal from './components/AssignAssociateEditor';
-import { AssociateEditorCollections } from './components/AssociateEditorCollections';
+import { AssociateEditorCorrections } from './components/AssociateEditorCorrections';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AuthorCorrections } from './components/AuthorCorrection';
 
 export default function ReviewsPage() {
   const { articleId } = useParams();
 
   const { data: reviewData, isPending } = useGetReviews(articleId as string);
+
   const [openEditor, setOpenEditor] = useState(false);
   const [openAssignEditorDialog, setopenAssignEditorDialog] = useState(false);
   const [openRereview, setOpenRereview] = useState(false);
-  const [reviewerUserId, setReviewerUserId] = useState('');
+  const [reviewId, setReviewId] = useState('');
   const [reviewerName, setReviewerName] = useState('');
   const [revieweEmail, setReviewerEMail] = useState('');
-
-  const reviewersName =
-    reviewData?.user.firstName + ' ' + reviewData?.user.lastName;
+  const [articleTitle, setArticleTitle] = useState('');
 
   const router = useRouter();
   const onCloseRereview = () => setOpenRereview(false);
@@ -47,9 +48,10 @@ export default function ReviewsPage() {
     formReviwerEmail: string
   ) => {
     setOpenRereview(true);
-    setReviewerUserId(reviewId);
+    setReviewId(reviewId);
     setReviewerName(reviewerName);
     setReviewerEMail(formReviwerEmail);
+    setArticleTitle(reviewData?.metadata.title as string);
   };
 
   return (
@@ -102,8 +104,11 @@ export default function ReviewsPage() {
           <Tabs defaultValue="reviews">
             <TabsList>
               <TabsTrigger value="reviews">Reviewers Reviews</TabsTrigger>
-              <TabsTrigger value="collections">
-                Associate Collections
+              <TabsTrigger value="author-corrections">
+                Author's Corrections
+              </TabsTrigger>
+              <TabsTrigger value="associate-corrections">
+                Associate Editor Corrections
               </TabsTrigger>
             </TabsList>
 
@@ -122,26 +127,33 @@ export default function ReviewsPage() {
                           reviewData.reviews.map((review) => {
                             const reviewerName = `${review.user.prefix ?? ''} ${review.user.firstName} ${review.user.lastName}`;
                             return (
-                              <Card key={review.id}>
-                                <CardHeader>
+                              <Card key={review.id} className="text-sm">
+                                <CardHeader className="pb-2">
                                   <div className="flex items-center justify-between">
                                     <div>
-                                      <h3 className="font-semibold">
+                                      <h3 className="font-medium">
                                         {reviewerName}
                                       </h3>
                                     </div>
-                                    <Badge>{review.status}</Badge>
+                                    <Badge
+                                      variant="secondary"
+                                      className="text-xs"
+                                    >
+                                      {review.status}
+                                    </Badge>
                                   </div>
                                 </CardHeader>
-                                <CardContent>
-                                  <p className="text-sm mb-4">
+
+                                <CardContent className="space-y-3 pb-4">
+                                  <p className="text-muted-foreground">
                                     {review.message}
                                   </p>
+
                                   {/* Annotated Files */}
                                   {review.fileIds &&
                                     review.fileIds.length > 0 && (
-                                      <div className="mt-4">
-                                        <h4 className="text-sm font-medium mb-3">
+                                      <div>
+                                        <h4 className="text-xs font-medium mb-2">
                                           Annotated Files
                                         </h4>
                                         <div className="space-y-2">
@@ -149,20 +161,18 @@ export default function ReviewsPage() {
                                             (fileUrl, idx) => (
                                               <div
                                                 key={idx}
-                                                className="flex items-center justify-between p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors mb-3"
+                                                className="flex items-center justify-between p-2 rounded-md border bg-muted/30 hover:bg-muted/50 transition-colors"
                                               >
                                                 <div className="flex items-center gap-3">
-                                                  <File className="h-4 w-4 text-green-500" />
-                                                  <div>
-                                                    <h5 className="text-sm font-medium">
-                                                      File {idx + 1}
-                                                    </h5>
-                                                  </div>
+                                                  <FileText className="h-4 w-4 text-green-500" />
+                                                  <span className="text-xs font-medium">
+                                                    File {idx + 1}
+                                                  </span>
                                                 </div>
 
                                                 <Button
                                                   variant="ghost"
-                                                  size="sm"
+                                                  size="icon"
                                                   asChild
                                                 >
                                                   <Link
@@ -178,25 +188,104 @@ export default function ReviewsPage() {
                                         </div>
                                       </div>
                                     )}
-                                  <div className="flex items-center justify-between gap-2">
-                                    <div className="mt-4 text-sm text-muted-foreground">
+
+                                  {/* Reviewed Date + Request Re-review */}
+                                  <div className="flex items-center justify-between pt-2">
+                                    <p className="text-xs text-muted-foreground">
                                       Reviewed on: {review.reviewedAt}
-                                    </div>
+                                    </p>
                                     <Button
                                       size="sm"
                                       variant="outline"
                                       onClick={() =>
                                         handleReReviewRequest(
                                           review.userId,
-                                          reviewersName,
+                                          reviewerName,
                                           review.user.email
                                         )
                                       }
                                     >
-                                      <Repeat />
+                                      <Repeat className="h-4 w-4 mr-1" />
                                       Request Re-Review
                                     </Button>
                                   </div>
+
+                                  {/* ============================== */}
+                                  {/* Revision Info (staff editor)   */}
+                                  {/* ============================== */}
+                                  {review.reviewRevisions &&
+                                    review.reviewRevisions.length > 0 && (
+                                      <div className="mt-5 border-t border-muted pt-4 space-y-4">
+                                        <div className="flex items-center gap-2">
+                                          <CornerDownRight className="h-4 w-4 text-muted-foreground" />
+                                          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                            Requested Revisions
+                                          </h4>
+                                        </div>
+
+                                        {review.reviewRevisions.map(
+                                          (revision) => (
+                                            <div
+                                              key={revision.id}
+                                              className="ml-6 p-4 rounded-lg border bg-muted/20"
+                                            >
+                                              <div className="flex gap-2 mb-2">
+                                                <span className="font-medium text-sm">
+                                                  Editor's Note:
+                                                </span>{' '}
+                                                <div
+                                                  className="prose prose-gray text-sm max-w-none text-foreground leading-relaxed text-justify"
+                                                  dangerouslySetInnerHTML={{
+                                                    __html:
+                                                      revision.message || '',
+                                                  }}
+                                                />
+                                              </div>
+
+                                              {/* Revision Files */}
+                                              {revision.fileIds &&
+                                                revision.fileIds.length > 0 && (
+                                                  <div className="space-y-2 mt-2">
+                                                    {revision.fileIds.map(
+                                                      (fileUrl, idx) => (
+                                                        <div
+                                                          key={idx}
+                                                          className="flex items-center justify-between p-2 rounded-md border bg-muted/30 hover:bg-muted/50 transition-colors"
+                                                        >
+                                                          <div className="flex items-center gap-3">
+                                                            <FileText className="h-4 w-4 text-green-500" />
+                                                            <span className="text-xs font-medium">
+                                                              File {idx + 1}
+                                                            </span>
+                                                          </div>
+
+                                                          <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            asChild
+                                                          >
+                                                            <Link
+                                                              href={fileUrl}
+                                                              target="_blank"
+                                                            >
+                                                              <Eye className="h-4 w-4" />
+                                                            </Link>
+                                                          </Button>
+                                                        </div>
+                                                      )
+                                                    )}
+                                                  </div>
+                                                )}
+
+                                              <p className="text-xs text-muted-foreground mt-3">
+                                                Requested on:{' '}
+                                                {revision.requestedAt}
+                                              </p>
+                                            </div>
+                                          )
+                                        )}
+                                      </div>
+                                    )}
                                 </CardContent>
                               </Card>
                             );
@@ -216,8 +305,11 @@ export default function ReviewsPage() {
                 </CardContent>
               </Card>
             </TabsContent>
-            <TabsContent value="collections">
-              <AssociateEditorCollections articleId={articleId as string} />
+            <TabsContent value="associate-corrections">
+              <AssociateEditorCorrections articleId={articleId as string} />
+            </TabsContent>
+            <TabsContent value="author-corrections">
+              <AuthorCorrections articleId={articleId as string} />
             </TabsContent>
           </Tabs>
           <div className="w-10/12 mx-auto grid grid-cols-2 gap-2 mt-5">
@@ -251,8 +343,9 @@ export default function ReviewsPage() {
           isOpen={openRereview}
           onClose={onCloseRereview}
           articleId={articleId as string}
-          reviewerId={reviewerUserId}
+          reviewId={reviewId}
           reviewerName={reviewerName}
+          articleTitle={articleTitle}
           reviewerEmail={revieweEmail}
         />
       )}

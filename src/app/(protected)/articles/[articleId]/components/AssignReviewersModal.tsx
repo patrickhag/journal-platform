@@ -81,7 +81,7 @@ const AssignRevieweModal = () => {
           onClick={() => setOpen(true)}
           title="Assign Reviewer"
         >
-          <UserRoundPlus size={25} />
+          <UserRoundPlus size={25} /> Assign Reviewer
         </Button>
         <DialogTrigger asChild></DialogTrigger>
         <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">

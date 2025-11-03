@@ -24,8 +24,6 @@ import {
 import { CheckSquare, XCircle, RotateCcw } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { DragAndDropFileInput } from '@/components/upload/FileInput';
-import { FileList } from '@/components/upload/FileList';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { safeParse } from 'zod-urlsearchparams';
 import { filesSchema } from '@/schemas/reviewer';
@@ -118,10 +116,6 @@ const EditorDecisionModal = ({
             publication, request revisions, or reject it.
           </DialogDescription>
         </DialogHeader>
-        <p>Attach Annotate Files (if any)</p>
-        <DragAndDropFileInput />
-        <FileList isEditNeeded={true} />
-
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}

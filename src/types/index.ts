@@ -146,36 +146,40 @@ export type TCollections = {
   }[];
 };
 
-export type TReview =
-  | {
-      articleStatus: string | null;
-      metadata: {
-        title: string;
-      };
-      user: {
-        firstName: string;
-        lastName: string;
-      };
-      reviews: {
-        message: string;
-        status: string | null;
-        articleId: string | null;
-        id: string;
-        userId: string;
-        fileIds: string[];
-        reviewedAt: string | null;
-        user: {
-          firstName: string;
-          lastName: string;
-          email: string;
-          prefix: string;
-        };
-      }[];
-      editorActions: {
-        id: string;
-      };
-    }
-  | undefined;
+export type TReview = {
+  articleStatus: string | null;
+  metadata: {
+    title: string;
+  };
+  user: {
+    firstName: string;
+    lastName: string;
+  };
+  reviews: {
+    message: string;
+    status: string | null;
+    articleId: string | null;
+    id: string;
+    userId: string;
+    fileIds: string[];
+    reviewedAt: string | null;
+    user: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      prefix: string;
+    };
+    reviewRevisions: {
+      id: string;
+      requestedAt: string;
+      message: string;
+      fileIds: string[];
+    }[];
+  }[];
+  editorActions: {
+    id: string;
+  };
+};
 
 export type TReviewerAssignment = {
   id: string;
@@ -577,7 +581,15 @@ export type TAssignment = {
       fileIds: string[];
       message: string;
       status: string;
-      reviewedAt: string; // ISO date string
+      reviewedAt: string;
+      reviewRevisions:
+        | {
+            id: string;
+            requestedAt: string;
+            message: string;
+            fileIds: string[];
+          }[]
+        | undefined;
     }[];
   };
 };
@@ -689,4 +701,11 @@ export type TFinalizedAssignment = {
       lastName: string;
     };
   };
+};
+
+export type TAuthorCorrection = {
+  id: string;
+  submittedAt: string;
+  fileIds: string[];
+  message: string;
 };

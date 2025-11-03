@@ -16,6 +16,20 @@ export async function POST(req: Request) {
     const session = await auth();
     const userId = session?.user?.id || '';
 
+    const hasReviewStatus = await db.query.reviewAssignments.findFirst({
+      where: eq(reviewAssignments.userId, userId),
+      columns: {
+        id: true,
+        status: true,
+      },
+    });
+
+    if (hasReviewStatus && hasReviewStatus.status === 'ACCEPTED') {
+      return NextResponse.json(
+        { message: 'Review has been already submitted and accepted' },
+        { status: 400 }
+      );
+    }
     await db.insert(reviews).values({
       message: message,
       articleId: articleId,
@@ -121,11 +135,8 @@ export async function GET(req: NextRequest) {
         { status: 401 }
       );
     }
-    const { searchParams } = new URL(req.url);
 
-    const search = searchParams.get('search');
-
-    let assignedArticles = await db.query.reviewAssignments.findMany({
+    const reviewerAssignedArticles = await db.query.reviewAssignments.findMany({
       columns: {
         id: true,
         assignedDate: true,
@@ -160,15 +171,12 @@ export async function GET(req: NextRequest) {
         },
       },
     });
-    // Filter articles that are past their due date and not published
 
-    if (search) {
-      assignedArticles = assignedArticles.filter((article) =>
-        article.article?.metadata.title
-          .toLowerCase()
-          .includes(search.toLowerCase())
-      );
-    }
+    const assignedArticles = reviewerAssignedArticles.filter(
+      (assignedArticle) => {
+        return assignedArticle?.article?.articleStatus !== 'PUBLISHED';
+      }
+    );
 
     const dueArticles = assignedArticles.filter((article) => {
       const dueDate = new Date(article.dueDate as string);

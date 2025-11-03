@@ -61,7 +61,9 @@ export const finalSubmissionSchema = z.object({
 });
 
 export const reviewSchema = z.object({
-  message: z.string(),
+  message: z.string().min(10, {
+    message: 'Review message must be at least 10 characters.',
+  }),
   status: z.enum([
     'Major Collection',
     'Minor Collection',

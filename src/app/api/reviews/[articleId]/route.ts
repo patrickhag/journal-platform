@@ -47,6 +47,14 @@ export async function GET(
                 prefix: true,
               },
             },
+            reviewRevisions: {
+              columns: {
+                id: true,
+                requestedAt: true,
+                message: true,
+                fileIds: true,
+              },
+            },
           },
         },
         editorActions: {

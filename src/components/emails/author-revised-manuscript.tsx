@@ -59,14 +59,10 @@ export const AuthorRevisedManuscriptEmailTemplate = ({
 
 export const ReviewerReReviewEmailTemplate = ({
   reviewerName,
-  authorName,
   articleTitle,
-  articleLink,
 }: {
   reviewerName: string;
-  authorName: string;
   articleTitle: string;
-  articleLink: string;
 }) => (
   <Tailwind>
     <Container className="bg-white border border-gray-200 rounded-lg max-w-xl mx-auto my-8 p-6">
@@ -80,24 +76,28 @@ export const ReviewerReReviewEmailTemplate = ({
       {/* Main Content */}
       <Section className="px-6 py-4">
         <Text className="text-lg font-medium text-gray-800">
-          Hi {reviewerName},
+          Dear {reviewerName},
         </Text>
         <Text className="text-gray-700 my-4">
-          <strong>{authorName}</strong> has submitted a revised manuscript:
-          &quot;<em>{articleTitle}</em>&quot;
+          We are writing to request your re-review of the revised manuscript
+          &quot;<em>{articleTitle}</em>&quot;.
         </Text>
         <Text className="text-gray-700 my-4">
-          The author has addressed your previous review comments. We would
-          appreciate your re-review of this revised manuscript.
+          The staff-editor has decided to request a re-review of the revised
+          version of the manuscript that addresses the comments and concerns
+          raised in your previous review.
         </Text>
-        <Button
-          href={`${process.env.NEXT_PUBLIC_URL}/reviewer/articles/${articleLink}`}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md font-medium my-4"
-        >
-          Re-Review Manuscript
-        </Button>
+        <Text className="text-gray-700 my-4">
+          Check your dashboard to see other information about the revision.
+        </Text>
         <Text className="text-gray-700 mt-6">
-          Thank you for your continued support.
+          We appreciate your time and expertise in helping us maintain the
+          quality of our publications.
+        </Text>
+        <Text className="text-gray-700 mt-2">
+          Best regards,
+          <br />
+          Editorial Team
         </Text>
       </Section>
 

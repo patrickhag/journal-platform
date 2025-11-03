@@ -59,6 +59,16 @@ export async function GET(
               },
             },
             reviews: {
+              with: {
+                reviewRevisions: {
+                  columns: {
+                    id: true,
+                    fileIds: true,
+                    message: true,
+                    requestedAt: true,
+                  },
+                },
+              },
               columns: {
                 id: true,
                 fileIds: true,

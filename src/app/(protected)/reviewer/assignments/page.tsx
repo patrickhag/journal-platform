@@ -10,13 +10,9 @@ import { useRouter } from 'next/navigation';
 import ReviewModal from '@/components/articles/Review';
 import ArticleCardSkeleton from '../components/ReviewCardSkeleton';
 import Link from 'next/link';
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 
 export default function ReviewerDashboard() {
   const { data, isPending } = useGetReviewerAssignments();
-
-  const [searchTerm, setSearchTerm] = useState('');
 
   const reviewerAssignments = data?.assignedArticles;
 
@@ -32,26 +28,11 @@ export default function ReviewerDashboard() {
     setReviewModal({ isOpen: false });
   };
 
-  const filteredAssignments = reviewerAssignments?.filter((assignment) => {
-    return assignment.article.metadata.title
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-  });
-
   const router = useRouter();
 
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-gray-900">Review Assignments</h1>
-      <div className="relative w-3/4">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-        <Input
-          placeholder="Search by article title or author..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10"
-        />
-      </div>
       <Card>
         <CardHeader>
           <div className="flex justify-between">
@@ -60,7 +41,7 @@ export default function ReviewerDashboard() {
               Current Assignments
             </CardTitle>
             <p className="text-sm text-gray-500 font-semibold flex-2">
-              Total Assignments: {filteredAssignments?.length ?? 0}
+              Total Assignments: {reviewerAssignments?.length ?? 0}
             </p>
           </div>
         </CardHeader>
@@ -68,7 +49,7 @@ export default function ReviewerDashboard() {
           {isPending &&
             [1, 2, 3, 4, 5, 6].map((i) => <ArticleCardSkeleton key={i} />)}
           <div className="space-y-4">
-            {filteredAssignments?.map((assignment) => {
+            {reviewerAssignments?.map((assignment) => {
               const { id, article } = assignment;
 
               const isPublished = article.articleStatus === 'PUBLISHED';
@@ -152,7 +133,7 @@ export default function ReviewerDashboard() {
               );
             })}
 
-            {!isPending && filteredAssignments?.length === 0 && (
+            {!isPending && reviewerAssignments?.length === 0 && (
               <p className="text-sm text-gray-500">
                 You have no active assignments.
               </p>

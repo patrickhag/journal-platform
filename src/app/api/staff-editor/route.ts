@@ -12,47 +12,42 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const associateEditorsAssigments = await db.query.editorAssignment.findMany(
-      {
-        where: eq(
-          editorAssignment.userId,
-          '4c7fed47-9110-41cc-bd5d-e9a0b6b1c9ea'
-        ),
-        orderBy: desc(editorAssignment.assignedAt),
-        columns: {
-          id: true,
-          assignedAt: true,
-        },
-        with: {
-          articleSubmission: {
-            columns: {
-              id: true,
-              articleStatus: true,
-              createdAt: true,
+    const staffEditorsAssigments = await db.query.editorAssignment.findMany({
+      where: eq(editorAssignment.userId, session.user.id as string),
+      orderBy: desc(editorAssignment.assignedAt),
+      columns: {
+        id: true,
+        assignedAt: true,
+      },
+      with: {
+        articleSubmission: {
+          columns: {
+            id: true,
+            articleStatus: true,
+            createdAt: true,
+          },
+          with: {
+            user: {
+              columns: {
+                firstName: true,
+                lastName: true,
+              },
             },
-            with: {
-              user: {
-                columns: {
-                  firstName: true,
-                  lastName: true,
-                },
+            metadata: {
+              columns: {
+                title: true,
+                prefix: true,
               },
-              metadata: {
-                columns: {
-                  title: true,
-                  prefix: true,
-                },
-              },
-              reviews: {
-                columns: { id: true },
-              },
+            },
+            reviews: {
+              columns: { id: true },
             },
           },
         },
-      }
-    );
+      },
+    });
 
-    return NextResponse.json(associateEditorsAssigments);
+    return NextResponse.json(staffEditorsAssigments);
   } catch (error) {
     console.error('Error creating volume:', error);
     return NextResponse.json(

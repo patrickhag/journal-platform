@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ArticleCardSkeleton() {
   return (
-    <div className="p-3 rounded-lg border bg-card shadow-sm flex flex-col gap-2 relative mb-4">
+    <div className="p-3 rounded-lg border bg-card shadow-sm flex flex-col gap-2 relative mb-2">
       {/* View Article Button - top right */}
       <div className="absolute top-3 right-3">
         <Skeleton className="h-7 w-24 rounded-md" />

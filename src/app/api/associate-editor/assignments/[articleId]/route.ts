@@ -22,7 +22,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const associateCollections =
+    const authorCorrections =
       await db.query.associateEditorCorrections.findMany({
         where: eq(associateEditorCorrections.articleId, articleId),
         columns: {
@@ -43,7 +43,7 @@ export async function GET(
         },
       });
 
-    return NextResponse.json(associateCollections);
+    return NextResponse.json(authorCorrections);
   } catch (error) {
     console.error('Error querying assigned articles:', error);
     return NextResponse.json(

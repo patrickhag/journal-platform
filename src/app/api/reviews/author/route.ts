@@ -64,8 +64,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: Request) {
   try {
-    const { articleId, message, reviewerEmail, articleTitle } =
-      await req.json();
+    const { articleId, message, fileIds } = await req.json();
 
     const session = await auth();
     const authorName = session?.user?.name;
@@ -74,21 +73,54 @@ export async function POST(req: Request) {
       articleId,
       authorId: session?.user?.id,
       message,
+      fileIds,
     };
 
     await db.insert(authorRevisions).values(insertInfo);
 
-    // send email to reviewer
-    // await authorInformReviewer({
-    //   articleTitle: articleTitle as string,
-    //   articleLink: articleId,
-    //   authorName: authorName as string,
-    //   message,
-    //   reviewerEmail,
-    // });
+    const article = await db.query.articleSubmissions.findFirst({
+      columns: {
+        id: true,
+      },
+      with: {
+        metadata: {
+          columns: {
+            title: true,
+          },
+        },
+        editorAssignment: {
+          with: {
+            user: {
+              columns: {
+                email: true,
+                firstName: true,
+                lastName: true,
+              },
+            },
+          },
+        },
+      },
+      where: eq(articleSubmissions.id, articleId),
+    });
+
+    const staffEditorEmail = article?.editorAssignment.user.email;
+    const staffEditorName =
+      article?.editorAssignment.user.firstName +
+      ' ' +
+      article?.editorAssignment.user.lastName;
+
+    // send email to staff-editor about the author reply
+    await authorInformStaffEditor({
+      staffEditorName: staffEditorName as string,
+      articleTitle: article?.metadata.title as string,
+      articleLink: articleId,
+      authorName: authorName as string,
+      message,
+      staffEditorEmail: staffEditorEmail as string,
+    });
 
     return NextResponse.json(
-      { message: 'Reply sent successfully and reviewer informed' },
+      { message: 'Reply sent successfully and staff-editor informed' },
       { status: 201 }
     );
   } catch (error) {

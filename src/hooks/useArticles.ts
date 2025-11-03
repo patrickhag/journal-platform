@@ -1,5 +1,5 @@
 import { TManuscripts } from '@/schemas/reviewer';
-import { IArticle, MessageResponse } from '@/types';
+import { IArticle, MessageResponse, TAuthorCorrection } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
@@ -126,6 +126,18 @@ export const useUpdatePublishedArticle = (clearUrl: () => void) => {
         : error.message;
 
       toast.error(message || 'Failed to modify published article');
+    },
+  });
+};
+
+export const useGetAuthorCorrections = (articleId: string) => {
+  return useQuery({
+    queryKey: ['authorCorrections'],
+    queryFn: async () => {
+      const { data } = await axios.get<TAuthorCorrection[]>(
+        `/api/users/author-corrections/${articleId}`
+      );
+      return data;
     },
   });
 };

@@ -119,15 +119,12 @@ export const useGetAuthorsReviews = () => {
 };
 
 type TpayloadData = {
-  reviewerId: string;
   articleId: string;
   message: string;
-  reviewerEmail: string;
-  reviewerName: string;
-  articleTitle: string;
+  fileIds: string[];
 };
 
-export const useAuthorReplyReviewer = () => {
+export const useAuthorReplyStaffEditor = () => {
   return useMutation({
     mutationFn: async (data: TpayloadData) => {
       return axios.post<MessageResponse>(`/api/reviews/author`, data);
@@ -205,15 +202,16 @@ export const useSendAuthorRevision = (articleId: string) => {
 type ReRevisionType = {
   message: string;
   fileIds: string[];
-  reviewerId: string;
   reviewerName: string;
   reviewerEmail: string;
+  reviewId: string;
+  articleTitle: string;
 };
 
-export const useSendReRevision = (articleId: string) => {
+export const useSendReRevision = () => {
   return useMutation({
     mutationFn: async (data: ReRevisionType) => {
-      return axios.put<MessageResponse>(`/api/editor/${articleId}`, data);
+      return axios.put<MessageResponse>(`/api/editor/review/`, data);
     },
     onSuccess: ({ data }) => {
       if (data.message) {
@@ -510,7 +508,7 @@ export const useRequestRecorrection = (correctionId: string) => {
     },
     onSuccess: ({ message }) => {
       queryClient.invalidateQueries({
-        queryKey: ['associateEditorCollections'],
+        queryKey: ['associateEditorparticularAssignment'],
       });
       toast.success(message);
     },
@@ -519,7 +517,7 @@ export const useRequestRecorrection = (correctionId: string) => {
         ? error.response?.data.message
         : error.message;
 
-      toast.error(message || 'Failed to update issue');
+      toast.error(message || 'Failed to update status correction');
     },
   });
 };
