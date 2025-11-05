@@ -73,14 +73,17 @@ export const useAcceptReviewAssignment = () => {
   });
 };
 
-export const useGetReviewerAssignments = () => {
+export const useGetReviewerAssignments = (page = 1, limit = 10) => {
   return useQuery({
-    queryKey: ['reviewerAssignments'],
+    queryKey: ['reviewerAssignments', page, limit],
     queryFn: async () => {
-      const { data } = await axios.get(`/api/reviews/`);
-      const assignedArticles = data.assignedArticles as TReviewerAssignment;
-      const dueArticles = data.dueArticles as TReviewerAssignment;
-      return { assignedArticles, dueArticles };
+      const { data } = await axios.get(`/api/reviews/`, {
+        params: { page, limit },
+      });
+      const assignedArticles = data.assignedArticles as TReviewerAssignment[];
+      const dueArticles = data.dueArticles as TReviewerAssignment[];
+      const pagination = data.pagination;
+      return { assignedArticles, dueArticles, pagination };
     },
   });
 };
@@ -280,22 +283,26 @@ export const useSendInvitation = (articleId: string) => {
   });
 };
 
-export const useGetAllCompleted = () => {
+export const useGetAllCompleted = (page = 1, limit = 10) => {
   return useQuery({
-    queryKey: ['allRevisions'],
+    queryKey: ['allRevisions', page, limit],
     queryFn: async () => {
-      const { data } = await axios.get<PReview[]>(`/api/reviews/all`);
+      const { data } = await axios.get(`/api/reviews/all`, {
+        params: { page, limit },
+      });
       return data;
     },
   });
 };
 
-export const useGetReviewersInfo = () => {
+export const useGetReviewersInfo = (page = 1, limit = 10) => {
   return useQuery({
-    queryKey: ['reviewersInfo'],
+    queryKey: ['reviewersInfo', page, limit],
     queryFn: async () => {
-      const { data } = await axios.get<TReviewerInfo[]>(`/api/reviewers/all`);
-      return data || [];
+      const { data } = await axios.get(`/api/reviewers/all`, {
+        params: { page, limit },
+      });
+      return data || { data: [], pagination: {} };
     },
   });
 };

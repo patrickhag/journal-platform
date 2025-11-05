@@ -6,13 +6,17 @@ import { toast } from 'sonner';
 
 export const useGetUserArticles = (
   debouncedSearchQuery: string,
-  selectedStatus: string
+  selectedStatus: string,
+  page = 1,
+  limit = 10
 ) => {
   const fetchArticles = async () => {
     const response = await axios.get<TManuscripts>(`/api/articles/user`, {
       params: {
         searchQuery: debouncedSearchQuery,
         articleStatus: selectedStatus,
+        page,
+        limit,
       },
     });
 
@@ -23,7 +27,13 @@ export const useGetUserArticles = (
     return response.data;
   };
   return useQuery<TManuscripts, Error>({
-    queryKey: ['manuscripts', debouncedSearchQuery, selectedStatus],
+    queryKey: [
+      'manuscripts',
+      debouncedSearchQuery,
+      selectedStatus,
+      page,
+      limit,
+    ],
     queryFn: fetchArticles,
   });
 };
@@ -41,9 +51,11 @@ export const useGetFinalSubmissions = (articleId: string) => {
   });
 };
 
-export const useGetAcceptedArticles = () => {
-  const fetchArticles = async (): Promise<IArticle[]> => {
-    const response = await axios.get<IArticle[]>(`/api/articles`);
+export const useGetAcceptedArticles = (page = 1, limit = 10) => {
+  const fetchArticles = async () => {
+    const response = await axios.get(`/api/articles`, {
+      params: { page, limit },
+    });
 
     if (response.status !== 200) {
       throw new Error('Error occurred while fetching articles');
@@ -51,8 +63,8 @@ export const useGetAcceptedArticles = () => {
 
     return response.data;
   };
-  return useQuery<IArticle[], Error>({
-    queryKey: ['toBePublishedArticles'],
+  return useQuery({
+    queryKey: ['toBePublishedArticles', page, limit],
     queryFn: fetchArticles,
     refetchOnWindowFocus: false,
   });

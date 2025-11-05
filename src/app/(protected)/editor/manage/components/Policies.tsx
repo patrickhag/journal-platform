@@ -15,7 +15,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-} from '@/components/ui/form';
+} from '@/components/ui/file-upload';
 
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';

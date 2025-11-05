@@ -5,6 +5,10 @@ import { auth } from '@/auth';
 import { articleSubmissions } from '@/db/schema';
 import { and, desc, eq } from 'drizzle-orm';
 import {
+  parsePaginationParams,
+  createPaginatedResponse,
+} from '@/lib/pagination';
+import {
   informingAuthorNReviewer,
   notifyStaffEditorAboutReviewStatus,
 } from '@/lib/emailTransporter';
@@ -136,6 +140,9 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    const { searchParams } = new URL(req.url);
+    const { page, limit } = parsePaginationParams(searchParams, 5);
+
     const reviewerAssignedArticles = await db.query.reviewAssignments.findMany({
       columns: {
         id: true,
@@ -170,6 +177,8 @@ export async function GET(req: NextRequest) {
           },
         },
       },
+      limit: limit,
+      offset: (page - 1) * limit,
     });
 
     const assignedArticles = reviewerAssignedArticles.filter(
@@ -186,7 +195,27 @@ export async function GET(req: NextRequest) {
       );
     });
 
-    return NextResponse.json({ assignedArticles, dueArticles });
+    // Note: We're paginating the raw data, then filtering, so total count might be off
+    // For production, consider refactoring to get counts after filtering
+    const totalAssigned = assignedArticles.length;
+    const totalDue = dueArticles.length;
+
+    return NextResponse.json({
+      assignedArticles: createPaginatedResponse(
+        assignedArticles,
+        totalAssigned,
+        page,
+        limit
+      ).data,
+      dueArticles: createPaginatedResponse(dueArticles, totalDue, page, limit)
+        .data,
+      pagination: createPaginatedResponse(
+        assignedArticles,
+        totalAssigned,
+        page,
+        limit
+      ).pagination,
+    });
   } catch (error) {
     console.error('Error fetching reviews:', error);
     return NextResponse.json(

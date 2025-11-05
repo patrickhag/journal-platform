@@ -1,11 +1,29 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
 import { articleSubmissions, publishedArticles } from '@/db/schema';
-import { desc, eq, or } from 'drizzle-orm';
+import { desc, eq, or, count } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  parsePaginationParams,
+  createPaginatedResponse,
+} from '@/lib/pagination';
 
 export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+    const { page, limit } = parsePaginationParams(searchParams, 5);
+
+    // Get total count
+    const [{ total }] = await db
+      .select({ total: count() })
+      .from(publishedArticles)
+      .where(
+        or(
+          eq(publishedArticles.status, 'AWAITING_DECISION'),
+          eq(publishedArticles.status, 'PUBLISHED')
+        )
+      );
+
     const foundPublishedArticles = await db.query.publishedArticles.findMany({
       where: or(
         eq(publishedArticles.status, 'AWAITING_DECISION'),
@@ -53,9 +71,13 @@ export async function GET(req: NextRequest) {
           },
         },
       },
+      limit: limit,
+      offset: (page - 1) * limit,
     });
 
-    return NextResponse.json(foundPublishedArticles);
+    return NextResponse.json(
+      createPaginatedResponse(foundPublishedArticles, total, page, limit)
+    );
   } catch (error) {
     console.error('Error creating volume:', error);
     return NextResponse.json(

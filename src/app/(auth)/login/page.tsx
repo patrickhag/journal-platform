@@ -13,7 +13,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from '@/components/ui/file-upload';
 import { startTransition, useActionState, useCallback, useState } from 'react';
 import Image from 'next/image';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';

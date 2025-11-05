@@ -29,7 +29,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from '@/components/ui/file-upload';
 import { reviewSchema, ReviewFormData } from '@/schemas/reviewer';
 import { useCreateReview } from '@/hooks/useReviews';
 import Loader from '../Loader';

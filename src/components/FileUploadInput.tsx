@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Upload, FileText, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { FormLabel } from '@/components/ui/form';
+import { FormLabel } from '@/components/ui/file-upload';
 import { UseFormReturn } from 'react-hook-form';
 
 interface FileUploadInputProps {

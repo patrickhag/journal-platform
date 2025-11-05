@@ -2,8 +2,12 @@ import { auth } from '@/auth';
 import { db } from '@/db/db';
 import { reviewAssignments, userRoles } from '@/db/schema';
 import { remindReviewerAboutRevision } from '@/lib/emailTransporter';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, count } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  parsePaginationParams,
+  createPaginatedResponse,
+} from '@/lib/pagination';
 
 export async function GET(req: NextRequest) {
   try {
@@ -19,6 +23,15 @@ export async function GET(req: NextRequest) {
         { status: 401 }
       );
     }
+
+    const { searchParams } = new URL(req.url);
+    const { page, limit } = parsePaginationParams(searchParams, 5);
+
+    // Get total count
+    const [{ total }] = await db
+      .select({ total: count() })
+      .from(userRoles)
+      .where(eq(userRoles.role, 'REVIEWER'));
 
     const reviewers = await db.query.userRoles.findMany({
       where: eq(userRoles.role, 'REVIEWER'),
@@ -65,9 +78,13 @@ export async function GET(req: NextRequest) {
           },
         },
       },
+      limit: limit,
+      offset: (page - 1) * limit,
     });
 
-    return NextResponse.json(reviewers);
+    return NextResponse.json(
+      createPaginatedResponse(reviewers, total, page, limit)
+    );
   } catch (error) {
     console.error('Error creating volume:', error);
     return NextResponse.json(

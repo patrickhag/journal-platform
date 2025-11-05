@@ -4,11 +4,13 @@ import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import { MessageResponse, TCollections } from '@/types';
 
-export const useGetCollections = () => {
+export const useGetCollections = (page = 1, limit = 10) => {
   return useQuery({
-    queryKey: ['collections'],
+    queryKey: ['collections', page, limit],
     queryFn: async () => {
-      const { data } = await axios.get<TCollections[]>(`/api/collections`);
+      const { data } = await axios.get(`/api/collections`, {
+        params: { page, limit },
+      });
       return data;
     },
   });

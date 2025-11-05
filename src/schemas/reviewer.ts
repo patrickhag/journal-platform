@@ -94,6 +94,16 @@ export type TArticle = {
 export type TManuscripts = {
   userName: string;
   articles: TArticle[];
+  // Pagination fields (optional for backward compatibility)
+  data?: TArticle[];
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
 };
 
 export type ReviewFormData = z.infer<typeof reviewSchema>;

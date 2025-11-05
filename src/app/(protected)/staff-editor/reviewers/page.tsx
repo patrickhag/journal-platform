@@ -41,6 +41,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { UnAssignAlertDialog } from '../components/UnAssignReviewerDialog';
 import { RemindReviewersDialog } from '../components/RemindReviewersDialog';
 import AddReviewerSheetModal from '@/components/staff-editor/AddReviewerSheetModal';
+import { Pagination, PaginationInfo } from '@/components/ui/pagination';
 
 const ManageReviewers = () => {
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
@@ -48,7 +49,23 @@ const ManageReviewers = () => {
   const [userId, setUserId] = useState('');
   const [openNotificationDialog, setOpenNotificationDialog] = useState(false);
   const [openAddReviewerModal, setOpenAddReviewerModal] = useState(false);
-  const { data: reviewersInfo = [], isPending } = useGetReviewersInfo();
+  const [page, setPage] = useState(1);
+  const limit = 5;
+  const { data: reviewersData, isPending } = useGetReviewersInfo(page, limit);
+
+  const reviewersDataRaw = reviewersData?.data || reviewersData;
+  // Ensure reviewersInfo is always an array
+  const reviewersInfo = Array.isArray(reviewersDataRaw) ? reviewersDataRaw : [];
+  const pagination = reviewersData?.pagination;
+
+  // Ensure pagination exists and has valid values before rendering
+  const hasValidPagination =
+    pagination &&
+    typeof pagination.totalPages === 'number' &&
+    pagination.totalPages > 0 &&
+    typeof pagination.page === 'number' &&
+    typeof pagination.total === 'number' &&
+    typeof pagination.limit === 'number';
 
   return (
     <>
@@ -70,9 +87,7 @@ const ManageReviewers = () => {
         {/* Reviewers Table */}
         <Card>
           <CardHeader>
-            <CardTitle>
-              Reviewers {`(${reviewersInfo ? reviewersInfo?.length : 'N/A'})`}
-            </CardTitle>
+            <CardTitle>Reviewers {`(${reviewersInfo.length})`}</CardTitle>
 
             <CardDescription>
               Manage reviewer accounts and track their assignments
@@ -99,42 +114,48 @@ const ManageReviewers = () => {
                     </TableCell>
                   </TableRow>
                 )}
-                {reviewersInfo?.map((reviewer) => {
-                  const name = `${reviewer.user.prefix ?? ''} ${reviewer.user.firstName} ${reviewer.user.lastName}`;
-                  const underReviewAssignments =
-                    reviewer.user.reviewAssignments.filter(
-                      (review) =>
-                        review.article.articleStatus === 'UNDER REVIEW'
-                    );
-                  const reviews = reviewer.user.reviews;
+                {reviewersInfo.map((reviewer) => {
+                  const name =
+                    `${reviewer.user?.prefix ?? ''} ${reviewer.user?.firstName ?? ''} ${reviewer.user?.lastName ?? ''}`.trim();
+                  const reviewAssignments =
+                    reviewer.user?.reviewAssignments || [];
+                  const underReviewAssignments = Array.isArray(
+                    reviewAssignments
+                  )
+                    ? reviewAssignments.filter(
+                        (review) =>
+                          review?.article?.articleStatus === 'UNDER REVIEW'
+                      )
+                    : [];
+                  const reviews = reviewer.user?.reviews || [];
                   return (
                     <TableRow key={reviewer.id}>
                       <TableCell>
                         <div>
                           <Link
                             className="font-medium hover:underline"
-                            href={`/users/${reviewer.user.id}`}
+                            href={`/users/${reviewer.user?.id}`}
                           >
                             {name}
                           </Link>
                           <div className="text-sm text-gray-500 flex items-center">
                             <Mail className="mr-1 h-3 w-3" />
-                            {reviewer.user.email}
+                            {reviewer.user?.email}
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center text-sm">
                           <Building className="mr-2 h-4 w-4 text-gray-400" />
-                          {reviewer.user.affiliation}
+                          {reviewer.user?.affiliation || 'N/A'}
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-1 max-w-xs">
-                          {reviewer.user.expertise
+                          {reviewer.user?.expertise
                             ?.split(',')
                             .slice(0, 2)
-                            .map((exp, index) => (
+                            .map((exp: string, index: number) => (
                               <Badge
                                 key={index}
                                 variant="secondary"
@@ -143,7 +164,7 @@ const ManageReviewers = () => {
                                 {exp.trim()}
                               </Badge>
                             ))}
-                          {reviewer.user.expertise &&
+                          {reviewer.user?.expertise &&
                             reviewer.user.expertise.split(',').length > 2 && (
                               <Badge variant="outline" className="text-xs">
                                 +{reviewer.user.expertise.split(',').length - 2}
@@ -153,7 +174,7 @@ const ManageReviewers = () => {
                       </TableCell>
                       <TableCell>
                         <div className="text-center font-semibold">
-                          {reviews.length}
+                          {Array.isArray(reviews) ? reviews.length : 0}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -166,12 +187,14 @@ const ManageReviewers = () => {
                                 <div key={assignment.id} className="text-xs">
                                   <div className="flex items-center justify-between">
                                     <div className="font-medium truncate flex-1">
-                                      {assignment.article.metadata.title}
+                                      {assignment.article?.metadata?.title ||
+                                        'Untitled'}
                                     </div>
                                   </div>
                                   <div>
                                     <Badge className="bg-yellow-50 text-yellow-600 text-xs">
-                                      {assignment.article.articleStatus}
+                                      {assignment.article?.articleStatus ||
+                                        'Unknown'}
                                     </Badge>
                                   </div>
                                 </div>
@@ -212,7 +235,7 @@ const ManageReviewers = () => {
                                   <h4 className="text-sm font-medium text-gray-900">
                                     Current Assignments
                                   </h4>
-                                  <ScrollArea className="h-[5500px] pr-4">
+                                  <ScrollArea className="h-[550px] pr-4">
                                     <div className="space-y-3">
                                       {underReviewAssignments.map(
                                         (assignment) => (
@@ -223,32 +246,35 @@ const ManageReviewers = () => {
                                             <div className="flex items-start justify-between gap-2">
                                               <div className="flex-1">
                                                 <Link
-                                                  href={`/articles/${assignment.article.id}`}
+                                                  href={`/articles/${assignment.article?.id}`}
                                                   target="_blank"
                                                   className="hover:underline"
                                                 >
                                                   <h5 className="font-medium text-sm line-clamp-1">
-                                                    {
-                                                      assignment.article
-                                                        .metadata.title
-                                                    }
+                                                    {assignment.article
+                                                      ?.metadata?.title ||
+                                                      'Untitled'}
                                                   </h5>
                                                 </Link>
                                                 <div className="flex items-center mt-2 gap-2">
                                                   <span className="text-xs text-gray-500">
                                                     Due:{' '}
-                                                    {
-                                                      assignment.dueDate as unknown as string
-                                                    }
+                                                    {assignment.dueDate
+                                                      ? new Date(
+                                                          assignment.dueDate as string
+                                                        ).toLocaleDateString()
+                                                      : 'N/A'}
                                                   </span>
                                                   <span className="text-xs text-gray-500">
                                                     •
                                                   </span>
                                                   <div className="text-xs text-gray-500">
                                                     Assigned:{' '}
-                                                    {
-                                                      assignment.assignedDate as unknown as string
-                                                    }
+                                                    {assignment.assignedDate
+                                                      ? new Date(
+                                                          assignment.assignedDate as string
+                                                        ).toLocaleDateString()
+                                                      : 'N/A'}
                                                   </div>
                                                 </div>
                                               </div>
@@ -314,7 +340,7 @@ const ManageReviewers = () => {
                   );
                 })}
               </TableBody>
-              {!isPending && reviewersInfo?.length === 0 && (
+              {!isPending && reviewersInfo.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6}>
                     <div className="py-4">No reviewers found.</div>
@@ -322,6 +348,21 @@ const ManageReviewers = () => {
                 </TableRow>
               )}
             </Table>
+            {hasValidPagination && pagination.total > 5 && (
+              <div className="mt-6 flex items-center justify-between px-6 pb-6">
+                <PaginationInfo
+                  currentPage={pagination.page}
+                  totalPages={pagination.totalPages}
+                  totalItems={pagination.total}
+                  itemsPerPage={pagination.limit}
+                />
+                <Pagination
+                  page={pagination.page}
+                  totalPages={pagination.totalPages}
+                  onPageChange={setPage}
+                />
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

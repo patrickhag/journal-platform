@@ -5,11 +5,13 @@ import axios, { AxiosError } from 'axios';
 import { Dispatch, SetStateAction } from 'react';
 import { toast } from 'sonner';
 
-export const useGetIssues = () => {
+export const useGetIssues = (page = 1, limit = 10) => {
   return useQuery({
-    queryKey: ['issues'],
+    queryKey: ['issues', page, limit],
     queryFn: async () => {
-      const { data } = await axios.get<Issue[]>(`/api/issues`);
+      const { data } = await axios.get(`/api/issues`, {
+        params: { page, limit },
+      });
       return data;
     },
   });
