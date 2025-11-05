@@ -16,7 +16,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from '@/components/ui/file-upload';
 import { Textarea } from '@/components/ui/textarea';
 import { ProofFormValues, proofSchema } from '@/lib/schemas';
 import { useCreateProof } from '@/hooks/useProofs';

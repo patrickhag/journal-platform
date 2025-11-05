@@ -19,7 +19,7 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from '@/components/ui/form';
+} from '@/components/ui/file-upload';
 import { useGetIssues } from '@/hooks/usePublishArticle';
 
 import { DragAndDropFileInput } from '@/components/upload/FileInput';

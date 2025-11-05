@@ -9,7 +9,7 @@ import {
   FormField,
   FormItem,
   FormMessage,
-} from '@/components/ui/form';
+} from '@/components/ui/file-upload';
 import { CloudUpload } from 'lucide-react';
 import { FileInput, FileUploader } from '@/components/ui/file-upload';
 import { useUploadArticleFiles } from '@/hooks/useUploadFiles';

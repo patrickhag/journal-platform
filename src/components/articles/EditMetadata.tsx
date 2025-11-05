@@ -23,7 +23,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from '@/components/ui/file-upload';
 import { useRouter } from 'next/navigation';
 import { useUpdateMetadata } from '@/hooks/useUpdateMetadata';
 import Loader from '../Loader';

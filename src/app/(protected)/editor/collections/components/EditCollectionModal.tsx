@@ -26,7 +26,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from '@/components/ui/file-upload';
 import { CollectionFormValues, collectionSchema } from '@/lib/schemas';
 import { useEditCollection } from '@/hooks/useCollections';
 import Loader from '@/components/Loader';

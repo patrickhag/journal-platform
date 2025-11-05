@@ -7,10 +7,20 @@ import {
 } from '@/db/schema';
 import { NextRequest, NextResponse } from 'next/server';
 import { slugify } from '@/lib/utils';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, count } from 'drizzle-orm';
+import {
+  parsePaginationParams,
+  createPaginatedResponse,
+} from '@/lib/pagination';
 
 export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+    const { page, limit } = parsePaginationParams(searchParams, 5);
+
+    // Get total count
+    const [{ total }] = await db.select({ total: count() }).from(collections);
+
     const allCollections = await db.query.collections.findMany({
       with: {
         collectionArticles: {
@@ -40,9 +50,14 @@ export async function GET(req: NextRequest) {
           },
         },
       },
+      limit: limit,
+      offset: (page - 1) * limit,
     });
 
-    return NextResponse.json(allCollections, { status: 200 });
+    return NextResponse.json(
+      createPaginatedResponse(allCollections, total, page, limit),
+      { status: 200 }
+    );
   } catch (error) {
     console.error('Error fetching collections:', error);
     return NextResponse.json(

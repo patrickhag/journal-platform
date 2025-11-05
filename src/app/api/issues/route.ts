@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
 import { articleSubmissions, Issues, issues } from '@/db/schema';
 import { auth } from '@/auth';
-import { eq } from 'drizzle-orm';
+import { eq, count } from 'drizzle-orm';
+import {
+  parsePaginationParams,
+  createPaginatedResponse,
+} from '@/lib/pagination';
 
 export async function GET(req: NextRequest) {
   try {
@@ -13,6 +17,12 @@ export async function GET(req: NextRequest) {
     ) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { searchParams } = new URL(req.url);
+    const { page, limit } = parsePaginationParams(searchParams, 5);
+
+    // Get total count
+    const [{ total }] = await db.select({ total: count() }).from(issues);
 
     const allIssues = await db.query.issues.findMany({
       columns: {
@@ -51,9 +61,13 @@ export async function GET(req: NextRequest) {
           },
         },
       },
+      limit: limit,
+      offset: (page - 1) * limit,
     });
 
-    return NextResponse.json(allIssues);
+    return NextResponse.json(
+      createPaginatedResponse(allIssues, total, page, limit)
+    );
   } catch (error) {
     console.error('Error creating volume:', error);
     return NextResponse.json(

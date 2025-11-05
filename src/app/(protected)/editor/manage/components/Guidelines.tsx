@@ -20,7 +20,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-} from '@/components/ui/form';
+} from '@/components/ui/file-upload';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { useCreateManuals, useGetManuals } from '@/hooks/useSettings';
 import Loader from '@/components/Loader';

@@ -20,7 +20,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
+} from '../ui/file-upload';
 import { Input } from '../ui/input';
 import { metadataSchema } from './ContributorsForm';
 import updateArticleMeta from '@/actions/updateArticleMeta';

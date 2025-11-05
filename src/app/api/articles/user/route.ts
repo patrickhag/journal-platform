@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
 import { articleSubmissions } from '@/db/schema';
-import { and, eq, desc } from 'drizzle-orm';
+import { and, eq, desc, count } from 'drizzle-orm';
 import { ARTICLE_STATUS } from '@/lib/consts';
 import { auth } from '@/auth';
+import {
+  parsePaginationParams,
+  createPaginatedResponse,
+  paginateArray,
+} from '@/lib/pagination';
 
 export async function GET(req: NextRequest) {
   try {
@@ -18,6 +23,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const searchQuery = searchParams.get('searchQuery')?.trim();
     const rawStatus = searchParams.get('articleStatus');
+    const { page, limit } = parsePaginationParams(searchParams, 5);
 
     const articleStatus = ARTICLE_STATUS.includes(rawStatus as any)
       ? (rawStatus as (typeof ARTICLE_STATUS)[number])
@@ -66,7 +72,24 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({ articles, userName: session?.user.name });
+    // Apply pagination after filtering
+    const { data: paginatedArticles, total } = paginateArray(
+      articles,
+      page,
+      limit
+    );
+
+    const paginatedResponse = createPaginatedResponse(
+      paginatedArticles,
+      total,
+      page,
+      limit
+    );
+
+    return NextResponse.json({
+      ...paginatedResponse,
+      userName: session?.user.name,
+    });
   } catch (error) {
     console.error('Error fetching articles:', error);
     return NextResponse.json(

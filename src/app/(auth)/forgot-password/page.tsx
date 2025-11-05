@@ -11,7 +11,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from '@/components/ui/file-upload';
 import { Input } from '@/components/ui/input';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon, Eye, EyeClosedIcon } from 'lucide-react';
