@@ -18,8 +18,8 @@ const Page = async ({
       </Card>
       <Paginator
         query={await searchParams}
-        nextLink="/articles/new/reviewer"
-        backLink="/articles/new/attach-files"
+        nextLink="/author/new/reviewer"
+        backLink="/author/new/attach-files"
       ></Paginator>
     </>
   );

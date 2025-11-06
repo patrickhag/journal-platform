@@ -61,9 +61,34 @@ const Sidebar = ({ userRole }: SidebarProps) => {
         return [
           { href: '/editor/dashboard', label: 'Overview', icon: BarChart3 },
           {
-            href: '/editor/articles',
+            href: '/editor/manage-submissions',
             label: 'Manage Submissions',
             icon: FileText,
+          },
+          {
+            href: '/editor/manage-under-reviews',
+            label: 'Manage Under Reviews',
+            icon: Hourglass,
+          },
+          {
+            href: '/editor/manage-corrections',
+            label: 'Manage Corrections',
+            icon: MessageSquare,
+          },
+          {
+            href: '/editor/manage-under-press',
+            label: 'Manage Under Press',
+            icon: Newspaper,
+          },
+          {
+            href: '/editor/approve-publish',
+            label: 'Approve & Publish',
+            icon: ClipboardCheck,
+          },
+          {
+            href: '/editor/manage-published',
+            label: 'Manage Published',
+            icon: CheckCircle,
           },
           { href: '/editor/users', label: 'Manage Users', icon: Users },
           {
@@ -86,11 +111,7 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             label: 'Site Settings',
             icon: FileCog,
           },
-          {
-            href: '/editor/published',
-            label: 'Published Manuscripts',
-            icon: ClipboardCheck,
-          },
+
           {
             href: '/editor/inquiries',
             label: 'Manage Inquiries',
@@ -136,13 +157,28 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             icon: CheckSquare,
           },
           {
+            href: '/staff-editor/under-review',
+            label: 'Under Review',
+            icon: Hourglass,
+          },
+          {
+            href: '/staff-editor/corrections',
+            label: 'Corrections',
+            icon: MessageSquare,
+          },
+          {
+            href: '/staff-editor/under-press',
+            label: 'Under Press',
+            icon: Newspaper,
+          },
+          {
             href: '/staff-editor/reviewers',
             label: 'Manage Reviewers',
             icon: Users,
           },
           {
             href: '/staff-editor/manage-editors',
-            label: 'Manage Editors',
+            label: 'Manage Associate Editors',
             icon: ShieldUser,
           },
           {

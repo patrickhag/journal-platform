@@ -9,19 +9,19 @@ import { AssignmentCardSkeleton } from '../components/AssignmentCardSkeleton';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function AssociateEditorDashboard() {
+  const [selectedStatus] = useState('SUBMITTED');
   const { data: associateEditorsAssigments = [], isPending } =
-    useGetAssignedStaffEditor();
+    useGetAssignedStaffEditor(selectedStatus);
 
   const router = useRouter();
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">
-          Current Assignments
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900">My Assignments</h1>
       </div>
 
       <Card>
@@ -43,7 +43,7 @@ export default function AssociateEditorDashboard() {
             )}
             {!isPending && associateEditorsAssigments?.length === 0 && (
               <p className="text-sm text-gray-500">
-                You have no assigned submissions.
+                You have no assigned assignments with "submitted" status.
               </p>
             )}
             {Array.isArray(associateEditorsAssigments) &&
@@ -92,21 +92,6 @@ export default function AssociateEditorDashboard() {
                       </div>
 
                       <div className="flex space-x-2 ml-4">
-                        {assignment.articleSubmission.reviews?.length > 0 && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="bg-amber-600 hover:bg-amber-700 text-white hover:text-white"
-                            onClick={() =>
-                              router.push(
-                                `/articles/reviews/${assignment.articleSubmission.id}`
-                              )
-                            }
-                          >
-                            <Hourglass className="mr-1 h-3 w-3" />
-                            View Reviews
-                          </Button>
-                        )}
                         <Link
                           href={`/articles/${assignment.articleSubmission.id}`}
                         >

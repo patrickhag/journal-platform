@@ -27,6 +27,7 @@ export default async function RecentArticles() {
       id: articleSubmissions.id,
     })
     .from(articleSubmissions)
+    .where(eq(articleSubmissions.articleStatus, 'SUBMITTED'))
     .leftJoin(users, eq(articleSubmissions.userId, users.id))
     .leftJoin(metadata, eq(metadata.articleId, articleSubmissions.id))
     .orderBy(desc(articleSubmissions.createdAt))
@@ -39,7 +40,7 @@ export default async function RecentArticles() {
           <CardTitle>Recent Submissions</CardTitle>
         </CardHeader>
         <div className="flex items-center gap-2">
-          <Link href="/editor/articles">
+          <Link href="/editor/manage-submissions">
             <Button variant={'link'} className="text-green-500">
               View all
             </Button>

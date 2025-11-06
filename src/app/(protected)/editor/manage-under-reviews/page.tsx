@@ -8,10 +8,11 @@ import {
 } from '@/components/ui/card';
 import { db } from '@/db/db';
 import { articleSubmissions } from '@/db/schema';
-import { desc } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 
 export default async function ArticlesPage() {
   const articles = await db.query.articleSubmissions.findMany({
+    where: eq(articleSubmissions.articleStatus, 'UNDER REVIEW'),
     columns: {
       section: true,
       articleStatus: true,
@@ -41,15 +42,16 @@ export default async function ArticlesPage() {
           <CardHeader>
             <div>
               <h2 className="text-2xl font-bold text-gray-900">
-                Articles Management
+                Manage Under Review Manuscripts
               </h2>
             </div>
             <CardDescription className="mb-6">
-              Manage articles and view their statuses
+              Manage manuscripts with under review status.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <ArticlesTable
+              isNotSubmission={true}
               data={articles.map((article) => ({
                 id: article.id,
                 section: article.section,

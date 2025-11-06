@@ -48,7 +48,6 @@ export async function GET(req: NextRequest) {
         },
         editorActions: {
           columns: {
-            editorfileId: true,
             decision: true,
             message: true,
           },

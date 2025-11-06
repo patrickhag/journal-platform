@@ -246,6 +246,13 @@ export const ARTICLE_STATUS = [
   'UNDER PRESS',
 ] as const;
 
+export const UNDER_REVIEW_STATUS = [
+  'Minor Correction',
+  'Major Correction',
+  'Accepted',
+  'Rejected',
+] as const;
+
 export type ArticleStatus = (typeof ARTICLE_STATUS)[number];
 
 export const articleFilters = ['My articles'] as const;

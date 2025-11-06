@@ -50,7 +50,7 @@ const Page = () => {
         setRedirectCountdown((prev) => {
           if (prev && prev > 1) return prev - 1;
           if (prev === 1) {
-            router.push('/submissions');
+            router.push('/author/submissions');
           }
           return prev;
         });
@@ -70,7 +70,7 @@ const Page = () => {
 
   const others = searchParams.toString();
   if (!others) {
-    redirect('/dashboard/start', RedirectType.push);
+    redirect('/author/new/start', RedirectType.push);
   }
 
   const metadataValidations = zu.safeParse({
@@ -337,7 +337,7 @@ const Page = () => {
         </div>
         <div className="mt-6">
           <Paginator
-            backLink={`/articles/new/reviewer?${searchParams.toString()}`}
+            backLink={`/author/new/reviewer?${searchParams.toString()}`}
           >
             <Button
               disabled={isPending}

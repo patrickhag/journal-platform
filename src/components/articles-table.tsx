@@ -46,7 +46,7 @@ import {
 import { StatusBadge } from './status-badge';
 
 import { Checkbox } from './ui/checkbox';
-import { ARTICLE_STATUS } from '@/lib/consts';
+import { UNDER_REVIEW_STATUS } from '@/lib/consts';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -74,9 +74,15 @@ type Article = {
 
 interface ArticlesTableProps {
   data: Article[];
+  isNotSubmission?: boolean;
+  isPublishedPage?: boolean;
 }
 
-export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
+export const ArticlesTable: FC<ArticlesTableProps> = ({
+  data,
+  isNotSubmission = false,
+  isPublishedPage = false,
+}) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -219,7 +225,13 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
           variant="outline"
           size="sm"
           className="hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-colors"
-          onClick={() => router.push('/articles/' + String(row.original.id))}
+          onClick={() =>
+            router.push(
+              isNotSubmission
+                ? '/articles/reviews/' + String(row.original.id)
+                : '/articles/' + String(row.original.id)
+            )
+          }
         >
           <Eye className="h-4 w-4" />
           View
@@ -290,8 +302,8 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
       <div className="bg-gray-50 rounded-lg border p-4 space-y-4">
         <div className="flex justify-between items-center">
           {/* Search and Filter Row */}
-          <div className="flex items-center gap-4 flex-wrap">
-            <div className="relative flex-1 max-w-sm">
+          <div className="flex gap-4 w-1/2">
+            <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Search articles by title, section, or owner..."
@@ -300,34 +312,6 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
                 className="pl-10 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
-
-            <Select
-              value={
-                (columnFilters.find((filter) => filter.id === 'status')
-                  ?.value as string) ?? ''
-              }
-              onValueChange={(value) => {
-                setColumnFilters((prev) =>
-                  value
-                    ? [
-                        ...prev.filter((f) => f.id !== 'status'),
-                        { id: 'status', value },
-                      ]
-                    : prev.filter((f) => f.id !== 'status')
-                );
-              }}
-            >
-              <SelectTrigger className="w-[180px] bg-white border-gray-200">
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                {ARTICLE_STATUS.map((article) => (
-                  <SelectItem key={article} value={article}>
-                    {article}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
 
             <Button
               variant="outline"
@@ -349,7 +333,7 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({ data }) => {
         </div>
         {/* Action Buttons Row */}
 
-        {hasSelected && (
+        {hasSelected && isPublishedPage && (
           <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
             <div className="flex items-center gap-2 text-blue-700">
               <CheckCircle className="h-4 w-4" />

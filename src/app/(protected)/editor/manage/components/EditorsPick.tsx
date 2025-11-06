@@ -31,10 +31,10 @@ export default function EditorsPick() {
             <CardDescription>
               Select articles in{' '}
               <Link
-                href={'/editor/articles/'}
+                href={'/editor/manage-published'}
                 className="text-blue-600 hover:underline"
               >
-                manage submissions
+                published articles
               </Link>{' '}
               to be featured on the journal&apos;s homepage
             </CardDescription>
@@ -52,7 +52,9 @@ export default function EditorsPick() {
                   className="flex items-start mb-6 pb-6 border-b last:border-0"
                 >
                   <div className="flex-1 space-y-1">
-                    <h3 className="font-medium">{article.metadata.title}</h3>
+                    <Link href={`/articles/${article.id}`}>
+                      <h3 className="font-medium">{article.metadata.title}</h3>
+                    </Link>
                     <div className="flex items-center">
                       <p className="text-sm font-medium">{article.section}</p>
                       <Dot />

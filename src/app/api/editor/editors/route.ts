@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import { db } from '@/db/db';
 import { articleSubmissions, editorAssignment, userRoles } from '@/db/schema';
 import { notifyStaffEditor } from '@/lib/emailTransporter';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -52,6 +52,21 @@ export async function POST(req: NextRequest) {
       !(session?.user.role === 'ADMIN' || session?.user.role === 'CHIEF_EDITOR')
     ) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // check if the editor is already assigned to the article
+    const isEditorAlreadyAssigned = await db.query.editorAssignment.findFirst({
+      where: and(
+        eq(editorAssignment.userId, userId),
+        eq(editorAssignment.articleId, articleId)
+      ),
+    });
+
+    if (isEditorAlreadyAssigned) {
+      return NextResponse.json(
+        { message: 'Editor has already been assigned to this article.' },
+        { status: 409 }
+      );
     }
 
     await db

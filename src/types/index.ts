@@ -220,9 +220,6 @@ export type TAssociateEditorAssignment = {
       title: string;
       prefix: string;
     };
-    reviews: {
-      id: true;
-    }[];
   };
 };
 

@@ -16,20 +16,22 @@ export async function POST(req: Request) {
     const session = await auth();
     const userId = session?.user?.id || '';
 
-    const hasReviewStatus = await db.query.reviewAssignments.findFirst({
-      where: eq(reviewAssignments.userId, userId),
+    const hasReviewStatus = await db.query.reviews.findFirst({
+      where: and(eq(reviews.userId, userId), eq(reviews.articleId, articleId)),
       columns: {
         id: true,
         status: true,
       },
     });
 
-    if (hasReviewStatus && hasReviewStatus.status === 'ACCEPTED') {
+    // CHECK IF THE REVIEW HAS BEEN ALREADY SUBMITTED AND ACCEPTED
+    if (hasReviewStatus && hasReviewStatus.status === 'Accepted') {
       return NextResponse.json(
-        { message: 'Review has been already submitted and accepted' },
+        { message: "You've already submitted a review for this manuscript" },
         { status: 400 }
       );
     }
+
     await db.insert(reviews).values({
       message: message,
       articleId: articleId,
@@ -38,7 +40,7 @@ export async function POST(req: Request) {
       userId,
     });
 
-    if (status === 'Major Collection' || status === 'Minor Collection') {
+    if (status === 'Major Correction' || status === 'Minor Correction') {
       await db
         .update(articleSubmissions)
         .set({ articleStatus: 'CORRECTION' })
@@ -92,15 +94,14 @@ export async function POST(req: Request) {
     });
 
     // send email to staff-editor also
-    if (status === 'Accepted' || status === 'Rejected') {
-      await notifyStaffEditorAboutReviewStatus({
-        articleTitle: articleTitle as string,
-        authorNames: authorName,
-        staffEditorEmail: staffEditorEmail as string,
-        articleId: article?.id as string,
-        status: status,
-      });
-    }
+
+    await notifyStaffEditorAboutReviewStatus({
+      articleTitle: articleTitle as string,
+      authorNames: authorName,
+      staffEditorEmail: staffEditorEmail as string,
+      articleId: article?.id as string,
+      status: status,
+    });
 
     // SEND IN-APP NOTIFICATION TO THE AUTHOR
     await db.insert(notifications).values({

@@ -48,7 +48,7 @@ export default function ShowNav({ isOpen = false }: { isOpen: boolean }) {
       </Link>
 
       <Link
-        href="/editor/articles"
+        href="/editor/dashboard"
         className={cn(
           pathname.toLowerCase().split('/').includes('articles')
             ? 'text-gray-700 bg-gray-100 rounded-md px-2.5 py-1.5'

@@ -7,12 +7,18 @@ import axios, { AxiosError } from 'axios';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-export const useGetAssignedStaffEditor = () => {
+export const useGetAssignedStaffEditor = (status: string) => {
   return useQuery({
-    queryKey: ['associateEditorAssignments'],
+    queryKey: ['associateEditorAssignments', status],
     queryFn: async () => {
-      const { data } =
-        await axios.get<TAssociateEditorAssignment[]>(`/api/staff-editor`);
+      const { data } = await axios.get<TAssociateEditorAssignment[]>(
+        `/api/staff-editor`,
+        {
+          params: {
+            articleStatus: status,
+          },
+        }
+      );
       return data;
     },
   });

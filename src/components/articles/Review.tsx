@@ -55,8 +55,8 @@ export default function ReviewModal({
   const fileIds = files.map((f) => f.publicId);
 
   const reviewStatus = [
-    'Major Collection',
-    'Minor Collection',
+    'Minor Correction',
+    'Major Correction',
     'Accepted',
     'Rejected',
   ];
