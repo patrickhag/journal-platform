@@ -71,7 +71,7 @@ export default function Dashboard() {
           asChild
           className="bg-[#212c9e] hover:bg-[#1A237E] whitespace-nowrap"
         >
-          <Link href="/author/article/new/start">
+          <Link href="/author/new-manuscript">
             <PlusCircle className="w-4 h-4 mr-2" />
             Submit New Article
           </Link>

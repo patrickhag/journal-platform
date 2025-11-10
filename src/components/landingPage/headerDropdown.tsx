@@ -44,7 +44,7 @@ export default function HeaderDropdown({
 
   return (
     <div className="flex items-center gap-4">
-      <Link href="/author/new/start">
+      <Link href="/author/new-manuscript">
         <Button className="text-white px-3 py-2 rounded bg-[#212c9e] hover:bg-[#1A237E]">
           Submit your research
         </Button>

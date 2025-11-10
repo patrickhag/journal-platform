@@ -46,9 +46,11 @@ function ArticleCard({ article }: { article: TArticle }) {
             <div className="flex items-start justify-between">
               {/* Left Section: Title, Dates, Status */}
               <div className="flex-1">
-                <h3 className="font-semibold text-lg text-gray-900 mb-2 line-clamp-1">
-                  {transformedArticle.title}
-                </h3>
+                <Link href={`/articles/${transformedArticle.id}`}>
+                  <h3 className="font-semibold text-lg text-gray-900 mb-2 line-clamp-1">
+                    {transformedArticle.title}
+                  </h3>
+                </Link>
 
                 <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
                   <span>

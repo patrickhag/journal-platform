@@ -40,7 +40,7 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             icon: FileText,
           },
           {
-            href: '/author/new/start',
+            href: '/author/new-manuscript',
             label: 'New Submission',
             icon: PlusCircle,
           },
@@ -195,7 +195,7 @@ const Sidebar = ({ userRole }: SidebarProps) => {
   const menuItems = getMenuItems();
 
   return (
-    <div className="h-full bg-gray-50 border-r p-4">
+    <div className="h-full bg-gray-50 border-r p-4 overflow-y-auto">
       <nav className="space-y-2">
         {menuItems.map((item) => {
           const isActive =

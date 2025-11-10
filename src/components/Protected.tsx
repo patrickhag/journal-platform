@@ -40,8 +40,7 @@ export default async function Protected({
   const pathname = headersList.get('x-pathname') || '';
 
   if (!session?.user) {
-    // Special message for /author/new/start
-    if (pathname === '/author/new/start') {
+    if (pathname === '/author/new-manuscript') {
       return (
         <div className="grid place-items-center h-[calc(100vh-4rem)]">
           <div className="text-center space-y-4">
@@ -92,8 +91,7 @@ export default async function Protected({
     const redirectRoute = getRedirectRoute(role);
     const roleDisplayName = getRoleDisplayName(role);
 
-    // Special message for /author/new/start
-    if (pathname === '/author/new/start') {
+    if (pathname === '/author/new-manuscript') {
       return (
         <div className="grid place-items-center h-[calc(100vh-4rem)]">
           <div className="text-center space-y-6 max-w-md mx-auto p-6">

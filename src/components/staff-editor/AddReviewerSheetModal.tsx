@@ -73,19 +73,6 @@ export default function AddReviewerSheetModal({
           >
             <FormField
               control={form.control}
-              name="prefix"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Prefix</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., Dr., Prof., etc." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
               name="names"
               render={({ field }) => (
                 <FormItem>

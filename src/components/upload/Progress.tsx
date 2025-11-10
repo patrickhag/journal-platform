@@ -1,58 +1,94 @@
 'use client';
-import { Check } from 'lucide-react';
-import { usePathname } from 'next/navigation';
-import React from 'react';
+
+import { usePathname, useSearchParams } from 'next/navigation';
+import React, { useMemo } from 'react';
 import { Card } from '@/components/ui/card';
+import { Check } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const journalKeys = [
-  { page: 'start', title: 'Start' },
-  { page: 'attach-files', title: 'Attach files' },
-  { page: 'meta', title: 'Meta data' },
-  { page: 'reviewer', title: 'Reviewers' },
-  { page: 'final', title: 'Final submit' },
+  { id: 'start', page: 'start', title: 'Start' },
+  { id: 'attach-files', page: 'attach-files', title: 'Attach files' },
+  { id: 'meta', page: 'meta', title: 'Meta data' },
+  { id: 'reviewer', page: 'reviewer', title: 'Reviewers' },
+  { id: 'final', page: 'final', title: 'Final submit' },
 ];
 
 export const ProgressLine = () => {
   const pathname = usePathname();
-  const page = pathname.split('/').at(-1) ?? 'start';
-  const currentStepIndex = journalKeys.findIndex((k) => k.page === page);
+  const params = useSearchParams();
+  const pageSegment = pathname.split('/').at(-1) ?? 'start';
+  const isNewManuscriptFlow = pageSegment === 'new-manuscript';
+
+  const wizardCurrentStepParam = params.get('currentStep');
+  const wizardCurrentStepId = journalKeys.some(
+    (key) => key.id === wizardCurrentStepParam
+  )
+    ? (wizardCurrentStepParam as string)
+    : journalKeys[0].id;
+  const rawCompleted = useMemo(() => params.get('completedSteps'), [params]);
+  const completedWizardSteps = useMemo(() => {
+    if (!rawCompleted) return new Set<string>();
+    const validIds = rawCompleted
+      .split(',')
+      .map((value) => value.trim())
+      .filter((value) => journalKeys.some((key) => key.id === value));
+    return new Set(validIds);
+  }, [rawCompleted]);
+
+  const defaultCurrentIndex = useMemo(() => {
+    const normalizedPage =
+      pageSegment === 'new-manuscript' ? 'start' : pageSegment;
+    const foundIndex = journalKeys.findIndex(
+      (key) => key.page === normalizedPage
+    );
+    return foundIndex === -1 ? 0 : foundIndex;
+  }, [pageSegment]);
 
   return (
-    <div className="sticky top-16 z-30 bg-gray-100">
+    <div className="sticky top-16 z-30">
       <div className="max-w-5xl mx-auto">
         <Card>
           <div className="flex items-center justify-between m-3 gap-0 sm:gap-2 md:gap-4">
-            {journalKeys.map(({ page: j, title }, i) => {
-              const isCompleted = i < currentStepIndex;
-              const isCurrent = i === currentStepIndex;
-              const isLast = i === journalKeys.length - 1;
+            {journalKeys.map(({ id, title }, index) => {
+              const isCompleted = isNewManuscriptFlow
+                ? completedWizardSteps.has(id)
+                : index < defaultCurrentIndex;
+              const isCurrent = isNewManuscriptFlow
+                ? !isCompleted && wizardCurrentStepId === id
+                : index === defaultCurrentIndex;
+              const isLast = index === journalKeys.length - 1;
 
               return (
-                <React.Fragment key={j}>
+                <React.Fragment key={id}>
                   <div className="flex items-center flex-auto">
                     <div className="flex items-center lg:flex-row gap-2">
                       <div
-                        className={`flex h-6 w-6 md:h-8 md:w-8 items-center justify-center rounded-full ${
-                          isCompleted ? 'bg-indigo-500' : 'bg-indigo-300'
-                        } text-white text-xs md:text-base transition-all duration-300 ${
+                        className={cn(
+                          'flex h-6 w-6 md:h-8 md:w-8 items-center justify-center rounded-full text-white text-xs md:text-base transition-all duration-300',
+                          isCompleted ? 'bg-indigo-500' : 'bg-indigo-300',
+                          isCurrent
+                            ? 'ring-2 ring-offset-2 ring-indigo-500'
+                            : '',
                           isLast ? 'mr-auto' : ''
-                        }`}
+                        )}
                       >
                         {isCompleted ? (
                           <Check className="w-3 h-3 md:w-4 md:h-4" />
                         ) : (
-                          i + 1
+                          index + 1
                         )}
                       </div>
                       <span
-                        className={`text-[#626EEF] text-[.5rem] md:text-[0.8rem] ${
+                        className={cn(
+                          'text-[#626EEF] text-[.5rem] md:text-[0.8rem] hidden sm:block',
                           isCurrent ? 'font-medium' : ''
-                        } hidden sm:block`}
+                        )}
                       >
                         {title}
                       </span>
                     </div>
-                    {i < journalKeys.length - 1 && (
+                    {index < journalKeys.length - 1 && (
                       <div className="h-px bg-[#838F9A] flex-1 mx-2 min-w-[10px] lg:min-w-[20px]" />
                     )}
                   </div>

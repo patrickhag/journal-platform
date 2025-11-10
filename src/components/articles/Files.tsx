@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 import { eq } from 'drizzle-orm';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Eye, File } from 'lucide-react';
+import { Eye, FileText } from 'lucide-react';
 import AddArticleFiles from './AddArticleFiles';
 
 async function Files({
@@ -39,16 +39,13 @@ async function Files({
           {filesData.map((file) => (
             <div
               key={file.id}
-              className="flex items-center justify-between p-2 border rounded-lg"
+              className="flex items-center justify-between p-3 border rounded-lg"
             >
               <div className="flex items-center">
-                <File className="h-5 w-5 text-muted-foreground mr-2 text-blue-500" />
+                <FileText className="h-5 w-5 mr-2 text-blue-500" />
                 <div>
                   <p className="font-medium line-clamp-1">
                     {file.originalName}
-                  </p>
-                  <p className="text-sm text-muted-foreground my-1">
-                    {file.fileType || 'Revised Manuscript'}
                   </p>
                 </div>
               </div>

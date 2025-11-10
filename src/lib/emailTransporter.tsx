@@ -85,7 +85,6 @@ export const notifyContibutor = async ({
   contributor,
 }: {
   toEmail: string;
-  url: string;
   subject: string;
   originalAuthor: string;
   article: string;

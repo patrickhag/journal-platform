@@ -15,7 +15,7 @@ const HeroSection = () => {
           in healthcare across Africa.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Link href="/author/new/start">
+          <Link href="/author/new-manuscript">
             <Button size="lg">
               <BookOpen className="w-5 h-5 mr-2" />
               Submit Research

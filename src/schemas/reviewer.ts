@@ -9,7 +9,6 @@ export const reviewerSchema = z.object({
   names: z.string().min(2, {
     message: 'Name must be at least 2 characters.',
   }),
-  prefix: z.string().optional(),
   affiliation: z.string().min(2, {
     message: 'Affiliation must be provided.',
   }),
