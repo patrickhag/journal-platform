@@ -238,3 +238,36 @@ export const useGetParticipants = (articleId: string) => {
     },
   });
 };
+
+type CreateUserPayload = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  affiliation?: string;
+  country?: string;
+  role?: string;
+  isPartOfEditorialBoard?: boolean;
+  prefix?: string;
+  orcid?: string;
+  bio?: string;
+  expertise?: string;
+};
+
+export const useCreateUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: CreateUserPayload) => {
+      return axios.post<{ message: string }>(`/api/users/create`, data);
+    },
+    onSuccess: ({ data }) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+    onError: (error: Error | AxiosError) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.error || error.response?.data?.message
+        : error.message;
+      toast.error(message || 'Failed to create user');
+    },
+  });
+};

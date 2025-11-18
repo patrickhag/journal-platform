@@ -23,6 +23,7 @@ const UsersPage = async () => {
             email: true,
             affiliation: true,
             createdAt: true,
+            isPartOfEditorialBoard: true,
           },
         },
       },

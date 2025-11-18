@@ -10,11 +10,16 @@ import { useRouter } from 'next/navigation';
 import ReviewModal from '@/components/articles/Review';
 import ArticleCardSkeleton from '../components/ReviewCardSkeleton';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 export default function ReviewerDashboard() {
   const { data, isPending } = useGetReviewerAssignments();
 
   const reviewerAssignments = data?.assignedArticles;
+
+  const { data: session } = useSession();
+
+  console.log('userId:', session?.user.id);
 
   const [reviewModal, setReviewModal] = useState<{
     isOpen: boolean;
@@ -118,7 +123,7 @@ export default function ReviewerDashboard() {
                         <Eye className="mr-2 h-4 w-4" />
                         View Article
                       </Button>
-                      <Link href={`/reviewer/article/${assignment.id}`}>
+                      <Link href={`/reviewer/assignment/${assignment.id}`}>
                         <Button
                           size="sm"
                           className="bg-blue-600 hover:bg-blue-700"

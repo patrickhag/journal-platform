@@ -17,7 +17,7 @@ import Link from 'next/link';
 import { useGetParticularAssignment } from '@/hooks/useReviews';
 import { useParams } from 'next/navigation';
 import ReviewModal from '@/components/articles/Review';
-import ReviewerAssignmentSkeleton from '../../../../components/ReviewerAssignmentSkeleton';
+import ReviewerAssignmentSkeleton from '@/components/ReviewerAssignmentSkeleton';
 
 const ReviewAssignment = () => {
   const { assignmentId } = useParams();

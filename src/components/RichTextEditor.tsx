@@ -45,6 +45,14 @@ export function RichTextEditor({
       attributes: {
         class: 'min-h-[156px] border rounded-md py-2 px-3 text-sm',
       },
+      transformPastedHTML(html) {
+        // Wrap pasted content in a paragraph tag if it's not already wrapped
+        const trimmed = html.trim();
+        if (!trimmed.startsWith('<')) {
+          return `<p>${html}</p>`;
+        }
+        return html;
+      },
     },
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();

@@ -9,6 +9,14 @@ import { RichTextEditor } from '@/components/RichTextEditor';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ContributorsForm } from '@/components/upload/ContributorsForm';
+import { SALUTATION } from '@/lib/consts';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export const StepMetadata = () => {
   const {
@@ -80,10 +88,23 @@ export const StepMetadata = () => {
                 >
                   Prefix <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="metadata.prefix"
-                  placeholder="Dr, Mr, Mrs..."
-                  {...register('metadata.prefix')}
+                <Controller
+                  control={control}
+                  name="metadata.prefix"
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select prefix" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {SALUTATION.map((value) => (
+                          <SelectItem key={value} value={value}>
+                            {value}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 />
                 {errors.metadata?.prefix?.message && (
                   <p className="text-sm text-destructive">

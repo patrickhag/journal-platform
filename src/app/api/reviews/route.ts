@@ -4,10 +4,7 @@ import { notifications, reviewAssignments, reviews } from '@/db/schema';
 import { auth } from '@/auth';
 import { articleSubmissions } from '@/db/schema';
 import { and, desc, eq } from 'drizzle-orm';
-import {
-  informingAuthorNReviewer,
-  notifyStaffEditorAboutReviewStatus,
-} from '@/lib/emailTransporter';
+import { notifyStaffEditorAboutReviewStatus } from '@/lib/emailTransporter';
 
 export async function POST(req: Request) {
   try {
@@ -39,6 +36,20 @@ export async function POST(req: Request) {
       status: status,
       userId,
     });
+
+    if (status === 'Accepted') {
+      await db
+        .update(reviewAssignments)
+        .set({
+          status: 'FINALIZED',
+        })
+        .where(
+          and(
+            eq(reviewAssignments.userId, userId),
+            eq(reviewAssignments.articleId, articleId)
+          )
+        );
+    }
 
     if (status === 'Major Correction' || status === 'Minor Correction') {
       await db
@@ -84,17 +95,7 @@ export async function POST(req: Request) {
     const authorEmail = article?.user.email;
     const staffEditorEmail = article?.editorAssignment.user.email;
 
-    // send email to author
-    await informingAuthorNReviewer({
-      articleTitle: articleTitle as string,
-      participantName: authorName,
-      participantEmail: authorEmail as string,
-      subject: 'Reviewer has reviewed your manuscript and provided a review',
-      userType: 'reviewer',
-    });
-
     // send email to staff-editor also
-
     await notifyStaffEditorAboutReviewStatus({
       articleTitle: articleTitle as string,
       authorNames: authorName,
@@ -144,11 +145,11 @@ export async function GET(req: NextRequest) {
         dueDate: true,
         status: true,
       },
-      orderBy: desc(reviewAssignments.assignedDate),
       where: and(
         eq(reviewAssignments.userId, session.user.id as string),
         eq(reviewAssignments.status, 'ACCEPTED')
       ),
+      orderBy: desc(reviewAssignments.assignedDate),
       with: {
         article: {
           columns: {

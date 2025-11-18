@@ -104,8 +104,8 @@ export default async function Metadata({
                     className="prose max-w-none"
                     dangerouslySetInnerHTML={{
                       __html: meta.article?.commentsForEditor
-                        .replace(/<pre>/g, '<p>')
-                        .replace(/<\/pre>/g, '</p>'),
+                        .replace(/<pre><code class="language-json">/g, '')
+                        .replace(/<\/code><\/pre>/g, ''),
                     }}
                   />
                 ) : (
@@ -143,7 +143,9 @@ export default async function Metadata({
             <div
               className="prose max-w-none"
               dangerouslySetInnerHTML={{
-                __html: meta.abstract,
+                __html: meta.abstract
+                  .replace(/<pre><code class="language-json">/g, '')
+                  .replace(/<\/code><\/pre>/g, ''),
               }}
             ></div>
           </div>

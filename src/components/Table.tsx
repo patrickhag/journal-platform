@@ -40,6 +40,7 @@ import { Input } from '@/components/ui/input';
 import { useAddToEditorialBoard } from '@/hooks/useUsers';
 import Loader from './Loader';
 import { TUser } from '@/types';
+import CreateUserSheet from './CreateUserSheet';
 
 interface Props<T> {
   data: TUser[];
@@ -54,6 +55,7 @@ export const TableData = <T extends { role?: string }>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [isCreateUserSheetOpen, setIsCreateUserSheetOpen] = useState(false);
 
   const table = useReactTable({
     data,
@@ -143,6 +145,35 @@ export const TableData = <T extends { role?: string }>({
               </SelectContent>
             </Select>
 
+            {/* Editorial Board Filter */}
+            <Select
+              value={
+                (columnFilters.find(
+                  (f: any) => f.id === 'isPartOfEditorialBoard'
+                )?.value as string) ?? ''
+              }
+              onValueChange={(value) => {
+                setColumnFilters((prev: any) =>
+                  value
+                    ? [
+                        ...prev.filter(
+                          (f: any) => f.id !== 'isPartOfEditorialBoard'
+                        ),
+                        { id: 'isPartOfEditorialBoard', value },
+                      ]
+                    : prev.filter((f: any) => f.id !== 'isPartOfEditorialBoard')
+                );
+              }}
+            >
+              <SelectTrigger className="w-[220px] bg-white border-gray-200">
+                <SelectValue placeholder="Filter by editorial board" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="true">Editorial Board Members</SelectItem>
+                <SelectItem value="false">Non-Editorial Board</SelectItem>
+              </SelectContent>
+            </Select>
+
             {/* Reset Button */}
             <Button
               variant="outline"
@@ -157,8 +188,17 @@ export const TableData = <T extends { role?: string }>({
               Reset All
             </Button>
           </div>
-          <div className="text-sm text-gray-500 font-semibold">
-            Total users: {table.getFilteredRowModel().rows.length}
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-gray-500 font-semibold">
+              Total users: {table.getFilteredRowModel().rows.length}
+            </div>
+            <Button
+              variant="default"
+              className="bg-blue-600 text-white hover:bg-blue-700"
+              onClick={() => setIsCreateUserSheetOpen(true)}
+            >
+              Add New user
+            </Button>
           </div>
         </div>
         {hasSelected && (
@@ -312,6 +352,11 @@ export const TableData = <T extends { role?: string }>({
           </div>
         </div>
       </div>
+
+      <CreateUserSheet
+        open={isCreateUserSheetOpen}
+        onOpenChange={setIsCreateUserSheetOpen}
+      />
     </div>
   );
 };

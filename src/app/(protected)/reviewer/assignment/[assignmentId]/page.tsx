@@ -20,9 +20,14 @@ import ReviewModal from '@/components/articles/Review';
 import ReviewerAssignmentSkeleton from '@/components/ReviewerAssignmentSkeleton';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/lib/utils';
+import { useSession } from 'next-auth/react';
 
 const ReviewAssignment = () => {
   const { assignmentId } = useParams();
+
+  const { data } = useSession();
+
+  console.log('userId:', data?.user.id);
 
   const { data: particularAssignment, isPending } = useGetParticularAssignment(
     assignmentId as string

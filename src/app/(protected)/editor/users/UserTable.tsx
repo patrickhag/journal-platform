@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { ArrowUpDown, Eye } from 'lucide-react';
+import { ArrowUpDown, Eye, Star } from 'lucide-react';
 import { TableData } from '@/components/Table';
 import { useRouter } from 'next/navigation';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -39,56 +39,53 @@ const columns: ColumnDef<TUser>[] = [
   {
     accessorKey: 'avatar',
     header: 'Picture',
-    cell: ({ row }) => (
-      <Avatar className="h-10 w-10 border-2 border-gray-100">
-        <AvatarImage src={row.getValue('avatar')} className="object-cover" />
-        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-sm font-semibold">
-          {(row.getValue('firstName') as string).at(0)}
-        </AvatarFallback>
-      </Avatar>
-    ),
+    cell: ({ row }) => {
+      const firstName = row.original.firstName || '';
+      const initial = firstName.charAt(0).toUpperCase() || 'U';
+      return (
+        <Avatar className="h-10 w-10 border-2 border-gray-100">
+          <AvatarImage src={row.getValue('avatar')} className="object-cover" />
+          <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-sm font-semibold">
+            {initial}
+          </AvatarFallback>
+        </Avatar>
+      );
+    },
   },
   {
-    accessorKey: 'firstName',
+    id: 'fullName',
+    accessorFn: (row) => {
+      const firstName = row.firstName || '';
+      const lastName = row.lastName || '';
+      return `${firstName} ${lastName}`.trim() || 'Not specified';
+    },
     header: ({ column }) => {
       return (
         <div
           className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          First Name
+          Full Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </div>
       );
     },
-    cell: ({ row }) => (
-      <div className="font-medium text-gray-900">
-        {row.getValue('firstName') || (
-          <span className="text-red-600 text-sm italic">Not specified</span>
-        )}
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'lastName',
-    header: ({ column }) => {
+    cell: ({ row }) => {
+      const firstName = row.original.firstName || '';
+      const lastName = row.original.lastName || '';
+      const fullName = `${firstName} ${lastName}`.trim() || 'Not specified';
+      const isPartOfEditorialBoard = (row.original as any)
+        .isPartOfEditorialBoard;
+
       return (
-        <div
-          className="flex items-center cursor-pointer hover:text-blue-600 transition-colors"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Last Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+        <div className="flex items-center gap-2 font-medium text-gray-900">
+          <span>{fullName}</span>
+          {isPartOfEditorialBoard && (
+            <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
+          )}
         </div>
       );
     },
-    cell: ({ row }) => (
-      <div className="font-medium text-gray-900">
-        {row.getValue('lastName') || (
-          <span className="text-red-600 text-sm italic">Not specified</span>
-        )}
-      </div>
-    ),
   },
   {
     accessorKey: 'email',
@@ -167,10 +164,25 @@ const columns: ColumnDef<TUser>[] = [
     accessorKey: 'role',
     header: 'Role',
     cell: ({ row }) => (
-      <Badge variant={'secondary'}>
-        {roleMap[row.getValue('role') as string]}
-      </Badge>
+      <Badge variant={'secondary'}>{row.getValue('role')}</Badge>
     ),
+  },
+  {
+    accessorKey: 'isPartOfEditorialBoard',
+    header: '',
+    cell: () => null,
+    enableSorting: false,
+    filterFn: (row, id, value) => {
+      const isPartOfEditorialBoard = (row.original as any)
+        .isPartOfEditorialBoard;
+      if (value === 'true') {
+        return isPartOfEditorialBoard === true;
+      }
+      if (value === 'false') {
+        return isPartOfEditorialBoard === false;
+      }
+      return true;
+    },
   },
   {
     header: 'Actions',

@@ -57,7 +57,9 @@ const UserDetail = () => {
 
   const { data } = useSession();
 
-  const { data: userInfo } = useGetUserInfo(userId as string);
+  const { data: userInfo, isPending: isGetUserInfoPending } = useGetUserInfo(
+    userId as string
+  );
 
   const user = {
     id: userInfo?.user.id,
@@ -91,7 +93,9 @@ const UserDetail = () => {
       : 'bg-gray-100 text-gray-800';
   };
 
-  const { mutate, isPending } = useDeactivateUser(user.id as string);
+  const { mutate, isPending: isDeactivateUserPending } = useDeactivateUser(
+    user.id as string
+  );
   const {
     mutate: changeUserRoleMutation,
     isPending: isChangingUserRolePending,
@@ -119,6 +123,18 @@ const UserDetail = () => {
       },
     });
   };
+
+  if (isGetUserInfoPending) {
+    return <p>Loading user information...</p>;
+  }
+
+  if (!userInfo) {
+    return (
+      <div>
+        <h1 className="text-2xl font-bold">User not found</h1>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -152,7 +168,7 @@ const UserDetail = () => {
             <DeactivateUserPermission
               handleStatusChange={handleStatusChange}
               isActive={userInfo?.user.isActive ?? true}
-              isPending={isPending}
+              isPending={isDeactivateUserPending}
               requiredPermissions={['DEACTIVATE_USER']}
               role={
                 data?.user.role as
@@ -388,7 +404,7 @@ const UserDetail = () => {
           username={user.name}
           currentStatus={userInfo?.user.isActive}
           onConfirm={handleConfirmedStatusChange}
-          isPending={isPending}
+          isPending={isDeactivateUserPending}
         />
       )}
     </>

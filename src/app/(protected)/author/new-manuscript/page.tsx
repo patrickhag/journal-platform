@@ -5,7 +5,6 @@ import {
   useMemo,
   useState,
   useEffect,
-  useCallback,
   useRef,
 } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,8 +20,9 @@ import {
 import { manuscriptFormSchema, type ManuscriptFormValues } from './schema';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
-import { SubmissionNavigation } from '@/components/SubmissionNavigation';
 import { useSubmitManuscript } from '@/hooks/useSubmitManuscript';
+import { toast } from 'sonner';
+import { SubmissionNavigation } from '@/components/SubmissionNavigation';
 
 type StepConfig = {
   id: string;
@@ -201,8 +201,6 @@ export default function Page() {
     setCurrentStep(step);
   };
 
-  const canAccessStep = useCallback((_index: number) => true, []);
-
   useEffect(() => {
     const targetIndex = stepIndexFromQuery;
     if (isInternalNavigation.current) {
@@ -223,7 +221,12 @@ export default function Page() {
     const fields = steps[currentStep].fields;
     const isStepValid = await trigger(fields, { shouldFocus: true });
 
-    if (!isStepValid) return;
+    if (!isStepValid) {
+      toast.info(
+        'Check your fields you might have forgotten to fill a required field.'
+      );
+      return;
+    }
 
     if (isLastStep) {
       await handleSubmit(onSubmit)();

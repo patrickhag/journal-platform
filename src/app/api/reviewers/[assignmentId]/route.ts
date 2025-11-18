@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
 import { reviewAssignments } from '@/db/schema';
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { auth } from '@/auth';
 
 type Params = { assignmentId: string };
@@ -26,7 +26,10 @@ export async function GET(
     }
 
     const assignedArticle = await db.query.reviewAssignments.findFirst({
-      where: eq(reviewAssignments.id, assignmentId),
+      where: and(
+        eq(reviewAssignments.id, assignmentId),
+        eq(reviewAssignments.userId, session.user.id as string)
+      ),
       columns: {
         id: true,
         dueDate: true,

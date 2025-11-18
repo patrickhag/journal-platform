@@ -106,6 +106,7 @@ export function getSDGLabel(sdg: string): string {
 export const roleMap: Record<string, string> = {
   NORMAL_USER: 'Author',
   CHIEF_EDITOR: 'Chief Editor',
+  SENIOR_EDITOR: 'Senior Editor',
   ASSOCIATE_EDITOR: 'Associate Editor',
   STAFF_EDITOR: 'Staff Editor',
   ADMIN: 'Admin',
@@ -182,4 +183,15 @@ export const redirectUserBasedOnRole = (role: string): string => {
 export const formatDate = (date: Date | string) => {
   const d = typeof date === 'string' ? new Date(date) : date;
   return format(d, 'MMM d, yyyy');
+};
+
+export const formatRoleText = (roleText: string): string => {
+  // Trim, split on whitespace, filter empty, uppercase each word, then join with _
+  if (!roleText) return '';
+  return roleText
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => word.toUpperCase())
+    .join('_');
 };

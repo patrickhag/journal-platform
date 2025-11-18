@@ -38,45 +38,21 @@ const LeftSideBar = async () => {
               </Link>
             </li>
             <li>
+              <Link
+                href="/manuals/#instructionToAuthors"
+                className="hover:text-blue-600"
+              >
+                For Authors
+              </Link>
+            </li>
+            <li>
               <Link href="#" className="hover:text-blue-600">
-                Supplements
+                For Reviewers
               </Link>
             </li>
             <li>
               <Link href="/collections" className="hover:text-blue-600">
                 Collections
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        {/* Supplements Section */}
-        <div>
-          <h2
-            className="text-lg font-semibold text-gray-700"
-            style={{ color: '#1A237E' }}
-          >
-            Supplements
-          </h2>
-          <ul className="mt-2 space-y-2 text-sm text-gray-600">
-            <li>
-              <Link href="#" className="hover:text-blue-600">
-                Our supplements
-              </Link>
-            </li>
-            <li>
-              <Link href="#" className="hover:text-blue-600">
-                Upcoming supplements
-              </Link>
-            </li>
-            <li>
-              <Link href="#" className="hover:text-blue-600">
-                Publish supplements
-              </Link>
-            </li>
-            <li>
-              <Link href="#" className="hover:text-blue-600">
-                Note to institutions
               </Link>
             </li>
           </ul>

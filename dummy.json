@@ -153,5 +153,141 @@
         "bio_statement": "Dr. Samuel Osei is a biomedical engineer specializing in diagnostic technologies for infectious diseases."
       }
     ]
+  },
+  {
+    "section_type": "original study",
+    "comments_for_the_editor": "This study explores the diagnostic potential of novel multi-omic biomarkers in early-stage lung cancer, integrating genomic, proteomic, and metabolomic data for predictive modeling.",
+    "prefix": "Dr.",
+    "title": "Integrative Biomarker Profiling for Early Lung Cancer Detection",
+    "subtitle": "A Multicenter Prospective Study Employing Multi-Omic Approaches",
+    "abstract": "Lung cancer remains one of the leading causes of cancer-related mortality worldwide, largely due to late-stage diagnosis and the lack of reliable, non-invasive early detection methods. This study aims to identify and validate novel biomarkers capable of distinguishing early-stage lung cancer from benign pulmonary conditions through an integrative, multi-omic approach. Over an 18-month prospective period, a cohort of 320 participants—comprising confirmed early-stage lung cancer patients, individuals with benign lung nodules, and healthy controls—was enrolled across four major medical centers. Blood and sputum samples were collected longitudinally and analyzed using next-generation sequencing (NGS), quantitative proteomics, and targeted metabolomic profiling. Machine learning models were developed to integrate molecular signatures across these omic layers, optimizing predictive accuracy. Preliminary findings reveal a distinct biomarker panel composed of five genetic variants, seven protein expression markers, and three metabolic ratios that together yield a diagnostic sensitivity of 92.4% and specificity of 89.1% in differentiating cancerous from non-cancerous samples. Furthermore, pathway enrichment analyses suggest strong associations with oxidative stress regulation, DNA repair, and immune response modulation. These results underscore the potential of a multi-omic biomarker framework as a transformative tool in early lung cancer detection, potentially enabling earlier therapeutic intervention and improved survival outcomes. Future work will focus on validating these markers in larger, more diverse populations and assessing their feasibility for translation into a standardized clinical assay. By bridging molecular discovery with computational analytics, this study contributes to the evolving paradigm of precision oncology and personalized diagnostic strategies in respiratory medicine.",
+    "contributors": [
+      {
+        "names_of_the_contributor": "Alice Morgan",
+        "email": "mokatow359@chaineor.com",
+        "salutation": "Dr.",
+        "country": "United States",
+        "userDetails": {
+          "ORCID_ID": "0000-0002-4567-8901",
+          "Homepage": "https://alice-morgan-research.org"
+        },
+        "affiliation": "Harvard Medical School",
+        "bio_statement": "Dr. Alice Morgan is a medical researcher specializing in oncology diagnostics, focusing on biomarker discovery and translational applications for early cancer detection."
+      },
+      {
+        "names_of_the_contributor": "Ravi Patel",
+        "email": "ravi.patel@example.org",
+        "salutation": "Dr.",
+        "country": "India",
+        "userDetails": {
+          "ORCID_ID": "0000-0003-9876-5432",
+          "Homepage": "https://ravi-patel-lab.in"
+        },
+        "affiliation": "All India Institute of Medical Sciences (AIIMS)",
+        "bio_statement": "Dr. Ravi Patel is a clinician-scientist with expertise in thoracic oncology and biomarker validation in population-based studies."
+      }
+    ]
+  },
+  {
+    "section_type": "original study",
+    "comments_for_the_editor": "This manuscript presents a comprehensive investigation into the role of gut microbiota-derived metabolites in regulating cognitive decline among elderly individuals with mild cognitive impairment (MCI).",
+    "prefix": "Prof.",
+    "title": "Gut Microbiome Metabolites as Predictors of Cognitive Decline",
+    "subtitle": "A Longitudinal Metabolomic and Neuroimaging Study in Aging Adults",
+    "abstract": "Emerging evidence suggests that gut microbiota and their metabolic products play a critical role in modulating brain function and neurodegenerative processes. This longitudinal study investigates the relationship between gut microbiome-derived metabolites and cognitive decline among elderly adults diagnosed with mild cognitive impairment (MCI). Over a 24-month observation period, a total of 260 participants aged 60–85 years were enrolled and monitored through clinical, cognitive, and neuroimaging assessments. Stool and plasma samples were collected at baseline, 12 months, and 24 months for comprehensive metabolomic profiling using ultra-performance liquid chromatography–mass spectrometry (UPLC–MS). Concurrently, participants underwent magnetic resonance imaging (MRI) to evaluate structural and functional brain changes, with particular focus on hippocampal volume and white matter integrity. Statistical correlation and multivariate regression analyses revealed that elevated levels of short-chain fatty acids (SCFAs), particularly butyrate and propionate, were significantly associated with slower cognitive decline and reduced hippocampal atrophy. Conversely, increased concentrations of trimethylamine N-oxide (TMAO) and p-cresol sulfate correlated with accelerated cognitive deterioration and enhanced neuroinflammatory signatures. Integrative modeling combining metabolic and neuroimaging data achieved a predictive accuracy of 86.7% in distinguishing stable versus progressive MCI cases. These findings provide strong evidence supporting the gut–brain axis as a modifiable pathway influencing neurodegenerative trajectories. The identification of specific microbial metabolites as potential biomarkers offers novel opportunities for early risk assessment and dietary or probiotic interventions targeting cognitive resilience. Ongoing work will expand these findings to diverse populations and explore causal mechanisms through controlled dietary modulation trials.",
+    "contributors": [
+      {
+        "names_of_the_contributor": "Michael Tan",
+        "email": "michael.tan@example.edu",
+        "salutation": "Prof.",
+        "country": "Singapore",
+        "userDetails": {
+          "ORCID_ID": "0000-0001-9987-2345",
+          "Homepage": "https://neuroaging-lab.sg"
+        },
+        "affiliation": "National University of Singapore, Department of Neuroscience",
+        "bio_statement": "Prof. Michael Tan is a neuroscientist specializing in the intersection of gut microbiota and neurodegenerative disorders, with an emphasis on translational aging research."
+      },
+      {
+        "names_of_the_contributor": "Laura Schneider",
+        "email": "laura.schneider@example.com",
+        "salutation": "Dr.",
+        "country": "Germany",
+        "userDetails": {
+          "ORCID_ID": "0000-0004-3345-9871",
+          "Homepage": "https://laura-schneider-lab.de"
+        },
+        "affiliation": "University of Munich, Institute of Nutritional Sciences",
+        "bio_statement": "Dr. Laura Schneider is a nutritional biochemist focusing on metabolomics, gut microbiota, and their impact on metabolic and neurological health outcomes."
+      }
+    ]
+  },
+  {
+    "section_type": "review article",
+    "comments_for_the_editor": "This manuscript provides an integrative review of recent advances in renewable energy storage systems, focusing on hybrid battery–supercapacitor architectures for sustainable grid applications.",
+    "prefix": "Dr.",
+    "title": "Advances in Hybrid Energy Storage Systems",
+    "subtitle": "Integrating Battery and Supercapacitor Technologies for a Sustainable Future",
+    "abstract": "The global transition toward renewable energy sources necessitates efficient, scalable, and sustainable energy storage solutions. This review article synthesizes findings from over 150 peer-reviewed studies published between 2018 and 2024, exploring the design, performance, and environmental implications of hybrid battery–supercapacitor systems. Emphasis is placed on the synergistic integration of lithium-ion, sodium-ion, and carbon-based supercapacitors, which combine high energy density with rapid charge–discharge capabilities. The paper also examines the role of novel electrode materials—such as graphene derivatives, MXenes, and metal–organic frameworks—in improving electrochemical stability and reducing lifecycle costs. Life-cycle assessment and techno-economic modeling suggest that hybrid configurations can reduce carbon emissions by up to 35% compared to standalone battery systems. The review concludes with perspectives on emerging trends, including AI-driven optimization of hybrid storage configurations and recycling strategies for sustainable resource management.",
+    "contributors": [
+      {
+        "names_of_the_contributor": "Aisha Rahman",
+        "email": "aisha.rahman@example.org",
+        "salutation": "Dr.",
+        "country": "United Arab Emirates",
+        "userDetails": {
+          "ORCID_ID": "0000-0003-2145-8762",
+          "Homepage": "https://energytech-lab.ae"
+        },
+        "affiliation": "Khalifa University, Department of Sustainable Energy",
+        "bio_statement": "Dr. Aisha Rahman is a materials scientist researching advanced energy storage materials and their applications in renewable energy systems."
+      },
+      {
+        "names_of_the_contributor": "Carlos Méndez",
+        "email": "carlos.mendez@example.mx",
+        "salutation": "Prof.",
+        "country": "Mexico",
+        "userDetails": {
+          "ORCID_ID": "0000-0002-6678-4310",
+          "Homepage": "https://electrochemistry-mx.com"
+        },
+        "affiliation": "National Autonomous University of Mexico, Institute of Electrochemistry",
+        "bio_statement": "Prof. Carlos Méndez specializes in electrochemical energy systems, focusing on hybrid architectures that integrate batteries and supercapacitors for grid-scale applications."
+      }
+    ]
+  },
+  {
+    "section_type": "case report",
+    "comments_for_the_editor": "This manuscript details a rare case of spontaneous remission in a patient diagnosed with metastatic melanoma following combined immunotherapy and dietary intervention.",
+    "prefix": "Dr.",
+    "title": "Unexpected Remission in Advanced Melanoma",
+    "subtitle": "A Case Study on Immunotherapy and Nutritional Synergy",
+    "abstract": "Spontaneous remission in metastatic melanoma remains a rare and poorly understood phenomenon. This case report describes a 52-year-old male patient with stage IV melanoma who demonstrated complete remission following a combined regimen of pembrolizumab and an anti-inflammatory dietary protocol. The patient initially presented with multiple metastatic lesions in the liver and lungs, confirmed through positron emission tomography–computed tomography (PET-CT). After six cycles of immunotherapy and the introduction of a polyphenol-rich Mediterranean diet, imaging results showed progressive tumor regression, culminating in complete remission within 14 months. Laboratory analyses revealed decreased circulating inflammatory cytokines and improved T-cell activation profiles. This case suggests a potential synergistic effect between immune checkpoint inhibitors and dietary modulation in enhancing therapeutic response. Further clinical studies are warranted to evaluate the mechanistic basis of this interaction and its potential for broader therapeutic application in oncology.",
+    "contributors": [
+      {
+        "names_of_the_contributor": "Hiroshi Tanaka",
+        "email": "hiroshi.tanaka@example.jp",
+        "salutation": "Dr.",
+        "country": "Japan",
+        "userDetails": {
+          "ORCID_ID": "0000-0001-5643-9087",
+          "Homepage": "https://tokyooncology.jp/team/tanaka"
+        },
+        "affiliation": "University of Tokyo Hospital, Department of Oncology",
+        "bio_statement": "Dr. Hiroshi Tanaka is a clinical oncologist with research interests in immunotherapy and nutritional interventions for cancer management."
+      },
+      {
+        "names_of_the_contributor": "Emily Johnson",
+        "email": "emily.johnson@example.uk",
+        "salutation": "Prof.",
+        "country": "United Kingdom",
+        "userDetails": {
+          "ORCID_ID": "0000-0003-7854-1239",
+          "Homepage": "https://emilyjohnsonlab.uk"
+        },
+        "affiliation": "University College London, Division of Clinical Nutrition and Metabolism",
+        "bio_statement": "Prof. Emily Johnson is a clinical nutritionist specializing in the interplay between diet, immune modulation, and cancer outcomes."
+      }
+    ]
   }
 ]

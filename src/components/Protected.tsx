@@ -9,11 +9,11 @@ interface ProtectedProps {
 }
 
 const ROLE_ROUTES: Record<USER_ROLE, string> = {
-  NORMAL_USER: '/submissions',
+  NORMAL_USER: '/author/submissions',
   REVIEWER: '/reviewer/assignments',
   CHIEF_EDITOR: '/editor/dashboard',
   ASSOCIATE_EDITOR: '/associate-editor/assignments',
-  STAFF_EDITOR: '/staff-editor/assigned',
+  STAFF_EDITOR: '/staff-editor/assignments',
 } as const;
 
 function getRedirectRoute(role: USER_ROLE): string {

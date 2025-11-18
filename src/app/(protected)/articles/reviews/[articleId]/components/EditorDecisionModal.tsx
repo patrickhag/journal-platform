@@ -66,6 +66,24 @@ const EditorDecisionModal = ({
 
   const { mutate, isPending } = useSendEditorDecision(articleId);
 
+  const statuses = [
+    {
+      value: 'ACCEPT',
+      label: 'Accept for Publication',
+      icon: <CheckSquare className="h-4 w-4 text-green-600 mr-2" />,
+    },
+    {
+      value: 'REVISION',
+      label: 'Request Revision',
+      icon: <RotateCcw className="h-4 w-4 text-amber-600 mr-2" />,
+    },
+    {
+      value: 'REJECT',
+      label: 'Reject',
+      icon: <XCircle className="h-4 w-4 text-red-600 mr-2" />,
+    },
+  ];
+
   const handleSubmit = (data: DecisionFormData) => {
     const { action, message } = data;
     mutate(
@@ -133,28 +151,22 @@ const EditorDecisionModal = ({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select your decision" />
+                        <SelectValue placeholder="Select your decision">
+                          {statuses.find(
+                            (status) => status.value === field.value
+                          )?.label || 'Select your decision'}
+                        </SelectValue>
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="ACCEPT">
-                        <div className="flex items-center">
-                          <CheckSquare className="h-4 w-4 text-green-600 mr-2" />
-                          Accept for Publication
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="REVISION">
-                        <div className="flex items-center">
-                          <RotateCcw className="h-4 w-4 text-amber-600 mr-2" />
-                          Request Revision
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="REJECT">
-                        <div className="flex items-center">
-                          <XCircle className="h-4 w-4 text-red-600 mr-2" />
-                          Reject
-                        </div>
-                      </SelectItem>
+                      {statuses.map((status) => (
+                        <SelectItem value={status.value} key={status.value}>
+                          <div className="flex items-center">
+                            {status.icon}
+                            {status.label}
+                          </div>
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
