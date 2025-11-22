@@ -101,9 +101,10 @@ export type IArticle = {
     prefix: string;
     abstract: string;
   };
-  files: {
-    publicId: string;
-  }[];
+  publishedArticle: {
+    id: string;
+    pdfUrl: string;
+  };
 };
 
 export type EditorsPicks = {
@@ -238,6 +239,8 @@ export type TPublishedArticle = {
   publishedAt: string;
   status: 'PUBLISHED' | string;
   pageRange: string;
+  pdfUrl: string;
+  slug: string;
   article: {
     id: string;
     metadata: {
@@ -573,22 +576,22 @@ export type TAssignment = {
       firstName: string;
       lastName: string;
     };
-    reviews: {
-      id: string;
-      fileIds: string[];
-      message: string;
-      status: string;
-      reviewedAt: string;
-      reviewRevisions:
-        | {
-            id: string;
-            requestedAt: string;
-            message: string;
-            fileIds: string[];
-          }[]
-        | undefined;
-    }[];
   };
+  reviews: {
+    id: string;
+    fileIds: string[];
+    message: string;
+    status: string;
+    reviewedAt: string;
+    reviewRevisions:
+      | {
+          id: string;
+          requestedAt: string;
+          message: string;
+          fileIds: string[];
+        }[]
+      | undefined;
+  }[];
 };
 
 export type CorrectionStatus =

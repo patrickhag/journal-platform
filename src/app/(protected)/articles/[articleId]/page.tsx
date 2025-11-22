@@ -210,20 +210,14 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
 
 const ArticleLinks = ({ articleId }: { articleId: string }) => (
   <div className="flex gap-2">
-    <Link
-      href={`/articles/reviews/${articleId}`}
-      className="hover:underline cursor-pointer"
-    >
-      <Button size="sm" className="gap-1 flex items-center">
+    <Link href={`/articles/reviews/${articleId}`}>
+      <Button size="sm" className="gap-1 flex items-center hover:underline">
         Reviews
         <ChevronRight className="w-2 h-2" />
       </Button>
     </Link>
-    <Link
-      href={`/articles/all-participants/${articleId}`}
-      className="hover:underline cursor-pointer"
-    >
-      <Button size="sm" className="gap-1 flex items-center">
+    <Link href={`/articles/all-participants/${articleId}`}>
+      <Button size="sm" className="gap-1 flex items-center hover:underline">
         All Participants
         <ChevronRight className="w-2 h-2" />
       </Button>

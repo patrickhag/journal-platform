@@ -265,7 +265,7 @@ export async function PATCH(
       });
     }
   } catch (error) {
-    console.error('Error sending review revision:', error);
+    console.error('Error publishing accepted article:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

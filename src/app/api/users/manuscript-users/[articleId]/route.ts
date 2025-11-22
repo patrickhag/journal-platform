@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
-import { articleSubmissions, publishedArticles, users } from '@/db/schema';
+import { articleSubmissions, publishedArticles } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 

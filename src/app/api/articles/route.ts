@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
-import { eq } from 'drizzle-orm';
+import { eq, desc } from 'drizzle-orm';
 import { articleSubmissions } from '@/db/schema';
+import { auth } from '@/auth';
 
 export async function GET(req: NextRequest) {
   try {
+    const session = await auth();
+
+    if (session?.user.role !== 'STAFF_EDITOR') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const articles = await db.query.articleSubmissions.findMany({
       columns: {
         id: true,
@@ -28,12 +35,14 @@ export async function GET(req: NextRequest) {
             abstract: true,
           },
         },
-        files: {
+        publishedArticle: {
           columns: {
-            publicId: true,
+            id: true,
+            pdfUrl: true,
           },
         },
       },
+      orderBy: desc(articleSubmissions.createdAt),
       where: eq(articleSubmissions.articleStatus, 'ACCEPTED'),
     });
 

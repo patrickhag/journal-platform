@@ -20,15 +20,21 @@ const PublishedArticles = () => {
     open: boolean;
     articleId?: string;
     articleTitle?: string;
+    pdfUrl?: string;
   }>({
     open: false,
     articleId: '',
     articleTitle: '',
+    pdfUrl: '',
   });
   const { data: acceptedManuscripts, isPending } = useGetAcceptedArticles();
 
-  const handlePublishManuscript = (articleId: string, articleTitle: string) => {
-    setSheetOpen({ open: true, articleId, articleTitle });
+  const handlePublishManuscript = (
+    articleId: string,
+    articleTitle: string,
+    pdfUrl: string
+  ) => {
+    setSheetOpen({ open: true, articleId, articleTitle, pdfUrl });
   };
 
   const onClose = () => setSheetOpen({ open: false });
@@ -94,7 +100,8 @@ const PublishedArticles = () => {
                         onClick={() =>
                           handlePublishManuscript(
                             manuscript.id,
-                            manuscript.metadata.title
+                            manuscript.metadata.title,
+                            manuscript.publishedArticle?.pdfUrl
                           )
                         }
                       >
@@ -118,6 +125,7 @@ const PublishedArticles = () => {
           open={sheetOpen.open}
           onOpenChange={onClose}
           title={sheetOpen.articleTitle as string}
+          pdfUrl={sheetOpen.pdfUrl as string}
         />
       )}
     </>

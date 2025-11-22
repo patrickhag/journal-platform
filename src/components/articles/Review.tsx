@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { FileList } from '../upload/FileList';
-import { useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { safeParse } from 'zod-urlsearchparams';
 import { filesSchema } from '@/schemas/reviewer';
 import {
@@ -69,6 +69,8 @@ export default function ReviewModal({
     },
   });
 
+  const { assignmentId } = useParams();
+
   const { handleSubmit } = form;
 
   const { mutate: createReviewMutation, isPending } = useCreateReview();
@@ -80,7 +82,9 @@ export default function ReviewModal({
       ...data,
       articleId,
       fileIds,
+      reviewAssignmentId: assignmentId as string,
     };
+
     createReviewMutation(payloadData, {
       onSettled: () => {
         onClose();

@@ -28,7 +28,7 @@ export const HeaderElement = async () => {
           </Link>
           <div className="flex items-center space-x-4">
             <div>Journal of African Epidemiology and Public Health</div>
-            <Badge className="bg-purple-100 text-purple-800">
+            <Badge className="bg-purple-100 text-purple-800 hover:text-purple-800 hover:bg-purple-100">
               {role && role}
             </Badge>
           </div>

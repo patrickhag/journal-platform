@@ -64,11 +64,10 @@ export const useGetIssues = () => {
   });
 };
 
-export const useGetPublishedArticles = () => {
+export const useGetPublishedArticles = (status: string) => {
   const fetchArticles = async (): Promise<TPublishedArticle[]> => {
-    const response = await axios.get<TPublishedArticle[]>(
-      `/api/articles/published`
-    );
+    const url = `/api/articles/published?status=${status}`;
+    const response = await axios.get<TPublishedArticle[]>(url);
 
     if (response.status !== 200) {
       throw new Error('Error occurred while fetching articles');
@@ -77,7 +76,7 @@ export const useGetPublishedArticles = () => {
     return response.data;
   };
   return useQuery<TPublishedArticle[], Error>({
-    queryKey: ['publishedArticles'],
+    queryKey: ['publishedArticles', status],
     queryFn: fetchArticles,
     refetchOnWindowFocus: false,
   });

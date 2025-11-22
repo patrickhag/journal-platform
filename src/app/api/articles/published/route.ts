@@ -6,11 +6,24 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
   try {
+    const session = await auth();
+
+    if (session?.user.role !== 'CHIEF_EDITOR') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const status = searchParams.get('status');
+
+    let whereCondition;
+    if (status === 'AWAITING_DECISION') {
+      whereCondition = eq(publishedArticles.status, 'AWAITING_DECISION');
+    } else if (status === 'PUBLISHED') {
+      whereCondition = eq(publishedArticles.status, 'PUBLISHED');
+    }
+
     const foundPublishedArticles = await db.query.publishedArticles.findMany({
-      where: or(
-        eq(publishedArticles.status, 'AWAITING_DECISION'),
-        eq(publishedArticles.status, 'PUBLISHED')
-      ),
+      where: whereCondition,
       orderBy: desc(publishedArticles.publishedAt),
       columns: {
         id: true,
@@ -18,6 +31,8 @@ export async function GET(req: NextRequest) {
         publishedAt: true,
         status: true,
         pageRange: true,
+        pdfUrl: true,
+        slug: true,
       },
       with: {
         article: {

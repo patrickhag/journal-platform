@@ -206,6 +206,11 @@ export const reviews = pgTable('reviews', {
   articleId: text('articleId').references(() => articleSubmissions.id, {
     onDelete: 'cascade',
   }),
+  reviewAssignmentId: text('reviewAssignmentId')
+    .references(() => reviewAssignments.id, {
+      onDelete: 'cascade',
+    })
+    .default(''),
   fileIds: text('fileIds')
     .array()
     .notNull()
@@ -586,6 +591,7 @@ export const publishedArticlesRelations = relations(
     article: one(articleSubmissions, {
       fields: [publishedArticles.articleId],
       references: [articleSubmissions.id],
+      relationName: 'publishedArticle',
     }),
     issue: one(issues, {
       fields: [publishedArticles.issueId],
@@ -707,6 +713,11 @@ export const articleSubmissionsRelations = relations(
       references: [editorAssignment.articleId],
       relationName: 'editorAssignment',
     }),
+    publishedArticle: one(publishedArticles, {
+      fields: [articleSubmissions.id],
+      references: [publishedArticles.articleId],
+      relationName: 'publishedArticle',
+    }),
     associateEditorAssignments: many(associateEditorAssignments, {
       relationName: 'associateEditorAssignmentArticle',
     }),
@@ -735,6 +746,11 @@ export const reviewsRelations = relations(reviews, ({ one, many }) => ({
     references: [users.id],
     relationName: 'userReviews',
   }),
+  reviewAssignment: one(reviewAssignments, {
+    fields: [reviews.reviewAssignmentId],
+    references: [reviewAssignments.id],
+    relationName: 'reviewAssignmentReviews',
+  }),
   reviewRevisions: many(reviewRevisions, {
     relationName: 'reviewRevisions',
   }),
@@ -754,7 +770,7 @@ export const volumeRelations = relations(volumes, ({ many }) => ({
 
 export const reviewAssignmentsRelations = relations(
   reviewAssignments,
-  ({ one }) => ({
+  ({ one, many }) => ({
     article: one(articleSubmissions, {
       fields: [reviewAssignments.articleId],
       references: [articleSubmissions.id],
@@ -764,6 +780,9 @@ export const reviewAssignmentsRelations = relations(
       fields: [reviewAssignments.userId],
       references: [users.id],
       relationName: 'userReviewAssignments',
+    }),
+    reviews: many(reviews, {
+      relationName: 'reviewAssignmentReviews',
     }),
   })
 );

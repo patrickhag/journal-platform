@@ -41,6 +41,7 @@ import { TPublishedArticle } from '@/types';
 import { publishedArticlesStatus } from '@/lib/consts';
 import { useUpdatePublishedArticle } from '@/hooks/useArticles';
 import Loader from '@/components/Loader';
+import { FileText } from 'lucide-react';
 
 const editPublishedArticleSchema = z.object({
   issueId: z.string(),
@@ -135,10 +136,7 @@ export default function EditPublishedManuscript({
 
         <div className="space-y-4 py-4">
           <div>
-            <p className="text-sm font-medium">
-              Update PDF File{' '}
-              <span className="text-muted-foreground">(Optional)</span>
-            </p>
+            <p className="text-sm font-medium">Update PDF File</p>
             <p className="text-xs text-muted-foreground mb-2">
               Leave empty to keep current file, or Upload the new one
             </p>
@@ -147,6 +145,31 @@ export default function EditPublishedManuscript({
             {fileError && (
               <p className="text-sm text-red-500 mt-2">{fileError}</p>
             )}
+          </div>
+
+          <div className="pt-4">
+            <div className="pt-2">
+              <p className="text-sm font-medium mb-2">Published PDF File</p>
+              <div className="w-full">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <FileText className="h-6 w-6 text-blue-500" />
+                      <div className="text-sm">
+                        <a
+                          href={publishedArticle?.pdfUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-blue-700 hover:underline break-all"
+                        >
+                          PDF file
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <Form {...form}>

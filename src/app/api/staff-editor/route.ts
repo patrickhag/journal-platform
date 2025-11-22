@@ -4,7 +4,6 @@ import {
   articleSubmissions,
   editorAssignment,
   metadata,
-  reviews,
   users,
 } from '@/db/schema';
 import { auth } from '@/auth';

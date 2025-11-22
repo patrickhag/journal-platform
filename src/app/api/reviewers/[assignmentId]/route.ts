@@ -61,25 +61,25 @@ export async function GET(
                 lastName: true,
               },
             },
-            reviews: {
-              with: {
-                reviewRevisions: {
-                  columns: {
-                    id: true,
-                    fileIds: true,
-                    message: true,
-                    requestedAt: true,
-                  },
-                },
-              },
+          },
+        },
+        reviews: {
+          with: {
+            reviewRevisions: {
               columns: {
                 id: true,
                 fileIds: true,
                 message: true,
-                status: true,
-                reviewedAt: true,
+                requestedAt: true,
               },
             },
+          },
+          columns: {
+            id: true,
+            fileIds: true,
+            message: true,
+            status: true,
+            reviewedAt: true,
           },
         },
       },

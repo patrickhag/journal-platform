@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Eye, Search, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AuthorReplyModal from './components/AuthorReplyModal';
@@ -82,31 +82,36 @@ const ReviewsReceived = () => {
       ) : (
         <div className="w-full">
           {filteredManuscripts?.map((manuscript) => (
-            <Card key={manuscript.id} className="flex flex-col">
-              <CardHeader className="space-y-3">
-                <div className="flex items-start justify-between gap-3">
-                  <Link
-                    href={`/articles/${manuscript.id}`}
-                    target="_blank"
-                    className="font-semibold text-lg hover:underline"
-                  >
-                    {manuscript.metadata.title}
-                  </Link>
-                  <StatusBadge status={manuscript.articleStatus || ''} />
+            <Card key={manuscript.id} className="shadow-none mb-3">
+              <CardContent className="p-0">
+                <div className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <Link href={`/articles/${manuscript.id}`} target="_blank">
+                        <h3 className="font-semibold text-lg text-gray-900 mb-2 line-clamp-1 hover:underline">
+                          {manuscript.metadata.title}
+                        </h3>
+                      </Link>
+                      <div className="text-sm text-gray-600 mb-3">
+                        <span>{manuscript.reviews.length} review(s)</span>
+                      </div>
+                      <StatusBadge
+                        status={manuscript.articleStatus || 'Submitted'}
+                      />
+                    </div>
+                    <div className="flex space-x-2 ml-4 shrink-0">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewReviews(manuscript)}
+                        className="cursor-pointer flex items-center gap-2"
+                      >
+                        <Eye className="h-4 w-4" />
+                        View Reviews
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              </CardHeader>
-              <CardContent className="mt-auto flex justify-between">
-                <div className="text-sm text-muted-foreground space-y-1">
-                  <p>{manuscript.reviews.length} review(s)</p>
-                </div>
-                <Button
-                  size="sm"
-                  onClick={() => handleViewReviews(manuscript)}
-                  className="flex items-center gap-2"
-                >
-                  <Eye className="h-4 w-4" />
-                  View Reviews
-                </Button>
               </CardContent>
             </Card>
           ))}

@@ -252,7 +252,7 @@ export const usePublishAcceptedArticle = (
         ? error.response?.data?.message
         : error.message;
 
-      toast.error(message || 'Failed to accept article');
+      toast.error(message || 'Failed to publish accepted article');
     },
   });
 };
@@ -431,7 +431,7 @@ export const useSubmitCollection = () => {
 
 export const useGetAssociateEditorsCollections = (articleId: string) => {
   return useQuery({
-    queryKey: ['associateEditorCollections'],
+    queryKey: ['associateEditorCorrections'],
     queryFn: async () => {
       const { data } = await axios.get<TAssociateEditorCollection[]>(
         `/api/associate-editor/assignments/${articleId}`

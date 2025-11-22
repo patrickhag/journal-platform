@@ -1,7 +1,6 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
 import { articleSubmissions, publishedArticles } from '@/db/schema';
-import { notifyUser } from '@/lib/emailTransporter';
 import { slugify } from '@/lib/utils';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -48,16 +47,28 @@ export async function POST(req: Request) {
 
     const { articleId, issueId, doi, pageRange, pdfUrl, title } = body;
 
-    await db.insert(publishedArticles).values({
-      articleId,
-      issueId,
-      doi,
-      pageRange,
-      pdfUrl,
-      slug: slugify(title),
-      status: 'AWAITING_DECISION',
-    });
-
+    if (!pdfUrl) {
+      await db
+        .update(publishedArticles)
+        .set({
+          issueId,
+          doi,
+          pageRange,
+          slug: slugify(title),
+          status: 'AWAITING_DECISION',
+        })
+        .where(eq(publishedArticles.articleId, articleId));
+    } else {
+      await db.insert(publishedArticles).values({
+        articleId,
+        issueId,
+        doi,
+        pageRange,
+        pdfUrl,
+        slug: slugify(title),
+        status: 'AWAITING_DECISION',
+      });
+    }
     await db
       .update(articleSubmissions)
       .set({ articleStatus: 'AWAITING_DECISION' })

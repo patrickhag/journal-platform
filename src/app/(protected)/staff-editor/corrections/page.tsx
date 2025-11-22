@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 export default function AssociateEditorDashboard() {
-  const [selectedStatus] = useState('CORRECTIONS');
+  const [selectedStatus] = useState('CORRECTION');
   const { data: associateEditorsAssigments, isPending } =
     useGetAssignedStaffEditor(selectedStatus);
 
@@ -45,7 +45,8 @@ export default function AssociateEditorDashboard() {
             )}
             {!isPending && associateEditorsAssigments?.length === 0 && (
               <p className="text-sm text-gray-500">
-                You have no assignments with corrections.
+                You have no assignments with{' '}
+                <span className="font-semibold">CORRECTION</span> status.
               </p>
             )}
             {Array.isArray(associateEditorsAssigments) &&

@@ -45,7 +45,8 @@ export default function AssociateEditorDashboard() {
             )}
             {!isPending && associateEditorsAssigments?.length === 0 && (
               <p className="text-sm text-gray-500">
-                You have no assignments under press.
+                You have no assignments{' '}
+                <span className="font-semibold">UNDER PRESS</span> status.
               </p>
             )}
             {Array.isArray(associateEditorsAssigments) &&

@@ -45,7 +45,8 @@ export default function AssociateEditorDashboard() {
             )}
             {!isPending && associateEditorsAssigments?.length === 0 && (
               <p className="text-sm text-gray-500">
-                You have no under review assignments.
+                You have no <span className="font-semibold">UNDER REVIEW</span>{' '}
+                assignments.
               </p>
             )}
             {Array.isArray(associateEditorsAssigments) &&

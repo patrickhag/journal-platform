@@ -41,6 +41,8 @@ const ManageEditors = () => {
   const { data: associateEditorsInfo = [], isPending } =
     useGetAssignedAssociateEditors();
 
+  console.log('associateEditorsInfo:', associateEditorsInfo);
+
   return (
     <>
       <div className="space-y-6">
@@ -173,19 +175,19 @@ const ManageEditors = () => {
                               </SheetHeader>
 
                               <div className="space-y-4 mt-6">
-                                {assignments &&
-                                  assignments.length > 0 &&
-                                  assignments.map((submission) => (
-                                    <div
-                                      key={submission.id}
-                                      className="space-y-3"
-                                    >
-                                      <h4 className="text-sm font-medium text-gray-900">
-                                        Current Assignment
-                                      </h4>
-                                      <ScrollArea className="h-[550px] pr-4">
-                                        <div className="space-y-3">
-                                          <Card className="p-4">
+                                {assignments && assignments.length > 0 && (
+                                  <div className="space-y-3">
+                                    <h4 className="text-sm font-medium text-gray-900">
+                                      Current Assignment
+                                      {assignments.length > 1 ? 's' : ''}
+                                    </h4>
+                                    <ScrollArea className="h-[550px] pr-4">
+                                      <div className="space-y-3">
+                                        {assignments.map((submission) => (
+                                          <Card
+                                            key={submission.id}
+                                            className="p-4"
+                                          >
                                             <div className="flex items-start justify-between gap-2">
                                               <div className="flex-1">
                                                 <Link
@@ -241,10 +243,11 @@ const ManageEditors = () => {
                                               </Button>
                                             </div>
                                           </Card>
-                                        </div>
-                                      </ScrollArea>
-                                    </div>
-                                  ))}
+                                        ))}
+                                      </div>
+                                    </ScrollArea>
+                                  </div>
+                                )}
                                 {assignments && assignments.length === 0 && (
                                   <div className="text-sm text-gray-500">
                                     This editor has no current assignments.

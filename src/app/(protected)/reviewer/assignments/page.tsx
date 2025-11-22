@@ -19,8 +19,6 @@ export default function ReviewerDashboard() {
 
   const { data: session } = useSession();
 
-  console.log('userId:', session?.user.id);
-
   const [reviewModal, setReviewModal] = useState<{
     isOpen: boolean;
     articleId?: string;

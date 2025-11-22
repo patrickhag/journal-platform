@@ -10,43 +10,36 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { FileText, Edit, SquareCheckBig } from 'lucide-react';
+import { FileText, SquareCheckBig } from 'lucide-react';
 import { TPublishedArticle } from '@/types';
 import { useGetPublishedArticles } from '@/hooks/usePublishArticle';
-import { ApproveManuscriptDialog } from './components/ApproveManuscriptDialog';
 import Link from 'next/link';
-import EditPublishedManuscript from './components/EditPublishedManuscript';
+import ApproveManuscriptSheet from './components/ApproveManuscriptSheet';
 
 const PublishedArticles = () => {
-  const { data: publishedArticles, isPending } = useGetPublishedArticles();
+  const { data: publishedArticles, isPending } =
+    useGetPublishedArticles('AWAITING_DECISION');
 
-  const [selectedPublishedArticle, setselectedPublishedArticle] =
+  const [selectedPublishedArticle, setSelectedPublishedArticle] =
     useState<TPublishedArticle | null>(null);
-  const [editSheetOpen, setEditSheetOpen] = useState(false);
-  const [acceptForPublication, setacceptForPublication] = useState<{
-    open: boolean;
-    articleId?: string;
-  }>({
-    open: false,
-    articleId: '',
-  });
-
-  const onCloseAlert = () => setacceptForPublication({ open: false });
+  const [approveSheetOpen, setApproveSheetOpen] = useState(false);
 
   return (
     <>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Publish Articles Management</h1>
+          <h1 className="text-3xl font-bold">
+            Approve Articles for Publication
+          </h1>
         </div>
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5" />
-              Published Articles
+              Articles Awaiting Decision
             </CardTitle>
             <CardDescription>
-              Manage manuscripts that was published by associate editor.
+              Review and approve manuscripts that are ready for publication.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -54,7 +47,7 @@ const PublishedArticles = () => {
               {isPending && <p>Loading...</p>}
 
               {!isPending && publishedArticles?.length === 0 && (
-                <p>No accepted manuscripts ready for publication.</p>
+                <p>No manuscripts awaiting decision.</p>
               )}
 
               {!isPending &&
@@ -68,7 +61,9 @@ const PublishedArticles = () => {
                       <div className="flex justify-between items-start">
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
-                            <Link href={`/articles/${publishedArticle.id}`}>
+                            <Link
+                              href={`/articles/${publishedArticle.article.id}`}
+                            >
                               <h3 className="font-semibold hover:underline">
                                 {publishedArticle.article.metadata.title}
                               </h3>
@@ -90,7 +85,7 @@ const PublishedArticles = () => {
                               {publishedArticle.pageRange || 'Not set'}
                             </span>
                             <span>
-                              <strong>Published:</strong>{' '}
+                              <strong>Submitted:</strong>{' '}
                               {new Date(
                                 publishedArticle.publishedAt
                               ).toLocaleDateString()}
@@ -100,34 +95,17 @@ const PublishedArticles = () => {
                       </div>
 
                       <div className="flex justify-end gap-2">
-                        {publishedArticle.status === 'AWAITING_DECISION' && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setacceptForPublication({
-                                open: true,
-                                articleId: publishedArticle.id,
-                              });
-                            }}
-                          >
-                            <SquareCheckBig className="h-4 w-4 mr-2" />
-                            Accept For Publication
-                          </Button>
-                        )}
-                        {publishedArticle.status === 'PUBLISHED' && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setselectedPublishedArticle(publishedArticle);
-                              setEditSheetOpen(true);
-                            }}
-                          >
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit Published Article
-                          </Button>
-                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedPublishedArticle(publishedArticle);
+                            setApproveSheetOpen(true);
+                          }}
+                        >
+                          <SquareCheckBig className="h-4 w-4 mr-2" />
+                          Accept For Publication
+                        </Button>
                       </div>
                     </div>
                   );
@@ -136,18 +114,11 @@ const PublishedArticles = () => {
           </CardContent>
         </Card>
       </div>
-      {editSheetOpen && (
-        <EditPublishedManuscript
-          open={editSheetOpen}
-          onOpenChange={setEditSheetOpen}
+      {approveSheetOpen && (
+        <ApproveManuscriptSheet
+          open={approveSheetOpen}
+          onOpenChange={setApproveSheetOpen}
           publishedArticle={selectedPublishedArticle}
-        />
-      )}
-      {acceptForPublication && (
-        <ApproveManuscriptDialog
-          open={acceptForPublication.open}
-          onOpenChange={onCloseAlert}
-          articleId={acceptForPublication.articleId as string}
         />
       )}
     </>

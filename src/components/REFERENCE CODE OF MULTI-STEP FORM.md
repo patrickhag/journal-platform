@@ -73,6 +73,7 @@ setCurrentStep(step => step - 1)
 }
 
 return (
+
 <section className='absolute inset-0 flex flex-col justify-between p-24'>
 {/_ steps _/}
 <nav aria-label='Progress'>

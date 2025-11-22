@@ -4,11 +4,15 @@ import { notifications, reviewAssignments, reviews } from '@/db/schema';
 import { auth } from '@/auth';
 import { articleSubmissions } from '@/db/schema';
 import { and, desc, eq } from 'drizzle-orm';
-import { notifyStaffEditorAboutReviewStatus } from '@/lib/emailTransporter';
+import {
+  informingAuthorNReviewer,
+  notifyStaffEditorAboutReviewStatus,
+} from '@/lib/emailTransporter';
 
 export async function POST(req: Request) {
   try {
-    const { message, articleId, fileIds, status } = await req.json();
+    const { message, articleId, fileIds, status, reviewAssignmentId } =
+      await req.json();
 
     const session = await auth();
     const userId = session?.user?.id || '';
@@ -35,6 +39,7 @@ export async function POST(req: Request) {
       fileIds: fileIds,
       status: status,
       userId,
+      reviewAssignmentId,
     });
 
     if (status === 'Accepted') {
@@ -104,6 +109,15 @@ export async function POST(req: Request) {
       status: status,
     });
 
+    // send email to author
+    await informingAuthorNReviewer({
+      articleTitle: articleTitle as string,
+      participantName: authorName,
+      participantEmail: authorEmail as string,
+      subject: 'Reviewer has reviewed your manuscript and provided a review',
+      userType: 'reviewer',
+    });
+
     // SEND IN-APP NOTIFICATION TO THE AUTHOR
     await db.insert(notifications).values({
       message: `New review submitted for your article named "${articleTitle}"`,
@@ -112,7 +126,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(
-      { message: 'Review sent successfully and author informed' },
+      { message: 'Your review was sent successfully.' },
       { status: 201 }
     );
   } catch (error) {

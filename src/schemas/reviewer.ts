@@ -63,12 +63,12 @@ export const reviewSchema = z.object({
   message: z.string().min(10, {
     message: 'Review message must be at least 10 characters.',
   }),
-  status: z.enum([
-    'Major Collection',
-    'Minor Collection',
-    'Accepted',
-    'Rejected',
-  ]),
+  status: z.enum(
+    ['Major Correction', 'Minor Correction', 'Accepted', 'Rejected'],
+    {
+      message: 'Please select a review status.',
+    }
+  ),
 });
 
 export type TArticle = {

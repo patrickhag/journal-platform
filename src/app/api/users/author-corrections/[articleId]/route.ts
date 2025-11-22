@@ -16,8 +16,10 @@ export async function GET(
     const { articleId } = await params;
 
     if (
-      !(session?.user.role !== 'CHIEF_EDITOR') ||
-      session?.user.role !== 'STAFF_EDITOR'
+      !(
+        session?.user.role === 'CHIEF_EDITOR' ||
+        session?.user.role === 'STAFF_EDITOR'
+      )
     ) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

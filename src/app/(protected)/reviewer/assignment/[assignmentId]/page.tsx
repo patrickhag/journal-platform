@@ -132,8 +132,8 @@ const ReviewAssignment = () => {
       </Card>
 
       {/* Previous Reviews (if any) */}
-      {particularAssignment?.article.reviews &&
-        particularAssignment?.article.reviews.length > 0 && (
+      {particularAssignment?.reviews &&
+        particularAssignment?.reviews.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -143,7 +143,7 @@ const ReviewAssignment = () => {
             </CardHeader>
 
             <CardContent>
-              {particularAssignment.article.reviews.map((review, index) => (
+              {particularAssignment?.reviews.map((review, index) => (
                 <div
                   key={index}
                   className="border rounded-lg p-4 bg-muted/50 mb-4 space-y-3"

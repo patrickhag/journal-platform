@@ -33,6 +33,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@/components/ui/sheet';
+import { FileText } from 'lucide-react';
 
 const publishArticleSchema = z.object({
   issueId: z.string().min(1, 'Issue is required'),
@@ -47,6 +48,7 @@ interface PublishManuscriptDialogProps {
   onOpenChange: (open: boolean) => void;
   title: string;
   articleId: string;
+  pdfUrl: string;
 }
 
 export default function PublishManuscriptDialog({
@@ -54,6 +56,7 @@ export default function PublishManuscriptDialog({
   onOpenChange,
   title,
   articleId,
+  pdfUrl,
 }: PublishManuscriptDialogProps) {
   const { data: issues } = useGetIssues();
 
@@ -82,7 +85,7 @@ export default function PublishManuscriptDialog({
       <SheetContent side="right" className="w-[500px] sm:w-[540px]">
         <SheetHeader>
           <SheetTitle>Approve Manuscript</SheetTitle>
-          <SheetDescription>
+          <SheetDescription className="line-clamp-2">
             Enter the publication details for &quot;{title}&quot;.
           </SheetDescription>
         </SheetHeader>
@@ -92,6 +95,33 @@ export default function PublishManuscriptDialog({
         </p>
         <DragAndDropFileInput />
         <FileList isEditNeeded />
+
+        {pdfUrl && (
+          <div className="pt-4">
+            <div className="pt-2">
+              <p className="text-sm font-medium mb-2">Forwarded PDF File</p>
+              <div className="w-full">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <FileText className="h-6 w-6 text-blue-500" />
+                      <div className="text-sm">
+                        <a
+                          href={pdfUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-blue-700 hover:underline break-all"
+                        >
+                          PDF file
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <Form {...form}>
           <form

@@ -43,7 +43,8 @@ export default function AssociateEditorDashboard() {
             )}
             {!isPending && associateEditorsAssigments?.length === 0 && (
               <p className="text-sm text-gray-500">
-                You have no assigned assignments with "submitted" status.
+                You have no assigned assignments with{' '}
+                <span className="font-semibold">SUBMITTED</span> status.
               </p>
             )}
             {Array.isArray(associateEditorsAssigments) &&

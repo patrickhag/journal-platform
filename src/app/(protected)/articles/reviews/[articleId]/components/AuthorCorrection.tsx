@@ -8,7 +8,6 @@ import { TAuthorCorrection } from '@/types';
 
 export const AuthorCorrections = ({ articleId }: { articleId: string }) => {
   const { data: corrections, isPending } = useGetAuthorCorrections(articleId);
-  console.log('corrections:', corrections);
 
   return (
     <>
