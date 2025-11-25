@@ -28,7 +28,7 @@ export function IssuesList() {
                 Volume {volume.volumeNumber} ({volume.year})
               </h3>
               <p className="text-sm text-gray-500">
-                {volume.issues.length} issues per volume
+                {volume.issues.length} issues in this volume
               </p>
             </div>
             {expandedVolume === volume.year ? (

@@ -1,6 +1,7 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
-import { articleSubmissions, publishedArticles } from '@/db/schema';
+import { articleSubmissions, issues, publishedArticles } from '@/db/schema';
+import { informChiefEditorAboutOngoingPublication } from '@/lib/emailTransporter';
 import { slugify } from '@/lib/utils';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -8,6 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(req: NextRequest) {
   try {
     const allIssues = await db.query.issues.findMany({
+      where: eq(issues.status, 'Published'),
       columns: {
         id: true,
         issueNumber: true,
@@ -45,7 +47,16 @@ export async function POST(req: Request) {
     }
     const body = await req.json();
 
-    const { articleId, issueId, doi, pageRange, pdfUrl, title } = body;
+    const {
+      articleId,
+      issueId,
+      doi,
+      pageRange,
+      pdfUrl,
+      title,
+      issueNumber,
+      volumeYear,
+    } = body;
 
     if (!pdfUrl) {
       await db
@@ -69,10 +80,41 @@ export async function POST(req: Request) {
         status: 'AWAITING_DECISION',
       });
     }
+
     await db
       .update(articleSubmissions)
       .set({ articleStatus: 'AWAITING_DECISION' })
       .where(eq(articleSubmissions.id, articleId));
+
+    const article = await db.query.articleSubmissions.findFirst({
+      where: eq(articleSubmissions.id, articleId),
+      columns: {
+        id: true,
+      },
+      with: {
+        metadata: {
+          columns: {
+            title: true,
+            prefix: true,
+          },
+        },
+        user: {
+          columns: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+    });
+
+    const authorNames = `${article?.metadata.prefix} ${article?.user.firstName} ${article?.user.lastName}`;
+
+    await informChiefEditorAboutOngoingPublication({
+      articleTitle: article?.metadata.title as string,
+      authorNames: authorNames,
+      issueNumber: issueNumber,
+      volumeYear: volumeYear,
+    });
 
     return NextResponse.json({
       message: "Article status changed, It's ready for chief-editor approval.",

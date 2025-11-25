@@ -23,29 +23,38 @@ export type Issue = {
   id: string;
   title: string;
   description: string;
-  status: 'Draft' | 'Published' | 'Archived';
+  status: string;
   issueNumber: number;
   volumeId: string;
-  publicationDate?: Date | undefined;
+  publicationDate: string;
+
   volume: {
     id: string;
     volumeNumber: number;
   };
-  articles: {
+
+  articles: Array<{
     id: string;
-    section: string;
-    metadata: {
-      title: string;
-      topics: string[];
+    slug: string;
+
+    article: {
+      id: string;
+      section: string;
+      metadata: {
+        title: string;
+        prefix: string;
+        topics: string[];
+      };
+      contributors: {
+        name: string;
+        salutation: string;
+      }[];
+      user: {
+        firstName: string;
+        lastName: string;
+      };
     };
-    user: {
-      firstName: string;
-      lastName: string;
-    };
-    contributors: {
-      name: string;
-    }[];
-  }[];
+  }>;
 };
 
 export type PublshIssueType = {

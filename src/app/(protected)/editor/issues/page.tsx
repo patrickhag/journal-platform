@@ -41,16 +41,16 @@ export default function App() {
             </p>
           </div>
         </div>
-        <Tabs defaultValue="volumes" className="w-full">
+        <Tabs defaultValue="issues" className="w-full">
           <div className="flex justify-between items-center mb-6">
             <TabsList>
-              <TabsTrigger value="volumes" className="flex items-center gap-2">
-                <BookOpenIcon className="w-4 h-4" />
-                Volumes
-              </TabsTrigger>
               <TabsTrigger value="issues" className="flex items-center gap-2">
                 <BookIcon className="w-4 h-4" />
                 Issues
+              </TabsTrigger>
+              <TabsTrigger value="volumes" className="flex items-center gap-2">
+                <BookOpenIcon className="w-4 h-4" />
+                Volumes
               </TabsTrigger>
             </TabsList>
 

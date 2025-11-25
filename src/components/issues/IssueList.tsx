@@ -19,24 +19,15 @@ import {
   BookOpenIcon,
   UserCircle2Icon,
   FolderIcon,
-  PlusIcon,
-  SendIcon,
   Ellipsis,
-  Dot,
   Edit,
   Trash,
+  Dot,
 } from 'lucide-react';
 import { useGetVolumes } from '@/hooks/useVolumes';
-import {
-  useDeleteIssue,
-  useEditIssue,
-  useGetIssues,
-  usePublishIssue,
-} from '@/hooks/useIssues';
+import { useDeleteIssue, useEditIssue, useGetIssues } from '@/hooks/useIssues';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { toast } from 'sonner';
 import Loader from '../Loader';
 import { useEffect, useState } from 'react';
 import { DeleteIssueDialog } from './DeleteIssueDialog';
@@ -53,9 +44,6 @@ export function IssueList() {
   const [issueToDelete, setIssueToDelete] = useState<string | null>(null);
   const [editingIssue, setEditingIssue] = useState<Issue | null>(null);
 
-  const router = useRouter();
-
-  const { mutate, isPending } = usePublishIssue();
   const { mutate: deleteIssueMutation, isPending: isDeletingIssuePending } =
     useDeleteIssue(setOpenDeleteIssueDialog);
 
@@ -63,6 +51,7 @@ export function IssueList() {
     setIssueToDelete(issueId);
     setOpenDeleteIssueDialog(true);
   };
+
   useEffect(() => {
     if (allowIssueDeletion) {
       deleteIssueMutation(issueToDelete ?? '');
@@ -70,23 +59,18 @@ export function IssueList() {
     }
   }, [allowIssueDeletion]);
 
-  const handlePublishIssue = ({
-    issueId,
-    articleIds,
-  }: {
-    issueId: string;
-    articleIds: string[];
-  }) => {
-    if (!articleIds.length) return toast.error('No articles to publish!');
-    mutate({ issueId, articleIds });
-  };
-
   const { mutate: editIssueMutation, isPending: isUpdatingIssuePending } =
     useEditIssue();
 
   const handleEditSubmit = (data: IssueType & { articles: string[] }) => {
-    editIssueMutation({ issueId: editingIssue?.id as string, data });
-    setEditingIssue(null);
+    editIssueMutation(
+      { issueId: editingIssue?.id as string, data },
+      {
+        onSuccess: () => {
+          setEditingIssue(null);
+        },
+      }
+    );
   };
 
   return (
@@ -167,38 +151,43 @@ export function IssueList() {
                   <Separator />
                   <ScrollArea className="h-[300px] pr-4">
                     <div className="space-y-4">
-                      {issue.articles?.map((article) => (
-                        <div key={article.id} className="space-y-3">
-                          <div className="bg-muted/50 rounded-lg p-4">
-                            <h4 className="font-medium mb-2">
-                              <Link
-                                href={`/articles/${article.id}`}
-                                className="hover:text-blue-900"
-                              >
-                                {article.metadata.title}
-                              </Link>
-                            </h4>
-                            <div className="flex items-center justify-between text-sm">
-                              <div className="flex items-center space-x-4">
-                                <div className="flex items-center text-muted-foreground">
-                                  <FolderIcon className="w-4 h-4 mr-1" />
-                                  <span>{article.section}</span>
-                                </div>
-                                <Separator
-                                  orientation="vertical"
-                                  className="h-4"
-                                />
-                                <div className="flex items-center">
-                                  <UserCircle2Icon className="w-4 h-4 mr-1 text-muted-foreground" />
-                                  <span>
-                                    {`${article.user.firstName} ${article.user.lastName}`}
-                                  </span>
+                      {issue.articles?.map((issueArticle) => {
+                        const article = issueArticle.article;
+                        const articleSlug =
+                          issueArticle.slug || issueArticle.article.id;
+                        return (
+                          <div key={issueArticle.id} className="space-y-3">
+                            <div className="bg-muted/50 rounded-lg p-4">
+                              <h4 className="font-medium mb-2 line-clamp-1">
+                                <Link
+                                  href={`/articles/article/${articleSlug}`}
+                                  className="hover:text-blue-900"
+                                >
+                                  {article.metadata.title}
+                                </Link>
+                              </h4>
+                              <div className="flex items-center justify-between text-sm">
+                                <div className="flex items-center space-x-4">
+                                  <div className="flex items-center text-muted-foreground">
+                                    <FolderIcon className="w-4 h-4 mr-1" />
+                                    <span>{article.section}</span>
+                                  </div>
+                                  <Separator
+                                    orientation="vertical"
+                                    className="h-4"
+                                  />
+                                  <div className="flex items-center">
+                                    <UserCircle2Icon className="w-4 h-4 mr-1 text-muted-foreground" />
+                                    <span>
+                                      {`${article.user.firstName} ${article.user.lastName}`}
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                       {(!issue.articles || issue.articles.length === 0) && (
                         <div className="text-center py-8 text-muted-foreground">
                           No articles in this issue yet.
@@ -206,39 +195,6 @@ export function IssueList() {
                       )}
                     </div>
                   </ScrollArea>
-                </div>
-                <div className="flex gap-4">
-                  <Button
-                    className="flex-1"
-                    variant="outline"
-                    disabled={issue.status === 'Published'}
-                    onClick={() => router.push('/editor/articles')}
-                  >
-                    <PlusIcon className="w-4 h-4 mr-2" />
-                    Assign Articles
-                  </Button>
-                  <Button
-                    className="flex-1"
-                    variant="default"
-                    disabled={
-                      issue.status === 'Published' ||
-                      issue.articles.length === 0
-                    }
-                    onClick={() => {
-                      const articleIds = issue.articles.map(
-                        (article) => article.id
-                      );
-                      handlePublishIssue({ issueId: issue.id, articleIds });
-                    }}
-                  >
-                    {isPending ? (
-                      <Loader text="Publishing..." />
-                    ) : (
-                      <>
-                        <SendIcon className="w-4 h-4 mr-2" /> Publish Issue
-                      </>
-                    )}
-                  </Button>
                 </div>
               </CardContent>
             </Card>

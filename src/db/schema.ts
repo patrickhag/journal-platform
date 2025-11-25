@@ -596,6 +596,7 @@ export const publishedArticlesRelations = relations(
     issue: one(issues, {
       fields: [publishedArticles.issueId],
       references: [issues.id],
+      relationName: 'publishedArticlesIssue',
     }),
     user: one(users, {
       fields: [publishedArticles.userId],
@@ -761,7 +762,9 @@ export const issuesRelations = relations(issues, ({ one, many }) => ({
     fields: [issues.volumeId],
     references: [volumes.id],
   }),
-  articles: many(articleSubmissions),
+  articles: many(publishedArticles, {
+    relationName: 'publishedArticlesIssue',
+  }),
 }));
 
 export const volumeRelations = relations(volumes, ({ many }) => ({

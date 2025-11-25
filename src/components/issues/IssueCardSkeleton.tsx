@@ -31,7 +31,7 @@ export default function IssueCardSkeleton() {
           ))}
         </div>
       </CardContent>
-      <div className="flex gap-4">
+      {/* <div className="flex gap-4">
         <Button className="flex-1" variant="outline" disabled>
           <PlusIcon className="w-4 h-4 mr-2" />
           Assign Articles
@@ -39,7 +39,7 @@ export default function IssueCardSkeleton() {
         <Button className="flex-1" variant="default" disabled>
           <SendIcon className="w-4 h-4 mr-2" /> Publish Issue
         </Button>
-      </div>
+      </div> */}
     </Card>
   );
 }

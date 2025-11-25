@@ -59,7 +59,7 @@ export function IssueModal({
       volumeId: '',
       title: '',
       description: '',
-      status: 'Draft',
+      status: 'Published',
     },
   });
 
@@ -183,32 +183,6 @@ export function IssueModal({
                       </PopoverContent>
                     </Popover>
                   </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent defaultValue={'Draft'}>
-                      <SelectItem value="Draft">Draft</SelectItem>
-                      <SelectItem value="Published" disabled>
-                        Published
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

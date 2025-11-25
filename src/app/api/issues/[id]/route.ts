@@ -178,6 +178,7 @@ export async function GET(
     }
 
     const issue = await db.query.issues.findFirst({
+      where: eq(issues.id, issueId),
       columns: {
         id: true,
         issueNumber: true,
@@ -193,30 +194,39 @@ export async function GET(
         articles: {
           columns: {
             id: true,
-            section: true,
+            articleId: true,
+            slug: true,
           },
           with: {
-            metadata: {
+            article: {
               columns: {
-                title: true,
-                topics: true,
+                id: true,
               },
-            },
-            user: {
-              columns: {
-                firstName: true,
-                lastName: true,
-              },
-            },
-            contributors: {
-              columns: {
-                name: true,
+              with: {
+                user: {
+                  columns: {
+                    firstName: true,
+                    lastName: true,
+                  },
+                },
+                metadata: {
+                  columns: {
+                    title: true,
+                    prefix: true,
+                    topics: true,
+                  },
+                },
+                contributors: {
+                  columns: {
+                    name: true,
+                    salutation: true,
+                  },
+                },
               },
             },
           },
         },
       },
-      where: eq(issues.id, issueId),
     });
 
     if (!issue) {

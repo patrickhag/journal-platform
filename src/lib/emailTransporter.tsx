@@ -33,6 +33,7 @@ import { StaffEditorEmailTemplate } from '@/components/emails/inform-associate-e
 import { NotifyReviewerAboutFinalizedAssignment } from '@/components/emails/notify-reviewer-about-finalised-status';
 import { AssociateEditorStatusEmail } from '@/components/emails/inform-associate-editor-about-correction';
 import { AuthorReplyToStaffEditorEmail } from '@/components/emails/author-reply-to-staff-editor';
+import { InformChiefEditorAboutOngoingPublication } from '@/components/emails/inform-chief-editor-about-ongoing-publication';
 
 export const sendPasswordResetEmail = async ({
   subject,
@@ -1013,6 +1014,44 @@ export const sendEmailToSubscribers = async ({
     return { success: true };
   } catch (error) {
     console.error('Error sending notification:', error);
+    return { success: false, error };
+  }
+};
+
+export const informChiefEditorAboutOngoingPublication = async ({
+  articleTitle,
+  authorNames,
+  issueNumber,
+  volumeYear,
+}: {
+  articleTitle: string;
+  authorNames: string;
+  issueNumber: string | number;
+  volumeYear: string | number;
+}) => {
+  try {
+    const emailHtml = await render(
+      <InformChiefEditorAboutOngoingPublication
+        articleTitle={articleTitle}
+        authorNames={authorNames}
+        issueNumber={issueNumber}
+        volumeYear={volumeYear}
+      />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: process.env.EDITOR_IN_CHIEF_EMAIL,
+      subject: 'Ongoing publication awaits your acceptance',
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error(
+      'Error informing chief editor about ongoing publication:',
+      error
+    );
     return { success: false, error };
   }
 };

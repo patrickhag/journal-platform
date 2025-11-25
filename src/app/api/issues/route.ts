@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
 import { articleSubmissions, Issues, issues } from '@/db/schema';
 import { auth } from '@/auth';
-import { eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 
 export async function GET(req: NextRequest) {
   try {
@@ -34,23 +34,33 @@ export async function GET(req: NextRequest) {
         articles: {
           columns: {
             id: true,
-            section: true,
+            slug: true,
           },
           with: {
-            metadata: {
+            article: {
               columns: {
-                title: true,
+                id: true,
+                section: true,
               },
-            },
-            user: {
-              columns: {
-                firstName: true,
-                lastName: true,
+              with: {
+                metadata: {
+                  columns: {
+                    title: true,
+                    prefix: true,
+                  },
+                },
+                user: {
+                  columns: {
+                    firstName: true,
+                    lastName: true,
+                  },
+                },
               },
             },
           },
         },
       },
+      orderBy: desc(issues.issueNumber),
     });
 
     return NextResponse.json(allIssues);
@@ -86,6 +96,21 @@ export async function POST(req: NextRequest) {
     if (!issueNumber || !volumeId || !publicationDate) {
       return NextResponse.json(
         { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    // check if issue number already exists
+    const existingIssue = await db.query.issues.findFirst({
+      where: and(
+        eq(issues.issueNumber, issueNumber),
+        eq(issues.volumeId, volumeId)
+      ),
+    });
+
+    if (existingIssue) {
+      return NextResponse.json(
+        { error: 'Issue number already exists for this volume' },
         { status: 400 }
       );
     }

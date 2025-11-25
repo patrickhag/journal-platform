@@ -64,6 +64,8 @@ type TPublishArticle = {
   doi?: string;
   issueId: string;
   pageRange: string;
+  issueNumber: number;
+  volumeYear: number;
 };
 
 export const usePublishArticle = () => {

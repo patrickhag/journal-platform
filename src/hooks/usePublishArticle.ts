@@ -58,13 +58,15 @@ export const useGetIssues = () => {
     return response.data;
   };
   return useQuery<TIssues[], Error>({
-    queryKey: ['publishIssues'],
+    queryKey: ['publishedIssues'],
     queryFn: fetchArticles,
     refetchOnWindowFocus: false,
   });
 };
 
-export const useGetPublishedArticles = (status: string) => {
+export const useGetPublishedArticles = (
+  status: 'AWAITING_DECISION' | 'PUBLISHED' | 'UNPUBLISHED'
+) => {
   const fetchArticles = async (): Promise<TPublishedArticle[]> => {
     const url = `/api/articles/published?status=${status}`;
     const response = await axios.get<TPublishedArticle[]>(url);

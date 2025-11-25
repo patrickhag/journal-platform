@@ -20,6 +20,8 @@ export async function GET(req: NextRequest) {
       whereCondition = eq(publishedArticles.status, 'AWAITING_DECISION');
     } else if (status === 'PUBLISHED') {
       whereCondition = eq(publishedArticles.status, 'PUBLISHED');
+    } else if (status === 'UNPUBLISHED') {
+      whereCondition = eq(publishedArticles.status, 'UNPUBLISHED');
     }
 
     const foundPublishedArticles = await db.query.publishedArticles.findMany({
@@ -119,11 +121,25 @@ export async function PUT(req: NextRequest) {
     }
 
     // Check if DOI is unique (if provided and different from current)
-    if (doi && doi === existingPublishedArticle.doi) {
-      return NextResponse.json(
-        { error: 'DOI already exists for another article' },
-        { status: 409 }
-      );
+    // Only show the "already exists" message if chief-editor is trying to actually update the DOI (i.e., it's present in the body and it's different from the current value)
+    if (
+      typeof doi !== 'undefined' &&
+      doi !== null &&
+      doi !== existingPublishedArticle.doi &&
+      doi.trim() !== ''
+    ) {
+      // Optionally add a check to ensure the new DOI does not already exist for a different article
+      const existingDOI = await db.query.publishedArticles.findFirst({
+        where: (fields, { and, eq, ne }) =>
+          and(eq(fields.doi, doi), ne(fields.id, publishedArticleId)),
+        columns: { id: true },
+      });
+      if (existingDOI) {
+        return NextResponse.json(
+          { message: 'DOI already exists for another article' },
+          { status: 409 }
+        );
+      }
     }
 
     const updateData: any = {
@@ -153,7 +169,7 @@ export async function PUT(req: NextRequest) {
     }
     return NextResponse.json(
       {
-        message: 'Published article updated successfully',
+        message: 'Published article modified successfully.',
       },
       { status: 200 }
     );

@@ -76,8 +76,17 @@ export default function PublishManuscriptDialog({
       articleId,
       title,
       ...values,
+      issueNumber: issues?.find((issue) => issue.id === values.issueId)
+        ?.issueNumber as number,
+      volumeYear: issues?.find((issue) => issue.id === values.issueId)?.volume
+        .year as number,
     };
-    mutate(payloadData);
+
+    mutate(payloadData, {
+      onSuccess: () => {
+        onOpenChange(false);
+      },
+    });
   };
 
   return (

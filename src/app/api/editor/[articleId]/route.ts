@@ -221,7 +221,7 @@ export async function PATCH(
         status: 'PUBLISHED',
         publishedAt: new Date(),
       })
-      .where(eq(publishedArticles.id, articleId))
+      .where(eq(publishedArticles.articleId, articleId))
       .returning();
 
     const article = await db.query.articleSubmissions.findFirst({
@@ -250,16 +250,16 @@ export async function PATCH(
     const authorEmail = article?.user.email as string;
     const articleLink = article?.id as string;
 
-    await notifyUser({
-      articleTitle: articleTitle,
-      authorName,
-      authorEmail,
-      articleLink: `${process.env.NEXT_PUBLIC_URL}/articles/article/${articleLink}`,
-      type: 'published',
-      subject: '🎉 Congratulations! Your Manuscript Is Officially Published',
-    });
-
     if (isUpdatingDone[0]) {
+      await notifyUser({
+        articleTitle: articleTitle,
+        authorName,
+        authorEmail,
+        articleLink: `${process.env.NEXT_PUBLIC_URL}/articles/article/${articleLink}`,
+        type: 'published',
+        subject: '🎉 Congratulations! Your Manuscript Is Officially Published',
+      });
+
       return NextResponse.json({
         message: 'Manuscript is officially published!',
       });

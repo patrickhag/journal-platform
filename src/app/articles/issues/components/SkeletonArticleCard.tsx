@@ -10,6 +10,9 @@ export default function SkeletonArticleCard() {
         <Skeleton className="h-6 w-20 rounded-full" />
         <Skeleton className="h-6 w-24 rounded-full" />
         <Skeleton className="h-6 w-16 rounded-full" />
+        <Skeleton className="h-6 w-20 rounded-full" />
+        <Skeleton className="h-6 w-24 rounded-full" />
+        <Skeleton className="h-6 w-16 rounded-full" />
       </div>
     </div>
   );

@@ -293,4 +293,4 @@ export const sdgGoals = [
   'Partnerships to achieve the Goal',
 ];
 
-export const publishedArticlesStatus = ['PUBLISHED', 'UNPUBLISH'];
+export const publishedArticlesStatus = ['PUBLISHED', 'UNPUBLISHED'];

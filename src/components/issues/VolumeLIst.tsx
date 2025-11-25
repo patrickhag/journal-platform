@@ -6,19 +6,9 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { VolumeType } from '@/types';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '../ui/button';
-import { BookIcon, MoreVertical } from 'lucide-react';
+import { BookIcon } from 'lucide-react';
 import { Separator } from '../ui/separator';
 import { ScrollArea } from '../ui/scroll-area';
-import { useState, useEffect } from 'react';
-import { DeleteVolumeDialog } from './DeleteVolumeDialog';
-import { useDeleteVolume } from '@/hooks/useVolumes';
 import VolumeCardSkeleton from './VolumeCardSkeleton';
 interface VolumeLIstProps {
   volumes: VolumeType;
@@ -26,26 +16,6 @@ interface VolumeLIstProps {
 }
 
 export function VolumeList({ volumes, isVolumesPending }: VolumeLIstProps) {
-  const [volumeToDelete, setVolumeToDelete] = useState<string | null>(null);
-  const [allowVolumeDeletion, setAllowVolumeDeletion] = useState(false);
-  const [openDeleteVolumeDialog, setOpenDeleteVolumeDialog] = useState(false);
-
-  const handleDeleteVolume = (volumeId: string) => {
-    setVolumeToDelete(volumeId);
-    setOpenDeleteVolumeDialog(true);
-  };
-
-  const { mutate: deleteVolumeMutation } = useDeleteVolume(
-    setOpenDeleteVolumeDialog
-  );
-
-  useEffect(() => {
-    if (allowVolumeDeletion) {
-      deleteVolumeMutation(volumeToDelete ?? '');
-      setAllowVolumeDeletion(false);
-    }
-  }, [allowVolumeDeletion]);
-
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -67,21 +37,6 @@ export function VolumeList({ volumes, isVolumesPending }: VolumeLIstProps) {
                         {volume.status}
                       </span>
                     </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          className="text-destructive"
-                          onClick={() => handleDeleteVolume(volume.id)}
-                        >
-                          Delete Volume
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </div>
                   <CardDescription>{volume.title}</CardDescription>
                   <div className="text-sm text-muted-foreground">
@@ -143,14 +98,6 @@ export function VolumeList({ volumes, isVolumesPending }: VolumeLIstProps) {
           </div>
         )}
       </div>
-      {openDeleteVolumeDialog && (
-        <DeleteVolumeDialog
-          open={openDeleteVolumeDialog}
-          onOpenChange={setOpenDeleteVolumeDialog}
-          setAllowVolumeDeletion={setAllowVolumeDeletion}
-          // isDeletingVolumePending={isDeletingVolumePending}
-        />
-      )}
     </>
   );
 }

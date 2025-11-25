@@ -374,7 +374,7 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-              <DropdownMenu>
+              {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
@@ -404,7 +404,7 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
-              </DropdownMenu>
+              </DropdownMenu> */}
 
               <Button
                 variant="outline"

@@ -65,9 +65,10 @@ export function EditIssueModal({
       description: issue.description,
       publicationDate: new Date(issue.publicationDate ?? Date.now()),
       status: issue.status as 'Draft' | 'Published',
-      articles: issue.articles.map((a) => a.id),
+      articles: issue.articles.map((a) => a.article.id),
     },
   });
+
   const [markedForDeletion, setMarkedForDeletion] = useState<Set<string>>(
     new Set()
   );
@@ -83,8 +84,8 @@ export function EditIssueModal({
 
     // Update form values with filtered articles
     const currentArticles = issue.articles
-      .filter((article) => !newMarkedForDeletion.has(article.id))
-      .map((article) => article.id);
+      .filter((article) => !newMarkedForDeletion.has(article.article.id))
+      .map((article) => article.article.id);
 
     form.setValue('articles', currentArticles);
   };
@@ -260,43 +261,48 @@ export function EditIssueModal({
               <Separator />
               <ScrollArea className="h-[200px] pr-4">
                 <div className="space-y-4">
-                  {issue.articles.map((article) => (
-                    <div
-                      key={article.id}
-                      className={`flex items-center justify-between bg-muted/50 rounded-lg p-4 relative transition-colors ${
-                        markedForDeletion.has(article.id)
-                          ? 'bg-red-50 border border-red-200'
-                          : ''
-                      }`}
-                    >
-                      <div className="space-y-1">
-                        <h4 className="font-medium">
-                          {article.metadata.title}
-                        </h4>
-                        <div className="text-sm text-muted-foreground">
-                          {article.section} •{' '}
-                          {article.user.firstName + ' ' + article.user.lastName}
-                        </div>
-                      </div>
-                      {markedForDeletion.has(article.id) && (
-                        <span className="absolute top-2 right-12 text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded-full">
-                          Will be removed
-                        </span>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        type="button"
-                        onClick={() => handleArticleToggle(article.id)}
+                  {issue.articles.map((issueArticle) => {
+                    const article = issueArticle.article;
+                    const articleId = article.id;
+                    const isMarked = markedForDeletion.has(articleId);
+                    return (
+                      <div
+                        key={issueArticle.id}
+                        className={`flex items-center justify-between bg-muted/50 rounded-lg p-4 relative transition-colors ${
+                          isMarked ? 'bg-red-50 border border-red-200' : ''
+                        }`}
                       >
-                        {markedForDeletion.has(article.id) ? (
-                          <UndoIcon className="h-4 w-4 text-blue-600" />
-                        ) : (
-                          <XIcon className="h-4 w-4" />
+                        <div className="space-y-1">
+                          <h4 className="font-medium">
+                            {article.metadata.title}
+                          </h4>
+                          <div className="text-sm text-muted-foreground">
+                            {article.section} •{' '}
+                            {article.user.firstName +
+                              ' ' +
+                              article.user.lastName}
+                          </div>
+                        </div>
+                        {isMarked && (
+                          <span className="absolute top-2 right-12 text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded-full">
+                            Will be removed
+                          </span>
                         )}
-                      </Button>
-                    </div>
-                  ))}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          type="button"
+                          onClick={() => handleArticleToggle(articleId)}
+                        >
+                          {isMarked ? (
+                            <UndoIcon className="h-4 w-4 text-blue-600" />
+                          ) : (
+                            <XIcon className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                    );
+                  })}
                 </div>
               </ScrollArea>
             </div>
