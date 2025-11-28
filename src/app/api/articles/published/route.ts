@@ -16,8 +16,8 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get('status');
 
     let whereCondition;
-    if (status === 'AWAITING_DECISION') {
-      whereCondition = eq(publishedArticles.status, 'AWAITING_DECISION');
+    if (status === 'AWAITING DECISION') {
+      whereCondition = eq(publishedArticles.status, 'AWAITING DECISION');
     } else if (status === 'PUBLISHED') {
       whereCondition = eq(publishedArticles.status, 'PUBLISHED');
     } else if (status === 'UNPUBLISHED') {

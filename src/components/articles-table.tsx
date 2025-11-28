@@ -46,7 +46,6 @@ import {
 import { StatusBadge } from './status-badge';
 
 import { Checkbox } from './ui/checkbox';
-import { UNDER_REVIEW_STATUS } from '@/lib/consts';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,7 +53,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useAssignIssues, useGetIssues } from '@/hooks/useIssues';
 import Loader from './Loader';
 import { useEditorsPick } from '@/hooks/useSettings';
 import { useRouter } from 'next/navigation';
@@ -86,7 +84,6 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const { data: issues } = useGetIssues();
   const router = useRouter();
 
   const columns: ColumnDef<Article>[] = [
@@ -262,8 +259,6 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({
     },
   });
 
-  const { mutate: assignIssuesMutation, isPending: isAssigningIssuePending } =
-    useAssignIssues();
   const { data: collections } = useGetCollections();
 
   const {
@@ -276,6 +271,8 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({
     .map((row) => row.original.id)
     .filter((id): id is string => id !== null);
 
+  console.log('selectedRowIds:', selectedRowIds);
+
   const handlePickArticle = () => {
     pickArticlesMutation({ articleIds: selectedRowIds });
   };
@@ -284,10 +281,6 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({
     mutate: assignCollectionsMutation,
     isPending: isAssigningCollectionPending,
   } = useAssignCollectionArticles();
-
-  const handleIssueAssertion = (issueId: string) => {
-    assignIssuesMutation({ articleIds: selectedRowIds, issueId });
-  };
 
   const handleCollectionAssertion = (collectionId: string) => {
     assignCollectionsMutation({ articleIds: selectedRowIds, collectionId });
@@ -374,38 +367,6 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-              {/* <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={isAssigningIssuePending}
-                    className="bg-white border-blue-300 text-blue-700 hover:bg-blue-50"
-                  >
-                    <FolderPlus className="h-3 w-3" />
-                    {isAssigningIssuePending ? (
-                      <Loader text="Assigning..." />
-                    ) : (
-                      'Assign Issues'
-                    )}
-                    <ChevronDown className="h-3 w-3 " />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-48">
-                  <DropdownMenuSeparator />
-                  {issues?.map((issue, index) => (
-                    <DropdownMenuItem
-                      key={index}
-                      onClick={() => handleIssueAssertion(issue.id)}
-                      className="hover:bg-blue-50"
-                    >
-                      <FileText className="h-4 w-4 mr-2" />
-                      Issue {issue.issueNumber}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu> */}
-
               <Button
                 variant="outline"
                 size="sm"

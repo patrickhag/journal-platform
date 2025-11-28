@@ -11,6 +11,7 @@
 !.yarn/versions
 
 /txt.txt
+/prompts.txt
 
 # testing
 /coverage

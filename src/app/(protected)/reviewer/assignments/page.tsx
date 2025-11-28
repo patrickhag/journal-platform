@@ -10,14 +10,11 @@ import { useRouter } from 'next/navigation';
 import ReviewModal from '@/components/articles/Review';
 import ArticleCardSkeleton from '../components/ReviewCardSkeleton';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 
 export default function ReviewerDashboard() {
   const { data, isPending } = useGetReviewerAssignments();
 
   const reviewerAssignments = data?.assignedArticles;
-
-  const { data: session } = useSession();
 
   const [reviewModal, setReviewModal] = useState<{
     isOpen: boolean;

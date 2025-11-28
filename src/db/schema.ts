@@ -252,6 +252,49 @@ export const finalSubmissions = pgTable('final_submissions', {
   }),
 });
 
+export const reviewAssessment = pgTable('review_assessment', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+
+  reviewId: text('review_id')
+    .references(() => reviews.id, { onDelete: 'cascade' })
+    .notNull(),
+
+  scopeRelevanceOriginality: boolean('scope_relevance_originality').notNull(),
+
+  ethicalCompliance: boolean('ethical_compliance').notNull(),
+
+  contentQualityRigor: boolean('content_quality_rigor').notNull(),
+
+  dataPresentationInterpretation: boolean(
+    'data_presentation_interpretation'
+  ).notNull(),
+
+  conclusionsImplications: boolean('conclusions_implications').notNull(),
+
+  languageQuality: boolean('language_quality').notNull(),
+
+  referencesFormatting: boolean('references_formatting').notNull(),
+
+  overallScientificQuality: boolean('overall_scientific_quality').notNull(),
+
+  confidentialComments: text('confidential_comments'),
+
+  reviewerSignature: text('reviewer_signature').notNull(),
+});
+
+export const reviewAssessmentRelations = relations(
+  reviewAssessment,
+  ({ one }) => ({
+    review: one(reviews, {
+      fields: [reviewAssessment.reviewId],
+      references: [reviews.id],
+      relationName: 'reviewAssessment',
+    }),
+  })
+);
+
 export const notifications = pgTable('notifications', {
   id: text('id')
     .primaryKey()
@@ -754,6 +797,11 @@ export const reviewsRelations = relations(reviews, ({ one, many }) => ({
   }),
   reviewRevisions: many(reviewRevisions, {
     relationName: 'reviewRevisions',
+  }),
+  reviewAssessment: one(reviewAssessment, {
+    fields: [reviews.id],
+    references: [reviewAssessment.reviewId],
+    relationName: 'reviewAssessment',
   }),
 }));
 

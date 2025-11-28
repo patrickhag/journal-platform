@@ -71,6 +71,50 @@ export const reviewSchema = z.object({
   ),
 });
 
+export const reviewAssessmentSchema = z.object({
+  scopeRelevanceOriginality: z.boolean({
+    required_error:
+      'Please confirm the manuscript meets scope, relevance, and originality standards.',
+  }),
+  ethicalCompliance: z.boolean({
+    required_error: 'Please confirm ethical compliance.',
+  }),
+  contentQualityRigor: z.boolean({
+    required_error: 'Please confirm content quality and rigor.',
+  }),
+  dataPresentationInterpretation: z.boolean({
+    required_error: 'Please confirm data presentation and interpretation.',
+  }),
+  conclusionsImplications: z.boolean({
+    required_error: 'Please confirm conclusions and implications.',
+  }),
+  languageQuality: z.boolean({
+    required_error: 'Please confirm language quality.',
+  }),
+  referencesFormatting: z.boolean({
+    required_error: 'Please confirm references and formatting.',
+  }),
+  overallScientificQuality: z.boolean({
+    required_error: 'Please confirm overall scientific quality.',
+  }),
+  confidentialComments: z
+    .string()
+    .max(2000, {
+      message: 'Confidential comments cannot exceed 2000 characters.',
+    })
+    .optional()
+    .or(z.literal('')),
+  reviewerSignature: z
+    .string({
+      required_error: 'Reviewer signature is required.',
+    })
+    .min(2, { message: 'Reviewer signature must be at least 2 characters.' }),
+});
+
+export const reviewerSubmissionSchema = reviewSchema.merge(
+  reviewAssessmentSchema
+);
+
 export type TArticle = {
   id: string;
   section: string;
@@ -95,4 +139,4 @@ export type TManuscripts = {
   articles: TArticle[];
 };
 
-export type ReviewFormData = z.infer<typeof reviewSchema>;
+export type ReviewFormData = z.infer<typeof reviewerSubmissionSchema>;

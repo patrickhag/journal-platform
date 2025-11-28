@@ -55,6 +55,20 @@ export async function GET(
                 fileIds: true,
               },
             },
+            reviewAssessment: {
+              columns: {
+                scopeRelevanceOriginality: true,
+                ethicalCompliance: true,
+                contentQualityRigor: true,
+                dataPresentationInterpretation: true,
+                conclusionsImplications: true,
+                languageQuality: true,
+                referencesFormatting: true,
+                overallScientificQuality: true,
+                confidentialComments: true,
+                reviewerSignature: true,
+              },
+            },
           },
         },
         editorActions: {

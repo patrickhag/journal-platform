@@ -15,20 +15,15 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useGetParticularAssignment } from '@/hooks/useReviews';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import ReviewModal from '@/components/articles/Review';
 import ReviewerAssignmentSkeleton from '@/components/ReviewerAssignmentSkeleton';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
 
 const ReviewAssignment = () => {
   const { assignmentId } = useParams();
-
-  const { data } = useSession();
-
-  console.log('userId:', data?.user.id);
-
+  const router = useRouter();
   const { data: particularAssignment, isPending } = useGetParticularAssignment(
     assignmentId as string
   );
@@ -60,7 +55,7 @@ const ReviewAssignment = () => {
     <div className="max-w-7xl mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <Button className="mb-4">
+        <Button className="mb-4" onClick={() => router.back()}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Go Back
         </Button>

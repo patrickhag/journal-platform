@@ -66,7 +66,7 @@ export async function POST(req: Request) {
           doi,
           pageRange,
           slug: slugify(title),
-          status: 'AWAITING_DECISION',
+          status: 'AWAITING DECISION',
         })
         .where(eq(publishedArticles.articleId, articleId));
     } else {
@@ -77,13 +77,13 @@ export async function POST(req: Request) {
         pageRange,
         pdfUrl,
         slug: slugify(title),
-        status: 'AWAITING_DECISION',
+        status: 'AWAITING DECISION',
       });
     }
 
     await db
       .update(articleSubmissions)
-      .set({ articleStatus: 'AWAITING_DECISION' })
+      .set({ articleStatus: 'AWAITING DECISION' })
       .where(eq(articleSubmissions.id, articleId));
 
     const article = await db.query.articleSubmissions.findFirst({

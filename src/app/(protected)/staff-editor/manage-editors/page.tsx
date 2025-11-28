@@ -41,8 +41,6 @@ const ManageEditors = () => {
   const { data: associateEditorsInfo = [], isPending } =
     useGetAssignedAssociateEditors();
 
-  console.log('associateEditorsInfo:', associateEditorsInfo);
-
   return (
     <>
       <div className="space-y-6">

@@ -65,7 +65,7 @@ export const useGetIssues = () => {
 };
 
 export const useGetPublishedArticles = (
-  status: 'AWAITING_DECISION' | 'PUBLISHED' | 'UNPUBLISHED'
+  status: 'AWAITING DECISION' | 'PUBLISHED' | 'UNPUBLISHED'
 ) => {
   const fetchArticles = async (): Promise<TPublishedArticle[]> => {
     const url = `/api/articles/published?status=${status}`;

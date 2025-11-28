@@ -185,6 +185,18 @@ export type TReview = {
       message: string;
       fileIds: string[];
     }[];
+    reviewAssessment?: {
+      scopeRelevanceOriginality: boolean;
+      ethicalCompliance: boolean;
+      contentQualityRigor: boolean;
+      dataPresentationInterpretation: boolean;
+      conclusionsImplications: boolean;
+      languageQuality: boolean;
+      referencesFormatting: boolean;
+      overallScientificQuality: boolean;
+      confidentialComments: string | null;
+      reviewerSignature: string;
+    } | null;
   }[];
   editorActions: {
     id: string;

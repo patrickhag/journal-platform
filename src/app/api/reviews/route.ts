@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db/db';
-import { notifications, reviewAssignments, reviews } from '@/db/schema';
+import { db as dbWithQuery } from '@/db/db';
+import {
+  db,
+  notifications,
+  reviewAssignments,
+  reviewAssessment,
+  reviews,
+} from '@/db/schema';
 import { auth } from '@/auth';
 import { articleSubmissions } from '@/db/schema';
 import { and, desc, eq } from 'drizzle-orm';
@@ -11,13 +17,28 @@ import {
 
 export async function POST(req: Request) {
   try {
-    const { message, articleId, fileIds, status, reviewAssignmentId } =
-      await req.json();
+    const {
+      message,
+      articleId,
+      fileIds,
+      status,
+      reviewAssignmentId,
+      scopeRelevanceOriginality,
+      ethicalCompliance,
+      contentQualityRigor,
+      dataPresentationInterpretation,
+      conclusionsImplications,
+      languageQuality,
+      referencesFormatting,
+      overallScientificQuality,
+      confidentialComments,
+      reviewerSignature,
+    } = await req.json();
 
     const session = await auth();
     const userId = session?.user?.id || '';
 
-    const hasReviewStatus = await db.query.reviews.findFirst({
+    const hasReviewStatus = await dbWithQuery.query.reviews.findFirst({
       where: and(eq(reviews.userId, userId), eq(reviews.articleId, articleId)),
       columns: {
         id: true,
@@ -33,13 +54,40 @@ export async function POST(req: Request) {
       );
     }
 
-    await db.insert(reviews).values({
-      message: message,
-      articleId: articleId,
-      fileIds: fileIds,
-      status: status,
-      userId,
-      reviewAssignmentId,
+    await db.transaction(async (tx) => {
+      const [reviewRecord] = await tx
+        .insert(reviews)
+        .values({
+          message,
+          articleId,
+          fileIds,
+          status,
+          userId,
+          reviewAssignmentId,
+        })
+        .returning({
+          id: reviews.id,
+        });
+
+      if (!reviewRecord) {
+        throw new Error('Unable to create review record.');
+      }
+
+      await tx.insert(reviewAssessment).values({
+        reviewId: reviewRecord.id,
+        scopeRelevanceOriginality,
+        ethicalCompliance,
+        contentQualityRigor,
+        dataPresentationInterpretation,
+        conclusionsImplications,
+        languageQuality,
+        referencesFormatting,
+        overallScientificQuality,
+        confidentialComments: confidentialComments || null,
+        reviewerSignature,
+      });
+
+      return reviewRecord;
     });
 
     if (status === 'Accepted') {
@@ -63,7 +111,7 @@ export async function POST(req: Request) {
         .where(eq(articleSubmissions.id, articleId));
     }
 
-    const article = await db.query.articleSubmissions.findFirst({
+    const article = await dbWithQuery.query.articleSubmissions.findFirst({
       columns: {
         id: true,
       },
@@ -152,45 +200,49 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const reviewerAssignedArticles = await db.query.reviewAssignments.findMany({
-      columns: {
-        id: true,
-        assignedDate: true,
-        dueDate: true,
-        status: true,
-      },
-      where: and(
-        eq(reviewAssignments.userId, session.user.id as string),
-        eq(reviewAssignments.status, 'ACCEPTED')
-      ),
-      orderBy: desc(reviewAssignments.assignedDate),
-      with: {
-        article: {
-          columns: {
-            id: true,
-            articleStatus: true,
-          },
-          with: {
-            metadata: {
-              columns: {
-                title: true,
-                prefix: true,
-              },
+    const reviewerAssignedArticles =
+      await dbWithQuery.query.reviewAssignments.findMany({
+        columns: {
+          id: true,
+          assignedDate: true,
+          dueDate: true,
+          status: true,
+        },
+        where: and(
+          eq(reviewAssignments.userId, session.user.id as string),
+          eq(reviewAssignments.status, 'ACCEPTED')
+        ),
+        orderBy: desc(reviewAssignments.assignedDate),
+        with: {
+          article: {
+            columns: {
+              id: true,
+              articleStatus: true,
             },
-            user: {
-              columns: {
-                firstName: true,
-                lastName: true,
+            with: {
+              metadata: {
+                columns: {
+                  title: true,
+                  prefix: true,
+                },
+              },
+              user: {
+                columns: {
+                  firstName: true,
+                  lastName: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
 
     const assignedArticles = reviewerAssignedArticles.filter(
       (assignedArticle) => {
-        return assignedArticle?.article?.articleStatus !== 'PUBLISHED';
+        return !(
+          assignedArticle?.article?.articleStatus === 'PUBLISHED' ||
+          assignedArticle?.article?.articleStatus === 'AWAITING DECISION'
+        );
       }
     );
 
@@ -198,7 +250,11 @@ export async function GET(req: NextRequest) {
       const dueDate = new Date(article.dueDate as string);
       const currentDate = new Date();
       return (
-        currentDate > dueDate && article?.article?.articleStatus !== 'PUBLISHED'
+        currentDate > dueDate &&
+        !(
+          article?.article?.articleStatus === 'PUBLISHED' ||
+          article?.article?.articleStatus === 'AWAITING DECISION'
+        )
       );
     });
 

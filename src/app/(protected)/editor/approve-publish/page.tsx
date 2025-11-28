@@ -24,7 +24,7 @@ const ManagePublishedArticles = () => {
   const { data: unpublishedArticles, isPending: unpublishedPending } =
     useGetPublishedArticles('UNPUBLISHED');
   const { data: awaitingArticles, isPending: awaitingPending } =
-    useGetPublishedArticles('AWAITING_DECISION');
+    useGetPublishedArticles('AWAITING DECISION');
 
   const [selectedPublishedArticle, setSelectedPublishedArticle] =
     useState<TPublishedArticle | null>(null);
