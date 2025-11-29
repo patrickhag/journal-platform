@@ -27,8 +27,8 @@ export const metadataSchema = z.object({
   subtitle: z.string({ required_error: 'Subtitle must be provided' }),
   abstract: z
     .string({ required_error: 'Abstract must be provided' })
-    .refine((value) => value.trim().split(/\s+/).length >= 300, {
-      message: 'Abstract must be at least 300 words.',
+    .refine((value) => value.trim().split(/\s+/).length <= 300, {
+      message: "Don't exceed 300 words",
     }),
   topics: z
     .array(z.string().min(3))
@@ -40,7 +40,6 @@ export const ContributorsForm = () => {
     control,
     register,
     watch,
-    setValue,
     formState: { errors },
   } = useFormContext<ManuscriptFormValues>();
 

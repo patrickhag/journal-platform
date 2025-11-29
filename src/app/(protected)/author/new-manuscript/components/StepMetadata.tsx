@@ -137,6 +137,9 @@ export const StepMetadata = () => {
             <Label className="text-sm font-medium">
               Abstract <span className="text-red-500">*</span>
             </Label>
+            <p className="text-xs text-muted-foreground">
+              Don't exceed 300 words
+            </p>
             <Controller
               control={control}
               name="metadata.abstract"
@@ -150,7 +153,7 @@ export const StepMetadata = () => {
             />
             {errors.metadata?.abstract?.message && (
               <p className="text-sm text-destructive">
-                {errors.metadata.abstract.message}
+                {String(errors.metadata.abstract.message)}
               </p>
             )}
           </div>
