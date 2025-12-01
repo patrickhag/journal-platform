@@ -32,7 +32,8 @@ export type TPermissionItem =
   | 'DEACTIVATE_USER'
   | 'CHANGE_ROLE'
   | 'VIEW_ALL_FINAL_FINAL_QUESTIONS'
-  | 'VIEW_ALL_PARTICIPANTS';
+  | 'VIEW_ALL_PARTICIPANTS'
+  | 'VIEW_ALL_ASSIGNED_REVIEWERS';
 
 type TPermission = {
   [role in (typeof USER_ROLES)[number]]: TPermissionItem[];
@@ -61,6 +62,7 @@ export const ROLE_PERMISSIONS: TPermission = {
     'DEACTIVATE_USER',
     'VIEW_ALL_PARTICIPANTS',
     'VIEW_ALL_FINAL_FINAL_QUESTIONS',
+    'VIEW_ALL_ASSIGNED_REVIEWERS',
   ],
   REVIEWER: [
     'VIEW_PUBLIC_ARTICLES',
@@ -76,6 +78,7 @@ export const ROLE_PERMISSIONS: TPermission = {
     'VIEW_REVIEWS',
     'VIEW_ALL_PARTICIPANTS',
     'VIEW_ALL_FINAL_FINAL_QUESTIONS',
+    'VIEW_ALL_ASSIGNED_REVIEWERS',
   ],
 };
 

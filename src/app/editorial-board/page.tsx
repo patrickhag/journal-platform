@@ -301,9 +301,9 @@ export default async function EditorialBoardPage() {
     <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="px-4 md:px-8 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-9">
+        <div className="flex flex-col lg:flex-row gap-8 px-4 py-6 mb-9">
           {/* Main Content */}
-          <div className="lg:col-span-3">
+          <div className="lg:w-3/4">
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
                 Our Editorial Board
@@ -413,7 +413,9 @@ export default async function EditorialBoardPage() {
           </div>
 
           {/* Sidebar */}
-          <LeftSideBar />
+          <div className="lg:w-1/4">
+            <LeftSideBar />
+          </div>
         </div>
         <Footer />
       </div>

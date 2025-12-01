@@ -231,6 +231,7 @@ export const articleSubmissions = pgTable('article_submissions', {
   createdAt: date('createdAt').defaultNow(),
   updatedAt: date('updatedAt').defaultNow(),
   acceptedAt: date('acceptedAt'),
+  paperId: text('paperId'),
   userId: text('userId')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
@@ -362,7 +363,10 @@ export const manuals = pgTable('manuals', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  guidelines: jsonb('guidelines').$type<{ content: string }>(),
+  guidelines: jsonb('guidelines').$type<{
+    forAuthors: string;
+    forReviewers: string;
+  }>(),
   policies: jsonb('policies').$type<{
     privacyPolicy: string;
   }>(),
@@ -373,6 +377,7 @@ export const manuals = pgTable('manuals', {
   termsNconditions: jsonb('termsNconditions').$type<{ content: string }>(),
   paperTemplate: text('paperTemplate'),
   copyrightTemplate: text('copyrightTemplate'),
+  humanPartsConsent: text('humanPartsConsent'),
 });
 
 export const editorActions = pgTable('editor_actions', {
@@ -831,6 +836,11 @@ export const reviewAssignmentsRelations = relations(
       fields: [reviewAssignments.userId],
       references: [users.id],
       relationName: 'userReviewAssignments',
+    }),
+    reviewer: one(reviewers, {
+      fields: [reviewAssignments.reviewerId],
+      references: [reviewers.id],
+      relationName: 'reviewAssignmentReviewer',
     }),
     reviews: many(reviews, {
       relationName: 'reviewAssignmentReviews',

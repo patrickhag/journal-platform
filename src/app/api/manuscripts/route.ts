@@ -10,7 +10,7 @@ import {
   reviewers as reviewersTable,
   users,
 } from '@/db/schema';
-import { ilike, eq } from 'drizzle-orm';
+import { ilike, eq, and, like, sql } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import type formidable from 'formidable';
 import {
@@ -23,6 +23,14 @@ type ManuscriptPayload = {
   sectionType: string;
   submissionRequirements: string[];
   editorComments?: string;
+  files: Array<{
+    file: {
+      name: string;
+      size: number;
+      type: string;
+    };
+    fileType?: string;
+  }>;
   metadata: {
     prefix: string;
     title: string;
@@ -71,6 +79,43 @@ const normalizeFiles = (files: formidable.Files): formidable.File[] => {
   return list;
 };
 
+/**
+ * Generates a unique manuscript ID in the format: JAEPH-YYYYMMDD-####
+ * @param trx - Database transaction or database instance
+ * @returns Generated manuscript ID string
+ */
+const generateManuscriptId = async (
+  trx: Parameters<Parameters<typeof db.transaction>[0]>[0]
+): Promise<string> => {
+  const prefix = 'JAEPH';
+  const today = new Date();
+  const dateStr = today.toISOString().split('T')[0].replace(/-/g, ''); // YYYYMMDD format
+  const pattern = `${prefix}-${dateStr}-%`;
+
+  // Find all paperIds that match today's pattern
+  const existingPapers = await trx
+    .select({ paperId: articleSubmissions.paperId })
+    .from(articleSubmissions)
+    .where(like(articleSubmissions.paperId, pattern));
+
+  // Extract counter numbers from existing IDs
+  const counters: number[] = existingPapers
+    .map((paper) => {
+      if (!paper.paperId) return 0;
+      const match = paper.paperId.match(/-(\d{4})$/);
+      return match ? parseInt(match[1], 10) : 0;
+    })
+    .filter((num) => num > 0);
+
+  // Get the next counter (max + 1, or 1 if no existing papers)
+  const nextCounter = counters.length > 0 ? Math.max(...counters) + 1 : 1;
+
+  // Format with zero-padding
+  const counterStr = nextCounter.toString().padStart(4, '0');
+
+  return `${prefix}-${dateStr}-${counterStr}`;
+};
+
 export const runtime = 'nodejs';
 
 export const POST = withUpload(async ({ fields, files, upload }) => {
@@ -96,14 +141,23 @@ export const POST = withUpload(async ({ fields, files, upload }) => {
 
     const uploadFiles = normalizeFiles(files).filter((file) => file?.filepath);
 
+    // Create a map of filename to fileType from payload
+    const fileTypeMap = new Map<string, string | undefined>();
+    if (payload.files) {
+      payload.files.forEach((fileItem) => {
+        fileTypeMap.set(fileItem.file.name, fileItem.fileType);
+      });
+    }
+
     const uploadedFiles = await Promise.all(
       uploadFiles.map(async (file) => {
         const result = await upload(file);
+        const fileType = fileTypeMap.get(file.originalFilename || '') || null;
         return {
           publicId: result.url,
           resourceType: result.mimetype ?? null,
           originalName: result.originalFilename,
-          fileType: result.mimetype ?? null,
+          fileType: fileType,
         };
       })
     );
@@ -133,7 +187,10 @@ export const POST = withUpload(async ({ fields, files, upload }) => {
       .limit(1);
     const userEmail = userRecord?.email;
 
-    const articleId = await db.transaction(async (trx) => {
+    const result = await db.transaction(async (trx) => {
+      // Generate unique manuscript ID
+      const generatedManuscriptId = await generateManuscriptId(trx);
+
       const [article] = await trx
         .insert(articleSubmissions)
         .values({
@@ -141,6 +198,7 @@ export const POST = withUpload(async ({ fields, files, upload }) => {
           requirements: payload.submissionRequirements,
           commentsForEditor: payload.editorComments,
           userId,
+          paperId: generatedManuscriptId,
         })
         .returning({ id: articleSubmissions.id });
 
@@ -230,12 +288,13 @@ export const POST = withUpload(async ({ fields, files, upload }) => {
         }
       }
 
-      return articleId;
+      return { articleId, manuscriptId: generatedManuscriptId };
     });
 
     return NextResponse.json({
       message: 'Manuscript submitted successfully.',
-      articleId,
+      articleId: result.articleId,
+      manuscriptId: result.manuscriptId,
     });
   } catch (error) {
     console.error('[api/manuscripts] submission error', error);

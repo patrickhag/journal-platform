@@ -21,10 +21,20 @@ export const useSubmitManuscript = () => {
       const { files, ...rest } = payload;
 
       const formData = new FormData();
-      formData.append('payload', JSON.stringify(rest));
+      // Include files metadata (name, size, type) and fileType in payload for matching
+      const filesMetadata = files.map((fileItem) => ({
+        file: {
+          name: fileItem.file.name,
+          size: fileItem.file.size,
+          type: fileItem.file.type,
+        },
+        fileType: fileItem.fileType,
+      }));
+      formData.append('payload', JSON.stringify({ ...rest, files: filesMetadata }));
 
-      files.forEach((file) => {
-        formData.append('files', file);
+      // Append actual File objects for upload
+      files.forEach((fileItem) => {
+        formData.append('files', fileItem.file);
       });
 
       const response = await fetch(MANUSCRIPT_ENDPOINT, {

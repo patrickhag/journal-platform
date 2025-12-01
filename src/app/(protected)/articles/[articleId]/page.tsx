@@ -17,6 +17,7 @@ import { ChevronRight } from 'lucide-react';
 import withPermissions from '@/components/WithPermission';
 import { AssignRevieweModalWithPermission } from './components/AssignReviewersModal';
 import { FinalSubmissionCardWithPermissions } from './components/AddsOnInformationExample';
+import { AssignedReviewersWithPermissions } from './components/AssignedReviewers';
 
 async function page({ params }: { params: Promise<{ articleId: string }> }) {
   const session = await auth();
@@ -178,6 +179,20 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
             </CardContent>
           </Card>
         )}
+
+        {/* ASSIGNED REVIEWERS - Only visible to STAFF_EDITOR and CHIEF_EDITOR */}
+        <AssignedReviewersWithPermissions
+          articleId={articleId}
+          role={
+            currentUserRole as
+              | 'NORMAL_USER'
+              | 'CHIEF_EDITOR'
+              | 'REVIEWER'
+              | 'STAFF_EDITOR'
+          }
+          requiredPermissions={['VIEW_ALL_ASSIGNED_REVIEWERS']}
+          fallback=""
+        />
         <FinalSubmissionCardWithPermissions
           role={
             (currentUserRole ?? 'ADMIN') as

@@ -47,6 +47,9 @@ async function Files({
                   <p className="font-medium line-clamp-1">
                     {file.originalName}
                   </p>
+                  <p className="text-sm text-muted-foreground my-1">
+                    {file.fileType || 'Revised Manuscript'}
+                  </p>
                 </div>
               </div>
               <div className="flex justify-between gap-3">

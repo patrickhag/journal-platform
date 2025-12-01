@@ -7,6 +7,7 @@ import {
   BookMarked,
   Goal,
   ShieldAlert,
+  Files,
 } from 'lucide-react';
 import EditorsPick from './components/EditorsPick';
 import Guidelines from './components/Guidelines';
@@ -15,6 +16,7 @@ import Policies from './components/Policies';
 import AimsNScope from './components/AimsNScope';
 import TermsAndConditions from './components/TermsNConditions';
 import SiteSettings from './components/Settings';
+import Documents from './components/Documents';
 
 function ManagePage() {
   return (
@@ -52,6 +54,10 @@ function ManagePage() {
               <Goal className="h-4 w-4" />
               Aims & Scope
             </TabsTrigger>
+            <TabsTrigger value="documents" className="flex items-center gap-2">
+              <Files className="h-4 w-4" />
+              Documents
+            </TabsTrigger>
             <TabsTrigger
               value="termsNconditions"
               className="flex items-center gap-2"
@@ -71,6 +77,7 @@ function ManagePage() {
           <Policies />
           <TermsAndConditions />
           <AimsNScope />
+          <Documents />
           <SiteSettings />
         </Tabs>
       </div>

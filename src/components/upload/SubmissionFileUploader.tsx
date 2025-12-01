@@ -54,6 +54,7 @@ type SubmissionFileUploaderProps = {
   multiple?: boolean;
   className?: string;
   icon?: ReactNode;
+  hideFileList?: boolean;
 };
 
 const bytesFromMb = (mb?: number) => (mb ? mb * 1024 * 1024 : undefined);
@@ -67,6 +68,7 @@ export const SubmissionFileUploader = ({
   multiple = true,
   className,
   icon,
+  hideFileList = false,
 }: SubmissionFileUploaderProps) => {
   const [internalFiles, setInternalFiles] = useState<File[]>(value ?? []);
 
@@ -146,7 +148,7 @@ export const SubmissionFileUploader = ({
         </FileInput>
       </FileUploader>
 
-      {internalFiles.length > 0 && (
+      {!hideFileList && internalFiles.length > 0 && (
         <div className="space-y-3">
           <p className="text-sm font-medium">Uploaded Files:</p>
           <div className="space-y-2">

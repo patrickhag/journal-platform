@@ -9,10 +9,10 @@ async function getArticlesCount() {
 
   const counts = {
     newSubmissions: articles.filter(
-      (article) => article.articleStatus === 'PUBLISHED'
+      (article) => article.articleStatus === 'SUBMITTED'
     ).length,
     published: articles.filter(
-      (article) => article.articleStatus === 'SUBMITTED'
+      (article) => article.articleStatus === 'PUBLISHED'
     ).length,
     underReview: articles.filter(
       (article) => article.articleStatus === 'UNDER REVIEW'

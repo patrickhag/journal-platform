@@ -46,7 +46,10 @@ const LeftSideBar = async () => {
               </Link>
             </li>
             <li>
-              <Link href="#" className="hover:text-blue-600">
+              <Link
+                href="/manuals/#instructionToReviewers"
+                className="hover:text-blue-600"
+              >
                 For Reviewers
               </Link>
             </li>

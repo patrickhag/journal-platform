@@ -46,12 +46,15 @@ export default function Reviewer({
           </sup>{' '}
           proposed reviewer{' '}
         </h3>
-        <Badge
-          variant={'outline'}
-          className={`text-center px-2 py-1 rounded-md`}
-        >
-          Invitation {reviewerStatus}
-        </Badge>
+        {(currentUserRole === 'CHIEF_EDITOR' ||
+          currentUserRole === 'STAFF_EDITOR') && (
+          <Badge
+            variant={'outline'}
+            className="text-center px-2 py-1 rounded-md"
+          >
+            Invitation {reviewerStatus}
+          </Badge>
+        )}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

@@ -42,22 +42,74 @@ export const filesSchema = z.object({
   files: z.array(fileSchema),
 });
 
-export const finalSubmissionSchema = z.object({
-  funded: z.enum(['yes', 'no'], {
-    required_error: 'Funding status is required',
-  }),
-  ethical: z.enum(['yes', 'no'], {
-    required_error: 'Ethical clearance status is required',
-  }),
-  consent: z.enum(['yes', 'no'], {
-    required_error: 'Informed consent status is required',
-  }),
-  human: z.enum(['yes', 'no'], {
-    required_error: 'Human part inclusion status is required',
-  }),
-  founders: z.string().optional(),
-  ethicalReference: z.string({ required_error: 'lorem' }).optional(),
-});
+export const finalSubmissionSchema = z
+  .object({
+    funded: z
+      .enum(['yes', 'no'], {
+        required_error: 'Funding status is required',
+      })
+      .or(z.literal('')),
+    ethical: z
+      .enum(['yes', 'no'], {
+        required_error: 'Ethical clearance status is required',
+      })
+      .or(z.literal('')),
+    consent: z
+      .enum(['yes', 'no'], {
+        required_error: 'Informed consent status is required',
+      })
+      .or(z.literal('')),
+    human: z
+      .enum(['yes', 'no'], {
+        required_error: 'Human part inclusion status is required',
+      })
+      .or(z.literal('')),
+    founders: z.string().optional(),
+    ethicalReference: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      // All radio fields must be answered (not empty)
+      return (
+        data.funded !== '' &&
+        data.ethical !== '' &&
+        data.consent !== '' &&
+        data.human !== ''
+      );
+    },
+    {
+      message: 'Please answer all questions before submitting.',
+    }
+  )
+  .refine(
+    (data) => {
+      // If funded is "yes", founders must be provided
+      if (data.funded === 'yes') {
+        return data.founders && data.founders.trim().length > 0;
+      }
+      return true;
+    },
+    {
+      message: 'Funding organization is required when the study is funded.',
+      path: ['founders'],
+    }
+  )
+  .refine(
+    (data) => {
+      // If ethical is "yes", ethicalReference must be provided
+      if (data.ethical === 'yes') {
+        return (
+          data.ethicalReference && data.ethicalReference.trim().length > 0
+        );
+      }
+      return true;
+    },
+    {
+      message:
+        'Ethical reference number is required when ethical clearance was given.',
+      path: ['ethicalReference'],
+    }
+  );
 
 export const reviewSchema = z.object({
   message: z.string().min(10, {

@@ -55,6 +55,7 @@ export const useCreateManuals = () => {
       termsNconditions,
       paperTemplate,
       copyrightTemplate,
+      humanPartsConsent,
     }: {
       guidelines?: unknown;
       aboutUs?: unknown;
@@ -63,6 +64,7 @@ export const useCreateManuals = () => {
       termsNconditions?: unknown;
       paperTemplate?: string;
       copyrightTemplate?: string;
+      humanPartsConsent?: string;
     }) => {
       return axios.post(`/api/manuals/`, {
         guidelines,
@@ -72,6 +74,7 @@ export const useCreateManuals = () => {
         termsNconditions,
         paperTemplate,
         copyrightTemplate,
+        humanPartsConsent,
       });
     },
     onSuccess: ({ data }) => {

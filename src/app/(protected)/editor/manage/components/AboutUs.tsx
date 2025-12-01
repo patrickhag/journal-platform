@@ -58,7 +58,7 @@ export default function AboutUs() {
             <CardHeader>
               <CardTitle>About JAEPH</CardTitle>
               <CardDescription>
-                Add and modify the page on About us.
+                Add or modify the page on About us.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

@@ -9,6 +9,11 @@ const browserFileSchema = z.custom<File>(
   'Please upload a valid file.'
 );
 
+const fileWithTypeSchema = z.object({
+  file: browserFileSchema,
+  fileType: z.string().optional(),
+});
+
 export const manuscriptFormSchema = z.object({
   sectionType: z
     .string({ required_error: 'Please select a section type.' })
@@ -21,8 +26,14 @@ export const manuscriptFormSchema = z.object({
     ),
   editorComments: z.string().optional(),
   files: z
-    .array(browserFileSchema)
-    .min(1, 'Please upload at least one file before proceeding.'),
+    .array(fileWithTypeSchema)
+    .min(1, 'Please upload at least one file before proceeding.')
+    .refine(
+      (files) => files.every((file) => file.fileType && file.fileType.trim().length > 0),
+      {
+        message: 'Please select a file type for all uploaded files before continuing.',
+      }
+    ),
   metadata: metadataSchema,
   contributors: z.array(contributorFormSchema).default([]),
   reviewers: z.array(reviewerSchema).default([]),

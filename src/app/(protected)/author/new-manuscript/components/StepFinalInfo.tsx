@@ -81,7 +81,7 @@ export const StepFinalInfo = () => {
             {submission?.funded === 'yes' && (
               <div className="space-y-2">
                 <Label htmlFor="finalSubmission-founders">
-                  Funding organization
+                  Funding organization <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="finalSubmission-founders"
@@ -143,7 +143,8 @@ export const StepFinalInfo = () => {
             {submission?.ethical === 'yes' && (
               <div className="space-y-2">
                 <Label htmlFor="finalSubmission-ethicalReference">
-                  Ethical reference number
+                  Ethical reference number{' '}
+                  <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="finalSubmission-ethicalReference"
@@ -251,6 +252,15 @@ export const StepFinalInfo = () => {
               <p className="text-xs text-destructive">
                 {finalErrors.human.message}
               </p>
+            )}
+            {submission?.human === 'yes' && (
+              <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                <p className="text-sm text-amber-800">
+                  <strong>Notice:</strong> Required human parts documentation
+                  (e.g., human blood samples or tissues) must be uploaded in
+                  Step 2.
+                </p>
+              </div>
             )}
           </div>
         </div>

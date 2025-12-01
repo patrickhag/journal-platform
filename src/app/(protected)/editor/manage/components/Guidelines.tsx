@@ -13,7 +13,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Form,
   FormControl,
@@ -25,24 +24,24 @@ import { RichTextEditor } from '@/components/RichTextEditor';
 import { useCreateManuals, useGetManuals } from '@/hooks/useSettings';
 import Loader from '@/components/Loader';
 import { useEffect } from 'react';
-import { DragAndDropFileInput } from '@/components/upload/FileInput';
-import { FileList } from '@/components/upload/FileList';
 import { filesSchema } from '@/schemas/reviewer';
 import { useSearchParams } from 'next/navigation';
 import { safeParse } from 'zod-urlsearchparams';
 import { useClearURL } from '@/components/ClearURL';
 
 const formSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  content: z.string().min(1, 'Content is required'),
+  forAuthors: z.string().min(20, 'For Authors must be at least 20 characters'),
+  forReviewers: z
+    .string()
+    .min(20, 'For Reviewers must be at least 20 characters'),
 });
 
 export default function Guidelines() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
-      content: '',
+      forAuthors: '',
+      forReviewers: '',
     },
   });
   const searchParams = useSearchParams();
@@ -61,7 +60,8 @@ export default function Guidelines() {
 
   useEffect(() => {
     if (manualData?.guidelines) {
-      form.setValue('content', manualData.guidelines.content || '');
+      form.setValue('forAuthors', manualData.guidelines.forAuthors || '');
+      form.setValue('forReviewers', manualData.guidelines.forReviewers || '');
     }
   }, [manualData]);
 
@@ -70,7 +70,13 @@ export default function Guidelines() {
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     createManualMutation(
-      { guidelines: data, paperTemplate: fileId },
+      {
+        guidelines: {
+          forAuthors: data.forAuthors,
+          forReviewers: data.forReviewers,
+        },
+        paperTemplate: fileId,
+      },
       {
         onSettled: () => {
           clearUrl();
@@ -83,51 +89,48 @@ export default function Guidelines() {
     <TabsContent value="guidelines" className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Submission Guidelines</CardTitle>
+          <CardTitle>Guidelines For Some Parties</CardTitle>
           <CardDescription>
-            Update the journal&apos;s submission guidelines and requirements
+            Update the journal&apos;s guidelines for some parties
           </CardDescription>
         </CardHeader>
         {isGettingManualsPending ? (
           <Loader text="Loading manuals..." />
         ) : (
           <CardContent>
-            <div className="space-y-3 mb-4">
-              <p className="text-sm mb-4">Upload paper template</p>
-              <DragAndDropFileInput />
-              <FileList isEditNeeded />
-            </div>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <FormField
                   control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem className="mb-4">
-                      <FormLabel>Title</FormLabel>
+                  name="forAuthors"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>For Authors</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Manuscript Submission Guidelines goes here"
+                        <RichTextEditor
+                          description={form.getValues().forAuthors}
+                          onChange={(d) => {
+                            form.setValue('forAuthors', d);
+                          }}
+                          placeholder="Authors should follow these guidelines when preparing their manuscripts..."
                         />
                       </FormControl>
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
-                  name="content"
+                  name="forReviewers"
                   render={() => (
-                    <FormItem>
-                      <FormLabel>Content</FormLabel>
+                    <FormItem className="mt-4">
+                      <FormLabel>For Reviewers</FormLabel>
                       <FormControl>
                         <RichTextEditor
-                          description={form.getValues().content}
+                          description={form.getValues().forReviewers}
                           onChange={(d) => {
-                            form.setValue('content', d);
+                            form.setValue('forReviewers', d);
                           }}
-                          placeholder="Authors should follow these guidelines when preparing their manuscripts..."
+                          placeholder="Reviewers should follow these guidelines when reviewing the manuscripts..."
                         />
                       </FormControl>
                     </FormItem>
