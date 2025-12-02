@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
-import { collections, collectionArticles } from '@/db/schema';
+import { collections, collectionArticles, collectionUsers } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -25,6 +25,10 @@ export async function PUT(
       sdgGoal,
       isFeatured,
       removedArticles,
+      userId,
+      userIds,
+      status,
+      deadline,
     } = await req.json();
 
     if (!collectionId) {
@@ -49,15 +53,50 @@ export async function PUT(
     }
 
     // Update collection metadata
+    const updateData: {
+      title: string;
+      description: string;
+      objective: string | null;
+      sdgGoal: string;
+      isFeatured: boolean;
+      thumbnailUrl: string;
+      userId?: string;
+      status?: string;
+      deadline?: Date | null;
+    } = {
+      title,
+      description,
+      objective,
+      sdgGoal,
+      isFeatured,
+      thumbnailUrl,
+    };
+
+    // Update status if provided
+    if (status) {
+      updateData.status = status;
+    }
+
+    // Update deadline if provided
+    if (deadline !== undefined) {
+      updateData.deadline = deadline || null;
+    }
+
+    // Support both single userId (backward compatibility) and userIds array
+    const userIdsToAssign = userIds || (userId ? [userId] : []);
+
+    // Only update userId if it's provided (for backward compatibility)
+    if (userId) {
+      updateData.userId = userId;
+    } else if (userIdsToAssign.length > 0) {
+      updateData.userId = userIdsToAssign[0];
+    }
+
     const updated = await db
       .update(collections)
       .set({
-        title,
-        description,
-        objective,
-        sdgGoal,
-        isFeatured,
-        thumbnailUrl,
+        ...updateData,
+        deadline: deadline ? new Date(deadline).toISOString() : null,
       })
       .where(eq(collections.id, collectionId))
       .returning();
@@ -66,6 +105,22 @@ export async function PUT(
       return NextResponse.json(
         { error: 'Collection not found' },
         { status: 404 }
+      );
+    }
+
+    // Update user assignments if userIds are provided
+    if (userIdsToAssign && userIdsToAssign.length > 0) {
+      // Delete existing assignments
+      await db
+        .delete(collectionUsers)
+        .where(eq(collectionUsers.collectionId, collectionId));
+
+      // Insert new assignments
+      await db.insert(collectionUsers).values(
+        userIdsToAssign.map((uid: string) => ({
+          collectionId: collectionId,
+          userId: uid,
+        }))
       );
     }
 

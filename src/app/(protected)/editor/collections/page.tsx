@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { PlusIcon } from 'lucide-react';
 import CollectionCard from './components/CollectionCard';
-import CreateCollectionModal from './components/CreateCollectionModal';
+import CreateCollectionSheet from './components/CreateCollectionSheet';
 import { useGetCollections } from '@/hooks/useCollections';
 
 export default function App() {
@@ -39,7 +39,7 @@ export default function App() {
           </div>
         </div>
 
-        <CreateCollectionModal isOpen={isOpen} onClose={onClose} />
+        <CreateCollectionSheet isOpen={isOpen} onClose={onClose} />
       </div>
     </div>
   );

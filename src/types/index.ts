@@ -140,6 +140,32 @@ export type TCollections = {
   thumbnailUrl: string;
   createdAt: Date;
   updatedAt: string;
+  userId: string;
+  status?: string;
+  deadline?: Date | string | null;
+  user?: {
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+    email: string | null;
+    affiliation: string | null;
+  } | null;
+  collectionUsers?: {
+    id: string;
+    collectionId: string;
+    userId: string;
+    assignedAt: Date | null;
+    user: {
+      id: string;
+      firstName: string | null;
+      lastName: string | null;
+      email: string | null;
+      affiliation: string | null;
+      avatar: string | null;
+      bio: string | null;
+      prefix: string | null;
+    };
+  }[];
   collectionArticles: {
     collectionId: string;
     articleId: string;

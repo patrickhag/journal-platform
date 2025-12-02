@@ -4,6 +4,27 @@ import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import { MessageResponse, TCollections } from '@/types';
 
+export type TEligibleUser = {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
+  affiliation: string | null;
+  role: string;
+};
+
+export const useGetEligibleUsers = () => {
+  return useQuery({
+    queryKey: ['eligible-users-for-collections'],
+    queryFn: async () => {
+      const { data } = await axios.get<TEligibleUser[]>(
+        `/api/users/eligible-for-collections`
+      );
+      return data;
+    },
+  });
+};
+
 export const useGetCollections = () => {
   return useQuery({
     queryKey: ['collections'],
@@ -74,6 +95,9 @@ type TPayload = {
   objective?: string | undefined;
   isFeatured?: boolean | undefined;
   removedArticles: string[];
+  userId?: string;
+  userIds?: string[];
+  deadline?: Date | null;
 };
 
 export const useEditCollection = (collectionId: string) => {

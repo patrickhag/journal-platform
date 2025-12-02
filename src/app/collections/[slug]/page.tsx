@@ -7,6 +7,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/db/db';
 import Link from 'next/link';
 import { getSDGLabel } from '@/lib/utils';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const CollectionPage = async ({
   params,
@@ -18,6 +19,32 @@ const CollectionPage = async ({
   const foundCollection = await db.query.collections.findFirst({
     where: eq(collections.slug, slug),
     with: {
+      user: {
+        columns: {
+          id: true,
+          prefix: true,
+          firstName: true,
+          lastName: true,
+          affiliation: true,
+          avatar: true,
+          bio: true,
+        },
+      },
+      collectionUsers: {
+        with: {
+          user: {
+            columns: {
+              id: true,
+              prefix: true,
+              firstName: true,
+              lastName: true,
+              affiliation: true,
+              avatar: true,
+              bio: true,
+            },
+          },
+        },
+      },
       collectionArticles: {
         with: {
           articleSubmission: {
@@ -94,15 +121,17 @@ const CollectionPage = async ({
                 </div>
               </div>
 
+              {/* Editors Section */}
+
               <div className="mt-12 bg-gray-50 rounded-lg p-6 mb-5">
                 <h3 className="font-semibold text-gray-900 mb-4">
                   About this Collection
                 </h3>
-                <div className="space-y-3 text-sm">
+                <div className="space-y-4 text-sm">
                   <div>
-                    <p className="font-medium text-gray-700">Focus:</p>
-                    <span className="text-gray-600 mt-1">
-                      {foundCollection.objective}
+                    <p className="font-medium text-gray-700 mb-1">Focus:</p>
+                    <span className="text-gray-600">
+                      {foundCollection.objective || 'Not specified'}
                     </span>
                   </div>
                   <div>
@@ -113,7 +142,92 @@ const CollectionPage = async ({
                       {getSDGLabel(foundCollection.sdgGoal as string)}
                     </p>
                   </div>
+                  {(foundCollection as any).deadline && (
+                    <div>
+                      <span className="font-medium text-gray-700">
+                        Deadline:
+                      </span>
+                      <p className="text-gray-600 mt-1">
+                        {new Date(
+                          (foundCollection as any).deadline
+                        ).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                  )}
                 </div>
+              </div>
+              {foundCollection.collectionUsers &&
+                foundCollection.collectionUsers.length > 0 && (
+                  <div className="mt-12 mb-5">
+                    <h3 className="font-semibold text-gray-900 mb-4">
+                      Editors
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {foundCollection.collectionUsers.map((cu) => {
+                        const editor = cu.user;
+                        return (
+                          <div
+                            key={cu.id}
+                            className="bg-gray-50 rounded-lg p-6"
+                          >
+                            <div className="flex items-start gap-4">
+                              {editor.avatar ? (
+                                <Avatar className="w-16 h-16 border-2 border-gray-200 flex-shrink-0">
+                                  <AvatarImage
+                                    src={editor.avatar}
+                                    alt={`${editor.firstName} ${editor.lastName}`}
+                                    className="object-cover"
+                                  />
+                                  <AvatarFallback className="bg-gradient-to-br from-sky-500 to-indigo-500 text-white text-lg font-semibold">
+                                    {editor.firstName
+                                      ?.charAt(0)
+                                      .toUpperCase() || 'U'}
+                                  </AvatarFallback>
+                                </Avatar>
+                              ) : (
+                                <div className="w-16 h-16 bg-gradient-to-br from-sky-500 to-indigo-500 rounded-full flex items-center justify-center flex-shrink-0 border-2 border-gray-200">
+                                  <span className="text-white font-semibold text-lg">
+                                    {editor.firstName
+                                      ?.charAt(0)
+                                      .toUpperCase() || 'U'}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-gray-900 font-medium mb-1">
+                                  {editor.prefix && (
+                                    <span>{editor.prefix}. </span>
+                                  )}
+                                  {editor.firstName} {editor.lastName}
+                                </p>
+                                {editor.affiliation && (
+                                  <p className="text-gray-600 text-sm mb-2">
+                                    {editor.affiliation}
+                                  </p>
+                                )}
+                                {editor.bio && (
+                                  <p className="text-gray-600 text-sm leading-relaxed mt-2">
+                                    {editor.bio}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+              {/* RESERVED SPACE FOR IMPACT */}
+              <div className="mt-12 bg-gray-50 rounded-lg p-6 mb-5">
+                <h3 className="font-semibold text-gray-900 mb-4">
+                  Space for Impact
+                </h3>
               </div>
 
               <div className="space-y-6">
@@ -121,9 +235,12 @@ const CollectionPage = async ({
                   <h2 className="text-2xl font-bold text-blue-800">
                     Articles in this Collection
                   </h2>
-                  <span className="text-sm text-gray-500">
-                    {foundCollection.collectionArticles.length} article(s)
-                  </span>
+                  {foundCollection.collectionArticles.length > 0 && (
+                    <span className="text-sm text-gray-500">
+                      {foundCollection.collectionArticles.length} article
+                      {foundCollection.collectionArticles.length > 1 ? 's' : ''}
+                    </span>
+                  )}
                 </div>
 
                 <div className="space-y-6">
@@ -143,7 +260,11 @@ const CollectionPage = async ({
                               <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
                                 <span className="flex items-center gap-1">
                                   <User className="w-4 h-4" />
-                                  by {article.user.firstName}{' '}
+                                  by{' '}
+                                  {article.metadata.prefix && (
+                                    <span>{article.metadata.prefix}. </span>
+                                  )}
+                                  {article.user.firstName}{' '}
                                   {article.user.lastName}
                                 </span>
                                 <span className="text-gray-400">•</span>
@@ -178,6 +299,13 @@ const CollectionPage = async ({
                         </article>
                       );
                     }
+                  )}
+                  {foundCollection.collectionArticles.length === 0 && (
+                    <div className="flex items-center justify-center">
+                      <p className="text-gray-500">
+                        Articles will appear here when they are published.
+                      </p>
+                    </div>
                   )}
                 </div>
               </div>

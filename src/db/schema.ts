@@ -470,8 +470,11 @@ export const collections = pgTable('collections', {
   sdgGoal: text('sdg_goal'),
   isFeatured: boolean('is_featured').default(false),
   thumbnailUrl: text('thumbnail_url'),
+  status: varchar('status', { length: 50 }).default('ACTIVE'),
+  deadline: date('deadline'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
+  userId: text('userId').references(() => users.id, { onDelete: 'cascade' }),
 });
 
 export const collectionArticles = pgTable('collection_articles', {
@@ -483,11 +486,48 @@ export const collectionArticles = pgTable('collection_articles', {
     .references(() => articleSubmissions.id),
 });
 
-export const collectionsRelations = relations(collections, ({ many }) => ({
+export const collectionUsers = pgTable('collection_users', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  collectionId: text('collectionId')
+    .notNull()
+    .references(() => collections.id, { onDelete: 'cascade' }),
+  userId: text('userId')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  assignedAt: timestamp('assigned_at').defaultNow(),
+});
+
+export const collectionsRelations = relations(collections, ({ many, one }) => ({
   collectionArticles: many(collectionArticles, {
     relationName: 'collectionArticles',
   }),
+  collectionUsers: many(collectionUsers, {
+    relationName: 'collectionUsers',
+  }),
+  user: one(users, {
+    fields: [collections.userId],
+    references: [users.id],
+    relationName: 'userCollections',
+  }),
 }));
+
+export const collectionUsersRelations = relations(
+  collectionUsers,
+  ({ one }) => ({
+    collection: one(collections, {
+      fields: [collectionUsers.collectionId],
+      references: [collections.id],
+      relationName: 'collectionUsers',
+    }),
+    user: one(users, {
+      fields: [collectionUsers.userId],
+      references: [users.id],
+      relationName: 'userCollectionAssignments',
+    }),
+  })
+);
 
 export const editorAssignment = pgTable('editor_assignment', {
   id: text('id')
@@ -870,6 +910,12 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   }),
   associateEditorCorrections: many(associateEditorCorrections, {
     relationName: 'associateEditorCorrections',
+  }),
+  collections: many(collections, {
+    relationName: 'userCollections',
+  }),
+  collectionAssignments: many(collectionUsers, {
+    relationName: 'userCollectionAssignments',
   }),
 }));
 

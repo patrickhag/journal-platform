@@ -98,9 +98,7 @@ export const finalSubmissionSchema = z
     (data) => {
       // If ethical is "yes", ethicalReference must be provided
       if (data.ethical === 'yes') {
-        return (
-          data.ethicalReference && data.ethicalReference.trim().length > 0
-        );
+        return data.ethicalReference && data.ethicalReference.trim().length > 0;
       }
       return true;
     },

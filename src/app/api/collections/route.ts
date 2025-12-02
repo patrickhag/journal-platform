@@ -4,6 +4,7 @@ import {
   articleSubmissions,
   collectionArticles,
   collections,
+  collectionUsers,
 } from '@/db/schema';
 import { NextRequest, NextResponse } from 'next/server';
 import { slugify } from '@/lib/utils';
@@ -39,6 +40,31 @@ export async function GET(req: NextRequest) {
             },
           },
         },
+        collectionUsers: {
+          with: {
+            user: {
+              columns: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+                affiliation: true,
+                avatar: true,
+                bio: true,
+                prefix: true,
+              },
+            },
+          },
+        },
+        user: {
+          columns: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            affiliation: true,
+          },
+        },
       },
     });
 
@@ -54,14 +80,34 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { title, description, objective, sdgGoal, isFeatured, thumbnailUrl } =
-      await req.json();
+    const {
+      title,
+      description,
+      objective,
+      sdgGoal,
+      isFeatured,
+      thumbnailUrl,
+      userId,
+      userIds,
+      status,
+      deadline,
+    } = await req.json();
     const session = await auth();
 
     if (
       !(session?.user.role === 'ADMIN' || session?.user.role === 'CHIEF_EDITOR')
     ) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Support both single userId (backward compatibility) and userIds array
+    const userIdsToAssign = userIds || (userId ? [userId] : []);
+
+    if (!userIdsToAssign || userIdsToAssign.length === 0) {
+      return NextResponse.json(
+        { error: 'At least one user assignment is required' },
+        { status: 400 }
+      );
     }
 
     const newCollection = {
@@ -72,9 +118,25 @@ export async function POST(req: NextRequest) {
       sdgGoal: sdgGoal,
       isFeatured: isFeatured ?? false,
       thumbnailUrl: thumbnailUrl,
+      userId: userIdsToAssign[0], // Keep userId for backward compatibility
+      status: status || 'ACTIVE',
+      deadline: deadline || null,
     };
 
-    await db.insert(collections).values(newCollection);
+    const [createdCollection] = await db
+      .insert(collections)
+      .values(newCollection)
+      .returning({ id: collections.id });
+
+    // Insert user assignments in the junction table
+    if (userIdsToAssign.length > 0) {
+      await db.insert(collectionUsers).values(
+        userIdsToAssign.map((uid: string) => ({
+          collectionId: createdCollection.id,
+          userId: uid,
+        }))
+      );
+    }
 
     return NextResponse.json(
       { message: 'Collection created successfully' },

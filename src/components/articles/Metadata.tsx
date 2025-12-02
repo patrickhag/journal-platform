@@ -12,9 +12,10 @@ import { cn } from '@/lib/utils';
 
 export default async function Metadata({
   articleId,
+  paperId,
 }: {
   articleId: string;
-  role: string;
+  paperId: string;
 }) {
   const meta = await db.query.metadata.findFirst({
     columns: {
@@ -85,6 +86,12 @@ export default async function Metadata({
             <div>
               <div className="mb-4">
                 <h3 className="text-sm font-medium text-muted-foreground">
+                  Manuscript ID
+                </h3>
+                <p className="mt-1">{paperId || ''}</p>
+              </div>
+              <div className="mb-4">
+                <h3 className="text-sm font-medium text-muted-foreground">
                   Title of the manuscript
                 </h3>
                 <p className="mt-1">{meta.title}</p>
@@ -95,11 +102,11 @@ export default async function Metadata({
                 </h3>
                 <p className="mt-1">{meta.subtitle || 'Not provided'}</p>
               </div>
-              <div className="mb-4">
-                <h3 className="text-sm font-medium text-muted-foreground text-gray-600">
-                  Comments for the editor
-                </h3>
-                {meta.article?.commentsForEditor ? (
+              {meta.article?.commentsForEditor && (
+                <div className="mb-4">
+                  <h3 className="text-sm font-medium text-muted-foreground text-gray-600">
+                    Comments for the editor
+                  </h3>
                   <div
                     className="prose max-w-none"
                     dangerouslySetInnerHTML={{
@@ -108,10 +115,8 @@ export default async function Metadata({
                         .replace(/<\/code><\/pre>/g, ''),
                     }}
                   />
-                ) : (
-                  <p className="mt-1">Not provided</p>
-                )}
-              </div>
+                </div>
+              )}
             </div>
             <div>
               <div className="mb-4">

@@ -29,9 +29,11 @@ export const manuscriptFormSchema = z.object({
     .array(fileWithTypeSchema)
     .min(1, 'Please upload at least one file before proceeding.')
     .refine(
-      (files) => files.every((file) => file.fileType && file.fileType.trim().length > 0),
+      (files) =>
+        files.every((file) => file.fileType && file.fileType.trim().length > 0),
       {
-        message: 'Please select a file type for all uploaded files before continuing.',
+        message:
+          'Please select a file type for all uploaded files before continuing.',
       }
     ),
   metadata: metadataSchema,

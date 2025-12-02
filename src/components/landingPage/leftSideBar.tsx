@@ -147,6 +147,14 @@ const LeftSideBar = async () => {
                   Paper template
                 </Link>
               </li>
+              <li>
+                <Link
+                  href={manuals?.[0]?.humanPartsConsent ?? '#'}
+                  className="hover:text-blue-600"
+                >
+                  Human participants checklist
+                </Link>
+              </li>
             </ul>
           )}
         </div>

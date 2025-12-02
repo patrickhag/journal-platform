@@ -90,6 +90,18 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
           {collection.description}
         </p>
 
+        {/* Assigned User */}
+        {collection.user && (
+          <div className="flex items-center space-x-2 text-xs text-gray-600">
+            <span className="font-medium">Assigned to:</span>
+            <span>
+              {collection.user.firstName} {collection.user.lastName}
+              {collection.user.affiliation &&
+                ` (${collection.user.affiliation})`}
+            </span>
+          </div>
+        )}
+
         {/* SDG Goal */}
         {collection.sdgGoal && (
           <div className="flex items-center space-x-2">

@@ -59,6 +59,12 @@ export const collectionSchema = z.object({
     .string()
     .url('Must be a valid URL')
     .min(1, 'Thumbnail is required'),
+  userId: z.string().optional(), // Keep for backward compatibility
+  userIds: z
+    .array(z.string())
+    .min(1, 'At least one user assignment is required'),
+  status: z.enum(['ACTIVE', 'ARCHIVED', 'INACTIVE']).default('ACTIVE'),
+  deadline: z.coerce.date().optional(),
 });
 
 export type CollectionFormValues = z.infer<typeof collectionSchema>;

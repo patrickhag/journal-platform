@@ -57,7 +57,7 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
           />
         </div>
         {/* METADATA & CONTRIBUTORS */}
-        <Metadata articleId={articleId} role={currentUserRole!} />
+        <Metadata articleId={articleId} paperId={article?.paperId as string} />
 
         {/* AUTHOR INFORMATION */}
         <Card className="my-3">

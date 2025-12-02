@@ -19,6 +19,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 import {
   Form,
   FormControl,
@@ -27,8 +34,11 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 import { CollectionFormValues, collectionSchema } from '@/lib/schemas';
-import { useEditCollection } from '@/hooks/useCollections';
+import { useEditCollection, useGetEligibleUsers } from '@/hooks/useCollections';
 import Loader from '@/components/Loader';
 import { TCollections } from '@/types';
 import { sdgGoals } from '@/lib/consts';
@@ -55,6 +65,12 @@ export function EditCollectionModal({
     sdgGoal: collection.sdgGoal,
     isFeatured: collection.isFeatured,
     thumbnailUrl: collection.thumbnailUrl,
+    userId: collection.userId || collection.user?.id || '',
+    userIds: collection.collectionUsers?.map((cu) => cu.user.id) || [],
+    status: (collection as any).status || 'ACTIVE',
+    deadline: (collection as any).deadline
+      ? new Date((collection as any).deadline)
+      : undefined,
   };
 
   const form = useForm<CollectionFormValues>({
@@ -63,6 +79,8 @@ export function EditCollectionModal({
   });
 
   const { mutate, isPending } = useEditCollection(collection.id);
+  const { data: eligibleUsers, isLoading: isLoadingUsers } =
+    useGetEligibleUsers();
 
   const [markedForDeletion, setMarkedForDeletion] = useState<Set<string>>(
     new Set()
@@ -83,6 +101,8 @@ export function EditCollectionModal({
       ...data,
       removedArticles: Array.from(markedForDeletion),
       thumbnailUrl: data.thumbnailUrl,
+      userId: data.userId,
+      userIds: data.userIds || (data.userId ? [data.userId] : []),
     };
     mutate(payload, {
       onSettled: () => {
@@ -196,6 +216,146 @@ export function EditCollectionModal({
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="userIds"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="mb-4">
+                    <FormLabel>
+                      Assign Users <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Select one or more users to assign to this collection
+                    </p>
+                  </div>
+                  <FormControl>
+                    <div className="space-y-3 max-h-[200px] overflow-y-auto border rounded-md p-4">
+                      {isLoadingUsers ? (
+                        <p className="text-sm text-muted-foreground">
+                          Loading users...
+                        </p>
+                      ) : eligibleUsers && eligibleUsers.length > 0 ? (
+                        eligibleUsers.map((user) => {
+                          const isChecked =
+                            field.value?.includes(user.id) ?? false;
+                          return (
+                            <div
+                              key={user.id}
+                              className="flex items-start space-x-3"
+                            >
+                              <Checkbox
+                                id={user.id}
+                                checked={isChecked}
+                                onCheckedChange={(checked) => {
+                                  const current = field.value ?? [];
+                                  if (checked === true) {
+                                    field.onChange([...current, user.id]);
+                                  } else {
+                                    field.onChange(
+                                      current.filter((id) => id !== user.id)
+                                    );
+                                  }
+                                }}
+                              />
+                              <label
+                                htmlFor={user.id}
+                                className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex-1"
+                              >
+                                <div className="font-medium">
+                                  {user.firstName} {user.lastName}
+                                </div>
+                                {user.email && (
+                                  <div className="text-xs text-muted-foreground">
+                                    {user.email}
+                                  </div>
+                                )}
+                                {user.affiliation && (
+                                  <div className="text-xs text-muted-foreground">
+                                    {user.affiliation}
+                                  </div>
+                                )}
+                              </label>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <p className="text-sm text-muted-foreground">
+                          No eligible users found
+                        </p>
+                      )}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Status <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="ACTIVE">Active</SelectItem>
+                      <SelectItem value="ARCHIVED">Archived</SelectItem>
+                      <SelectItem value="INACTIVE">Inactive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="deadline"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Deadline</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={'outline'}
+                          className={cn(
+                            'pl-3 text-left font-normal',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, 'PPP')
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={
+                          field.value ? new Date(field.value) : undefined
+                        }
+                        onSelect={field.onChange}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="isFeatured"

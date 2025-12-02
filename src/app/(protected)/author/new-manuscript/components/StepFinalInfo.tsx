@@ -256,9 +256,10 @@ export const StepFinalInfo = () => {
             {submission?.human === 'yes' && (
               <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
                 <p className="text-sm text-amber-800">
-                  <strong>Notice:</strong> Required human parts documentation
-                  (e.g., human blood samples or tissues) must be uploaded in
-                  Step 2.
+                  <strong>Notice:</strong> Required Human Research participant
+                  checklist(for human blood samples or tissues, biological
+                  material) must be filled and uploaded in step 2. see it on
+                  homepage downloads.
                 </p>
               </div>
             )}

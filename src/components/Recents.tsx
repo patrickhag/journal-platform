@@ -50,7 +50,7 @@ export const Recents = async () => {
         return (
           <div key={article.id} className="my-6 w-[90%]">
             <div className="space-y-1">
-              <h2 className="text-xl font-medium hover:text-blue-500 cursor-pointer leading-snug">
+              <h2 className="text-xl font-medium hover:text-blue-500 cursor-pointer leading-snug line-clamp-1">
                 <Link href={`/articles/article/${article.slug}`}>
                   {articleData.metadata.title}
                 </Link>

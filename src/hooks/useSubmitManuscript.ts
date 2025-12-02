@@ -30,7 +30,10 @@ export const useSubmitManuscript = () => {
         },
         fileType: fileItem.fileType,
       }));
-      formData.append('payload', JSON.stringify({ ...rest, files: filesMetadata }));
+      formData.append(
+        'payload',
+        JSON.stringify({ ...rest, files: filesMetadata })
+      );
 
       // Append actual File objects for upload
       files.forEach((fileItem) => {
