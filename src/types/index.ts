@@ -756,3 +756,22 @@ export type TAuthorCorrection = {
   fileIds: string[];
   message: string;
 };
+
+export type TPublishedArticles = {
+  slug: string;
+  publishedAt: Date;
+  id: string;
+  article: {
+    id: string;
+    section: string;
+    user: {
+      firstName: string;
+      lastName: string;
+    };
+    metadata: {
+      title: string;
+      prefix: string;
+      subtitle: string;
+    };
+  };
+};

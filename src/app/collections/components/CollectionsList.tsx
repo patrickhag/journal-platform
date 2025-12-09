@@ -1,9 +1,8 @@
 'use client';
 
-import { useGetCollections } from '@/hooks/useCollections';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { TCollections } from '@/types';
+import { TCollections } from '@/db/schema';
 
 function CollectionCard({ collection }: { collection: TCollections }) {
   const status = (collection as any).status || 'ACTIVE';
@@ -79,19 +78,11 @@ function CollectionCard({ collection }: { collection: TCollections }) {
   );
 }
 
-export function CollectionsList() {
-  const { data: collections, isLoading } = useGetCollections();
-
-  if (isLoading) {
-    return (
-      <div className="flex py-8">
-        <span className="ml-2 text-sm text-gray-600">
-          Loading collections...
-        </span>
-      </div>
-    );
-  }
-
+export function CollectionsList({
+  collections,
+}: {
+  collections: TCollections[];
+}) {
   if (!collections || collections.length === 0) {
     return <div className="text-gray-500 py-8">No collections found.</div>;
   }

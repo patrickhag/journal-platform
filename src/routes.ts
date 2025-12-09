@@ -29,6 +29,7 @@ export const apiAuthPrefix = [
   '/api/auth/user',
   '/api/collections',
   '/api/articles/searched-articles',
+  '/api/articles/published-articles',
   '/api/ads/home',
 ];
 

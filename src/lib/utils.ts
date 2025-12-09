@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { format, parseISO } from 'date-fns';
 import { CorrectionStatus } from '@/types';
+import { toast } from 'sonner';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -194,4 +195,14 @@ export const formatRoleText = (roleText: string): string => {
     .filter(Boolean)
     .map((word) => word.toUpperCase())
     .join('_');
+};
+
+export const copyToClipboard = (text: string, format?: string) => {
+  navigator.clipboard.writeText(text).then(() => {
+    if (format) {
+      toast.info(`${format} citation copied successfully.`);
+    } else {
+      toast.info('Link copied successfully.');
+    }
+  });
 };

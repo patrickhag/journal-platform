@@ -1,5 +1,10 @@
 import { TManuscripts } from '@/schemas/reviewer';
-import { IArticle, MessageResponse, TAuthorCorrection } from '@/types';
+import {
+  IArticle,
+  MessageResponse,
+  TAuthorCorrection,
+  TPublishedArticles,
+} from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
@@ -138,6 +143,18 @@ export const useGetAuthorCorrections = (articleId: string) => {
     queryFn: async () => {
       const { data } = await axios.get<TAuthorCorrection[]>(
         `/api/users/author-corrections/${articleId}`
+      );
+      return data;
+    },
+  });
+};
+
+export const useGetPublishedArticles = () => {
+  return useQuery<TPublishedArticles[], Error>({
+    queryKey: ['publishedArticles'],
+    queryFn: async () => {
+      const { data } = await axios.get<TPublishedArticles[]>(
+        `/api/articles/published-articles`
       );
       return data;
     },

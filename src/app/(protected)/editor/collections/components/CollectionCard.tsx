@@ -119,12 +119,14 @@ const CollectionCard = ({ collection }: CollectionCardProps) => {
           <div className="flex items-center space-x-4 text-xs text-gray-500">
             <span className="flex items-center space-x-1">
               <FileText className="w-3 h-3" />
-              <span>{collection.collectionArticles.length} articles</span>
+              <span>{collection.collectionArticles?.length || 0} articles</span>
             </span>
             <span className="flex items-center space-x-1">
               <Calendar className="w-3 h-3" />
               <span>
-                {new Date(collection.createdAt as Date).toLocaleDateString()}
+                {collection.createdAt
+                  ? new Date(collection.createdAt as Date).toLocaleDateString()
+                  : 'N/A'}
               </span>
             </span>
           </div>

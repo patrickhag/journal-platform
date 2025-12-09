@@ -8,6 +8,76 @@ import { db } from '@/db/db';
 import Link from 'next/link';
 import { getSDGLabel } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+
+  const collection = await db.query.collections.findFirst({
+    where: eq(collections.slug, slug),
+    columns: {
+      id: true,
+      title: true,
+      description: true,
+      slug: true,
+      thumbnailUrl: true,
+      sdgGoal: true,
+      objective: true,
+    },
+  });
+
+  if (!collection) {
+    return {
+      title: 'Collection Not Found',
+    };
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_URL || '';
+  const url = `${baseUrl}/collections/${collection.slug}`;
+  const description =
+    collection.description ||
+    `Explore ${collection.title}, a curated collection of research papers in African Epidemiology and Public Health.`;
+  const imageUrl = collection.thumbnailUrl
+    ? collection.thumbnailUrl.startsWith('http')
+      ? collection.thumbnailUrl
+      : `${baseUrl}${collection.thumbnailUrl}`
+    : `${baseUrl}/jaep-logo.png`;
+
+  return {
+    title: collection.title,
+    description: description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title: `${collection.title} | Journal of African Epidemiology and Public Health`,
+      description: description,
+      url: url,
+      siteName: 'Journal of African Epidemiology and Public Health',
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: collection.title,
+        },
+      ],
+      locale: 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${collection.title} | Journal of African Epidemiology and Public Health`,
+      description: description,
+      images: [imageUrl],
+    },
+  };
+}
 
 const CollectionPage = async ({
   params,
@@ -75,7 +145,7 @@ const CollectionPage = async ({
     },
   });
 
-  if (!foundCollection) return <div>Collection not found</div>;
+  if (!foundCollection) notFound();
 
   return (
     <div className="min-h-screen bg-white">
