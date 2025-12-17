@@ -18,9 +18,12 @@ import { FileList } from '@/components/upload/FileList';
 import { filesSchema } from '@/schemas/reviewer';
 import { safeParse } from 'zod-urlsearchparams';
 import { useSearchParams } from 'next/navigation';
-import { collectionsRelations } from '@/db/schema';
+import { useClearURL } from '@/components/ClearURL';
 
-const AuthorReplyModal: React.FC<{ articleId: string }> = ({ articleId }) => {
+const AuthorReplyModal: React.FC<{
+  articleId: string;
+  isNotAllowedToReply: boolean;
+}> = ({ articleId, isNotAllowedToReply }) => {
   const [reply, setReply] = useState('');
   const [isOpen, setIsOpen] = useState(false);
 
@@ -41,6 +44,8 @@ const AuthorReplyModal: React.FC<{ articleId: string }> = ({ articleId }) => {
     setIsOpen(false);
   };
 
+  const clearURL = useClearURL();
+
   const handleSubmit = async () => {
     const payloadData = {
       articleId,
@@ -49,8 +54,9 @@ const AuthorReplyModal: React.FC<{ articleId: string }> = ({ articleId }) => {
     };
 
     mutate(payloadData, {
-      onSettled: () => {
+      onSuccess: () => {
         handleClose();
+        clearURL();
       },
     });
   };
@@ -58,7 +64,9 @@ const AuthorReplyModal: React.FC<{ articleId: string }> = ({ articleId }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Reply to Reviews</Button>
+        <Button variant="outline" disabled={isNotAllowedToReply}>
+          Reply to Reviews
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-auto">
         <DialogHeader>

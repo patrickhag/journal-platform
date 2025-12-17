@@ -26,15 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Mail,
-  Building,
-  FileText,
-  Trash2,
-  Bell,
-  UserPlus,
-  FilePlus,
-} from 'lucide-react';
+import { Mail, Building, FileText, Trash2, Bell, UserPlus } from 'lucide-react';
 import { useGetReviewersInfo } from '@/hooks/useReviews';
 import Link from 'next/link';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -49,6 +41,8 @@ const ManageReviewers = () => {
   const [openNotificationDialog, setOpenNotificationDialog] = useState(false);
   const [openAddReviewerModal, setOpenAddReviewerModal] = useState(false);
   const { data: reviewersInfo = [], isPending } = useGetReviewersInfo();
+
+  console.log('reviewersInfo:', reviewersInfo);
 
   return (
     <>
@@ -86,7 +80,6 @@ const ManageReviewers = () => {
                   <TableHead>Reviewer</TableHead>
                   <TableHead>Affiliation</TableHead>
                   <TableHead>Expertise</TableHead>
-                  <TableHead>Reviews</TableHead>
                   <TableHead>Current Assignments</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -94,7 +87,7 @@ const ManageReviewers = () => {
               <TableBody>
                 {isPending && (
                   <TableRow>
-                    <TableCell colSpan={6}>
+                    <TableCell colSpan={5}>
                       <div className="py-4">Loading...</div>
                     </TableCell>
                   </TableRow>
@@ -106,7 +99,6 @@ const ManageReviewers = () => {
                       (review) =>
                         review.article.articleStatus === 'UNDER REVIEW'
                     );
-                  const reviews = reviewer.user.reviews;
                   return (
                     <TableRow key={reviewer.id}>
                       <TableCell>
@@ -152,11 +144,6 @@ const ManageReviewers = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="text-center font-semibold">
-                          {reviews.length}
-                        </div>
-                      </TableCell>
-                      <TableCell>
                         {underReviewAssignments &&
                         underReviewAssignments.length > 0 ? (
                           <div className="space-y-1 max-w-xs">
@@ -184,7 +171,7 @@ const ManageReviewers = () => {
                           </div>
                         ) : (
                           <div className="text-sm text-gray-500">
-                            No assignments
+                            No active assignments
                           </div>
                         )}
                       </TableCell>
@@ -195,7 +182,7 @@ const ManageReviewers = () => {
                               <FileText className="h-4 w-4" />
                             </Button>
                           </SheetTrigger>
-                          <SheetContent className="sm:max-w-none w-[450px]">
+                          <SheetContent className="sm:max-w-none w-[550px]">
                             <SheetHeader>
                               <SheetTitle>
                                 Manage Assignments - {name}
@@ -234,7 +221,7 @@ const ManageReviewers = () => {
                                                     }
                                                   </h5>
                                                 </Link>
-                                                <div className="flex items-center mt-2 gap-2">
+                                                <div className="flex items-center mt-2 gap-2 flex-wrap">
                                                   <span className="text-xs text-gray-500">
                                                     Due:{' '}
                                                     {
@@ -250,6 +237,22 @@ const ManageReviewers = () => {
                                                       assignment.assignedDate as unknown as string
                                                     }
                                                   </div>
+                                                  {assignment.reviews &&
+                                                    assignment.reviews.length >
+                                                      0 && (
+                                                      <>
+                                                        <span className="text-xs text-gray-500">
+                                                          •
+                                                        </span>
+                                                        <div className="text-xs text-gray-500">
+                                                          Reviews:{' '}
+                                                          {
+                                                            assignment.reviews
+                                                              .length
+                                                          }
+                                                        </div>
+                                                      </>
+                                                    )}
                                                 </div>
                                               </div>
                                               <div className="flex items-center">
@@ -316,7 +319,7 @@ const ManageReviewers = () => {
               </TableBody>
               {!isPending && reviewersInfo?.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6}>
+                  <TableCell colSpan={5}>
                     <div className="py-4">No reviewers found.</div>
                   </TableCell>
                 </TableRow>

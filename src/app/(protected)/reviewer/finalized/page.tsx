@@ -38,7 +38,6 @@ export default function FinalizedAssignments() {
 
           const author = `${article.metadata?.prefix ?? ''}. ${article.user.firstName} ${article.user.lastName}`;
           const title = article.metadata?.title;
-          const articleStatus = assignment.article.articleStatus;
 
           return (
             <div
@@ -48,9 +47,15 @@ export default function FinalizedAssignments() {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
-                    <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
-                      {title}
-                    </h3>
+                    <Link
+                      href={`/articles/${article.id}`}
+                      className="hover:underline"
+                      target="_blank"
+                    >
+                      <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
+                        {title}
+                      </h3>
+                    </Link>
                   </div>
 
                   <p className="text-gray-600 mb-3">Author: {author}</p>
@@ -60,7 +65,7 @@ export default function FinalizedAssignments() {
                       variant={'outline'}
                       className="bg-yellow-100 text-yellow-800"
                     >
-                      {articleStatus}
+                      {'FINALIZED'}
                     </Badge>
                   </div>
                 </div>
@@ -72,7 +77,7 @@ export default function FinalizedAssignments() {
                       View Details
                     </Button>
                   </Link>
-                  <Link href={`/reviewer/article/${assignment.id}`}>
+                  <Link href={`/reviewer/assignment/${assignment.id}`}>
                     <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
                       <Clock className="mr-2 h-4 w-4" />
                       Past Reviews

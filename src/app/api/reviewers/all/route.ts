@@ -34,12 +34,8 @@ export async function GET(req: NextRequest) {
             prefix: true,
           },
           with: {
-            reviews: {
-              columns: {
-                id: true,
-              },
-            },
             reviewAssignments: {
+              where: eq(reviewAssignments.status, 'ACCEPTED'),
               columns: {
                 id: true,
                 articleId: true,
@@ -47,6 +43,11 @@ export async function GET(req: NextRequest) {
                 dueDate: true,
               },
               with: {
+                reviews: {
+                  columns: {
+                    id: true,
+                  },
+                },
                 article: {
                   columns: {
                     id: true,
@@ -145,7 +146,8 @@ export async function PATCH(req: NextRequest) {
     }
 
     const isItDeleted = await db
-      .delete(reviewAssignments)
+      .update(reviewAssignments)
+      .set({ status: 'DECLINED' })
       .where(
         and(
           eq(reviewAssignments.articleId, articleId),

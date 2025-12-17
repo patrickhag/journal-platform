@@ -11,15 +11,15 @@ export async function GET(
 ) {
   try {
     const { articleId } = await params;
-    const session = await auth();
-    if (
-      !(
-        session?.user.role === 'CHIEF_EDITOR' ||
-        session?.user.role === 'STAFF_EDITOR'
-      )
-    ) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    // const session = await auth();
+    // if (
+    //   !(
+    //     session?.user.role === 'CHIEF_EDITOR' ||
+    //     session?.user.role === 'STAFF_EDITOR'
+    //   )
+    // ) {
+    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // }
 
     const participants = await db.query.articleSubmissions.findFirst({
       where: eq(articleSubmissions.id, articleId),
@@ -72,13 +72,17 @@ export async function GET(
     // Grab the reviewers from reviewAssignments who have accepted the invitation
     const reviewers = participants?.reviewAssignments
       ? participants.reviewAssignments.filter(
-          (assignment) => assignment.status === 'ACCEPTED'
+          (assignment) =>
+            assignment.status === 'ACCEPTED' ||
+            assignment.status === 'FINALIZED'
         )
       : [];
 
     const associateEditors = participants?.associateEditorAssignments
       ? participants.associateEditorAssignments.filter(
-          (assignment) => assignment.status === 'ACCEPTED'
+          (assignment) =>
+            assignment.status === 'ACCEPTED' ||
+            assignment.status === 'FINALIZED'
         )
       : [];
 

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import withPermissions from '@/components/WithPermission';
+import { AssignReviewerModal } from './AssignReviewersModal';
 
 interface AssignedReviewersProps {
   articleId: string;
@@ -32,11 +33,14 @@ async function AssignedReviewers({ articleId }: AssignedReviewersProps) {
 
   return (
     <Card className="my-3">
-      <CardHeader>
-        <CardTitle className="text-lg font-semibold text-[#1a237e]">
-          Assigned Reviewers
-        </CardTitle>
-      </CardHeader>
+      <div className="flex justify-between items-center mb-3">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold text-[#1a237e]">
+            Assigned Reviewers
+          </CardTitle>
+        </CardHeader>
+        <AssignReviewerModal />
+      </div>
       <CardContent className="space-y-5">
         {assignedReviewers.map((assignment, index) => (
           <div key={assignment.id}>

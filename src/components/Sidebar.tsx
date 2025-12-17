@@ -172,7 +172,7 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             icon: Newspaper,
           },
           {
-            href: '/staff-editor/reviewers',
+            href: '/staff-editor/manage-reviewers',
             label: 'Manage Reviewers',
             icon: Users,
           },

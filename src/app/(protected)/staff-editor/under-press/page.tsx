@@ -62,9 +62,15 @@ export default function AssociateEditorDashboard() {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-2">
-                          <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
-                            {assignment.articleSubmission?.metadata?.title}
-                          </h3>
+                          <Link
+                            href={`/articles/${assignment.articleSubmission.id}`}
+                            className="hover:underline"
+                            target="_blank"
+                          >
+                            <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
+                              {assignment.articleSubmission?.metadata?.title}
+                            </h3>
+                          </Link>
                         </div>
 
                         <p className="text-gray-600 mb-3">by {authorName}</p>

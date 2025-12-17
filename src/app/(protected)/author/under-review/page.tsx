@@ -29,11 +29,7 @@ export default function Dashboard() {
           <>
             {/* Skeleton placeholders */}
             <Skeleton className="h-7 w-48 rounded-md" />
-            <Skeleton className="h-5 w-72 rounded-md" />
-            <Skeleton className="h-5 w-72 rounded-md" />
-            <Skeleton className="h-5 w-72 rounded-md" />
-            <Skeleton className="h-5 w-72 rounded-md" />
-            <Skeleton className="h-5 w-72 rounded-md" />
+            <Skeleton className="h-5 w-72 rounded-md" />{' '}
           </>
         ) : manuscripts ? (
           <>

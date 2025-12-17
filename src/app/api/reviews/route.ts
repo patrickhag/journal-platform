@@ -239,10 +239,7 @@ export async function GET(req: NextRequest) {
 
     const assignedArticles = reviewerAssignedArticles.filter(
       (assignedArticle) => {
-        return !(
-          assignedArticle?.article?.articleStatus === 'PUBLISHED' ||
-          assignedArticle?.article?.articleStatus === 'AWAITING DECISION'
-        );
+        return assignedArticle?.article?.articleStatus === 'UNDER REVIEW';
       }
     );
 
@@ -251,10 +248,7 @@ export async function GET(req: NextRequest) {
       const currentDate = new Date();
       return (
         currentDate > dueDate &&
-        !(
-          article?.article?.articleStatus === 'PUBLISHED' ||
-          article?.article?.articleStatus === 'AWAITING DECISION'
-        )
+        article?.article?.articleStatus === 'UNDER REVIEW'
       );
     });
 

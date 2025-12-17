@@ -10,11 +10,19 @@ import { useRouter } from 'next/navigation';
 import ReviewModal from '@/components/articles/Review';
 import ArticleCardSkeleton from '../components/ReviewCardSkeleton';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 export default function ReviewerDashboard() {
   const { data, isPending } = useGetReviewerAssignments();
 
+  console.log('data:', data);
+
   const reviewerAssignments = data?.assignedArticles;
+
+  const { data: session } = useSession();
+  const reviewerId = session?.user.id;
+
+  console.log('reviewerId:', reviewerId);
 
   const [reviewModal, setReviewModal] = useState<{
     isOpen: boolean;
@@ -65,9 +73,15 @@ export default function ReviewerDashboard() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
-                        <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
-                          {title}
-                        </h3>
+                        <Link
+                          href={`/articles/${article.id}`}
+                          target="_blank"
+                          className="hover:underline"
+                        >
+                          <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
+                            {title}
+                          </h3>
+                        </Link>
                       </div>
 
                       <p className="text-gray-600 mb-3">Author: {author}</p>

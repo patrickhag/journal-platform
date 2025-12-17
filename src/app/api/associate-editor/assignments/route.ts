@@ -28,6 +28,7 @@ export async function GET(req: NextRequest) {
           assignedAt: true,
           dueDate: true,
           message: true,
+          status: true,
         },
         with: {
           articleSubmissions: {
@@ -47,7 +48,11 @@ export async function GET(req: NextRequest) {
       }
     );
 
-    return NextResponse.json(assignedArticles);
+    const eligibleAssignedArticles = assignedArticles.filter(
+      (article) => article.status !== 'DECLINED'
+    );
+
+    return NextResponse.json(eligibleAssignedArticles);
   } catch (error) {
     console.error('Error querying assigned articles:', error);
     return NextResponse.json(

@@ -39,7 +39,11 @@ export const useGetAssignedAssociateEditors = () => {
 export const useAssociateEditorFunctions = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: { articleId: string; userId: string }) => {
+    mutationFn: async (data: {
+      articleId: string;
+      userId: string;
+      isItNotification?: boolean;
+    }) => {
       return axios.patch(`/api/associate-editor`, data);
     },
     onSuccess: ({ data }) => {

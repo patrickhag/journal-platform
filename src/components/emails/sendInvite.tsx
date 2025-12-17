@@ -17,6 +17,7 @@ export const SendInvitation: React.FC<{
   dueDate?: string;
   articleId: string;
   password: string;
+  reviewAssignmentId: string;
 }> = ({
   reviewerName,
   articleTitle,
@@ -25,6 +26,7 @@ export const SendInvitation: React.FC<{
   dueDate,
   articleId,
   password,
+  reviewAssignmentId,
 }) => {
   return (
     <Tailwind>
@@ -103,7 +105,7 @@ export const SendInvitation: React.FC<{
                 <td align="center" className="w-1/2 pr-[8px]">
                   <Button
                     className="box-border w-full rounded-md border border-gray-300 bg-gray-900 text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition"
-                    href={`${process.env.NEXT_PUBLIC_URL}/reviewer-accept-invitation/${articleId}`}
+                    href={`${process.env.NEXT_PUBLIC_URL}/reviewer-invitation/${articleId}?inviteStatus=1&reviewAssignmentId=${reviewAssignmentId}`}
                   >
                     Accept Invitation
                   </Button>
@@ -111,7 +113,7 @@ export const SendInvitation: React.FC<{
                 <td align="center" className="w-1/2 pl-[8px]">
                   <Button
                     className="box-border w-full rounded-md border border-gray-300 bg-white text-gray-900 px-4 py-2 text-sm font-medium hover:bg-gray-100 transition"
-                    href={`${process.env.NEXT_PUBLIC_URL}/invitation/${articleId}?accept_invite=0`}
+                    href={`${process.env.NEXT_PUBLIC_URL}/reviewer-invitation/${articleId}?inviteStatus=0&reviewAssignmentId=${reviewAssignmentId}`}
                   >
                     Decline Invitation
                   </Button>

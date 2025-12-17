@@ -209,7 +209,9 @@ export default function ReviewModal({
                   name="message"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Feedback</FormLabel>
+                      <FormLabel>
+                        Feedback <span className="text-red-700">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="General feedback on this manuscript?"

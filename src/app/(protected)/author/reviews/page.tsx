@@ -20,10 +20,15 @@ import { ReviewCard } from '@/components/ReviewCard';
 import { StatusBadge } from '@/components/status-badge';
 import { ArticleSkeleton } from '@/components/articles/ArticleSkeleton';
 import { Input } from '@/components/ui/input';
+import { useSession } from 'next-auth/react';
 
 const ReviewsReceived = () => {
   const { data: manuscripts, isPending } = useGetAuthorsReviews();
   const [searchQuery, setSearchQuery] = useState('');
+
+  const { data } = useSession();
+
+  console.log('userId:', data?.user.id);
 
   const [selectedManuscript, setSelectedManuscript] =
     useState<TArticlesReview | null>(null);
@@ -39,6 +44,8 @@ const ReviewsReceived = () => {
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
   });
+
+  const isNotAllowedToReply = (selectedManuscript?.reviews?.length ?? 0) <= 1;
 
   return (
     <div className="space-y-6">
@@ -142,7 +149,20 @@ const ReviewsReceived = () => {
                   : 'Reviews'}
               </SheetTitle>
               <SheetDescription>
-                Review details and reviewer feedback
+                {selectedManuscript && selectedManuscript.reviews.length < 2 ? (
+                  <div className="bg-yellow-100 border-l-4 border-yellow-400 text-yellow-700 p-4 rounded mb-4">
+                    <div className="font-semibold mb-1">
+                      You can't reply yet
+                    </div>
+                    <div>
+                      You can only reply to reviews when there are at least{' '}
+                      <span className="font-semibold">two</span> reviews. Please
+                      wait until all required reviews have been submitted.
+                    </div>
+                  </div>
+                ) : (
+                  <>Review details and reviewer feedback</>
+                )}
               </SheetDescription>
             </SheetHeader>
 
@@ -152,9 +172,8 @@ const ReviewsReceived = () => {
                   <ReviewCard
                     key={review.id}
                     review={review}
-                    showDownloadButton={true}
                     showViewButton={true}
-                    reviewerDisplayName={`Reviewer ${index + 1}`}
+                    reviewerDisplayName={`Review ${index + 1}`}
                   />
                 ))}
               </div>
@@ -162,7 +181,10 @@ const ReviewsReceived = () => {
           </div>
 
           <SheetFooter className="sticky bottom-0 bg-white mt-4 py-4 flex justify-end gap-2">
-            <AuthorReplyModal articleId={selectedManuscript?.id || ''} />
+            <AuthorReplyModal
+              articleId={selectedManuscript?.id || ''}
+              isNotAllowedToReply={isNotAllowedToReply}
+            />
           </SheetFooter>
         </SheetContent>
       </Sheet>

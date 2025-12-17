@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useReviewerFunctions } from '@/hooks/useReviews';
 import { UserMinus } from 'lucide-react';
+import Loader from '@/components/Loader';
 
 export function UnAssignAlertDialog({
   isOpen,
@@ -60,7 +61,7 @@ export function UnAssignAlertDialog({
             className="bg-red-500 hover:bg-red-600 focus:ring-red-500 text-white rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
           >
             <UserMinus className="h-4 w-4 mr-1" />
-            {isPending ? 'Unassigning...' : 'Unassign'}
+            {isPending ? <Loader text="Unassigning..." /> : 'Unassign'}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

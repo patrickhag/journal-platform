@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { File, Eye, Repeat, Download } from 'lucide-react';
+import { File, Eye, Repeat } from 'lucide-react';
 import Link from 'next/link';
 
 interface Review {
@@ -24,22 +24,18 @@ interface Review {
 interface ReviewCardProps {
   review: Review;
   showReReviewButton?: boolean;
-  showDownloadButton?: boolean;
   showViewButton?: boolean;
   onReReviewClick?: (review: Review) => void;
   reviewerDisplayName?: string;
-  variant?: 'default' | 'compact';
   className?: string;
 }
 
 export const ReviewCard = ({
   review,
   showReReviewButton = false,
-  showDownloadButton = false,
   showViewButton = true,
   onReReviewClick,
   reviewerDisplayName,
-  variant = 'default',
   className = '',
 }: ReviewCardProps) => {
   const reviewerName =
@@ -67,22 +63,6 @@ export const ReviewCard = ({
     const config = badgeConfig[status] || { variant: 'default', label: status };
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
-
-  if (variant === 'compact') {
-    return (
-      <div className={`border rounded-lg p-4 bg-muted/50 ${className}`}>
-        <div className="flex items-center justify-between mb-2">
-          <Badge>{review.status || 'Pending'}</Badge>
-          <span className="text-sm text-muted-foreground">
-            {review.reviewedAt || 'Not reviewed'}
-          </span>
-        </div>
-        {review.message && (
-          <p className="text-sm text-muted-foreground">{review.message}</p>
-        )}
-      </div>
-    );
-  }
 
   return (
     <Card className={className}>
@@ -141,14 +121,6 @@ export const ReviewCard = ({
           </div>
 
           <div className="flex items-center gap-2">
-            {showDownloadButton && review.fileIds.length > 0 && (
-              <Button size="sm" variant="outline" asChild>
-                <Link href={review.fileIds[0]}>
-                  <Download className="h-4 w-4" />
-                </Link>
-              </Button>
-            )}
-
             {showReReviewButton && onReReviewClick && (
               <Button
                 size="sm"

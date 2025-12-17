@@ -322,6 +322,9 @@ export const reviewAssignments = pgTable('review_assignments', {
   userId: text('userId').references(() => users.id, {
     onDelete: 'cascade',
   }),
+  authorRevisionId: text('authorRevisionId').references(
+    () => authorRevisions.id
+  ),
   status: varchar('review_assignments_status', { length: 50 }).default(
     'INVITED'
   ),
@@ -885,6 +888,9 @@ export const reviewAssignmentsRelations = relations(
     reviews: many(reviews, {
       relationName: 'reviewAssignmentReviews',
     }),
+    authorRevisions: many(authorRevisions, {
+      relationName: 'reviewAssignmentsAuthorRevision',
+    }),
   })
 );
 
@@ -957,6 +963,11 @@ export const authorRevisionsRelations = relations(
       fields: [authorRevisions.articleId],
       references: [articleSubmissions.id],
       relationName: 'authorRevisions',
+    }),
+    reviewAssignment: one(reviewAssignments, {
+      fields: [authorRevisions.id],
+      references: [reviewAssignments.authorRevisionId],
+      relationName: 'reviewAssignmentsAuthorRevision',
     }),
   })
 );

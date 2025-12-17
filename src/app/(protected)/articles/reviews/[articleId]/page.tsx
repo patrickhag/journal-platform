@@ -190,6 +190,8 @@ export default function ReviewsPage() {
 
   const { data: reviewData, isPending } = useGetReviews(articleId as string);
 
+  console.log('reviewData:', reviewData);
+
   const [openEditor, setOpenEditor] = useState(false);
   const [openAssignEditorDialog, setopenAssignEditorDialog] = useState(false);
   const [openRereview, setOpenRereview] = useState(false);
@@ -285,7 +287,7 @@ export default function ReviewsPage() {
                       <div className="space-y-6">
                         {reviewData && reviewData?.reviews?.length > 0 ? (
                           reviewData.reviews.map((review) => {
-                            const reviewerName = `${review.user.prefix ?? ''} ${review.user.firstName} ${review.user.lastName}`;
+                            const reviewerName = `${review.user.prefix ? review.user.prefix + '.' : ''} ${review.user.firstName} ${review.user.lastName}`;
                             const reviewerAssessment = review.reviewAssessment;
                             return (
                               <Card key={review.id} className="text-sm">

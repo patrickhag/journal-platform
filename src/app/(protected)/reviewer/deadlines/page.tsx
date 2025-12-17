@@ -9,6 +9,7 @@ import { useGetReviewerAssignments } from '@/hooks/useReviews';
 import { useRouter } from 'next/navigation';
 import ReviewModal from '@/components/articles/Review';
 import ArticleCardSkeleton from '../components/ReviewCardSkeleton';
+import Link from 'next/link';
 
 export default function ReviewerDashboard() {
   const { data, isPending } = useGetReviewerAssignments();
@@ -76,14 +77,20 @@ export default function ReviewerDashboard() {
           return (
             <div
               key={id}
-              className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
+              className="border rounded-lg p-4 bg-white hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
-                    <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
-                      {title}
-                    </h3>
+                    <Link
+                      href={`/articles/${article.id}`}
+                      target="_blank"
+                      className="hover:underline"
+                    >
+                      <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
+                        {title}
+                      </h3>
+                    </Link>
                   </div>
 
                   <p className="text-gray-600 mb-3">Author: {author}</p>

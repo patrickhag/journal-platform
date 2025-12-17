@@ -77,11 +77,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await db.insert(reviewAssignments).values({
-      articleId,
-      userId,
-      dueDate: date,
-    });
+    const [{ id: reviewAssignmentId }] = await db
+      .insert(reviewAssignments)
+      .values({
+        articleId,
+        userId,
+        dueDate: date,
+      })
+      .returning({ id: reviewAssignments.id });
 
     await db
       .update(articleSubmissions)
@@ -120,6 +123,7 @@ export async function POST(req: NextRequest) {
       dueDate: new Date(date as string).toISOString().split('T')[0],
       articleTitle: article?.metadata.title as string,
       abstract: article?.metadata.abstract as string,
+      reviewAssignmentId: reviewAssignmentId,
     });
 
     return NextResponse.json(

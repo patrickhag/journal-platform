@@ -32,7 +32,7 @@ import { Calendar } from '@/components/ui/calendar';
 import withPermissions from '@/components/WithPermission';
 import { DialogTrigger } from '@radix-ui/react-dialog';
 
-const AssignRevieweModal = () => {
+export const AssignReviewerModal = () => {
   const [selectedReviewerId, setSelectedReviewerId] = useState<string>('');
   const { data: availableReviwers } = useGetReviewers();
   const { mutate, isPending } = useAssignReviewer();
@@ -201,5 +201,3 @@ const AssignRevieweModal = () => {
     </>
   );
 };
-export const AssignRevieweModalWithPermission =
-  withPermissions(AssignRevieweModal);

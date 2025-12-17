@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
-import { authorRevisions, reviews } from '@/db/schema';
+import { authorRevisions, reviews, reviewAssignments } from '@/db/schema';
 import { auth } from '@/auth';
 import { articleSubmissions } from '@/db/schema';
-import { and, desc, eq } from 'drizzle-orm';
-import { authorInformStaffEditor } from '@/lib/emailTransporter';
+import { and, desc, eq, isNotNull } from 'drizzle-orm';
+import {
+  authorInformStaffEditor,
+  authorInformReviewer,
+} from '@/lib/emailTransporter';
 
 export async function GET(req: NextRequest) {
   try {
@@ -69,15 +72,28 @@ export async function POST(req: Request) {
     const session = await auth();
     const authorName = session?.user?.name;
 
-    const insertInfo = {
-      articleId,
-      authorId: session?.user?.id,
-      message,
-      fileIds,
-    };
+    // Insert author revision and get the ID
+    const [insertedAuthorRevision] = await db
+      .insert(authorRevisions)
+      .values({
+        articleId,
+        authorId: '0004a9ae-add6-4bc8-bde9-4b783ef027ec',
+        message,
+        fileIds,
+      })
+      .returning({ id: authorRevisions.id });
 
-    await db.insert(authorRevisions).values(insertInfo);
+    const authorRevisionId = insertedAuthorRevision.id;
 
+    // update article status to UNDER REVIEW
+    await db
+      .update(articleSubmissions)
+      .set({
+        articleStatus: 'UNDER REVIEW',
+      })
+      .where(eq(articleSubmissions.id, articleId));
+
+    // fetch article with reviews and editor info
     const article = await db.query.articleSubmissions.findFirst({
       columns: {
         id: true,
@@ -99,6 +115,22 @@ export async function POST(req: Request) {
             },
           },
         },
+        reviewAssignments: {
+          where: eq(reviewAssignments.status, 'ACCEPTED'),
+          columns: {
+            id: true,
+          },
+          with: {
+            user: {
+              columns: {
+                email: true,
+                firstName: true,
+                lastName: true,
+                prefix: true,
+              },
+            },
+          },
+        },
       },
       where: eq(articleSubmissions.id, articleId),
     });
@@ -108,6 +140,32 @@ export async function POST(req: Request) {
       article?.editorAssignment.user.firstName +
       ' ' +
       article?.editorAssignment.user.lastName;
+
+    // create review revisions for each submitted review and link to author revision
+    const articleReviewAssignments = article?.reviewAssignments || [];
+
+    for (const reviewAssignment of articleReviewAssignments) {
+      // send email notification to the reviewer
+      const reviewerName =
+        `${reviewAssignment?.user?.prefix || ''} ${reviewAssignment?.user?.firstName} ${reviewAssignment?.user?.lastName}`.trim();
+
+      // add author revision-id to review assignments
+      await db
+        .update(reviewAssignments)
+        .set({
+          authorRevisionId,
+        })
+        .where(eq(reviewAssignments.id, reviewAssignment.id));
+
+      await authorInformReviewer({
+        reviewerName,
+        authorName: authorName as string,
+        articleTitle: article?.metadata.title as string,
+        articleLink: articleId,
+        message,
+        reviewerEmail: reviewAssignment?.user?.email as string,
+      });
+    }
 
     // send email to staff-editor about the author reply
     await authorInformStaffEditor({
@@ -120,7 +178,10 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(
-      { message: 'Reply sent successfully and staff-editor informed' },
+      {
+        message:
+          'Reply sent successfully. Staff editor and reviewers have been notified.',
+      },
       { status: 201 }
     );
   } catch (error) {

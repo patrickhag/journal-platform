@@ -15,7 +15,6 @@ import { AssignOrRejectComponent } from '@/components/articles/AssignOrReject';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import withPermissions from '@/components/WithPermission';
-import { AssignRevieweModalWithPermission } from './components/AssignReviewersModal';
 import { FinalSubmissionCardWithPermissions } from './components/AddsOnInformationExample';
 import { AssignedReviewersWithPermissions } from './components/AssignedReviewers';
 
@@ -138,24 +137,11 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
         {/* REVIEWERS */}
         {session?.user.role !== 'REVIEWER' && (
           <Card className="my-3">
-            <div className="flex justify-between items-center">
-              <CardHeader>
-                <CardTitle className="text-lg text-[#1a237e]">
-                  Proposed Reviewers
-                </CardTitle>
-              </CardHeader>
-              <AssignRevieweModalWithPermission
-                requiredPermissions={['ASSIGN_REVIEWERS']}
-                role={
-                  currentUserRole as
-                    | 'NORMAL_USER'
-                    | 'CHIEF_EDITOR'
-                    | 'REVIEWER'
-                    | 'STAFF_EDITOR'
-                }
-                fallback={''}
-              />
-            </div>
+            <CardHeader>
+              <CardTitle className="text-lg text-[#1a237e]">
+                Proposed Reviewers
+              </CardTitle>
+            </CardHeader>
             <CardContent className="space-y-5">
               <div className="flex justify-between">
                 {reviewrs.length === 0 && (
@@ -226,13 +212,21 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
 const ArticleLinks = ({ articleId }: { articleId: string }) => (
   <div className="flex gap-2">
     <Link href={`/articles/reviews/${articleId}`}>
-      <Button size="sm" className="gap-1 flex items-center hover:underline">
+      <Button
+        size="sm"
+        className="gap-1 flex items-center hover:underline"
+        variant={'outline'}
+      >
         Reviews
         <ChevronRight className="w-2 h-2" />
       </Button>
     </Link>
     <Link href={`/articles/all-participants/${articleId}`}>
-      <Button size="sm" className="gap-1 flex items-center hover:underline">
+      <Button
+        size="sm"
+        className="gap-1 flex items-center hover:underline"
+        variant={'outline'}
+      >
         All Participants
         <ChevronRight className="w-2 h-2" />
       </Button>

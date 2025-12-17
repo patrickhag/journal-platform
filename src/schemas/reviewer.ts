@@ -110,15 +110,13 @@ export const finalSubmissionSchema = z
   );
 
 export const reviewSchema = z.object({
-  message: z.string().min(10, {
-    message: 'Review message must be at least 10 characters.',
-  }),
-  status: z.enum(
-    ['Major Correction', 'Minor Correction', 'Accepted', 'Rejected'],
-    {
-      message: 'Please select a review status.',
-    }
-  ),
+  message: z.string().min(5, "What's your thoughts on this review?"),
+  status: z.enum([
+    'Major Correction',
+    'Minor Correction',
+    'Accepted',
+    'Rejected',
+  ]),
 });
 
 export const reviewAssessmentSchema = z.object({

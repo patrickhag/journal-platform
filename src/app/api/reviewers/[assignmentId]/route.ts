@@ -82,6 +82,14 @@ export async function GET(
             reviewedAt: true,
           },
         },
+        authorRevisions: {
+          columns: {
+            id: true,
+            fileIds: true,
+            message: true,
+            submittedAt: true,
+          },
+        },
       },
     });
     return NextResponse.json(assignedArticle);

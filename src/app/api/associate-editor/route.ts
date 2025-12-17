@@ -5,7 +5,10 @@ import {
   associateEditorAssignments,
   userRoles,
 } from '@/db/schema';
-import { sendAssociateEditorInvitation } from '@/lib/emailTransporter';
+import {
+  sendAssociateEditorInvitation,
+  remindAssociateEditorAboutAssignment,
+} from '@/lib/emailTransporter';
 import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 import { format } from 'date-fns';
@@ -154,7 +157,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { userId, articleId } = await req.json();
+    const { userId, articleId, isItNotification } = await req.json();
 
     if (!(userId || articleId)) {
       return NextResponse.json(
@@ -163,8 +166,54 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
+    const editor = await db.query.associateEditorAssignments.findFirst({
+      columns: {
+        dueDate: true,
+      },
+      where: and(
+        eq(associateEditorAssignments.userId, userId),
+        eq(associateEditorAssignments.articleId, articleId)
+      ),
+      with: {
+        user: {
+          columns: {
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+        articleSubmissions: {
+          columns: {
+            id: true,
+          },
+          with: {
+            metadata: {
+              columns: {
+                title: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (isItNotification) {
+      // send email to the associate editor
+      await remindAssociateEditorAboutAssignment({
+        toEmail: editor?.user?.email as string,
+        articleTitle: editor?.articleSubmissions?.metadata.title as string,
+        editorName: `${editor?.user?.firstName} ${editor?.user?.lastName}`,
+        dueDate: format(new Date(editor?.dueDate as Date), 'MMMM d, yyyy'),
+      });
+      return NextResponse.json(
+        { message: 'Associate editor successfully notified' },
+        { status: 200 }
+      );
+    }
+
     const isItDeleted = await db
-      .delete(associateEditorAssignments)
+      .update(associateEditorAssignments)
+      .set({ status: 'DECLINED' })
       .where(
         and(
           eq(associateEditorAssignments.articleId, articleId),

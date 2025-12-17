@@ -12,16 +12,12 @@ const ReviewerAssignmentSkeleton = ({
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center mb-4 gap-2">
+      <div>
+        <div className="flex items-center gap-2">
           <Button variant="ghost" className="mb-4" disabled>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Go Back
           </Button>
-          {/* Submit Review Button */}
-          <div className="pt-6 text-end m-5">
-            <Skeleton className="h-10 w-32 ml-auto" />
-          </div>
         </div>
       </div>
 

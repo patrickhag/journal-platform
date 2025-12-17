@@ -508,9 +508,7 @@ export type TReviewerInfo = {
     affiliation: string | null;
     expertise: string | null;
     prefix: string | null;
-    reviews: {
-      id: string;
-    }[];
+
     reviewAssignments: {
       id: string;
       articleId: string;
@@ -523,6 +521,9 @@ export type TReviewerInfo = {
           title: string;
         };
       };
+      reviews: {
+        id: string;
+      }[];
     }[];
   };
 };
@@ -630,14 +631,18 @@ export type TAssignment = {
     message: string;
     status: string;
     reviewedAt: string;
-    reviewRevisions:
-      | {
-          id: string;
-          requestedAt: string;
-          message: string;
-          fileIds: string[];
-        }[]
-      | undefined;
+    reviewRevisions?: {
+      id: string;
+      requestedAt: string;
+      message: string;
+      fileIds: string[];
+    }[];
+  }[];
+  authorRevisions?: {
+    id: string;
+    fileIds: string[];
+    message: string;
+    submittedAt: string;
   }[];
 };
 

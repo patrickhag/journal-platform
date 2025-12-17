@@ -9,7 +9,7 @@ export default function GoBackButton() {
 
   return (
     <div className="mb-4">
-      <Button size="sm" onClick={() => router.back()}>
+      <Button size="sm" onClick={() => router.back()} variant={'outline'}>
         <ChevronLeft className="w-4 h-4" />
         Go back
       </Button>

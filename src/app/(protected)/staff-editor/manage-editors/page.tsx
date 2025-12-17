@@ -26,18 +26,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Mail, Building, FileText, User, Trash2 } from 'lucide-react';
+import { Mail, Building, FileText, User, Trash2, Bell } from 'lucide-react';
 import Link from 'next/link';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { UnAssignEditorAlertDialog } from './components/UnAssignEditorAlertDialog';
 import { useGetAssignedAssociateEditors } from '../hooks/useAssociateEditorHooks';
 import { format } from 'date-fns';
+import { RemindEditorsDialog } from '../components/RemindEditorsDialog';
 
 const ManageEditors = () => {
   const [openAlertDialog, setOpenAlertDialog] = useState(false);
   const [articleId, setArticleId] = useState('');
   const [userId, setUserId] = useState('');
-
+  const [openNotificationDialog, setOpenNotificationDialog] = useState(false);
   const { data: associateEditorsInfo = [], isPending } =
     useGetAssignedAssociateEditors();
 
@@ -47,7 +48,9 @@ const ManageEditors = () => {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Manage Editors</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Manage Associate Editors
+            </h1>
           </div>
         </div>
 
@@ -126,7 +129,7 @@ const ManageEditors = () => {
                       <TableCell>
                         {assignments && assignments.length > 0 ? (
                           <div className="space-y-1 max-w-xs">
-                            {assignments.map((submission) => (
+                            {assignments.slice(0, 2).map((submission) => (
                               <div className="text-xs" key={submission.id}>
                                 <div className="flex items-center justify-between">
                                   <div className="font-medium truncate flex-1">
@@ -146,11 +149,16 @@ const ManageEditors = () => {
                                 </div>
                               </div>
                             ))}
+                            {assignments.length > 2 && (
+                              <div className="text-xs text-gray-500">
+                                +{assignments.length - 2} more
+                              </div>
+                            )}
                           </div>
                         ) : (
-                          <span className="text-sm text-gray-500">
+                          <div className="text-sm text-gray-500">
                             No assignments
-                          </span>
+                          </div>
                         )}
                       </TableCell>
                       <TableCell className="text-right">
@@ -225,20 +233,38 @@ const ManageEditors = () => {
                                                   </div>
                                                 </div>
                                               </div>
-                                              <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="h-8 w-8 p-0 hover:bg-red-100"
-                                                onClick={() => {
-                                                  setOpenAlertDialog(true);
-                                                  setUserId(editor.user.id);
-                                                  setArticleId(
-                                                    submission.articleId
-                                                  );
-                                                }}
-                                              >
-                                                <Trash2 className="h-4 w-4 text-red-500" />
-                                              </Button>
+                                              <div className="flex items-center">
+                                                <Button
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  className="h-8 w-8 p-0 hover:bg-red-100"
+                                                  onClick={() => {
+                                                    setOpenAlertDialog(true);
+                                                    setUserId(editor.user.id);
+                                                    setArticleId(
+                                                      submission.articleId
+                                                    );
+                                                  }}
+                                                >
+                                                  <Trash2 className="h-4 w-4 text-red-500" />
+                                                </Button>
+                                                <Button
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  className="h-8 w-8 p-0 hover:bg-blue-100"
+                                                  onClick={() => {
+                                                    setOpenNotificationDialog(
+                                                      true
+                                                    );
+                                                    setUserId(editor.user.id);
+                                                    setArticleId(
+                                                      submission.articleId
+                                                    );
+                                                  }}
+                                                >
+                                                  <Bell className="h-4 w-4 text-blue-500" />
+                                                </Button>
+                                              </div>
                                             </div>
                                           </Card>
                                         ))}
@@ -281,6 +307,14 @@ const ManageEditors = () => {
           articleId={articleId}
           isOpen={openAlertDialog}
           setOpenAlertDialog={setOpenAlertDialog}
+          userId={userId}
+        />
+      )}
+      {openNotificationDialog && (
+        <RemindEditorsDialog
+          articleId={articleId}
+          isOpen={openNotificationDialog}
+          setOpenAlertDialog={setOpenNotificationDialog}
           userId={userId}
         />
       )}

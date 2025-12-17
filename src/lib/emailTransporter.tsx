@@ -27,12 +27,14 @@ import { InformStaffEditorAboutAssociateInvitation } from '@/components/emails/i
 import { NotifyStaffEditorAboutAssociateEditorCorrection } from '@/components/emails/notifiy-staff-editor-about-ass-correction';
 import { SubscriberEmail } from '@/components/emails/sendSubscriberEmail';
 import { RemindReviewer } from '@/components/emails/remind-reviewer';
+import { RemindEditor } from '@/components/emails/remind-editor';
 import { transporter } from './emailConfig';
 import { NotifyStaffEditorAboutReviewerAcceptance } from '@/components/emails/notify-staff-editor-about-review-acceptance';
 import { StaffEditorEmailTemplate } from '@/components/emails/inform-associate-editor';
 import { NotifyReviewerAboutFinalizedAssignment } from '@/components/emails/notify-reviewer-about-finalised-status';
 import { AssociateEditorStatusEmail } from '@/components/emails/inform-associate-editor-about-correction';
 import { AuthorReplyToStaffEditorEmail } from '@/components/emails/author-reply-to-staff-editor';
+import { AuthorReplyToReviewerEmail } from '@/components/emails/author-reply-to-reviewer';
 import { InformChiefEditorAboutOngoingPublication } from '@/components/emails/inform-chief-editor-about-ongoing-publication';
 
 export const sendPasswordResetEmail = async ({
@@ -146,6 +148,39 @@ export const remindReviewerAboutRevision = async ({
   }
 };
 
+export const remindAssociateEditorAboutAssignment = async ({
+  toEmail,
+  articleTitle,
+  editorName,
+  dueDate,
+}: {
+  toEmail: string;
+  articleTitle: string;
+  editorName: string;
+  dueDate: string;
+}) => {
+  const emailHtml = await render(
+    <RemindEditor
+      articleTitle={articleTitle}
+      editorName={editorName}
+      dueDate={dueDate}
+    />
+  );
+
+  const options = {
+    from: process.env.EMAIL_USER,
+    to: toEmail,
+    subject: 'Reminder: Please complete your assigned manuscript formatting',
+    html: emailHtml,
+  };
+  const result = await transporter.sendMail(options);
+  if (result.accepted.length === 0) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
 export const sendInvitation = async ({
   reviewerNames,
   articleId,
@@ -155,6 +190,7 @@ export const sendInvitation = async ({
   dueDate,
   password,
   abstract,
+  reviewAssignmentId,
 }: {
   reviewerNames: string;
   articleId: string;
@@ -164,6 +200,7 @@ export const sendInvitation = async ({
   dueDate: string;
   password?: string;
   abstract: string;
+  reviewAssignmentId: string;
 }) => {
   const emailHtml = await render(
     <SendInvitation
@@ -174,6 +211,7 @@ export const sendInvitation = async ({
       articleId={articleId}
       dueDate={dueDate}
       password={password as string}
+      reviewAssignmentId={reviewAssignmentId}
     />
   );
   const options = {
@@ -945,6 +983,49 @@ export const authorInformStaffEditor = async ({
     return { success: true };
   } catch (error) {
     console.error('Error sending author reply notification:', error);
+    return { success: false, error };
+  }
+};
+
+export const authorInformReviewer = async ({
+  reviewerName,
+  authorName,
+  articleTitle,
+  articleLink,
+  message,
+  reviewerEmail,
+}: {
+  reviewerName: string;
+  authorName: string;
+  articleTitle: string;
+  articleLink: string;
+  message?: string;
+  reviewerEmail: string;
+}) => {
+  try {
+    const emailHtml = await render(
+      <AuthorReplyToReviewerEmail
+        reviewerName={reviewerName}
+        articleTitle={articleTitle}
+        articleLink={articleLink}
+        authorName={authorName}
+        message={message}
+      />
+    );
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: reviewerEmail,
+      subject: `Author reply received for "${articleTitle}"`,
+      html: emailHtml,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error(
+      'Error sending author reply notification to reviewer:',
+      error
+    );
     return { success: false, error };
   }
 };

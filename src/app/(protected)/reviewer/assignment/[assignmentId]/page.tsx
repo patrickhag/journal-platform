@@ -20,6 +20,7 @@ import ReviewModal from '@/components/articles/Review';
 import ReviewerAssignmentSkeleton from '@/components/ReviewerAssignmentSkeleton';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/lib/utils';
+import { useSession } from 'next-auth/react';
 
 const ReviewAssignment = () => {
   const { assignmentId } = useParams();
@@ -27,6 +28,12 @@ const ReviewAssignment = () => {
   const { data: particularAssignment, isPending } = useGetParticularAssignment(
     assignmentId as string
   );
+
+  const { data } = useSession();
+
+  console.log('user-id:', data?.user.id);
+
+  console.log('particularAssignment:', particularAssignment);
 
   const [reviewModal, setReviewModal] = useState<{
     isOpen: boolean;
@@ -59,18 +66,19 @@ const ReviewAssignment = () => {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Go Back
         </Button>
-        {particularAssignment?.status !== 'FINALIZED' && (
-          <Button
-            type="submit"
-            className="bg-primary hover:bg-primary/90"
-            onClick={() =>
-              handleSubmitReview(particularAssignment?.article.id as string)
-            }
-          >
-            <SquarePen className="mr-2 h-4 w-4" />
-            Submit Review
-          </Button>
-        )}
+        {particularAssignment?.status === 'ACCEPTED' &&
+          particularAssignment?.article.articleStatus === 'UNDER REVIEW' && (
+            <Button
+              type="submit"
+              className="bg-primary hover:bg-primary/90"
+              onClick={() =>
+                handleSubmitReview(particularAssignment?.article.id as string)
+              }
+            >
+              <SquarePen className="mr-2 h-4 w-4" />
+              Submit Review
+            </Button>
+          )}
       </div>
       {/* Assignment Info */}
       <Card>
@@ -97,34 +105,114 @@ const ReviewAssignment = () => {
         </CardHeader>
       </Card>
 
-      {/* Files Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <FileText className="mr-2 h-5 w-5" />
-            Manuscript Files
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {particularAssignment?.article.files.map((file, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between p-3 border rounded-lg"
-            >
-              <div className="flex items-center">
-                <FileText className="mr-2 h-4 w-4 text-blue-600" />
-                <span>{file.originalName}</span>
+      {/* Author Response Section or Manuscript Files */}
+      {particularAssignment?.authorRevisions &&
+      particularAssignment?.authorRevisions?.length > 0 ? (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <FileText className="mr-2 h-5 w-5" />
+              Author Response
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {particularAssignment.authorRevisions &&
+              particularAssignment.authorRevisions.map(
+                (authorRevision, index) => (
+                  <div
+                    key={authorRevision.id || index}
+                    className="border rounded-lg p-4 bg-muted/50 space-y-3"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-semibold text-muted-foreground">
+                        Author Response
+                      </span>
+                      {authorRevision.submittedAt && (
+                        <span className="text-xs text-muted-foreground">
+                          {formatDate(authorRevision.submittedAt)}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Author's Message */}
+                    {authorRevision?.message && (
+                      <div className="space-y-2">
+                        <p className="text-sm font-semibold text-muted-foreground">
+                          Author's Comments:
+                        </p>
+                        <div
+                          className="prose prose-gray text-sm max-w-none text-foreground leading-relaxed p-3 bg-muted/30 rounded-md"
+                          dangerouslySetInnerHTML={{
+                            __html: authorRevision.message,
+                          }}
+                        />
+                      </div>
+                    )}
+
+                    {/* Author Revision Files */}
+                    {authorRevision.fileIds &&
+                      authorRevision.fileIds.length > 0 && (
+                        <div className="space-y-2 mt-3">
+                          <p className="text-sm font-semibold text-muted-foreground">
+                            Revised Files:
+                          </p>
+                          {authorRevision.fileIds.map(
+                            (fileUrl: string, idx: number) => (
+                              <div
+                                key={idx}
+                                className="flex items-center justify-between p-3 border rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                              >
+                                <div className="flex items-center">
+                                  <FileText className="mr-2 h-4 w-4 text-blue-600" />
+                                  <span className="text-sm">
+                                    Revised file {idx + 1}
+                                  </span>
+                                </div>
+                                <Link href={fileUrl} target="_blank">
+                                  <Button size="sm" variant="outline">
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    View
+                                  </Button>
+                                </Link>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      )}
+                  </div>
+                )
+              )}
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <FileText className="mr-2 h-5 w-5" />
+              Manuscript Files
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {particularAssignment?.article.files.map((file, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between p-3 border rounded-lg"
+              >
+                <div className="flex items-center">
+                  <FileText className="mr-2 h-4 w-4 text-blue-600" />
+                  <span>{file.originalName}</span>
+                </div>
+                <Link href={file.publicId}>
+                  <Button size="sm" variant="outline">
+                    <Eye className="mr-2 h-4 w-4" />
+                    View
+                  </Button>
+                </Link>
               </div>
-              <Link href={file.publicId}>
-                <Button size="sm" variant="outline">
-                  <Eye className="mr-2 h-4 w-4" />
-                  View
-                </Button>
-              </Link>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+            ))}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Previous Reviews (if any) */}
       {particularAssignment?.reviews &&
@@ -154,7 +242,7 @@ const ReviewAssignment = () => {
                   {/* Reviewer comments */}
                   <p className="text-sm text-muted-foreground">
                     <span className="font-semibold">Comments: </span>
-                    <span>{review.message}</span>
+                    <span>{review.message || 'No comments provided'}</span>
                   </p>
 
                   {/* Annotated Files */}
@@ -186,6 +274,90 @@ const ReviewAssignment = () => {
                       </div>
                     </div>
                   )}
+
+                  {/* ============================== */}
+                  {/* Author Revisions               */}
+                  {/* ============================== */}
+                  {review.reviewRevisions &&
+                    review.reviewRevisions.length > 0 &&
+                    review.reviewRevisions.some(
+                      (rev: any) => rev.authorRevision
+                    ) && (
+                      <div className="mt-5 border-t border-muted pt-4 space-y-4">
+                        <div className="flex items-center gap-2">
+                          <CornerDownRight className="h-4 w-4 text-muted-foreground" />
+                          <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                            Author Revisions
+                          </h4>
+                        </div>
+
+                        {review.reviewRevisions
+                          .filter((rev: any) => rev.authorRevision)
+                          .map((revision: any) => (
+                            <div
+                              key={revision.id}
+                              className="ml-6 p-4 rounded-lg border bg-muted/20"
+                            >
+                              <div className="flex gap-2 mb-2">
+                                <span className="font-medium text-sm">
+                                  Author's Reply:
+                                </span>{' '}
+                                <div
+                                  className="prose prose-gray text-sm max-w-none text-foreground leading-relaxed text-justify"
+                                  dangerouslySetInnerHTML={{
+                                    __html:
+                                      revision.authorRevision?.message || '',
+                                  }}
+                                />
+                              </div>
+
+                              {/* Author Revision Files */}
+                              {revision.authorRevision?.fileIds &&
+                                revision.authorRevision.fileIds.length > 0 && (
+                                  <div className="space-y-2 mt-2">
+                                    {revision.authorRevision.fileIds.map(
+                                      (fileUrl: string, idx: number) => (
+                                        <div
+                                          key={idx}
+                                          className="flex items-center justify-between p-2 rounded-md border bg-muted/30 hover:bg-muted/50 transition-colors"
+                                        >
+                                          <div className="flex items-center gap-3">
+                                            <FileText className="h-4 w-4 text-blue-500" />
+                                            <span className="text-xs font-medium">
+                                              File {idx + 1}
+                                            </span>
+                                          </div>
+
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            asChild
+                                          >
+                                            <Link
+                                              href={fileUrl}
+                                              target="_blank"
+                                            >
+                                              <Eye className="h-4 w-4" />
+                                            </Link>
+                                          </Button>
+                                        </div>
+                                      )
+                                    )}
+                                  </div>
+                                )}
+
+                              <p className="text-xs text-muted-foreground mt-3">
+                                Submitted on:{' '}
+                                {revision.authorRevision?.submittedAt
+                                  ? formatDate(
+                                      revision.authorRevision.submittedAt
+                                    )
+                                  : 'N/A'}
+                              </p>
+                            </div>
+                          ))}
+                      </div>
+                    )}
 
                   {/* ============================== */}
                   {/* Revision Info (staff editor)   */}
