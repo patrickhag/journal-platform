@@ -616,6 +616,7 @@ export const associateEditorCorrections = pgTable(
     }),
     fileId: text('fileId').notNull(),
     status: varchar('status', { length: 50 }).default('SUBMITTED'),
+    message: text('message'),
     submittedAt: date('submittedAt').defaultNow(),
     approvedAt: date('approvedAt'),
     userId: text('userId')
@@ -706,9 +707,24 @@ export const metrics = pgTable('metrics', {
   articleSlug: text('slug')
     .references(() => publishedArticles.slug, { onDelete: 'cascade' })
     .notNull(),
-  citations: integer('citations').default(0),
   createdAt: date('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export const citations = pgTable('citations', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  metricId: text('metric_id')
+    .references(() => metrics.id, { onDelete: 'cascade' })
+    .notNull()
+    .unique(),
+  bibtexFormat: integer('bibtex_format').default(0),
+  risFormat: integer('ris_format').default(0),
+  apaStyle: integer('apa_style').default(0),
+  amaStyle: integer('ama_style').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
 });
 
 export const ads = pgTable('ads', {
@@ -726,6 +742,17 @@ export const metricsRelations = relations(metrics, ({ one }) => ({
   publishedArticle: one(publishedArticles, {
     fields: [metrics.articleSlug],
     references: [publishedArticles.slug],
+  }),
+  citation: one(citations, {
+    fields: [metrics.id],
+    references: [citations.metricId],
+  }),
+}));
+
+export const citationsRelations = relations(citations, ({ one }) => ({
+  metric: one(metrics, {
+    fields: [citations.metricId],
+    references: [metrics.id],
   }),
 }));
 

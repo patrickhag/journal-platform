@@ -47,6 +47,7 @@ export async function GET(
                   fileId: true,
                   submittedAt: true,
                   status: true,
+                  message: true,
                 },
               },
               user: {

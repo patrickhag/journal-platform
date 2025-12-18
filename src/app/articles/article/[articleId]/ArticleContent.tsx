@@ -43,6 +43,7 @@ import { downloadPublishedArticle } from '@/lib/downloadPublishedArticle';
 import {
   useGetMetricInteraction,
   useIncrementMetrics,
+  type CitationFormat,
 } from '@/hooks/useMetrics';
 import {
   HoverCard,
@@ -57,6 +58,9 @@ export default function ArticleContent() {
   const [showCiteModal, setShowCiteModal] = useState(false);
   const [viewCount, setViewCount] = useState(false);
   const [downloadCount, setDownloadCount] = useState(false);
+  const [citationFormat, setCitationFormat] = useState<
+    CitationFormat | undefined
+  >(undefined);
 
   const { data: article, isPending } = useGetPublishedArticle(
     articleId as string
@@ -67,10 +71,26 @@ export default function ArticleContent() {
   const { data: metric } = useGetMetricInteraction(articleId as string);
 
   useEffect(() => {
-    if (viewCount || downloadCount) {
-      mutate({ slug: articleId as string, viewCount, downloadCount });
+    if (viewCount || downloadCount || citationFormat) {
+      const slug = article?.slug || (articleId as string);
+      mutate(
+        {
+          slug,
+          viewCount,
+          downloadCount,
+          citationFormat,
+        },
+        {
+          onSuccess: () => {
+            // Reset state after successful mutation
+            setViewCount(false);
+            setDownloadCount(false);
+            setCitationFormat(undefined);
+          },
+        }
+      );
     }
-  }, [viewCount, downloadCount]);
+  }, [viewCount, downloadCount, citationFormat, mutate, articleId, article]);
 
   const articleData = article?.article;
 
@@ -118,7 +138,12 @@ export default function ArticleContent() {
         }`;
   };
 
-  const downloadRisLatex = (content: string, filename: string) => {
+  const downloadRisLatex = (
+    content: string,
+    filename: string,
+    format: 'bibtexFormat' | 'risFormat'
+  ) => {
+    setCitationFormat(format);
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -128,6 +153,13 @@ export default function ArticleContent() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const handleCopyCitation = (content: string, format: 'APA' | 'AMA') => {
+    const citationFormat: CitationFormat =
+      format === 'APA' ? 'apaStyle' : 'amaStyle';
+    setCitationFormat(citationFormat);
+    copyToClipboard(content, format);
   };
 
   const generateAPA = () => {
@@ -372,7 +404,12 @@ export default function ArticleContent() {
                 </h3>
                 <div className="flex justify-between items-center">
                   <span className="font-medium">Citations</span>
-                  <span className="font-semibold text-primary">42</span>
+                  <span className="font-semibold text-primary">
+                    {(metric?.citations?.bibtexFormat || 0) +
+                      (metric?.citations?.risFormat || 0) +
+                      (metric?.citations?.apaStyle || 0) +
+                      (metric?.citations?.amaStyle || 0)}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="font-medium">Views</span>
@@ -436,7 +473,8 @@ export default function ArticleContent() {
                       onClick={() =>
                         downloadRisLatex(
                           generateBibTeX(),
-                          `${articleData?.metadata.title}.bib`
+                          `${articleData?.metadata.title}.bib`,
+                          'bibtexFormat'
                         )
                       }
                     >
@@ -457,7 +495,8 @@ export default function ArticleContent() {
                       onClick={() =>
                         downloadRisLatex(
                           generateRIS(),
-                          `${articleData?.metadata.title}.ris`
+                          `${articleData?.metadata.title}.ris`,
+                          'risFormat'
                         )
                       }
                     >
@@ -473,7 +512,7 @@ export default function ArticleContent() {
                     <Button
                       variant="outline"
                       className="gap-2 h-auto p-4 justify-start"
-                      onClick={() => copyToClipboard(generateAPA(), 'APA')}
+                      onClick={() => handleCopyCitation(generateAPA(), 'APA')}
                     >
                       <Copy className="w-4 h-4" />
                       <div className="text-left">
@@ -487,7 +526,7 @@ export default function ArticleContent() {
                     <Button
                       variant="outline"
                       className="gap-2 h-auto p-4 justify-start"
-                      onClick={() => copyToClipboard(generateAMA(), 'AMA')}
+                      onClick={() => handleCopyCitation(generateAMA(), 'AMA')}
                     >
                       <Copy className="w-4 h-4" />
                       <div className="text-left">

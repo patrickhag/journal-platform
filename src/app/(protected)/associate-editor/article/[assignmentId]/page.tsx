@@ -102,11 +102,14 @@ const ParticularAssociateAssignment = () => {
                       </div>
 
                       {/* Message Section (if available) */}
-                      {particularAssignment.message && (
-                        <p className="text-sm text-muted-foreground mb-2">
-                          {particularAssignment.message}
-                        </p>
-                      )}
+                      <p className="text-sm text-muted-foreground mb-2">
+                        <span className="font-medium">Comments:</span>{' '}
+                        {correction.message || (
+                          <span className="text-muted-foreground">
+                            No message available.
+                          </span>
+                        )}
+                      </p>
 
                       {/* File Section */}
                       <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors mb-3">

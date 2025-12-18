@@ -39,6 +39,12 @@ export const AssociateEditorCorrections = ({
                           </h3>
                         </CardHeader>
                         <CardContent>
+                          {correction.message && (
+                            <p className="text-sm text-muted-foreground mb-5">
+                              <span className="font-medium">Comments:</span>{' '}
+                              {correction.message}
+                            </p>
+                          )}
                           {/* Annotated Files */}
                           <div>
                             <div className="flex justify-between mb-2">

@@ -39,6 +39,8 @@ const EditorsPickSection = async () => {
     )
     .limit(4);
 
+  console.log('editorsPicks:', editorsPicks);
+
   const gridClass =
     editorsPicks.length === 3
       ? 'grid grid-cols-1 md:grid-cols-3 gap-6'

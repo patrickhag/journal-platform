@@ -32,6 +32,7 @@ export async function GET(
           submittedAt: true,
           fileId: true,
           status: true,
+          message: true,
         },
         with: {
           user: {

@@ -2,11 +2,13 @@
 
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 import { useSearchParams } from 'next/navigation';
 import { safeParse } from 'zod-urlsearchparams';
@@ -17,7 +19,7 @@ import Loader from '@/components/Loader';
 import { useClearURL } from '@/components/ClearURL';
 import { DragAndDropFileInput } from '@/components/upload/FileInput';
 import { FileList } from '@/components/upload/FileList';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { TAssociateAssignment } from '@/types';
 
 export default function UploadCorrection({
@@ -39,6 +41,8 @@ export default function UploadCorrection({
   const fileIds = files.map((f) => f.publicId);
   const fileId = fileIds[0];
 
+  const [message, setMessage] = useState('');
+
   const { mutate, isPending } = useSubmitCollection();
 
   const clearURL = useClearURL();
@@ -58,38 +62,60 @@ export default function UploadCorrection({
       staffEditorName,
       staffEditorEmail,
       articleTitle,
+      message: message.trim() || undefined,
     };
     mutate(data, {
       onSettled: () => {
         setOpenSubmitCollection(false);
+        setMessage('');
         clearURL();
       },
     });
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpenSubmitCollection}>
-      <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-semibold text-[#1a237e]">
+    <Sheet open={open} onOpenChange={setOpenSubmitCollection}>
+      <SheetContent className="sm:max-w-[550px] overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle className="text-2xl font-semibold text-[#1a237e]">
             Submit a correction
-          </DialogTitle>
-        </DialogHeader>
-        <div className="text-sm">Annotate file(s)</div>
-        <DragAndDropFileInput />
-        <FileList isEditNeeded={true} />
+          </SheetTitle>
+        </SheetHeader>
+        <div className="mt-6 space-y-6">
+          <div className="space-y-2">
+            <div className="text-sm font-medium">Annotate file(s)</div>
+            <DragAndDropFileInput />
+            <FileList isEditNeeded={true} />
+          </div>
 
-        <div className="space-y-3">
-          <Button
-            type="submit"
-            disabled={isPending || files.length === 0}
-            onClick={onSubmit}
-            className="bg-indigo-500 hover:bg-indigo-600 w-full"
-          >
-            {isPending ? <Loader text="Submitting..." /> : 'Submit Correction'}
-          </Button>
+          <div className="space-y-2">
+            <Label htmlFor="message">Message (Optional)</Label>
+            <Textarea
+              id="message"
+              placeholder="Add any additional notes or comments about this correction..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              rows={4}
+              className="resize-none"
+            />
+          </div>
+
+          <div className="space-y-3">
+            <Button
+              type="submit"
+              disabled={isPending || files.length === 0}
+              onClick={onSubmit}
+              className="bg-indigo-500 hover:bg-indigo-600 w-full"
+            >
+              {isPending ? (
+                <Loader text="Submitting..." />
+              ) : (
+                'Submit Correction'
+              )}
+            </Button>
+          </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }

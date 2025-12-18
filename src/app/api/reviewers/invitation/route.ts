@@ -55,6 +55,7 @@ export async function POST(req: NextRequest) {
     });
 
     let userId;
+    let reviewAssignmentId;
     if (!existingUser) {
       // Insert new user
       const [newUser] = await db
@@ -103,12 +104,16 @@ export async function POST(req: NextRequest) {
         { status: 409 }
       );
     } else {
-      await db.insert(reviewAssignments).values({
-        articleId,
-        reviewerId,
-        dueDate,
-        userId,
-      });
+      const [reviewerAssignment] = await db
+        .insert(reviewAssignments)
+        .values({
+          articleId,
+          reviewerId,
+          dueDate,
+          userId,
+        })
+        .returning({ id: reviewAssignments.id });
+      reviewAssignmentId = reviewerAssignment.id;
     }
 
     const article = await db.query.articleSubmissions.findFirst({
@@ -136,6 +141,7 @@ export async function POST(req: NextRequest) {
       toEmail: reviewerEmail,
       password,
       abstract: article?.metadata.abstract as string,
+      reviewAssignmentId: reviewAssignmentId as string,
     });
 
     return NextResponse.json(

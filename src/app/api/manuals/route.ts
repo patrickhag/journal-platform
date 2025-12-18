@@ -21,18 +21,34 @@ export async function POST(req: NextRequest) {
     const existingManual = await db.select().from(manuals).limit(1);
 
     if (existingManual.length > 0) {
+      // Merge generalSettings with existing if updating
+      let mergedGeneralSettings = generalSettings;
+      if (generalSettings !== undefined) {
+        const existingGeneralSettings = existingManual[0]
+          .generalSettings as Record<string, unknown> | null;
+        mergedGeneralSettings = {
+          ...(existingGeneralSettings || {}),
+          ...generalSettings,
+        };
+      }
+
       await db.update(manuals).set({
-        guidelines,
-        instructionToAuthors,
-        generalSettings,
-        policies,
-        aboutUs,
-        aimsNscope,
-        termsNconditions,
-        paperTemplate,
-        copyrightTemplate,
-        humanPartsConsent,
-      });
+        guidelines: guidelines ?? existingManual[0].guidelines,
+        instructionToAuthors:
+          instructionToAuthors ?? existingManual[0].instructionToAuthors,
+        generalSettings:
+          mergedGeneralSettings ?? existingManual[0].generalSettings,
+        policies: policies ?? existingManual[0].policies,
+        aboutUs: aboutUs ?? existingManual[0].aboutUs,
+        aimsNscope: aimsNscope ?? existingManual[0].aimsNscope,
+        termsNconditions:
+          termsNconditions ?? existingManual[0].termsNconditions,
+        paperTemplate: paperTemplate ?? existingManual[0].paperTemplate,
+        copyrightTemplate:
+          copyrightTemplate ?? existingManual[0].copyrightTemplate,
+        humanPartsConsent:
+          humanPartsConsent ?? existingManual[0].humanPartsConsent,
+      } as typeof manuals.$inferInsert);
 
       return NextResponse.json(
         { message: 'Changes updated successfully!' },

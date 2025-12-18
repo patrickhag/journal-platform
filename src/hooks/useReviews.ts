@@ -404,6 +404,7 @@ export const useSubmitCollection = () => {
       staffEditorName: string;
       articleTitle: string | undefined;
       staffEditorEmail: string | undefined;
+      message?: string;
     }) => {
       return axios.post<MessageResponse>(
         '/api/associate-editor/assignments',

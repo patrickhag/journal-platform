@@ -70,6 +70,7 @@ export async function POST(req: Request) {
       staffEditorName,
       articleTitle,
       staffEditorEmail,
+      message,
     } = await req.json();
 
     const session = await auth();
@@ -84,6 +85,7 @@ export async function POST(req: Request) {
       articleId,
       fileId,
       userId: session?.user.id,
+      message: message || null,
     });
 
     // send email to staff-editor

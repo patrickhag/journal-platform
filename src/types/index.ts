@@ -385,9 +385,17 @@ export type TPublication = {
   issue: PublishedIssue;
 };
 
+export type TCitationFormat = {
+  bibtexFormat: number;
+  risFormat: number;
+  apaStyle: number;
+  amaStyle: number;
+};
+
 export type TMetric = {
   views: number;
   downloads: number;
+  citations: TCitationFormat;
 };
 
 export type FormState =
@@ -597,6 +605,7 @@ export type TAssociateEditorCollection = {
   submittedAt: string;
   fileId: string;
   status: CorrectionStatus;
+  message?: string;
   user: {
     firstName: string;
     lastName: string;
@@ -668,6 +677,7 @@ export type TAssociateAssignment = {
       fileId: string;
       submittedAt: string;
       status: CorrectionStatus;
+      message?: string;
     }[];
     user: {
       firstName: string;

@@ -10,6 +10,7 @@ export function DashboardCards() {
     useGetMetricsInteractions();
 
   const totalInteractions = interactions?.totalInteractions ?? 0;
+  const totalCitations = interactions?.totalCitations ?? 0;
 
   const { data, isPending: isUserPending } = useGetUsers();
 
@@ -19,10 +20,11 @@ export function DashboardCards() {
     <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-3">
       <StatCard
         title="Total Citations"
-        value={248}
+        value={totalCitations}
         icon={BookOpenCheck}
         description="Academic references to published papers"
         iconClassName="bg-blue-100 dark:bg-blue-900"
+        isPending={isInteractionsPending}
       />
       <StatCard
         title="Total Users"

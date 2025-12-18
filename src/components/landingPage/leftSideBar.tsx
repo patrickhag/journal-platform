@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getPublishedVolumes, getManual, getMostViewed } from '@/actions';
 import AdsSection from './AdsSection';
+import { MetricsSection } from './MetricsSection';
 
 const LeftSideBar = async () => {
   const { data: volumes, error: volumesError } = await getPublishedVolumes();
@@ -157,6 +158,16 @@ const LeftSideBar = async () => {
               </li>
             </ul>
           )}
+        </div>
+        {/* Metrics Section */}
+        <div>
+          <h2
+            className="text-lg font-semibold text-gray-700 mb-3"
+            style={{ color: '#1A237E' }}
+          >
+            Metrics
+          </h2>
+          <MetricsSection />
         </div>
       </div>
     </div>

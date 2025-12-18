@@ -190,8 +190,6 @@ export default function ReviewsPage() {
 
   const { data: reviewData, isPending } = useGetReviews(articleId as string);
 
-  console.log('reviewData:', reviewData);
-
   const [openEditor, setOpenEditor] = useState(false);
   const [openAssignEditorDialog, setopenAssignEditorDialog] = useState(false);
   const [openRereview, setOpenRereview] = useState(false);

@@ -53,6 +53,7 @@ export const useCreateManuals = () => {
       policies,
       aimsNscope,
       termsNconditions,
+      generalSettings,
       paperTemplate,
       copyrightTemplate,
       humanPartsConsent,
@@ -62,6 +63,7 @@ export const useCreateManuals = () => {
       policies?: unknown;
       aimsNscope?: unknown;
       termsNconditions?: unknown;
+      generalSettings?: unknown;
       paperTemplate?: string;
       copyrightTemplate?: string;
       humanPartsConsent?: string;
@@ -72,6 +74,7 @@ export const useCreateManuals = () => {
         policies,
         aimsNscope,
         termsNconditions,
+        generalSettings,
         paperTemplate,
         copyrightTemplate,
         humanPartsConsent,

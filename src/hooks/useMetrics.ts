@@ -9,10 +9,17 @@ type MetricsResponse = {
   error?: string;
 };
 
+export type CitationFormat =
+  | 'bibtexFormat'
+  | 'risFormat'
+  | 'apaStyle'
+  | 'amaStyle';
+
 type IncrementMetricsParams = {
   slug: string;
   downloadCount?: boolean;
   viewCount?: boolean;
+  citationFormat?: CitationFormat;
 };
 
 export const useIncrementMetrics = () => {
@@ -23,14 +30,18 @@ export const useIncrementMetrics = () => {
       slug,
       downloadCount,
       viewCount,
+      citationFormat,
     }: IncrementMetricsParams) => {
-      if (!downloadCount && !viewCount) {
-        throw new Error('Either downloadCount or viewCount must be specified');
+      if (!downloadCount && !viewCount && !citationFormat) {
+        throw new Error(
+          'Either downloadCount, viewCount, or citationFormat must be specified'
+        );
       }
       const response = await axios.post<MetricsResponse>('/api/metrics', {
         slug,
         downloadCount,
         viewCount,
+        citationFormat,
       });
 
       return response.data;
@@ -76,10 +87,10 @@ export const useGetMostViewed = () => {
 
 export const useGetMetricInteraction = (slug: string) => {
   return useQuery({
-    queryKey: ['metric'],
+    queryKey: ['metric', slug],
     queryFn: async () => {
       const { data } = await axios.get<TMetric>(`/api/metrics/${slug}`);
-      return data || [];
+      return data;
     },
   });
 };

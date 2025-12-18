@@ -55,6 +55,14 @@ interface CreateUserSheetProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const roles = [
+  'REVIEWER',
+  'ASSOCIATE_EDITOR',
+  'STAFF_EDITOR',
+  'LEAD_EDITOR',
+  'SENIOR_EDITOR',
+];
+
 export default function CreateUserSheet({
   open,
   onOpenChange,
@@ -235,21 +243,23 @@ export default function CreateUserSheet({
                 <FormItem>
                   <FormLabel>Role</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="e.g., REVIEWER, ASSOCIATE_EDITOR, AUTHOR"
-                      {...field}
-                    />
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {roles.map((role) => (
+                          <SelectItem key={role} value={role}>
+                            {role
+                              .replace('_', ' ')
+                              .toLowerCase()
+                              .replace(/\b\w/g, (l) => l.toUpperCase())}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
-            <FormField
-              control={form.control}
-              name="isPartOfEditorialBoard"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base">
                       Part of Editorial Board
@@ -260,7 +270,7 @@ export default function CreateUserSheet({
                   </div>
                   <FormControl>
                     <Switch
-                      checked={field.value}
+                      checked={field.value === 'true'}
                       onCheckedChange={field.onChange}
                     />
                   </FormControl>
