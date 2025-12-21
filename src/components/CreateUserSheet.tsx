@@ -61,6 +61,7 @@ const roles = [
   'STAFF_EDITOR',
   'LEAD_EDITOR',
   'SENIOR_EDITOR',
+  'ADVISOR',
 ];
 
 export default function CreateUserSheet({
@@ -259,21 +260,37 @@ export default function CreateUserSheet({
                       </SelectContent>
                     </Select>
                   </FormControl>
+                </FormItem>
+              )}
+            />
 
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Part of Editorial Board
-                    </FormLabel>
-                    <div className="text-sm text-muted-foreground">
-                      Indicate if this user should be part of the editorial team
+            <FormField
+              control={form.control}
+              name="isPartOfEditorialBoard"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="rounded-lg border bg-background p-4 flex justify-between items-center gap-4">
+                    <div>
+                      <FormLabel
+                        htmlFor="isPartOfEditorialBoard"
+                        className="text-base mb-1 cursor-pointer"
+                      >
+                        Part of Editorial Board
+                      </FormLabel>
+                      <div className="text-sm text-muted-foreground">
+                        Indicate if this user should be part of the editorial
+                        team
+                      </div>
                     </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        id="isPartOfEditorialBoard"
+                      />
+                    </FormControl>
                   </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value === 'true'}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />

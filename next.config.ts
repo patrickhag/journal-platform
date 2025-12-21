@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/demb9mspy/image/upload/**',
       },
+      {
+        protocol: 'https',
+        hostname: '2y2qhuqhoodzge1p.public.blob.vercel-storage.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };

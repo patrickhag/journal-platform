@@ -34,13 +34,25 @@ import {
   UserCog,
   Users,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useAddToEditorialBoard } from '@/hooks/useUsers';
+import {
+  useAddToEditorialBoard,
+  useRemoveFromEditorialBoard,
+} from '@/hooks/useUsers';
 import Loader from './Loader';
 import { TUser } from '@/types';
 import CreateUserSheet from './CreateUserSheet';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+} from '@/components/ui/alert-dialog';
 
 interface Props<T> {
   data: TUser[];
@@ -56,6 +68,7 @@ export const TableData = <T extends { role?: string }>({
   const [globalFilter, setGlobalFilter] = useState('');
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [isCreateUserSheetOpen, setIsCreateUserSheetOpen] = useState(false);
+  const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
 
   const table = useReactTable({
     data,
@@ -84,14 +97,48 @@ export const TableData = <T extends { role?: string }>({
     .map((row: any) => row.original.id)
     .filter((id): id is string => id !== null);
 
-  const { mutate, isPending } = useAddToEditorialBoard();
+  const { mutate: addToEditorialBoard, isPending: isAdding } =
+    useAddToEditorialBoard();
+  const { mutate: removeFromEditorialBoard, isPending: isRemoving } =
+    useRemoveFromEditorialBoard();
+
+  // Check if all selected users are in editorial board
+  const areAllSelectedInEditorialBoard = useMemo(() => {
+    if (selectedRows.length === 0) return false;
+    return selectedRows.every((row: any) => {
+      const user = row.original as TUser & { isPartOfEditorialBoard?: boolean };
+      return user.isPartOfEditorialBoard === true;
+    });
+  }, [selectedRows]);
 
   const handleAddToEditorialBoard = () => {
-    mutate({ userIds: selectedRowIds });
+    console.log({ selectedRowIds });
+    addToEditorialBoard({ userIds: selectedRowIds });
+  };
+
+  const handleRemoveFromEditorialBoard = () => {
+    removeFromEditorialBoard(
+      { userIds: selectedRowIds },
+      {
+        onSuccess: () => {
+          setIsRemoveDialogOpen(false);
+          table.toggleAllPageRowsSelected(false);
+        },
+      }
+    );
+  };
+
+  const handleButtonClick = () => {
+    if (areAllSelectedInEditorialBoard) {
+      setIsRemoveDialogOpen(true);
+    } else {
+      handleAddToEditorialBoard();
+    }
   };
 
   const selectedCount = selectedRows.length;
   const hasSelected = selectedCount > 0;
+  const isPending = isAdding || isRemoving;
 
   const roleOptions = ['ADMIN', 'ASSOCIATE_EDITOR', 'REVIEWER', 'NORMAL_USER'];
 
@@ -214,15 +261,27 @@ export const TableData = <T extends { role?: string }>({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={handleAddToEditorialBoard}
+                onClick={handleButtonClick}
                 disabled={isPending}
-                className="bg-white border-green-300 text-green-700 hover:bg-green-50"
+                className={
+                  areAllSelectedInEditorialBoard
+                    ? 'bg-white border-red-300 text-red-700 hover:bg-red-50'
+                    : 'bg-white border-green-300 text-green-700 hover:bg-green-50'
+                }
               >
                 <UserCog className="h-3 w-3" />
                 {isPending ? (
-                  <Loader text="Adding..." />
+                  <Loader
+                    text={
+                      areAllSelectedInEditorialBoard
+                        ? 'Removing...'
+                        : 'Adding...'
+                    }
+                  />
+                ) : areAllSelectedInEditorialBoard ? (
+                  'Remove from editorial board'
                 ) : (
-                  'Add to editoril board'
+                  'Add to editorial board'
                 )}
               </Button>
             </div>
@@ -357,6 +416,31 @@ export const TableData = <T extends { role?: string }>({
         open={isCreateUserSheetOpen}
         onOpenChange={setIsCreateUserSheetOpen}
       />
+
+      <AlertDialog
+        open={isRemoveDialogOpen}
+        onOpenChange={setIsRemoveDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will remove the selected user(s) from the editorial board
+              members. This action can be undone by adding them back later.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <Button
+              disabled={isRemoving}
+              variant={'destructive'}
+              onClick={handleRemoveFromEditorialBoard}
+            >
+              {isRemoving ? <Loader text="Removing..." /> : 'Yes, Remove'}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

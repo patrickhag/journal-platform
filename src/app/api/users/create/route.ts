@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { formatRoleText } from '@/lib/utils';
+import { revalidatePath } from 'next/cache';
 
 export async function POST(req: NextRequest) {
   try {
@@ -71,6 +72,8 @@ export async function POST(req: NextRequest) {
       userId: newUser[0].id,
       role: formatRoleText(role),
     });
+
+    revalidatePath('/editor/users');
 
     return NextResponse.json(
       { message: 'User created successfully' },

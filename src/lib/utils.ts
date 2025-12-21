@@ -108,10 +108,13 @@ export const roleMap: Record<string, string> = {
   NORMAL_USER: 'Author',
   CHIEF_EDITOR: 'Chief Editor',
   SENIOR_EDITOR: 'Senior Editor',
+  LEAD_EDITOR: 'Lead Editor',
   ASSOCIATE_EDITOR: 'Associate Editor',
   STAFF_EDITOR: 'Staff Editor',
   ADMIN: 'Admin',
   REVIEWER: 'Reviewer',
+  ADVISOR: 'Advisor',
+  EDITORIAL_BOARD_MEMBER: 'Editorial Board Member',
 };
 
 export const getAssignmentStatusColor = (status: string) => {

@@ -1,5 +1,4 @@
-import { TUsers } from '@/db/schema';
-import { TParticipants, TReviewers, TSUser, TUserInfo } from '@/types';
+import { TParticipants, TReviewers, TSUser, TUser, TUserInfo } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
@@ -9,6 +8,16 @@ export const useGetUsers = () => {
     queryKey: ['users'],
     queryFn: async () => {
       const { data } = await axios.get(`/api/users`);
+      return data;
+    },
+  });
+};
+
+export const useGetAllUsers = () => {
+  return useQuery({
+    queryKey: ['all-users'],
+    queryFn: async () => {
+      const { data } = await axios.get<TUser[]>(`/api/users/all`);
       return data;
     },
   });
@@ -217,12 +226,36 @@ export const useAddToEditorialBoard = () => {
     onSuccess: ({ data }) => {
       toast.info(data.message);
       queryClient.invalidateQueries({ queryKey: ['editorial-board'] });
+      queryClient.invalidateQueries({ queryKey: ['all-users'] });
     },
     onError: (error: Error | AxiosError) => {
       const message = axios.isAxiosError(error)
         ? error.response?.data.message
         : error.message;
       toast.error(message || 'Failed to pick article(s)');
+    },
+  });
+};
+
+export const useRemoveFromEditorialBoard = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ userIds }: { userIds?: string[] }) => {
+      return axios.delete<{ message: string }>(`/api/users/`, {
+        data: { userIds },
+      });
+    },
+    onSuccess: ({ data }) => {
+      toast.info(data.message);
+      queryClient.invalidateQueries({ queryKey: ['editorial-board'] });
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['all-users'] });
+    },
+    onError: (error: Error | AxiosError) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data.message
+        : error.message;
+      toast.error(message || 'Failed to remove user(s) from editorial board');
     },
   });
 };
@@ -261,6 +294,7 @@ export const useCreateUser = () => {
     },
     onSuccess: ({ data }) => {
       toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ['all-users'] });
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
     onError: (error: Error | AxiosError) => {
@@ -268,6 +302,59 @@ export const useCreateUser = () => {
         ? error.response?.data?.error || error.response?.data?.message
         : error.message;
       toast.error(message || 'Failed to create user');
+    },
+  });
+};
+
+export const useAddUserRole = (userId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (role: string) => {
+      const response = await axios.post<{ message: string; role: any }>(
+        `/api/users/user/${userId}/roles`,
+        { role }
+      );
+      return response;
+    },
+    onSuccess: ({ data }) => {
+      if (data) {
+        queryClient.invalidateQueries({ queryKey: ['user', userId] });
+        toast.success(data.message || 'Role added successfully!');
+      }
+    },
+    onError: (error: Error | AxiosError) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.error || error.response?.data?.message
+        : error.message;
+
+      toast.error(message || 'Failed to add role');
+    },
+  });
+};
+
+export const useRemoveUserRole = (userId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (role: string) => {
+      const response = await axios.delete<{ message: string }>(
+        `/api/users/user/${userId}/roles?role=${role}`
+      );
+      return response;
+    },
+    onSuccess: ({ data }) => {
+      if (data) {
+        queryClient.invalidateQueries({ queryKey: ['user', userId] });
+        toast.success(data.message || 'Role removed successfully!');
+      }
+    },
+    onError: (error: Error | AxiosError) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.error || error.response?.data?.message
+        : error.message;
+
+      toast.error(message || 'Failed to remove role');
     },
   });
 };

@@ -672,6 +672,7 @@ export const publishedArticles = pgTable('published_articles', {
   publishedAt: timestamp('published_at'),
   pageRange: varchar('page_range', { length: 20 }),
   pdfUrl: text('pdf_url'),
+  articlePicture: text('article_picture'),
   isEditorsPick: boolean('isEditorsPick'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at'),

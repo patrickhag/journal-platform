@@ -8,8 +8,8 @@ import { TableData } from '@/components/Table';
 import { useRouter } from 'next/navigation';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { roleMap } from '@/lib/utils';
 import { TUser } from '@/types';
+import { roleMap } from '@/lib/utils';
 
 const columns: ColumnDef<TUser>[] = [
   {
@@ -163,9 +163,25 @@ const columns: ColumnDef<TUser>[] = [
   {
     accessorKey: 'role',
     header: 'Role',
-    cell: ({ row }) => (
-      <Badge variant={'secondary'}>{row.getValue('role')}</Badge>
-    ),
+    cell: ({ row }) => {
+      const user = row.original as any;
+      const roles = user.roles || [user.role].filter(Boolean);
+      const primaryRole = roles[0] || user.role || '';
+      const hasMultipleRoles = roles.length > 1;
+
+      return (
+        <div className="flex items-center gap-1.5">
+          <Badge variant={'secondary'}>
+            {roleMap[primaryRole] || primaryRole}
+          </Badge>
+          {hasMultipleRoles && (
+            <Badge variant="outline" className="text-xs">
+              +{roles.length - 1}
+            </Badge>
+          )}
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'isPartOfEditorialBoard',

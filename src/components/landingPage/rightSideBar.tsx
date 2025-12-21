@@ -18,6 +18,7 @@ const EditorsPickSection = async () => {
       id: publishedArticles.id,
       slug: publishedArticles.slug,
       publishedAt: publishedArticles.publishedAt,
+      articlePicture: publishedArticles.articlePicture,
       section: articleSubmissions.section,
       title: metadata.title,
       prefix: metadata.prefix,
@@ -34,12 +35,10 @@ const EditorsPickSection = async () => {
     .where(
       and(
         eq(publishedArticles.status, 'PUBLISHED'),
-        eq(articleSubmissions.isEditorsPick, true)
+        eq(publishedArticles.isEditorsPick, true)
       )
     )
     .limit(4);
-
-  console.log('editorsPicks:', editorsPicks);
 
   const gridClass =
     editorsPicks.length === 3
@@ -63,6 +62,7 @@ const EditorsPickSection = async () => {
                 id,
                 publishedAt,
                 slug,
+                articlePicture,
                 section,
                 title,
                 prefix,
@@ -70,7 +70,7 @@ const EditorsPickSection = async () => {
                 lastName,
               } = item;
               const fullName = `${prefix}. ${firstName} ${lastName}`;
-              const imageUrl = getSectionImage(section);
+              const imageUrl = articlePicture || getSectionImage(section);
 
               return (
                 <Link key={id} href={`/articles/article/${slug}`}>
@@ -82,7 +82,9 @@ const EditorsPickSection = async () => {
                         width={300}
                         height={160}
                         className="w-full h-40 object-cover rounded-lg"
-                        alt={section}
+                        alt={
+                          articlePicture ? title || 'Article image' : section
+                        }
                       />
                       <div className="absolute bottom-0 left-0 right-0 bg-black rounded-lg bg-opacity-50 text-white p-2 flex items-center justify-between">
                         <p className="text-sm line-clamp-1">{title}</p>

@@ -118,14 +118,18 @@ export type IArticle = {
 
 export type EditorsPicks = {
   id: string;
-  section: string;
-  updatedAt: string;
-  user: {
-    firstName: string | null;
-    lastName: string | null;
-  };
-  metadata: {
-    title: string;
+  updatedAt: Date | null;
+  articlePicture: string | null;
+  article: {
+    id: string;
+    section: string;
+    user: {
+      firstName: string | null;
+      lastName: string | null;
+    };
+    metadata: {
+      title: string;
+    };
   };
 }[];
 
@@ -424,22 +428,26 @@ export type TMostViewed = {
 }[];
 
 export type TUserInfo = {
-  id: string;
-  role: 'NORMAL_USER';
+  id?: string;
+  role: string; // Primary role for backward compatibility
+  roles?: Array<{
+    id: string;
+    role: string;
+  }>;
   user: {
     id: string;
     firstName: string;
     lastName: string;
-    affiliation: string;
-    country: string;
+    affiliation: string | null;
+    country: string | null;
     email: string;
-    emailVerified: string;
+    emailVerified: string | null;
     isActive: boolean;
     isPartOfEditorialBoard: boolean;
-    password: string;
-    avatar: string;
-    orcid: string;
-    bio: string;
+    password: string | null;
+    avatar: string | null;
+    orcid: string | null;
+    bio: string | null;
     expertise: null | string;
     updatedAt: null | string;
     prefix: null | string;
@@ -450,7 +458,7 @@ export type TUserInfo = {
       articleStatus: string;
       metadata: {
         title: string;
-      };
+      } | null;
     }>;
     publishedArticles: Array<{
       id: string;
@@ -460,8 +468,46 @@ export type TUserInfo = {
         id: string;
         metadata: {
           title: string;
-        };
+        } | null;
       };
+    }>;
+    reviewAssignments?: Array<{
+      id: string;
+      assignedDate: string | null;
+      dueDate: string | null;
+      status: string;
+      reviewedDate: string | null;
+      article: {
+        id: string;
+        articleStatus: string;
+        metadata: {
+          title: string;
+        } | null;
+      } | null;
+    }>;
+    submittedArticles?: Array<{
+      id: string;
+      createdAt: string;
+      articleStatus: string;
+      metadata: {
+        title: string;
+      } | null;
+    }>;
+    correctionsArticles?: Array<{
+      id: string;
+      createdAt: string;
+      articleStatus: string;
+      metadata: {
+        title: string;
+      } | null;
+    }>;
+    underPressArticles?: Array<{
+      id: string;
+      createdAt: string;
+      articleStatus: string;
+      metadata: {
+        title: string;
+      } | null;
     }>;
   };
 };

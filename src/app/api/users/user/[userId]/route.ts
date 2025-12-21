@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
-import { userRoles, users } from '@/db/schema';
+import { reviewAssignments, userRoles, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -23,19 +23,83 @@ export async function GET(
 
     const { userId } = await params;
 
-    const foundUserInfo = await db.query.userRoles.findFirst({
+    // Fetch all roles for the user
+    const allUserRoles = await db.query.userRoles.findMany({
       where: eq(userRoles.userId, userId),
       columns: {
         id: true,
         role: true,
       },
+    });
+
+    // Get the first role for backward compatibility (or use the first one if exists)
+    const primaryRole = allUserRoles[0]?.role || null;
+
+    // Fetch user with articles and published articles
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+      columns: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        isActive: true,
+        createdAt: true,
+        affiliation: true,
+        expertise: true,
+        orcid: true,
+        country: true,
+        bio: true,
+        avatar: true,
+      },
       with: {
-        user: {
+        articles: {
+          columns: {
+            id: true,
+            createdAt: true,
+            articleStatus: true,
+          },
           with: {
-            articles: {
+            metadata: {
+              columns: {
+                title: true,
+              },
+            },
+          },
+        },
+        publishedArticles: {
+          columns: {
+            id: true,
+            publishedAt: true,
+            slug: true,
+          },
+          with: {
+            article: {
               columns: {
                 id: true,
-                createdAt: true,
+              },
+              with: {
+                metadata: {
+                  columns: {
+                    title: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        reviewAssignments: {
+          columns: {
+            id: true,
+            assignedDate: true,
+            dueDate: true,
+            status: true,
+            reviewedDate: true,
+          },
+          with: {
+            article: {
+              columns: {
+                id: true,
                 articleStatus: true,
               },
               with: {
@@ -46,35 +110,40 @@ export async function GET(
                 },
               },
             },
-            publishedArticles: {
-              columns: {
-                id: true,
-                publishedAt: true,
-                slug: true,
-              },
-              with: {
-                article: {
-                  columns: {
-                    id: true,
-                  },
-                  with: {
-                    metadata: {
-                      columns: {
-                        title: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
           },
         },
       },
     });
 
-    return NextResponse.json(foundUserInfo);
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Filter articles by status
+    const submittedArticles = user.articles.filter(
+      (article) => article.articleStatus === 'SUBMITTED'
+    );
+    const correctionsArticles = user.articles.filter(
+      (article) =>
+        article.articleStatus === 'UNDER REVIEW' ||
+        article.articleStatus === 'CORRECTION'
+    );
+    const underPressArticles = user.articles.filter(
+      (article) => article.articleStatus === 'UNDER PRESS'
+    );
+
+    return NextResponse.json({
+      roles: allUserRoles,
+      role: primaryRole, // For backward compatibility
+      user: {
+        ...user,
+        submittedArticles,
+        correctionsArticles,
+        underPressArticles,
+      },
+    });
   } catch (error) {
-    console.error('Error creating volume:', error);
+    console.error('Error fetching user info:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

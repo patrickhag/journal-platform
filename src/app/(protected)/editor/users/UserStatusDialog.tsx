@@ -39,8 +39,8 @@ export const UserStatusDialog = ({
           <AlertDialogDescription>
             Are you sure you want to {action} {username}?
             {currentStatus
-              ? ' This will prevent them from accessing the system.'
-              : ' This will restore their access to the system.'}
+              ? ' This will prevent them from accessing the platform.'
+              : ' This will restore their access to the platform.'}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

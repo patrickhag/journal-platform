@@ -160,7 +160,7 @@ const LeftSideBar = async () => {
           )}
         </div>
         {/* Metrics Section */}
-        <div>
+        <div className="w-full">
           <h2
             className="text-lg font-semibold text-gray-700 mb-3"
             style={{ color: '#1A237E' }}

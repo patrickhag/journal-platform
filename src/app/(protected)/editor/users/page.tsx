@@ -1,39 +1,17 @@
+'use client';
+
 import { UserTable } from './UserTable';
+import { UsersTableSkeleton } from './UsersTableSkeleton';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
 } from '@/components/ui/card';
-import { db } from '@/db/db';
+import { useGetAllUsers } from '@/hooks/useUsers';
 
-const UsersPage = async () => {
-  const users = await db.query.userRoles
-    .findMany({
-      columns: {
-        role: true,
-      },
-      with: {
-        user: {
-          columns: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            avatar: true,
-            email: true,
-            affiliation: true,
-            createdAt: true,
-            isPartOfEditorialBoard: true,
-          },
-        },
-      },
-    })
-    .then((userRoles) =>
-      userRoles.map((userRole) => ({
-        ...userRole.user,
-        role: userRole.role,
-      }))
-    );
+const UsersPage = () => {
+  const { data: users, isLoading } = useGetAllUsers();
 
   return (
     <div className="container mx-auto py-7">
@@ -49,7 +27,11 @@ const UsersPage = async () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <UserTable data={users} />
+          {isLoading ? (
+            <UsersTableSkeleton />
+          ) : (
+            <UserTable data={users || []} />
+          )}
         </CardContent>
       </Card>
     </div>

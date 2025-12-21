@@ -46,20 +46,26 @@ export default function EditorsPick() {
                 <EditorsCardSkeleton key={index} />
               ))
             ) : editorsPicks.length > 0 ? (
-              editorsPicks.map((article) => (
+              editorsPicks.map((pickedArticle) => (
                 <div
-                  key={article.id}
+                  key={pickedArticle.id}
                   className="flex items-start mb-6 pb-6 border-b last:border-0"
                 >
                   <div className="flex-1 space-y-1">
-                    <Link href={`/articles/${article.id}`}>
-                      <h3 className="font-medium">{article.metadata.title}</h3>
+                    <Link href={`/articles/${pickedArticle.id}`}>
+                      <h3 className="font-medium">
+                        {pickedArticle.article.metadata.title}
+                      </h3>
                     </Link>
                     <div className="flex items-center">
-                      <p className="text-sm font-medium">{article.section}</p>
+                      <p className="text-sm font-medium">
+                        {pickedArticle.article.section}
+                      </p>
                       <Dot />
                       <p className="text-sm text-gray-500">
-                        {article.user.firstName + ' ' + article.user.lastName}
+                        {pickedArticle.article.user.firstName +
+                          ' ' +
+                          pickedArticle.article.user.lastName}
                       </p>
                     </div>
                   </div>
@@ -69,7 +75,7 @@ export default function EditorsPick() {
                       size="sm"
                       onClick={() => {
                         setopenDialog(true);
-                        setLoadingArticleId(article.id);
+                        setLoadingArticleId(pickedArticle.article.id);
                       }}
                     >
                       <Trash2 className="h-4 w-4 mr-2" />

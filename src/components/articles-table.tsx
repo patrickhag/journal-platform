@@ -54,12 +54,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import Loader from './Loader';
-import { useEditorsPick } from '@/hooks/useSettings';
 import { useRouter } from 'next/navigation';
 import {
   useAssignCollectionArticles,
   useGetCollections,
 } from '@/hooks/useCollections';
+import { PickArticlesSheet } from './PickArticlesSheet';
 
 type Article = {
   id: string | null;
@@ -261,20 +261,20 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({
 
   const { data: collections } = useGetCollections();
 
-  const {
-    mutate: pickArticlesMutation,
-    isPending: isPickArticlesMutationPending,
-  } = useEditorsPick();
+  const [isPickSheetOpen, setIsPickSheetOpen] = useState(false);
 
   const selectedRows = table.getSelectedRowModel().rows;
   const selectedRowIds = selectedRows
     .map((row) => row.original.id)
     .filter((id): id is string => id !== null);
 
-  console.log('selectedRowIds:', selectedRowIds);
+  const selectedArticles = selectedRows.map((row) => ({
+    id: row.original.id,
+    title: row.original.title,
+  }));
 
   const handlePickArticle = () => {
-    pickArticlesMutation({ articleIds: selectedRowIds });
+    setIsPickSheetOpen(true);
   };
 
   const {
@@ -371,15 +371,10 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={handlePickArticle}
-                disabled={isPickArticlesMutationPending}
                 className="bg-white border-green-300 text-green-700 hover:bg-green-50"
               >
                 <FileHeart className="h-3 w-3" />
-                {isPickArticlesMutationPending ? (
-                  <Loader text="Picking..." />
-                ) : (
-                  'Pick Articles'
-                )}
+                Pick Articles
               </Button>
             </div>
           </div>
@@ -513,6 +508,12 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({
           </div>
         </div>
       </div>
+
+      <PickArticlesSheet
+        open={isPickSheetOpen}
+        onOpenChange={setIsPickSheetOpen}
+        articles={selectedArticles}
+      />
     </div>
   );
 };

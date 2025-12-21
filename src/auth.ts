@@ -29,7 +29,7 @@ export const authOptions: NextAuthConfig = {
             user?.password as string
           );
 
-          if (isUserRoleEligible && passwordMatch) {
+          if (isUserRoleEligible && passwordMatch && user?.isActive) {
             return {
               name: `${user?.firstName} ${user?.lastName}`,
               id: user?.id,
@@ -87,6 +87,7 @@ const getUserFromDb = async (email: string) => {
         lastName: true,
         email: true,
         password: true,
+        isActive: true,
       },
       with: {
         roles: {

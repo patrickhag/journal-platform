@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
-import { users } from '@/db/schema';
+import { userRoles, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -37,10 +37,19 @@ export async function POST(req: NextRequest) {
 
     const { userIds } = await req.json();
 
+    // Validate input
+    if (!userIds || !Array.isArray(userIds) || userIds.length === 0) {
+      return NextResponse.json(
+        { error: 'userIds array is required and must not be empty' },
+        { status: 400 }
+      );
+    }
+
     const authors: string[] = [];
 
     for (const userId of userIds) {
       const foundUser = await db.query.userRoles.findFirst({
+        where: eq(userRoles.userId, userId),
         columns: {
           role: true,
         },
@@ -52,13 +61,12 @@ export async function POST(req: NextRequest) {
             },
           },
         },
-        where: eq(users.id, userId),
       });
 
       if (!foundUser) continue;
 
       // Track authors for later
-      if (foundUser.role === 'AUTHOR') {
+      if (foundUser.role === 'NORMAL_USER') {
         authors.push(
           `${foundUser?.user.firstName} ${foundUser?.user.lastName}`
         );
@@ -90,6 +98,39 @@ export async function POST(req: NextRequest) {
     );
   } catch (error) {
     console.error('Error updating user:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (
+      !(session?.user.role === 'CHIEF_EDITOR' || session?.user.role === 'ADMIN')
+    ) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { userIds } = await req.json();
+
+    for (const userId of userIds) {
+      // Update user to remove from editorial board
+      await db
+        .update(users)
+        .set({ isPartOfEditorialBoard: false })
+        .where(eq(users.id, userId));
+    }
+
+    return NextResponse.json(
+      { message: 'User(s) successfully removed from the Editorial Board!' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error removing user from editorial board:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
