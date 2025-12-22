@@ -60,6 +60,7 @@ import {
   useGetCollections,
 } from '@/hooks/useCollections';
 import { PickArticlesSheet } from './PickArticlesSheet';
+import Link from 'next/link';
 
 type Article = {
   id: string | null;
@@ -218,21 +219,22 @@ export const ArticlesTable: FC<ArticlesTableProps> = ({
       id: 'actions',
       header: 'Actions',
       cell: ({ row }) => (
-        <Button
-          variant="outline"
-          size="sm"
-          className="hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-colors"
-          onClick={() =>
-            router.push(
-              isNotSubmission
-                ? '/articles/reviews/' + String(row.original.id)
-                : '/articles/' + String(row.original.id)
-            )
+        <Link
+          href={
+            isNotSubmission
+              ? '/articles/reviews/' + String(row.original.id)
+              : '/articles/' + String(row.original.id)
           }
         >
-          <Eye className="h-4 w-4" />
-          View
-        </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-colors"
+          >
+            <Eye className="h-4 w-4" />
+            View
+          </Button>
+        </Link>
       ),
     },
   ];

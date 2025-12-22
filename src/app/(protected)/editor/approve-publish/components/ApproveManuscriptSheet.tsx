@@ -51,7 +51,7 @@ export default function ApproveManuscriptSheet({
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
           side="right"
-          className="w-[500px] sm:w-[540px] flex flex-col h-full"
+          className="w-full sm:max-w-2xl flex flex-col h-full"
         >
           <SheetHeader>
             <SheetTitle>Review Manuscript for Publication</SheetTitle>

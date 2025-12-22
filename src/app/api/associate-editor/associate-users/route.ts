@@ -60,7 +60,20 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(associateEditors);
+    // Filter to only include assignments with articles that have 'UNDER PRESS' status
+    const filteredAssociateEditors = associateEditors.map((editor) => ({
+      ...editor,
+      user: {
+        ...editor.user,
+        associateEditorAssignments:
+          editor.user.associateEditorAssignments.filter(
+            (assignment) =>
+              assignment.articleSubmissions?.articleStatus === 'UNDER PRESS'
+          ),
+      },
+    }));
+
+    return NextResponse.json(filteredAssociateEditors);
   } catch (error) {
     console.error('Error creating volume:', error);
     return NextResponse.json(

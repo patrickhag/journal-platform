@@ -21,10 +21,16 @@ import EditPublishedManuscript from './components/EditPublishedManuscript';
 const ManagePublishedArticles = () => {
   const { data: publishedArticles, isPending: publishedPending } =
     useGetPublishedArticles('PUBLISHED');
+
+  console.log('publishedArticles:', publishedArticles);
   const { data: unpublishedArticles, isPending: unpublishedPending } =
     useGetPublishedArticles('UNPUBLISHED');
+
+  console.log('unpublishedArticles:', unpublishedArticles);
   const { data: awaitingArticles, isPending: awaitingPending } =
     useGetPublishedArticles('AWAITING DECISION');
+
+  console.log('publishedArticles:', awaitingArticles);
 
   const [selectedPublishedArticle, setSelectedPublishedArticle] =
     useState<TPublishedArticle | null>(null);
@@ -180,10 +186,10 @@ const ManagePublishedArticles = () => {
             Modify Published, Unpublished and Awaiting decision Articles
           </h1>
         </div>
-        <Tabs defaultValue="awaiting" className="w-full">
+        <Tabs defaultValue="published" className="w-full">
           <TabsList>
-            <TabsTrigger value="awaiting">Awaiting Decision</TabsTrigger>
             <TabsTrigger value="published">Published</TabsTrigger>
+            <TabsTrigger value="awaiting">Awaiting Decision</TabsTrigger>
             <TabsTrigger value="unpublished">Unpublished</TabsTrigger>
           </TabsList>
           <TabsContent value="published">

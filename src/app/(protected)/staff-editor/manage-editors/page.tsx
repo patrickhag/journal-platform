@@ -197,7 +197,7 @@ const ManageEditors = () => {
                                             <div className="flex items-start justify-between gap-2">
                                               <div className="flex-1">
                                                 <Link
-                                                  href={`/articles/${submission.id}`}
+                                                  href={`/articles/${submission.articleId}`}
                                                   target="_blank"
                                                   className="hover:underline"
                                                 >

@@ -126,8 +126,8 @@ export function PickArticlesSheet({
         <SheetHeader>
           <SheetTitle>Pick Articles for Editor&apos;s Pick</SheetTitle>
           <SheetDescription>
-            Upload an image for each article to feature on the landing page.
-            All articles must have an image before submitting.
+            Upload an image for each article to feature on the landing page. All
+            articles must have an image before submitting.
           </SheetDescription>
         </SheetHeader>
 
@@ -149,7 +149,9 @@ export function PickArticlesSheet({
                     <h3 className="font-semibold text-gray-900 mb-1">
                       {article.title || 'Untitled Article'}
                     </h3>
-                    <p className="text-sm text-gray-600">Article ID: {articleId}</p>
+                    <p className="text-sm text-gray-600">
+                      Article ID: {articleId}
+                    </p>
                   </div>
                   {hasImage && (
                     <div className="flex items-center gap-2 text-green-600 text-sm">
@@ -244,4 +246,3 @@ export function PickArticlesSheet({
     </Sheet>
   );
 }
-

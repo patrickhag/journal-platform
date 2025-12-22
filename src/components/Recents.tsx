@@ -39,8 +39,6 @@ export const Recents = async () => {
     limit: 5,
   });
 
-  console.log('foundPublishedArticles:', foundPublishedArticles);
-
   return (
     <div className="w-full sm:px-2 md:px-0">
       <h2 className="text-xl font-bold mb-4" style={{ color: '#1A237E' }}>

@@ -49,7 +49,9 @@ export async function GET(req: NextRequest) {
     );
 
     const eligibleAssignedArticles = assignedArticles.filter(
-      (article) => article.status !== 'DECLINED'
+      (article) =>
+        article.status !== 'DECLINED' &&
+        article.articleSubmissions?.articleStatus === 'UNDER PRESS'
     );
 
     return NextResponse.json(eligibleAssignedArticles);

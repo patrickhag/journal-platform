@@ -129,7 +129,10 @@ export default function EditPublishedManuscript({
 
   return (
     <Sheet open={open} onOpenChange={handleClose}>
-      <SheetContent side="right" className="w-[500px] sm:w-[540px]">
+      <SheetContent
+        side="right"
+        className="w-full sm:max-w-2xl flex flex-col h-full"
+      >
         <SheetHeader>
           <SheetTitle>Edit Published Article</SheetTitle>
         </SheetHeader>

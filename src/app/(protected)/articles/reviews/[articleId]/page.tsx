@@ -202,6 +202,12 @@ export default function ReviewsPage() {
   const onCloseRereview = () => setOpenRereview(false);
   const onCloseEditor = () => setOpenEditor(false);
 
+  // Count accepted reviews
+  const acceptedReviewsCount =
+    reviewData?.reviews?.filter((review) => review.status === 'Accepted')
+      .length || 0;
+  const canAssignAssociateEditor = acceptedReviewsCount >= 2;
+
   const handleReReviewRequest = (
     reviewId: string,
     reviewerName: string,
@@ -263,7 +269,7 @@ export default function ReviewsPage() {
           </Card>
           <Tabs defaultValue="reviews">
             <TabsList>
-              <TabsTrigger value="reviews">Reviewers Reviews</TabsTrigger>
+              <TabsTrigger value="reviews">Reviewer's Review</TabsTrigger>
               <TabsTrigger value="author-corrections">
                 Author's Corrections
               </TabsTrigger>
@@ -514,6 +520,7 @@ export default function ReviewsPage() {
             <Button
               className="bg-emerald-600 hover:bg-emerald-700"
               onClick={() => setopenAssignEditorDialog(true)}
+              disabled={!canAssignAssociateEditor}
             >
               <UserCheck className="mr-2 h-4 w-4" />
               Assign Associate Editor
