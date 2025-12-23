@@ -391,20 +391,23 @@ export default function ReviewsPage() {
                                     <p className="text-xs text-muted-foreground">
                                       Reviewed on: {review.reviewedAt}
                                     </p>
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      onClick={() =>
-                                        handleReReviewRequest(
-                                          review.userId,
-                                          reviewerName,
-                                          review.user.email
-                                        )
-                                      }
-                                    >
-                                      <Repeat className="h-4 w-4 mr-1" />
-                                      Request Re-Review
-                                    </Button>
+                                    {reviewData?.articleStatus !==
+                                      'PUBLISHED' && (
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() =>
+                                          handleReReviewRequest(
+                                            review.userId,
+                                            reviewerName,
+                                            review.user.email
+                                          )
+                                        }
+                                      >
+                                        <Repeat className="h-4 w-4 mr-1" />
+                                        Request Re-Review
+                                      </Button>
+                                    )}
                                   </div>
 
                                   {/* ============================== */}
@@ -509,23 +512,27 @@ export default function ReviewsPage() {
               <AuthorCorrections articleId={articleId as string} />
             </TabsContent>
           </Tabs>
-          <div className="w-10/12 mx-auto grid grid-cols-2 gap-2 mt-5">
-            <Button
-              className="bg-amber-600 hover:bg-amber-700"
-              onClick={() => setOpenEditor(true)}
-            >
-              <CheckSquare className="mr-2 h-4 w-4" />
-              Make Decision
-            </Button>
-            <Button
-              className="bg-emerald-600 hover:bg-emerald-700"
-              onClick={() => setopenAssignEditorDialog(true)}
-              disabled={!canAssignAssociateEditor}
-            >
-              <UserCheck className="mr-2 h-4 w-4" />
-              Assign Associate Editor
-            </Button>
-          </div>
+
+          {reviewData?.articleStatus !== 'PUBLISHED' && (
+            <div className="w-10/12 mx-auto grid grid-cols-2 gap-2 mt-5">
+              <Button
+                className="bg-amber-600 hover:bg-amber-700"
+                onClick={() => setOpenEditor(true)}
+              >
+                <CheckSquare className="mr-2 h-4 w-4" />
+                Make Decision
+              </Button>
+
+              <Button
+                className="bg-emerald-600 hover:bg-emerald-700"
+                onClick={() => setopenAssignEditorDialog(true)}
+                disabled={!canAssignAssociateEditor}
+              >
+                <UserCheck className="mr-2 h-4 w-4" />
+                Assign Associate Editor
+              </Button>
+            </div>
+          )}
         </div>
       </div>
       {openEditor && (

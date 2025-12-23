@@ -56,12 +56,15 @@ interface CreateUserSheetProps {
 }
 
 const roles = [
+  'NORMAL_USER',
   'REVIEWER',
-  'ASSOCIATE_EDITOR',
   'STAFF_EDITOR',
-  'LEAD_EDITOR',
+  'ASSOCIATE_EDITOR',
   'SENIOR_EDITOR',
-  'ADVISOR',
+  'LEAD_EDITOR',
+  'ASSISTANT_EDITOR',
+  'EDITORIAL_BOARD_MEMBER',
+  'EDITORIAL_ADVISOR',
 ];
 
 export default function CreateUserSheet({
@@ -249,14 +252,20 @@ export default function CreateUserSheet({
                         <SelectValue placeholder="Select role" />
                       </SelectTrigger>
                       <SelectContent>
-                        {roles.map((role) => (
-                          <SelectItem key={role} value={role}>
-                            {role
-                              .replace('_', ' ')
-                              .toLowerCase()
-                              .replace(/\b\w/g, (l) => l.toUpperCase())}
-                          </SelectItem>
-                        ))}
+                        {roles.map((role) => {
+                          // Replace all underscores, collapse multiple spaces, trim.
+                          const displayRole = role
+                            .replace(/_/g, ' ')
+                            .replace(/\s+/g, ' ')
+                            .trim()
+                            .toLowerCase()
+                            .replace(/\b\w/g, (l) => l.toUpperCase());
+                          return (
+                            <SelectItem key={role} value={role}>
+                              {displayRole}
+                            </SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
                   </FormControl>

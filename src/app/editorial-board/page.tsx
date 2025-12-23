@@ -37,12 +37,16 @@ export default async function EditorialBoardPage() {
     .innerJoin(users, eq(userRoles.userId, users.id))
     .where(eq(users.isPartOfEditorialBoard, true));
 
-  console.log('allMembers:', allMembers);
-
-  // Group members by role
+  // Group members by role, excluding NORMAL_USER (Author) role
+  // If a user has multiple roles including NORMAL_USER, only show other roles
   const groupedByRole = allMembers.reduce(
     (acc, member) => {
       const role = member.user_roles.role;
+      // Skip NORMAL_USER role as it represents "Author" and should not be shown
+      // in the editorial board page even if the user has this role
+      if (role === 'NORMAL_USER') {
+        return acc;
+      }
       if (!acc[role]) {
         acc[role] = [];
       }
@@ -55,18 +59,20 @@ export default async function EditorialBoardPage() {
   // Define role display order and hierarchy
   const roleOrder = [
     'CHIEF_EDITOR',
+    'ASSOCIATE_EDITOR',
     'SENIOR_EDITOR',
     'LEAD_EDITOR',
-    'ASSOCIATE_EDITOR',
     'ASSISTANT_EDITOR',
     'EDITORIAL_BOARD_MEMBER',
-    'EDITORIAL_ADVISOR',
     'REVIEWER',
+    'EDITORIAL_ADVISOR',
   ];
 
   // Roles that should NOT show pictures
   const rolesWithoutPictures = ['REVIEWER', 'AUTHOR'];
-  const inlineProfileRoles = new Set([
+  // Roles that should use the reviewer-style card layout (2-column grid)
+  const reviewerStyleRoles = new Set([
+    'REVIEWER',
     'EDITORIAL_BOARD_MEMBER',
     'ASSOCIATE_EDITOR',
     'ASSISTANT_EDITOR',
@@ -107,44 +113,6 @@ export default async function EditorialBoardPage() {
     const firstName = member.user.firstName || '';
     const initial = firstName.charAt(0).toUpperCase() || 'U';
     const showPicture = !rolesWithoutPictures.includes(roleKey);
-    const shouldUseInlineProfile = inlineProfileRoles.has(roleKey);
-
-    if (shouldUseInlineProfile) {
-      const inlineName =
-        `${member.user.firstName || ''} ${member.user.lastName || ''}`.trim() ||
-        fullName ||
-        'Name not specified';
-      const profileSegments = [
-        inlineName,
-        member.user.prefix || '',
-        member.user.affiliation || '',
-        member.user.country || '',
-      ].filter((segment) => segment && segment.length > 0);
-
-      return (
-        <div className="rounded-lg border border-gray-200 bg-white p-4">
-          <div className="flex items-start justify-between gap-4">
-            <p className="text-sm text-gray-900 flex-1">
-              {profileSegments.join(', ')}
-            </p>
-            {member.user.orcid && (
-              <div className="flex-shrink-0">
-                <Button variant="outline" size="sm" className="text-xs" asChild>
-                  <a
-                    href={`https://orcid.org/${member.user.orcid}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ExternalLink className="w-3 h-3 mr-1" />
-                    ORCID
-                  </a>
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    }
 
     if (isEditorialBoardMember) {
       return (
@@ -335,7 +303,8 @@ export default async function EditorialBoardPage() {
               const roleLabel =
                 role === 'REVIEWER' ? 'Reviewers' : formatRoleLabel(role);
 
-              const isEditorialBoardMember = role === 'REVIEWER';
+              const isEditorialBoardMember: boolean =
+                reviewerStyleRoles.has(role);
 
               return (
                 <div key={role}>
@@ -350,7 +319,7 @@ export default async function EditorialBoardPage() {
                     </h3>
                     <div
                       className={
-                        isEditorialBoardMember
+                        isEditorialBoardMember === true
                           ? 'grid md:grid-cols-2 gap-4'
                           : 'grid grid-cols-1 md:grid-cols-1 gap-6'
                       }
@@ -380,6 +349,8 @@ export default async function EditorialBoardPage() {
                 const hasPreviousGroups = roleOrder.some(
                   (r) => groupedByRole[r]?.length > 0
                 );
+                const isEditorialBoardMember: boolean =
+                  reviewerStyleRoles.has(role);
 
                 return (
                   <div key={role}>
@@ -397,12 +368,18 @@ export default async function EditorialBoardPage() {
                           </span>
                         )}
                       </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div
+                        className={
+                          isEditorialBoardMember === true
+                            ? 'grid md:grid-cols-2 gap-4'
+                            : 'grid grid-cols-1 md:grid-cols-1 gap-6'
+                        }
+                      >
                         {members.map((member: EditorialBoardMember) => (
                           <MemberCard
                             key={member.user.id}
                             member={member}
-                            isEditorialBoardMember={false}
+                            isEditorialBoardMember={isEditorialBoardMember}
                           />
                         ))}
                       </div>
