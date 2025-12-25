@@ -430,7 +430,7 @@ export const useSubmitCollection = () => {
   });
 };
 
-export const useGetAssociateEditorsCollections = (articleId: string) => {
+export const useGetAssociateEditorsCorrections = (articleId: string) => {
   return useQuery({
     queryKey: ['associateEditorCorrections'],
     queryFn: async () => {

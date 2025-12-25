@@ -74,11 +74,9 @@ function AssociateEditorDashboard() {
                               </span>
                             </div>
                           )}
-                          {!isPublished && (
-                            <Badge>
-                              {assignment.articleSubmissions.articleStatus}
-                            </Badge>
-                          )}
+
+                          <Badge>FINALIZED</Badge>
+
                           {isPublished && (
                             <Badge className="bg-gray-100 text-gray-700">
                               PUBLISHED

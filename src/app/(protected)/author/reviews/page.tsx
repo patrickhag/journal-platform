@@ -28,8 +28,6 @@ const ReviewsReceived = () => {
 
   const { data } = useSession();
 
-  console.log('userId:', data?.user.id);
-
   const [selectedManuscript, setSelectedManuscript] =
     useState<TArticlesReview | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -80,7 +78,7 @@ const ReviewsReceived = () => {
 
       {isPending ? (
         <>
-          {Array.from({ length: 3 }).map((_, i) => (
+          {Array.from({ length: 5 }).map((_, i) => (
             <div className="mb-3" key={i}>
               <ArticleSkeleton />
             </div>

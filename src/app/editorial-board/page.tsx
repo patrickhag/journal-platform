@@ -64,8 +64,8 @@ export default async function EditorialBoardPage() {
     'LEAD_EDITOR',
     'ASSISTANT_EDITOR',
     'EDITORIAL_BOARD_MEMBER',
-    'REVIEWER',
     'EDITORIAL_ADVISOR',
+    'REVIEWER',
   ];
 
   // Roles that should NOT show pictures

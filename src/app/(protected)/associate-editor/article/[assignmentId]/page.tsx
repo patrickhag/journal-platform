@@ -38,14 +38,18 @@ const ParticularAssociateAssignment = () => {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Go Back
           </Button>
-          <Button
-            type="submit"
-            className="bg-primary hover:bg-primary/90"
-            onClick={() => setOpen(true)}
-          >
-            <SquarePen className="mr-2 h-4 w-4" />
-            Submit Correction
-          </Button>
+
+          {particularAssignment?.articleSubmissions.articleStatus !==
+            'PUBLISHED' && (
+            <Button
+              type="submit"
+              className="bg-primary hover:bg-primary/90"
+              onClick={() => setOpen(true)}
+            >
+              <SquarePen className="mr-2 h-4 w-4" />
+              Submit Correction
+            </Button>
+          )}
         </div>
         {/* Assignment Info */}
         <Card>

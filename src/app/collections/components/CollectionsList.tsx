@@ -99,7 +99,7 @@ export function CollectionsList({
     <div className="space-y-8">
       {/* Call for Papers Section */}
       {callsForPapers.length > 0 && (
-        <div>
+        <div className="mt-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
             Calls for papers
           </h2>

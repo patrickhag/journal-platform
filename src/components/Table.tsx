@@ -140,7 +140,12 @@ export const TableData = <T extends { role?: string }>({
   const hasSelected = selectedCount > 0;
   const isPending = isAdding || isRemoving;
 
-  const roleOptions = ['ADMIN', 'ASSOCIATE_EDITOR', 'REVIEWER', 'NORMAL_USER'];
+  const roleOptions = [
+    'ASSOCIATE_EDITOR',
+    'STAFF_EDITOR',
+    'REVIEWER',
+    'NORMAL_USER',
+  ];
 
   return (
     <div className="space-y-4">

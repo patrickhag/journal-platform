@@ -2,7 +2,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { File, Download, FileSearch2 } from 'lucide-react';
-import { useGetAssociateEditorsCollections } from '@/hooks/useReviews';
+import { useGetAssociateEditorsCorrections } from '@/hooks/useReviews';
 import ForwardFileModal from '@/components/articles/ForwardFileDialog';
 import { AssociateEditorCorrectionStatusModal } from './RequestAssociateRecorrection';
 import { formatAssignmentCorrectionsStatus } from '@/lib/utils';
@@ -14,7 +14,7 @@ export const AssociateEditorCorrections = ({
   articleId: string;
 }) => {
   const { data: corrections, isPending } =
-    useGetAssociateEditorsCollections(articleId);
+    useGetAssociateEditorsCorrections(articleId);
 
   return (
     <>

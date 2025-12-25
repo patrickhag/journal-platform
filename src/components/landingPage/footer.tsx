@@ -139,16 +139,16 @@ const Footer = async () => {
           By using this website, you agree to our{' '}
           <Link
             href="/manuals#termsNconditions"
-            className="hover:text-blue-600 hover:underline"
+            className="text-blue-600 hover:underline"
           >
             terms and conditions
           </Link>
           ,{' '}
-          <Link href="/privacy" className="hover:text-blue-600 hover:underline">
+          <Link href="/privacy" className="text-blue-600 hover:underline">
             Privacy statement
           </Link>
           , and{' '}
-          <Link href="/cookies" className="hover:text-blue-600 hover:underline">
+          <Link href="/cookies" className="text-blue-600 hover:underline">
             cookies policy
           </Link>
           .

@@ -60,7 +60,11 @@ export default async function RecentArticles() {
           <TableBody>
             {submissions.map((submission, index) => (
               <TableRow key={index}>
-                <TableCell>{submission.title}</TableCell>
+                <TableCell className="max-w-[50%]">
+                  <div className="line-clamp-2 break-words">
+                    {submission.title}
+                  </div>
+                </TableCell>
                 <TableCell>
                   {(submission.ownerFirstName as string) +
                     ' ' +
