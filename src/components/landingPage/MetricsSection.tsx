@@ -43,7 +43,7 @@ export function MetricsSection() {
   ];
 
   return (
-    <Card className="w-full max-w-xs rounded-xl shadow-sm">
+    <Card className="w-full rounded-xl shadow-sm">
       <CardContent className="p-3">
         <div className="space-y-2">
           {metrics.map((item, index) => (

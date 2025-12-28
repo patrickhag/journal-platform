@@ -53,9 +53,9 @@ export default function Dashboard() {
       </div>
 
       {/* Controls */}
-      <div className="flex items-center justify-between gap-4 p-4 bg-card border border-border rounded-xl shadow-sm">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 p-3 md:p-4 bg-card border border-border rounded-xl shadow-sm">
         {/* Search Box */}
-        <div className="relative flex-1 max-w-2xl">
+        <div className="relative flex-1 w-full sm:max-w-2xl">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="text"
@@ -65,11 +65,9 @@ export default function Dashboard() {
             className="pl-10 bg-background border-border w-full"
           />
         </div>
-
-        {/* Submit Button */}
         <Button
           asChild
-          className="bg-[#212c9e] hover:bg-[#1A237E] whitespace-nowrap"
+          className="bg-[#212c9e] hover:bg-[#1A237E] whitespace-nowrap w-full sm:w-auto"
         >
           <Link href="/author/new-manuscript">
             <PlusCircle className="w-4 h-4 mr-2" />

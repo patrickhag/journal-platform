@@ -60,6 +60,16 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+        brand: {
+          DEFAULT: '#212c9e',
+          hover: '#1a237a',
+        },
+        text: {
+          primary: '#111111',
+          secondary: '#4b5563',
+        },
+        borderPlatform: '#e5e7eb',
+        surface: '#f8fafc',
       },
       borderRadius: {
         lg: 'var(--radius)',

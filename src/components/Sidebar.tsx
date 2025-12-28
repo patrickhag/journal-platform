@@ -25,9 +25,10 @@ import {
 
 interface SidebarProps {
   userRole: string;
+  onLinkClick?: () => void;
 }
 
-const Sidebar = ({ userRole }: SidebarProps) => {
+const Sidebar = ({ userRole, onLinkClick }: SidebarProps) => {
   const pathname = usePathname();
 
   const getMenuItems = () => {
@@ -54,6 +55,11 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             href: '/author/under-press',
             label: 'Under Press',
             icon: Newspaper,
+          },
+          {
+            href: '/author/accepted',
+            label: 'Accepted',
+            icon: CheckCircle,
           },
           { href: '/author/published', label: 'Published', icon: CheckCircle },
         ];
@@ -195,7 +201,7 @@ const Sidebar = ({ userRole }: SidebarProps) => {
   const menuItems = getMenuItems();
 
   return (
-    <div className="h-full bg-gray-50 border-r p-4 overflow-y-auto">
+    <div className="h-full bg-gray-50 border-r p-3 md:p-4 overflow-y-auto">
       <nav className="space-y-2">
         {menuItems.map((item) => {
           const isActive =
@@ -206,10 +212,11 @@ const Sidebar = ({ userRole }: SidebarProps) => {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onLinkClick}
               className={cn(
                 'flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors',
                 isActive
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  ? 'bg-[#212c9e] text-white hover:bg-[#1A237E]'
                   : 'text-gray-700 hover:bg-gray-100'
               )}
             >

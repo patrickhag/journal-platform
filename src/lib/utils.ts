@@ -3,6 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { format, parseISO } from 'date-fns';
 import { CorrectionStatus } from '@/types';
 import { toast } from 'sonner';
+import sanitizeHtml from 'sanitize-html';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -209,3 +210,57 @@ export const copyToClipboard = (text: string, format?: string) => {
     }
   });
 };
+
+// Helper function to escape XML special characters
+export function escapeXml(unsafe: string | null | undefined): string {
+  if (!unsafe) return '';
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+// Helper function for returning errors in xml
+export function errorResponse(code: string, message?: string) {
+  return `<?xml version="1.0" encoding="UTF-8"?>
+    <OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/">
+      <responseDate>${new Date().toISOString()}</responseDate>
+      <error code="${code}">${message ?? ''}</error>
+    </OAI-PMH>`;
+}
+
+// Helper function to format date to YYYY-MM-DD
+export function formatDateForXML(
+  date: Date | string | null | undefined
+): string {
+  if (!date) return '';
+  const d = typeof date === 'string' ? new Date(date) : date;
+  if (isNaN(d.getTime())) return '';
+  return d.toISOString().split('T')[0];
+}
+
+// Helper function to strip HTML tags and convert to plain text
+export function stripHtml(html: string | null | undefined): string {
+  if (!html) return '';
+  // Use sanitize-html to remove all HTML tags and return plain text
+  return sanitizeHtml(html, {
+    allowedTags: [],
+    allowedAttributes: {},
+  })
+    .replace(/\s+/g, ' ') // Normalize whitespace
+    .trim(); // Trim leading/trailing whitespace
+}
+
+export function encodeResumptionToken(data: object) {
+  return Buffer.from(JSON.stringify(data)).toString('base64');
+}
+
+export function decodeResumptionToken(token: string) {
+  try {
+    return JSON.parse(Buffer.from(token, 'base64').toString('utf-8'));
+  } catch {
+    return null;
+  }
+}

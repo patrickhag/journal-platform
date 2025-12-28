@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getPublishedVolumes, getManual, getMostViewed } from '@/actions';
 import AdsSection from './AdsSection';
 import { MetricsSection } from './MetricsSection';
+import { SponsorsSection } from './SponsorsSection';
 
 const LeftSideBar = async () => {
   const { data: volumes, error: volumesError } = await getPublishedVolumes();
@@ -169,6 +170,15 @@ const LeftSideBar = async () => {
           </h2>
           <MetricsSection />
         </div>
+
+        {/* Sponsors Section */}
+        <SponsorsSection
+          sponsors={
+            manuals?.[0]?.sponsors as
+              | Array<{ id: string; link: string; logo: string }>
+              | undefined
+          }
+        />
       </div>
     </div>
   );

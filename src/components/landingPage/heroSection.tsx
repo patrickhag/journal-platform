@@ -16,7 +16,10 @@ const HeroSection = () => {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link href="/author/new-manuscript">
-            <Button size="lg">
+            <Button
+              size="lg"
+              className="text-white px-3 py-2 rounded bg-[#212c9e] hover:bg-[#1A237E]"
+            >
               <BookOpen className="w-5 h-5 mr-2" />
               Submit Research
               <ArrowRight className="w-4 h-4 ml-2" />

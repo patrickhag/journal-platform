@@ -22,7 +22,7 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 md:space-y-6 lg:space-y-8">
       {/* Header Section */}
       <div className="space-y-2">
         {isPending ? (
@@ -33,12 +33,12 @@ export default function Dashboard() {
           </>
         ) : manuscripts ? (
           <>
-            <h2 className="text-2xl text-[#141A26] font-bold">
+            <h2 className="text-xl md:text-2xl text-[#141A26] font-bold">
               Welcome back, {manuscripts?.userName}
             </h2>
             {manuscripts.articles.length > 0 ? (
-              <p className="text-muted-foreground">
-                You’ve got{' '}
+              <p className="text-sm md:text-base text-muted-foreground">
+                You've got{' '}
                 <span className="font-semibold">
                   {manuscripts.articles.length} manuscript
                   {manuscripts.articles.length === 1 ? '' : 's'}
@@ -46,16 +46,18 @@ export default function Dashboard() {
                 .
               </p>
             ) : (
-              <span>You haven’t submitted any manuscripts yet.</span>
+              <span className="text-sm md:text-base">
+                You haven't submitted any manuscripts yet.
+              </span>
             )}
           </>
         ) : null}
       </div>
 
       {/* Controls */}
-      <div className="flex items-center justify-between gap-4 p-4 bg-card border border-border rounded-xl shadow-sm">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 p-3 md:p-4 bg-card border border-border rounded-xl shadow-sm">
         {/* Search Box */}
-        <div className="relative flex-1 max-w-2xl">
+        <div className="relative flex-1 w-full sm:max-w-2xl">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="text"
@@ -67,7 +69,7 @@ export default function Dashboard() {
         </div>
         <Button
           asChild
-          className="bg-[#212c9e] hover:bg-[#1A237E] whitespace-nowrap"
+          className="bg-[#212c9e] hover:bg-[#1A237E] whitespace-nowrap w-full sm:w-auto"
         >
           <Link href="/author/new-manuscript">
             <PlusCircle className="w-4 h-4 mr-2" />
@@ -89,9 +91,9 @@ export default function Dashboard() {
         ) : manuscripts?.articles && manuscripts.articles.length > 0 ? (
           <ArticleSection articles={manuscripts.articles} />
         ) : (
-          <div className="text-center py-12">
-            <div className="bg-card border border-border rounded-xl p-8 max-w-md mx-auto">
-              <p className="text-muted-foreground text-lg">
+          <div className="text-center py-8 md:py-12">
+            <div className="bg-card border border-border rounded-xl p-6 md:p-8 max-w-md mx-auto">
+              <p className="text-muted-foreground text-base md:text-lg">
                 No manuscript(s) found.
               </p>
             </div>

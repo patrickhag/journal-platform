@@ -15,8 +15,8 @@ export const HeaderElement = async () => {
 
   return (
     <>
-      <div className="flex items-center gap-8">
-        <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 md:gap-8 flex-1">
+        <div className="flex items-center gap-2 md:gap-4">
           <Link href="/" className="block">
             <Image
               src="/jaep-logo.png"
@@ -26,15 +26,17 @@ export const HeaderElement = async () => {
               className="rounded-full object-cover"
             />
           </Link>
-          <div className="flex items-center space-x-4">
-            <div>Journal of African Epidemiology and Public Health</div>
-            <Badge className="bg-purple-100 text-purple-800 hover:text-purple-800 hover:bg-purple-100">
+          <div className="flex items-center space-x-2 md:space-x-4">
+            <div className="hidden lg:block text-sm">
+              Journal of African Epidemiology and Public Health
+            </div>
+            <Badge className="bg-purple-100 text-purple-800 hover:text-purple-800 hover:bg-purple-100 text-xs">
               {role && role}
             </Badge>
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 md:gap-4">
         <NotificationsModal />
 
         <HeaderModal name={name} />

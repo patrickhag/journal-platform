@@ -1,6 +1,12 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
-import { reviewAssignments, userRoles, users } from '@/db/schema';
+import {
+  associateEditorAssignments,
+  editorAssignment,
+  reviewAssignments,
+  userRoles,
+  users,
+} from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -35,7 +41,85 @@ export async function GET(
     // Get the first role for backward compatibility (or use the first one if exists)
     const primaryRole = allUserRoles[0]?.role || null;
 
-    // Fetch user with articles and published articles
+    // Extract role names for conditional queries
+    const roleNames = allUserRoles.map((r) => r.role);
+    const isAuthor = roleNames.includes('NORMAL_USER');
+    const isReviewer = roleNames.includes('REVIEWER');
+    const isAssociateEditor = roleNames.includes('ASSOCIATE_EDITOR');
+    const isStaffEditor = roleNames.includes('STAFF_EDITOR');
+
+    // Build the with clause conditionally based on roles
+    const withClause: any = {
+      publishedArticles: {
+        columns: {
+          id: true,
+          publishedAt: true,
+          slug: true,
+        },
+        with: {
+          article: {
+            columns: {
+              id: true,
+            },
+            with: {
+              metadata: {
+                columns: {
+                  title: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    // Only fetch articles if user is an Author
+    if (isAuthor) {
+      withClause.articles = {
+        columns: {
+          id: true,
+          createdAt: true,
+          articleStatus: true,
+        },
+        with: {
+          metadata: {
+            columns: {
+              title: true,
+            },
+          },
+        },
+      };
+    }
+
+    // Only fetch review assignments if user is a Reviewer
+    if (isReviewer) {
+      withClause.reviewAssignments = {
+        columns: {
+          id: true,
+          assignedDate: true,
+          dueDate: true,
+          status: true,
+          reviewedDate: true,
+        },
+        with: {
+          article: {
+            columns: {
+              id: true,
+              articleStatus: true,
+            },
+            with: {
+              metadata: {
+                columns: {
+                  title: true,
+                },
+              },
+            },
+          },
+        },
+      };
+    }
+
+    // Fetch user with conditional relations
     const user = await db.query.users.findFirst({
       where: eq(users.id, userId),
       columns: {
@@ -52,52 +136,75 @@ export async function GET(
         bio: true,
         avatar: true,
       },
-      with: {
-        articles: {
+      with: withClause,
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Filter articles by status (only if user is an Author)
+    const userWithArticles = user as typeof user & {
+      articles?: Array<{
+        id: string;
+        createdAt: string;
+        articleStatus: string;
+        metadata: { title: string } | null;
+      }>;
+    };
+
+    const submittedArticles =
+      isAuthor && userWithArticles.articles
+        ? userWithArticles.articles.filter(
+            (article: {
+              id: string;
+              createdAt: string;
+              articleStatus: string;
+              metadata: { title: string } | null;
+            }) => article.articleStatus === 'SUBMITTED'
+          )
+        : [];
+    const correctionsArticles =
+      isAuthor && userWithArticles.articles
+        ? userWithArticles.articles.filter(
+            (article: {
+              id: string;
+              createdAt: string;
+              articleStatus: string;
+              metadata: { title: string } | null;
+            }) =>
+              article.articleStatus === 'UNDER REVIEW' ||
+              article.articleStatus === 'CORRECTION'
+          )
+        : [];
+    const underPressArticles =
+      isAuthor && userWithArticles.articles
+        ? userWithArticles.articles.filter(
+            (article: {
+              id: string;
+              createdAt: string;
+              articleStatus: string;
+              metadata: { title: string } | null;
+            }) => article.articleStatus === 'UNDER PRESS'
+          )
+        : [];
+
+    // Fetch associate editor assignments if user is Associate Editor
+    let associateEditorAssignmentsData: any[] = [];
+    if (isAssociateEditor) {
+      associateEditorAssignmentsData =
+        await db.query.associateEditorAssignments.findMany({
+          where: eq(associateEditorAssignments.userId, userId),
           columns: {
             id: true,
-            createdAt: true,
-            articleStatus: true,
-          },
-          with: {
-            metadata: {
-              columns: {
-                title: true,
-              },
-            },
-          },
-        },
-        publishedArticles: {
-          columns: {
-            id: true,
-            publishedAt: true,
-            slug: true,
-          },
-          with: {
-            article: {
-              columns: {
-                id: true,
-              },
-              with: {
-                metadata: {
-                  columns: {
-                    title: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-        reviewAssignments: {
-          columns: {
-            id: true,
-            assignedDate: true,
+            assignedAt: true,
             dueDate: true,
             status: true,
-            reviewedDate: true,
+            finalizedAt: true,
+            message: true,
           },
           with: {
-            article: {
+            articleSubmissions: {
               columns: {
                 id: true,
                 articleStatus: true,
@@ -110,27 +217,88 @@ export async function GET(
                 },
               },
             },
+            staffEditor: {
+              columns: {
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
           },
-        },
-      },
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+        });
     }
 
-    // Filter articles by status
-    const submittedArticles = user.articles.filter(
-      (article) => article.articleStatus === 'SUBMITTED'
-    );
-    const correctionsArticles = user.articles.filter(
-      (article) =>
-        article.articleStatus === 'UNDER REVIEW' ||
-        article.articleStatus === 'CORRECTION'
-    );
-    const underPressArticles = user.articles.filter(
-      (article) => article.articleStatus === 'UNDER PRESS'
-    );
+    // Fetch editor assignments if user is Staff Editor
+    let editorAssignmentsData: any = null;
+    if (isStaffEditor) {
+      const allEditorAssignments = await db.query.editorAssignment.findMany({
+        where: eq(editorAssignment.userId, userId),
+        columns: {
+          id: true,
+          assignedAt: true,
+        },
+        with: {
+          articleSubmission: {
+            columns: {
+              id: true,
+              articleStatus: true,
+              createdAt: true,
+            },
+            with: {
+              metadata: {
+                columns: {
+                  title: true,
+                },
+              },
+              user: {
+                columns: {
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      // Filter editor assignments by status
+      const submittedEditorAssignments = allEditorAssignments.filter(
+        (assignment) =>
+          assignment.articleSubmission?.articleStatus === 'SUBMITTED'
+      );
+      const correctionsEditorAssignments = allEditorAssignments.filter(
+        (assignment) =>
+          assignment.articleSubmission?.articleStatus === 'UNDER REVIEW' ||
+          assignment.articleSubmission?.articleStatus === 'CORRECTION'
+      );
+      const underPressEditorAssignments = allEditorAssignments.filter(
+        (assignment) =>
+          assignment.articleSubmission?.articleStatus === 'UNDER PRESS'
+      );
+
+      editorAssignmentsData = {
+        all: allEditorAssignments,
+        submitted: submittedEditorAssignments,
+        corrections: correctionsEditorAssignments,
+        underPress: underPressEditorAssignments,
+      } as any;
+    }
+
+    const userWithReviewAssignments = user as typeof user & {
+      reviewAssignments?: Array<{
+        id: string;
+        assignedDate: string | null;
+        dueDate: string | null;
+        status: string;
+        reviewedDate: string | null;
+        article: {
+          id: string;
+          articleStatus: string;
+          metadata: { title: string } | null;
+        } | null;
+      }>;
+    };
 
     return NextResponse.json({
       roles: allUserRoles,
@@ -140,6 +308,11 @@ export async function GET(
         submittedArticles,
         correctionsArticles,
         underPressArticles,
+        reviewAssignments: isReviewer
+          ? userWithReviewAssignments.reviewAssignments || []
+          : [],
+        associateEditorAssignments: associateEditorAssignmentsData,
+        editorAssignments: editorAssignmentsData,
       },
     });
   } catch (error) {

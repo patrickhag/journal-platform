@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import HeaderDropdown from './headerDropdown';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -23,6 +23,30 @@ export default function Header() {
   const pathname = usePathname();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isMobileMenuOpen &&
+        menuRef.current &&
+        buttonRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMobileMenuOpen]);
 
   const isActiveLink = (itemPath: string, currentPath: string) => {
     if (itemPath === '/') {
@@ -63,38 +87,30 @@ export default function Header() {
         </div>
 
         <button
+          ref={buttonRef}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="lg:hidden p-2 hover:bg-gray-100 rounded focus:outline-none"
+          className="lg:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          aria-label="Toggle menu"
         >
-          {isMobileMenuOpen ? (
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          ) : (
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          )}
+          <span
+            className={`block w-6 h-0.5 bg-gray-700 rounded-full transition-all duration-300 ease-in-out ${
+              isMobileMenuOpen
+                ? 'rotate-45 translate-y-2 bg-blue-600'
+                : 'rotate-0 translate-y-0'
+            }`}
+          />
+          <span
+            className={`block w-6 h-0.5 bg-gray-700 rounded-full transition-all duration-300 ease-in-out ${
+              isMobileMenuOpen ? 'opacity-0' : 'opacity-100'
+            }`}
+          />
+          <span
+            className={`block w-6 h-0.5 bg-gray-700 rounded-full transition-all duration-300 ease-in-out ${
+              isMobileMenuOpen
+                ? '-rotate-45 -translate-y-2 bg-blue-600'
+                : 'rotate-0 translate-y-0'
+            }`}
+          />
         </button>
 
         <nav className="hidden lg:flex items-center gap-6 text-gray-700 max-[1132px]:text-sm">
@@ -116,6 +132,7 @@ export default function Header() {
 
         {/* Mobile Dropdown Menu */}
         <div
+          ref={menuRef}
           className={`lg:hidden w-full absolute left-0 top-full  ${
             isMobileMenuOpen ? 'block' : 'hidden'
           }`}

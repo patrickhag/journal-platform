@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
     aboutUs,
     aimsNscope,
     termsNconditions,
+    sponsors,
     paperTemplate,
     copyrightTemplate,
     humanPartsConsent,
@@ -43,6 +44,7 @@ export async function POST(req: NextRequest) {
         aimsNscope: aimsNscope ?? existingManual[0].aimsNscope,
         termsNconditions:
           termsNconditions ?? existingManual[0].termsNconditions,
+        sponsors: sponsors ?? existingManual[0].sponsors,
         paperTemplate: paperTemplate ?? existingManual[0].paperTemplate,
         copyrightTemplate:
           copyrightTemplate ?? existingManual[0].copyrightTemplate,
@@ -65,6 +67,7 @@ export async function POST(req: NextRequest) {
           aboutUs,
           aimsNscope,
           termsNconditions,
+          sponsors,
           paperTemplate,
           copyrightTemplate,
           humanPartsConsent,

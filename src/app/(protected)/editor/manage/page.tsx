@@ -8,6 +8,7 @@ import {
   Goal,
   ShieldAlert,
   Files,
+  Globe,
 } from 'lucide-react';
 import EditorsPick from './components/EditorsPick';
 import Guidelines from './components/Guidelines';
@@ -17,6 +18,7 @@ import AimsNScope from './components/AimsNScope';
 import TermsAndConditions from './components/TermsNConditions';
 import SiteSettings from './components/Settings';
 import Documents from './components/Documents';
+import Supporters from './components/Supporters';
 
 function ManagePage() {
   return (
@@ -58,6 +60,10 @@ function ManagePage() {
               <Files className="h-4 w-4" />
               Documents
             </TabsTrigger>
+            <TabsTrigger value="sponsors" className="flex items-center gap-2">
+              <Globe className="h-4 w-4" />
+              Supporters
+            </TabsTrigger>
             <TabsTrigger
               value="termsNconditions"
               className="flex items-center gap-2"
@@ -78,6 +84,7 @@ function ManagePage() {
           <TermsAndConditions />
           <AimsNScope />
           <Documents />
+          <Supporters />
           <SiteSettings />
         </Tabs>
       </div>

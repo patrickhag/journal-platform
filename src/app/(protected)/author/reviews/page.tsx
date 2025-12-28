@@ -20,13 +20,10 @@ import { ReviewCard } from '@/components/ReviewCard';
 import { StatusBadge } from '@/components/status-badge';
 import { ArticleSkeleton } from '@/components/articles/ArticleSkeleton';
 import { Input } from '@/components/ui/input';
-import { useSession } from 'next-auth/react';
 
 const ReviewsReceived = () => {
   const { data: manuscripts, isPending } = useGetAuthorsReviews();
   const [searchQuery, setSearchQuery] = useState('');
-
-  const { data } = useSession();
 
   const [selectedManuscript, setSelectedManuscript] =
     useState<TArticlesReview | null>(null);
@@ -51,9 +48,10 @@ const ReviewsReceived = () => {
         <h1 className="text-3xl font-bold text-gray-900">Reviews Received</h1>
       </div>
 
-      <div className="flex items-center justify-between gap-4 p-4 bg-card border border-border rounded-xl shadow-sm">
+      {/* Controls */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 p-3 md:p-4 bg-card border border-border rounded-xl shadow-sm">
         {/* Search Box */}
-        <div className="relative flex-1 max-w-2xl">
+        <div className="relative flex-1 w-full sm:max-w-2xl">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="text"
@@ -63,11 +61,9 @@ const ReviewsReceived = () => {
             className="pl-10 bg-background border-border w-full"
           />
         </div>
-
-        {/* Submit Button */}
         <Button
           asChild
-          className="bg-[#212c9e] hover:bg-[#1A237E] whitespace-nowrap"
+          className="bg-[#212c9e] hover:bg-[#1A237E] whitespace-nowrap w-full sm:w-auto"
         >
           <Link href="/author/new-manuscript">
             <PlusCircle className="w-4 h-4 mr-2" />
@@ -78,7 +74,7 @@ const ReviewsReceived = () => {
 
       {isPending ? (
         <>
-          {Array.from({ length: 5 }).map((_, i) => (
+          {Array.from({ length: 6 }).map((_, i) => (
             <div className="mb-3" key={i}>
               <ArticleSkeleton />
             </div>

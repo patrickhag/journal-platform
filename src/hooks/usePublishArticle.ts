@@ -65,7 +65,7 @@ export const useGetIssues = () => {
 };
 
 export const useGetPublishedArticles = (
-  status: 'AWAITING DECISION' | 'PUBLISHED' | 'UNPUBLISHED'
+  status: 'AWAITING DECISION' | 'PUBLISHED' | 'WITHDRAWN'
 ) => {
   const fetchArticles = async (): Promise<TPublishedArticle[]> => {
     const url = `/api/articles/published?status=${status}`;
@@ -80,7 +80,6 @@ export const useGetPublishedArticles = (
   return useQuery<TPublishedArticle[], Error>({
     queryKey: ['publishedArticles', status],
     queryFn: fetchArticles,
-    refetchOnWindowFocus: false,
   });
 };
 

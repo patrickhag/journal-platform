@@ -14,6 +14,7 @@ import {
 } from '@/lib/utils';
 import { useState } from 'react';
 import UploadCorrection from '../../components/UploadCorrection';
+import ConditionalRender from '@/components/ConditionalRender';
 
 const ParticularAssociateAssignment = () => {
   const { assignmentId } = useParams();
@@ -39,8 +40,10 @@ const ParticularAssociateAssignment = () => {
             Go Back
           </Button>
 
-          {particularAssignment?.articleSubmissions.articleStatus !==
-            'PUBLISHED' && (
+          <ConditionalRender
+            status={particularAssignment?.articleSubmissions.articleStatus}
+            hideOn={['PUBLISHED', 'AWAITING DECISION', 'ACCEPTED']}
+          >
             <Button
               type="submit"
               className="bg-primary hover:bg-primary/90"
@@ -49,7 +52,7 @@ const ParticularAssociateAssignment = () => {
               <SquarePen className="mr-2 h-4 w-4" />
               Submit Correction
             </Button>
-          )}
+          </ConditionalRender>
         </div>
         {/* Assignment Info */}
         <Card>

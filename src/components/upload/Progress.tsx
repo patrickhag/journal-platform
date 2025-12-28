@@ -66,10 +66,8 @@ export const ProgressLine = () => {
                       <div
                         className={cn(
                           'flex h-6 w-6 md:h-8 md:w-8 items-center justify-center rounded-full text-white text-xs md:text-base transition-all duration-300',
-                          isCompleted ? 'bg-indigo-500' : 'bg-indigo-300',
-                          isCurrent
-                            ? 'ring-2 ring-offset-2 ring-indigo-500'
-                            : '',
+                          isCompleted ? 'bg-brand' : 'bg-brand/40',
+                          isCurrent ? 'ring-2 ring-offset-2 ring-brand' : '',
                           isLast ? 'mr-auto' : ''
                         )}
                       >
@@ -81,7 +79,7 @@ export const ProgressLine = () => {
                       </div>
                       <span
                         className={cn(
-                          'text-[#626EEF] text-[.5rem] md:text-[0.8rem] hidden sm:block',
+                          'text-brand text-[.5rem] md:text-[0.8rem] hidden sm:block',
                           isCurrent ? 'font-medium' : ''
                         )}
                       >
@@ -89,7 +87,7 @@ export const ProgressLine = () => {
                       </span>
                     </div>
                     {index < journalKeys.length - 1 && (
-                      <div className="h-px bg-[#838F9A] flex-1 mx-2 min-w-[10px] lg:min-w-[20px]" />
+                      <div className="h-px bg-borderPlatform flex-1 mx-2 min-w-[10px] lg:min-w-[20px]" />
                     )}
                   </div>
                 </React.Fragment>

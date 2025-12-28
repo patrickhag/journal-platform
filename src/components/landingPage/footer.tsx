@@ -9,7 +9,7 @@ import NewsletterSubscribeForm from './newsletter-subscribe-form';
 
 const Footer = async () => {
   return (
-    <footer className="text-gray-700">
+    <footer className="text-gray-700 px-4 md:px-8 py-4 md:py-6">
       <div className="w-[98%] mx-auto border-t my-5 pt-5">
         {/* Top Section */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">

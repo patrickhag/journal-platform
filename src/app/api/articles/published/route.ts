@@ -20,8 +20,8 @@ export async function GET(req: NextRequest) {
       whereCondition = eq(publishedArticles.status, 'AWAITING DECISION');
     } else if (status === 'PUBLISHED') {
       whereCondition = eq(publishedArticles.status, 'PUBLISHED');
-    } else if (status === 'UNPUBLISHED') {
-      whereCondition = eq(publishedArticles.status, 'UNPUBLISHED');
+    } else if (status === 'WITHDRAWN') {
+      whereCondition = eq(publishedArticles.status, 'WITHDRAWN');
     }
 
     const foundPublishedArticles = await db.query.publishedArticles.findMany({
@@ -159,7 +159,7 @@ export async function PUT(req: NextRequest) {
       .set(updateData)
       .where(eq(publishedArticles.id, publishedArticleId));
 
-    if (status === 'UNPUBLISHED') {
+    if (status === 'WITHDRAWN') {
       await db
         .update(articleSubmissions)
         .set({

@@ -509,7 +509,7 @@ export const useRequestRecorrection = (correctionId: string) => {
     },
     onSuccess: ({ message }) => {
       queryClient.invalidateQueries({
-        queryKey: ['associateEditorparticularAssignment'],
+        queryKey: ['associateEditorCorrections'],
       });
       toast.success(message);
     },

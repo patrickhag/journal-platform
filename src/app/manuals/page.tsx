@@ -7,7 +7,7 @@ export default async function GuidelinesPage() {
 
   return (
     <div className="px-4 md:px-8 py-6">
-      <div className="flex flex-col lg:flex-row gap-8 px-4 py-6 mb-9">
+      <div className="flex flex-col lg:flex-row gap-8 mb-9">
         <div className="lg:w-3/4">
           {manuals?.guidelines?.forAuthors && (
             <GuidelineSection

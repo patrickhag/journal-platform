@@ -42,24 +42,24 @@ function ArticleCard({ article }: { article: TArticle }) {
     <>
       <Card className="shadow-none">
         <CardContent className="p-0">
-          <div className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
-            <div className="flex items-start justify-between">
+          <div className="border rounded-lg p-3 md:p-4 hover:bg-gray-50 transition-colors">
+            <div className="flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-4">
               {/* Left Section: Title, Dates, Status */}
-              <div className="flex-1">
+              <div className="flex-1 min-w-0 w-full">
                 <Link href={`/articles/${transformedArticle.id}`}>
-                  <h3 className="font-semibold text-lg text-gray-900 mb-2 line-clamp-1">
+                  <h3 className="font-semibold text-base md:text-lg text-gray-900 mb-2 line-clamp-2 sm:line-clamp-1">
                     {transformedArticle.title}
                   </h3>
                 </Link>
 
-                <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-1 sm:space-y-0 text-xs sm:text-sm text-gray-600 mb-3">
                   <span>
                     Submitted:{' '}
                     {new Date(
                       transformedArticle.submittedAt
                     ).toLocaleDateString()}
                   </span>
-                  <span>•</span>
+                  <span className="hidden sm:inline">•</span>
                   <span>
                     Last Updated:{' '}
                     {new Date(
@@ -74,12 +74,15 @@ function ArticleCard({ article }: { article: TArticle }) {
               </div>
 
               {/* Right Section: Action Buttons */}
-              <div className="flex space-x-2 ml-4">
-                <Link href={`/articles/${transformedArticle.id}`}>
+              <div className="flex space-x-2 w-full sm:w-auto sm:ml-4">
+                <Link
+                  href={`/articles/${transformedArticle.id}`}
+                  className="flex-1 sm:flex-initial"
+                >
                   <Button
                     variant="outline"
                     size="sm"
-                    className="cursor-pointer"
+                    className="cursor-pointer w-full sm:w-auto"
                   >
                     <Eye className="mr-1 h-4 w-4" />
                     View Details

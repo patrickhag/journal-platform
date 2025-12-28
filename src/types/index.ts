@@ -509,6 +509,96 @@ export type TUserInfo = {
         title: string;
       } | null;
     }>;
+    associateEditorAssignments?: Array<{
+      id: string;
+      assignedAt: string | null;
+      dueDate: string | null;
+      status: string;
+      finalizedAt: string | null;
+      message: string | null;
+      articleSubmissions: {
+        id: string;
+        articleStatus: string;
+        metadata: {
+          title: string;
+        } | null;
+      } | null;
+      staffEditor: {
+        firstName: string;
+        lastName: string;
+        email: string;
+      } | null;
+    }>;
+    editorAssignments?: {
+      all: Array<{
+        id: string;
+        assignedAt: string | null;
+        articleSubmission: {
+          id: string;
+          articleStatus: string;
+          createdAt: string;
+          metadata: {
+            title: string;
+          } | null;
+          user: {
+            firstName: string;
+            lastName: string;
+            email: string;
+          } | null;
+        } | null;
+      }>;
+      submitted: Array<{
+        id: string;
+        assignedAt: string | null;
+        articleSubmission: {
+          id: string;
+          articleStatus: string;
+          createdAt: string;
+          metadata: {
+            title: string;
+          } | null;
+          user: {
+            firstName: string;
+            lastName: string;
+            email: string;
+          } | null;
+        } | null;
+      }>;
+      corrections: Array<{
+        id: string;
+        assignedAt: string | null;
+        articleSubmission: {
+          id: string;
+          articleStatus: string;
+          createdAt: string;
+          metadata: {
+            title: string;
+          } | null;
+          user: {
+            firstName: string;
+            lastName: string;
+            email: string;
+          } | null;
+        } | null;
+      }>;
+      underPress: Array<{
+        id: string;
+        assignedAt: string | null;
+        articleSubmission: {
+          id: string;
+          articleStatus: string;
+          createdAt: string;
+          metadata: {
+            title: string;
+          } | null;
+          user: {
+            firstName: string;
+            lastName: string;
+            email: string;
+          } | null;
+        } | null;
+      }>;
+    };
   };
 };
 
@@ -616,6 +706,7 @@ export type TAssociateEditorAssignments = {
   dueDate: string;
   fileIds: string[] | null;
   message: string;
+  status: string;
   staffEditor: {
     firstName: string;
     lastName: string;

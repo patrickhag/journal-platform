@@ -49,6 +49,7 @@ export const SubmissionNavigation = forwardRef<
           variant="outline"
           onClick={onBack}
           disabled={isBackDisabled}
+          className="border-brand text-brand hover:bg-brand hover:text-white"
         >
           {backLabel}
         </Button>
@@ -56,6 +57,7 @@ export const SubmissionNavigation = forwardRef<
           type={nextType}
           onClick={nextType === 'submit' ? undefined : onNext}
           disabled={isNextDisabled || isNextLoading}
+          className="bg-brand text-white hover:bg-brand-hover"
         >
           {isNextLoading ? <Loader text="Submitting..." /> : nextLabel}
         </Button>

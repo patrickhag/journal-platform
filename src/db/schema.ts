@@ -378,6 +378,13 @@ export const manuals = pgTable('manuals', {
   aboutUs: jsonb('aboutUs').$type<{ content: string }>(),
   aimsNscope: jsonb('aimsNscope').$type<{ content: string }>(),
   termsNconditions: jsonb('termsNconditions').$type<{ content: string }>(),
+  sponsors: jsonb('sponsors').$type<
+    Array<{
+      id: string;
+      link: string;
+      logo: string;
+    }>
+  >(),
   paperTemplate: text('paperTemplate'),
   copyrightTemplate: text('copyrightTemplate'),
   humanPartsConsent: text('humanPartsConsent'),

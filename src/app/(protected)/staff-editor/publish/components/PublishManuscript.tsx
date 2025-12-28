@@ -91,7 +91,10 @@ export default function PublishManuscriptDialog({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-[500px] sm:w-[540px]">
+      <SheetContent
+        side="right"
+        className="w-full sm:max-w-2xl flex flex-col h-full"
+      >
         <SheetHeader>
           <SheetTitle>Approve Manuscript</SheetTitle>
           <SheetDescription className="line-clamp-2">

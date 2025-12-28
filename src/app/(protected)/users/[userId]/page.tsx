@@ -24,6 +24,7 @@ import {
   ArrowLeft,
   FileText,
   ClipboardList,
+  UserX,
 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import {
@@ -61,6 +62,12 @@ const UserDetail = () => {
   const isReviewer = userRoles.some(
     (r: { role: string }) => r.role === 'REVIEWER'
   );
+  const isAssociateEditor = userRoles.some(
+    (r: { role: string }) => r.role === 'ASSOCIATE_EDITOR'
+  );
+  const isStaffEditor = userRoles.some(
+    (r: { role: string }) => r.role === 'STAFF_EDITOR'
+  );
 
   const user = {
     id: userInfo?.user.id,
@@ -81,6 +88,9 @@ const UserDetail = () => {
     totalUnderPress: (userInfo?.user as any)?.underPressArticles?.length || 0,
     totalPublished: userInfo?.user.publishedArticles?.length || 0,
     reviewAssignments: userInfo?.user.reviewAssignments || [],
+    associateEditorAssignments:
+      (userInfo?.user as any)?.associateEditorAssignments || [],
+    editorAssignments: (userInfo?.user as any)?.editorAssignments || [],
     submittedArticles: (userInfo?.user as any)?.submittedArticles || [],
     correctionsArticles: (userInfo?.user as any)?.correctionsArticles || [],
     underPressArticles: (userInfo?.user as any)?.underPressArticles || [],
@@ -144,8 +154,29 @@ const UserDetail = () => {
 
   if (!userInfo) {
     return (
-      <div>
-        <h1 className="text-2xl font-bold">User not found</h1>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Card className="w-full max-w-md">
+          <CardContent className="flex flex-col items-center justify-center py-12 px-6 text-center">
+            <div className="rounded-full bg-gray-100 p-4 mb-4">
+              <UserX className="h-12 w-12 text-gray-400" />
+            </div>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+              User Not Found
+            </h2>
+            <p className="text-gray-600 mb-6">
+              The user you're looking for doesn't exist or may have been removed
+              from the system.
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => router.back()}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Go Back
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -663,14 +694,402 @@ const UserDetail = () => {
                   </div>
                 )}
 
-                {/* Empty State */}
-                {!isAuthor && !isReviewer && (
-                  <div className="text-center py-8 text-gray-500">
-                    <p className="text-sm">
-                      No role-based statistics available
-                    </p>
+                {/* Associate Editor Statistics */}
+                {isAssociateEditor && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">
+                      Associate Editor Assignments (
+                      {user.associateEditorAssignments?.length ?? 0})
+                    </span>
+                    {Array.isArray(user.associateEditorAssignments) &&
+                      user.associateEditorAssignments.length > 0 && (
+                        <Sheet>
+                          <SheetTrigger>
+                            <Button variant="outline" size="sm">
+                              <ClipboardList className="h-4 w-4" />
+                            </Button>
+                          </SheetTrigger>
+                          <SheetContent>
+                            <SheetHeader>
+                              <SheetTitle>
+                                Associate Editor Assignments
+                              </SheetTitle>
+                              <SheetDescription>
+                                All associate editor assignments for {user.name}
+                              </SheetDescription>
+                            </SheetHeader>
+                            <div className="space-y-4 mt-6">
+                              <ScrollArea className="h-[550px] pr-4">
+                                <div className="space-y-3">
+                                  {user.associateEditorAssignments.map(
+                                    (assignment: any) => (
+                                      <Card className="p-3" key={assignment.id}>
+                                        <div>
+                                          <Link
+                                            href={`/articles/${assignment.articleSubmissions?.id}`}
+                                            target="_blank"
+                                          >
+                                            <h5 className="font-medium text-sm line-clamp-1 hover:underline cursor-pointer">
+                                              {assignment.articleSubmissions
+                                                ?.metadata?.title || 'Untitled'}
+                                            </h5>
+                                          </Link>
+                                          <div className="mt-2 flex items-center gap-4 flex-wrap">
+                                            <span className="text-xs text-gray-500">
+                                              Assigned:{' '}
+                                              {assignment.assignedAt
+                                                ? format(
+                                                    new Date(
+                                                      assignment.assignedAt
+                                                    ),
+                                                    'MMM dd, yyyy'
+                                                  )
+                                                : 'N/A'}
+                                            </span>
+                                            {assignment.dueDate && (
+                                              <span className="text-xs text-gray-500">
+                                                Due:{' '}
+                                                {format(
+                                                  new Date(assignment.dueDate),
+                                                  'MMM dd, yyyy'
+                                                )}
+                                              </span>
+                                            )}
+                                            {assignment.finalizedAt && (
+                                              <span className="text-xs text-gray-500">
+                                                Finalized:{' '}
+                                                {format(
+                                                  new Date(
+                                                    assignment.finalizedAt
+                                                  ),
+                                                  'MMM dd, yyyy'
+                                                )}
+                                              </span>
+                                            )}
+                                            <Badge
+                                              variant="outline"
+                                              className="text-xs"
+                                            >
+                                              {assignment.status}
+                                            </Badge>
+                                          </div>
+                                          {assignment.staffEditor && (
+                                            <div className="mt-2">
+                                              <span className="text-xs text-gray-500">
+                                                Assigned by:{' '}
+                                                {
+                                                  assignment.staffEditor
+                                                    .firstName
+                                                }{' '}
+                                                {
+                                                  assignment.staffEditor
+                                                    .lastName
+                                                }
+                                              </span>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </Card>
+                                    )
+                                  )}
+                                </div>
+                              </ScrollArea>
+                            </div>
+                          </SheetContent>
+                        </Sheet>
+                      )}
                   </div>
                 )}
+
+                {/* Staff Editor Statistics */}
+                {isStaffEditor && (
+                  <>
+                    {/* Submitted Editor Assignments */}
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">
+                        Submitted Assignments (
+                        {(user.editorAssignments as any)?.submitted?.length ??
+                          0}
+                        )
+                      </span>
+                      {(user.editorAssignments as any)?.submitted &&
+                        (user.editorAssignments as any).submitted.length >
+                          0 && (
+                          <Sheet>
+                            <SheetTrigger>
+                              <Button variant="outline" size="sm">
+                                <FileText className="h-4 w-4" />
+                              </Button>
+                            </SheetTrigger>
+                            <SheetContent>
+                              <SheetHeader>
+                                <SheetTitle>Submitted Assignments</SheetTitle>
+                                <SheetDescription>
+                                  All submitted editor assignments for{' '}
+                                  {user.name}
+                                </SheetDescription>
+                              </SheetHeader>
+                              <div className="space-y-4 mt-6">
+                                <ScrollArea className="h-[550px] pr-4">
+                                  <div className="space-y-3">
+                                    {(
+                                      user.editorAssignments as any
+                                    ).submitted.map((assignment: any) => (
+                                      <Card className="p-3" key={assignment.id}>
+                                        <div>
+                                          <Link
+                                            href={`/articles/${assignment.articleSubmission?.id}`}
+                                            target="_blank"
+                                          >
+                                            <h5 className="font-medium text-sm line-clamp-1 hover:underline cursor-pointer">
+                                              {assignment.articleSubmission
+                                                ?.metadata?.title || 'Untitled'}
+                                            </h5>
+                                          </Link>
+                                          <div className="mt-2 flex items-center gap-4 flex-wrap">
+                                            <span className="text-xs text-gray-500">
+                                              Assigned:{' '}
+                                              {assignment.assignedAt
+                                                ? format(
+                                                    new Date(
+                                                      assignment.assignedAt
+                                                    ),
+                                                    'MMM dd, yyyy'
+                                                  )
+                                                : 'N/A'}
+                                            </span>
+                                            <Badge
+                                              variant="outline"
+                                              className="text-xs"
+                                            >
+                                              {
+                                                assignment.articleSubmission
+                                                  ?.articleStatus
+                                              }
+                                            </Badge>
+                                          </div>
+                                          {assignment.articleSubmission
+                                            ?.user && (
+                                            <div className="mt-2">
+                                              <span className="text-xs text-gray-500">
+                                                Author:{' '}
+                                                {
+                                                  assignment.articleSubmission
+                                                    .user.firstName
+                                                }{' '}
+                                                {
+                                                  assignment.articleSubmission
+                                                    .user.lastName
+                                                }
+                                              </span>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </Card>
+                                    ))}
+                                  </div>
+                                </ScrollArea>
+                              </div>
+                            </SheetContent>
+                          </Sheet>
+                        )}
+                    </div>
+
+                    {/* Corrections Editor Assignments */}
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">
+                        Corrections Assignments (
+                        {(user.editorAssignments as any)?.corrections?.length ??
+                          0}
+                        )
+                      </span>
+                      {(user.editorAssignments as any)?.corrections &&
+                        (user.editorAssignments as any).corrections.length >
+                          0 && (
+                          <Sheet>
+                            <SheetTrigger>
+                              <Button variant="outline" size="sm">
+                                <FileText className="h-4 w-4" />
+                              </Button>
+                            </SheetTrigger>
+                            <SheetContent>
+                              <SheetHeader>
+                                <SheetTitle>Corrections Assignments</SheetTitle>
+                                <SheetDescription>
+                                  All corrections editor assignments for{' '}
+                                  {user.name}
+                                </SheetDescription>
+                              </SheetHeader>
+                              <div className="space-y-4 mt-6">
+                                <ScrollArea className="h-[550px] pr-4">
+                                  <div className="space-y-3">
+                                    {(
+                                      user.editorAssignments as any
+                                    ).corrections.map((assignment: any) => (
+                                      <Card className="p-3" key={assignment.id}>
+                                        <div>
+                                          <Link
+                                            href={`/articles/${assignment.articleSubmission?.id}`}
+                                            target="_blank"
+                                          >
+                                            <h5 className="font-medium text-sm line-clamp-1 hover:underline cursor-pointer">
+                                              {assignment.articleSubmission
+                                                ?.metadata?.title || 'Untitled'}
+                                            </h5>
+                                          </Link>
+                                          <div className="mt-2 flex items-center gap-4 flex-wrap">
+                                            <span className="text-xs text-gray-500">
+                                              Assigned:{' '}
+                                              {assignment.assignedAt
+                                                ? format(
+                                                    new Date(
+                                                      assignment.assignedAt
+                                                    ),
+                                                    'MMM dd, yyyy'
+                                                  )
+                                                : 'N/A'}
+                                            </span>
+                                            <Badge
+                                              variant="outline"
+                                              className="text-xs"
+                                            >
+                                              {
+                                                assignment.articleSubmission
+                                                  ?.articleStatus
+                                              }
+                                            </Badge>
+                                          </div>
+                                          {assignment.articleSubmission
+                                            ?.user && (
+                                            <div className="mt-2">
+                                              <span className="text-xs text-gray-500">
+                                                Author:{' '}
+                                                {
+                                                  assignment.articleSubmission
+                                                    .user.firstName
+                                                }{' '}
+                                                {
+                                                  assignment.articleSubmission
+                                                    .user.lastName
+                                                }
+                                              </span>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </Card>
+                                    ))}
+                                  </div>
+                                </ScrollArea>
+                              </div>
+                            </SheetContent>
+                          </Sheet>
+                        )}
+                    </div>
+
+                    {/* Under Press Editor Assignments */}
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">
+                        Under Press Assignments (
+                        {(user.editorAssignments as any)?.underPress?.length ??
+                          0}
+                        )
+                      </span>
+                      {(user.editorAssignments as any)?.underPress &&
+                        (user.editorAssignments as any).underPress.length >
+                          0 && (
+                          <Sheet>
+                            <SheetTrigger>
+                              <Button variant="outline" size="sm">
+                                <FileText className="h-4 w-4" />
+                              </Button>
+                            </SheetTrigger>
+                            <SheetContent>
+                              <SheetHeader>
+                                <SheetTitle>Under Press Assignments</SheetTitle>
+                                <SheetDescription>
+                                  All under press editor assignments for{' '}
+                                  {user.name}
+                                </SheetDescription>
+                              </SheetHeader>
+                              <div className="space-y-4 mt-6">
+                                <ScrollArea className="h-[550px] pr-4">
+                                  <div className="space-y-3">
+                                    {(
+                                      user.editorAssignments as any
+                                    ).underPress.map((assignment: any) => (
+                                      <Card className="p-3" key={assignment.id}>
+                                        <div>
+                                          <Link
+                                            href={`/articles/${assignment.articleSubmission?.id}`}
+                                            target="_blank"
+                                          >
+                                            <h5 className="font-medium text-sm line-clamp-1 hover:underline cursor-pointer">
+                                              {assignment.articleSubmission
+                                                ?.metadata?.title || 'Untitled'}
+                                            </h5>
+                                          </Link>
+                                          <div className="mt-2 flex items-center gap-4 flex-wrap">
+                                            <span className="text-xs text-gray-500">
+                                              Assigned:{' '}
+                                              {assignment.assignedAt
+                                                ? format(
+                                                    new Date(
+                                                      assignment.assignedAt
+                                                    ),
+                                                    'MMM dd, yyyy'
+                                                  )
+                                                : 'N/A'}
+                                            </span>
+                                            <Badge
+                                              variant="outline"
+                                              className="text-xs"
+                                            >
+                                              {
+                                                assignment.articleSubmission
+                                                  ?.articleStatus
+                                              }
+                                            </Badge>
+                                          </div>
+                                          {assignment.articleSubmission
+                                            ?.user && (
+                                            <div className="mt-2">
+                                              <span className="text-xs text-gray-500">
+                                                Author:{' '}
+                                                {
+                                                  assignment.articleSubmission
+                                                    .user.firstName
+                                                }{' '}
+                                                {
+                                                  assignment.articleSubmission
+                                                    .user.lastName
+                                                }
+                                              </span>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </Card>
+                                    ))}
+                                  </div>
+                                </ScrollArea>
+                              </div>
+                            </SheetContent>
+                          </Sheet>
+                        )}
+                    </div>
+                  </>
+                )}
+
+                {/* Empty State */}
+                {!isAuthor &&
+                  !isReviewer &&
+                  !isAssociateEditor &&
+                  !isStaffEditor && (
+                    <div className="text-center py-8 text-gray-500">
+                      <p className="text-sm">
+                        No role-based statistics available
+                      </p>
+                    </div>
+                  )}
               </CardContent>
             </Card>
           </div>

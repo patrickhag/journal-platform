@@ -23,6 +23,7 @@ export async function GET(req: NextRequest) {
           assignedAt: true,
           dueDate: true,
           message: true,
+          status: true,
         },
         with: {
           articleSubmissions: {

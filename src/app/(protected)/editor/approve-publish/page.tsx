@@ -21,16 +21,10 @@ import EditPublishedManuscript from './components/EditPublishedManuscript';
 const ManagePublishedArticles = () => {
   const { data: publishedArticles, isPending: publishedPending } =
     useGetPublishedArticles('PUBLISHED');
-
-  console.log('publishedArticles:', publishedArticles);
-  const { data: unpublishedArticles, isPending: unpublishedPending } =
-    useGetPublishedArticles('UNPUBLISHED');
-
-  console.log('unpublishedArticles:', unpublishedArticles);
+  const { data: withdrawnArticles, isPending: withdrawnPending } =
+    useGetPublishedArticles('WITHDRAWN');
   const { data: awaitingArticles, isPending: awaitingPending } =
     useGetPublishedArticles('AWAITING DECISION');
-
-  console.log('publishedArticles:', awaitingArticles);
 
   const [selectedPublishedArticle, setSelectedPublishedArticle] =
     useState<TPublishedArticle | null>(null);
@@ -183,14 +177,14 @@ const ManagePublishedArticles = () => {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">
-            Modify Published, Unpublished and Awaiting decision Articles
+            Modify Published, Withdrawn and Awaiting decision Articles
           </h1>
         </div>
-        <Tabs defaultValue="published" className="w-full">
+        <Tabs defaultValue="awaiting" className="w-full">
           <TabsList>
-            <TabsTrigger value="published">Published</TabsTrigger>
             <TabsTrigger value="awaiting">Awaiting Decision</TabsTrigger>
-            <TabsTrigger value="unpublished">Unpublished</TabsTrigger>
+            <TabsTrigger value="published">Published</TabsTrigger>
+            <TabsTrigger value="withdrawn">Withdrawn</TabsTrigger>
           </TabsList>
           <TabsContent value="published">
             <Card>
@@ -216,26 +210,26 @@ const ManagePublishedArticles = () => {
               </CardContent>
             </Card>
           </TabsContent>
-          <TabsContent value="unpublished">
+          <TabsContent value="withdrawn">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5" />
-                  Unpublished Articles{' '}
-                  {unpublishedArticles && `(${unpublishedArticles?.length})`}
+                  Withdrawn Articles{' '}
+                  {withdrawnArticles && `(${withdrawnArticles?.length})`}
                 </CardTitle>
                 <CardDescription>
-                  Review manuscripts that are currently unpublished and make
+                  Review manuscripts that are currently withdrawn and make
                   updates before republishing.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {unpublishedPending && <p>Loading unpublished articles...</p>}
-                  {!unpublishedPending &&
+                  {withdrawnPending && <p>Loading withdrawn articles...</p>}
+                  {!withdrawnPending &&
                     renderArticles(
-                      unpublishedArticles,
-                      'No unpublished articles found.'
+                      withdrawnArticles,
+                      'No withdrawn articles found.'
                     )}
                 </div>
               </CardContent>

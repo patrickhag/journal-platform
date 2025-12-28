@@ -75,7 +75,7 @@ function AssociateEditorDashboard() {
                             </div>
                           )}
 
-                          <Badge>FINALIZED</Badge>
+                          <Badge>{assignment.status}</Badge>
 
                           {isPublished && (
                             <Badge className="bg-gray-100 text-gray-700">
