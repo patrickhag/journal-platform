@@ -6,7 +6,6 @@ import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import { AuthError } from 'next-auth';
 import type z from 'zod';
-import jwt from 'jsonwebtoken';
 
 export async function register(
   _prevState:
@@ -33,6 +32,8 @@ export async function register(
     const user = {
       ...register.data,
       password: hashedPassword,
+      isActive: true,
+      emailVerified: new Date(),
     };
 
     const createdUser = await db.insert(users).values(user).returning();

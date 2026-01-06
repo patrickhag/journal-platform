@@ -28,7 +28,7 @@ import { NotifyStaffEditorAboutAssociateEditorCorrection } from '@/components/em
 import { SubscriberEmail } from '@/components/emails/sendSubscriberEmail';
 import { RemindReviewer } from '@/components/emails/remind-reviewer';
 import { RemindEditor } from '@/components/emails/remind-editor';
-import { transporter } from './emailConfig';
+import { resend, transporter } from './emailConfig';
 import { NotifyStaffEditorAboutReviewerAcceptance } from '@/components/emails/notify-staff-editor-about-review-acceptance';
 import { StaffEditorEmailTemplate } from '@/components/emails/inform-associate-editor';
 import { NotifyReviewerAboutFinalizedAssignment } from '@/components/emails/notify-reviewer-about-finalised-status';
@@ -256,13 +256,16 @@ export const sendAssociateEditorInvitation = async ({
 export const sendVerifyToken = async ({
   email,
   token,
+  name,
 }: {
   email: string;
   token: string;
+  name?: string;
 }) => {
   const emailHtml = await render(
     <SendVerifyEmail
       link={`${process.env.NEXT_PUBLIC_URL}/api/verify-user?id=${token}`}
+      name={name}
     />
   );
   const options = {

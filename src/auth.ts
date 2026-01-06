@@ -3,9 +3,56 @@ import { users } from '@/db/schema';
 import logger from '@/lib/logger';
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
-import NextAuth, { type User, type NextAuthConfig } from 'next-auth';
+import NextAuth, { type User, type NextAuthConfig, AuthError } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import Google from 'next-auth/providers/google';
+
+// Custom error class that extends AuthError with a code property
+class CustomCredentialsError extends AuthError {
+  code: string;
+  constructor(message: string, code: string) {
+    super(message);
+    this.code = code;
+    this.name = 'CredentialsSignin';
+    this.type = 'CredentialsSignin';
+  }
+}
+
+// Custom error classes with specific error codes
+class EmailNotVerifiedError extends CustomCredentialsError {
+  constructor() {
+    super('EMAIL_NOT_VERIFIED', 'EMAIL_NOT_VERIFIED');
+  }
+}
+
+class UserNotFoundError extends CustomCredentialsError {
+  constructor() {
+    super('USER_NOT_FOUND', 'USER_NOT_FOUND');
+  }
+}
+
+class InvalidPasswordError extends CustomCredentialsError {
+  constructor() {
+    super('INVALID_PASSWORD', 'INVALID_PASSWORD');
+  }
+}
+
+class InvalidRoleError extends CustomCredentialsError {
+  constructor() {
+    super('INVALID_ROLE', 'INVALID_ROLE');
+  }
+}
+
+class PasswordNotSetError extends CustomCredentialsError {
+  constructor() {
+    super('PASSWORD_NOT_SET', 'PASSWORD_NOT_SET');
+  }
+}
+
+class MissingCredentialsError extends CustomCredentialsError {
+  constructor() {
+    super('MISSING_CREDENTIALS', 'MISSING_CREDENTIALS');
+  }
+}
 
 export const BASE_PATH = '/api/auth';
 
@@ -21,23 +68,61 @@ export const authOptions: NextAuthConfig = {
       async authorize(credentials): Promise<User | null> {
         try {
           const { email, password, role } = credentials;
+
+          // Validate input
+          if (!email || !password || !role) {
+            throw new MissingCredentialsError();
+          }
+
           const user = await getUserFromDb(email as string);
-          const myRoles = user?.roles;
+
+          // Case 1: User doesn't exist
+          if (!user) {
+            throw new UserNotFoundError();
+          }
+
+          // Case 2: Missing password in database
+          if (!user.password) {
+            throw new PasswordNotSetError();
+          }
+
+          const myRoles = user.roles;
           const isUserRoleEligible = myRoles?.some((r) => r.role === role);
           const passwordMatch = await bcrypt.compare(
             password as string,
-            user?.password as string
+            user.password as string
           );
 
-          if (isUserRoleEligible && passwordMatch && user?.isActive) {
-            return {
-              name: `${user?.firstName} ${user?.lastName}`,
-              id: user?.id,
-              role: (role as string) ?? 'NORMAL_USER',
-            };
+          // Case 3: Wrong password
+          if (!passwordMatch) {
+            throw new InvalidPasswordError();
           }
-          return null;
+
+          // Case 4: User doesn't have the selected role
+          if (!isUserRoleEligible) {
+            throw new InvalidRoleError();
+          }
+
+          // Case 5: User account is not active
+          if (!user.isActive) {
+            throw new EmailNotVerifiedError();
+          }
+
+          // Success - all checks passed
+          return {
+            name: `${user.firstName} ${user.lastName}`,
+            id: user.id,
+            role: (role as string) ?? 'NORMAL_USER',
+          };
         } catch (error) {
+          // Re-throw our custom credential errors
+          if (
+            error instanceof CustomCredentialsError ||
+            error instanceof AuthError
+          ) {
+            throw error;
+          }
+          // Log and re-throw other errors
           if (error instanceof Error) {
             logger.error(error.message);
           }
@@ -45,7 +130,6 @@ export const authOptions: NextAuthConfig = {
         }
       },
     }),
-    Google,
   ],
   session: {
     strategy: 'jwt',
@@ -88,6 +172,7 @@ const getUserFromDb = async (email: string) => {
         email: true,
         password: true,
         isActive: true,
+        emailVerified: true,
       },
       with: {
         roles: {

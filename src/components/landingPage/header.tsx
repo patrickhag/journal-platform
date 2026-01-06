@@ -18,8 +18,6 @@ const navItems = [
 ];
 
 export default function Header() {
-  const { data: session } = useSession();
-  const names = session?.user?.name?.split(' ')?.[1]?.substring(0, 1);
   const pathname = usePathname();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -127,7 +125,7 @@ export default function Header() {
               {item.label}
             </Link>
           ))}
-          <HeaderDropdown names={names} session={session} />
+          <HeaderDropdown />
         </nav>
 
         {/* Mobile Dropdown Menu */}
@@ -154,7 +152,7 @@ export default function Header() {
               </Link>
             ))}
             <div className="mt-4 pt-4 border-t">
-              <HeaderDropdown names={names} session={session} />
+              <HeaderDropdown />
             </div>
           </nav>
         </div>

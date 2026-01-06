@@ -1,3 +1,5 @@
+'use client';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,40 +9,17 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { UserRound } from 'lucide-react';
-import { Session } from 'next-auth';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { handleDashboardRedirect } from '@/lib/utils';
 
-export default function HeaderDropdown({
-  names,
-  session,
-}: {
-  names?: string;
-  session: Session | null;
-}) {
-  const handleDashboardRedirect = () => {
-    const role = session?.user?.role;
-
-    switch (role) {
-      case 'NORMAL_USER':
-        redirect('/author/submissions');
-        break;
-      case 'ASSOCIATE_EDITOR':
-        redirect('/staff-editor/assigned');
-        break;
-      case 'CHIEF_EDITOR':
-        redirect('/editor/dashboard');
-        break;
-      case 'REVIEWER':
-        redirect('/reviewer/assignments');
-        break;
-      default:
-        redirect('/');
-    }
-  };
+export default function HeaderDropdown() {
+  const { data: session } = useSession();
+  const names = session?.user?.name?.split(' ')?.[1]?.substring(0, 1);
+  const role = session?.user.role;
 
   return (
     <div className="flex items-center gap-4">
@@ -53,13 +32,17 @@ export default function HeaderDropdown({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="cursor-pointer">
-              <AvatarFallback className="lowercase">{names}</AvatarFallback>
+              <AvatarFallback className="lowercase">
+                {names as string}
+              </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleDashboardRedirect}>
+            <DropdownMenuItem
+              onClick={() => handleDashboardRedirect(role as string)}
+            >
               My Dashboard
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => redirect('/profile')}>

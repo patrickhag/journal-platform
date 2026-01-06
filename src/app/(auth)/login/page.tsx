@@ -14,9 +14,15 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { startTransition, useActionState, useCallback, useState } from 'react';
+import {
+  startTransition,
+  useActionState,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import Image from 'next/image';
-import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { loginSchema } from '@/schemas/auth.schema';
 import { z } from 'zod';
 import { authenticate } from '@/actions/authenticate';
@@ -24,6 +30,8 @@ import { useSearchParams } from 'next/navigation';
 import Loader from '@/components/Loader';
 import Link from 'next/link';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { toast } from 'sonner';
+import { resendVerificationEmail } from '@/actions/resendVerificationEmail';
 
 export default function LoginComponent() {
   const [showPassword, setShowPassword] = useState(false);
@@ -31,6 +39,8 @@ export default function LoginComponent() {
     authenticate,
     undefined
   );
+  const lastShownErrorRef = useRef<string | null>(null);
+  const [resendingEmail, setResendingEmail] = useState(false);
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -42,10 +52,115 @@ export default function LoginComponent() {
 
   const searchparams = useSearchParams();
 
+  useEffect(() => {
+    // Show thank you message if user just verified their email
+    if (searchparams.get('verified') === 'true') {
+      toast.success(
+        'Thank you for verifying your email! Your account has been activated. You can now log in.',
+        {
+          duration: 6000,
+        }
+      );
+    }
+
+    // Handle different error messages (only show once per unique error)
+    if (errorMessage && errorMessage !== lastShownErrorRef.current) {
+      lastShownErrorRef.current = errorMessage;
+      switch (errorMessage) {
+        case 'EMAIL_NOT_VERIFIED': {
+          const userEmail = form.getValues('email');
+          toast.error(
+            'Email not verified. Check your inbox for the verification link.',
+            {
+              duration: 10000,
+              position: 'bottom-right',
+              action: userEmail
+                ? {
+                    label: 'Resend',
+                    onClick: async () => {
+                      if (resendingEmail) return;
+                      setResendingEmail(true);
+                      const loadingToast = toast.loading('Sending ...', {
+                        position: 'bottom-right',
+                      });
+                      try {
+                        const result = await resendVerificationEmail(userEmail);
+                        toast.dismiss(loadingToast);
+                        if (result.success) {
+                          toast.success(result.message, {
+                            duration: 6000,
+                            position: 'bottom-right',
+                          });
+                        } else {
+                          toast.error(result.message, {
+                            duration: 6000,
+                            position: 'bottom-right',
+                          });
+                        }
+                      } catch (error) {
+                        toast.dismiss(loadingToast);
+                        toast.error(
+                          'Failed to send verification email. Please try again later.',
+                          {
+                            duration: 6000,
+                            position: 'bottom-right',
+                          }
+                        );
+                      } finally {
+                        setResendingEmail(false);
+                      }
+                    },
+                  }
+                : undefined,
+            }
+          );
+          break;
+        }
+        case 'USER_NOT_FOUND':
+          toast.error(
+            'No account found with this email address. Please check your email or register for a new account.',
+            { duration: 6000, position: 'bottom-right' }
+          );
+          break;
+        case 'INVALID_PASSWORD':
+          toast.error(
+            'Incorrect password. Please try again or use "Forgot password?" to reset it.',
+            { duration: 6000, position: 'bottom-right' }
+          );
+          break;
+        case 'INVALID_ROLE':
+          toast.error(
+            'You do not have permission to log in with the selected role. Please select a different role.',
+            { duration: 6000, position: 'bottom-right' }
+          );
+          break;
+        case 'PASSWORD_NOT_SET':
+          toast.error(
+            'Your account password is not set. Please contact support.',
+            { duration: 6000, position: 'bottom-right' }
+          );
+          break;
+        case 'MISSING_CREDENTIALS':
+          toast.error('Please fill in all required fields.', {
+            duration: 4000,
+            position: 'bottom-right',
+          });
+          break;
+        default:
+          toast.error(errorMessage, {
+            duration: 6000,
+            position: 'bottom-right',
+          });
+      }
+    }
+  }, [errorMessage, searchparams]);
+
   const onSubmit = useCallback(
     (data: z.infer<typeof loginSchema>) => {
-      startTransition(() => {
-        formAction({
+      // Reset the last shown error ref when submitting again to allow new errors to be shown
+      lastShownErrorRef.current = null;
+      startTransition(async () => {
+        await formAction({
           ...data,
           redirect: searchparams.get('from') || undefined,
         });
@@ -73,21 +188,15 @@ export default function LoginComponent() {
           <p className="text-sm text-muted-foreground">
             Glad to see you again!
           </p>
-          {errorMessage && (
-            <div
-              className="flex p-4 items-end space-x-1 justify-center bg-red-100 rounded-md"
-              aria-live="polite"
-              aria-atomic="true"
-            >
-              <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-              <p className="text-sm text-red-500">{errorMessage}</p>
-            </div>
-          )}
         </CardHeader>
 
         <CardContent className="space-y-6">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4"
+              key={errorMessage || 'default'}
+            >
               <FormField
                 control={form.control}
                 name="email"
@@ -152,64 +261,32 @@ export default function LoginComponent() {
                         value={field.value}
                         className="flex flex-wrap gap-4"
                       >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem
-                            value="NORMAL_USER"
-                            id="NORMAL_USER"
-                          />
-                          <FormLabel
-                            htmlFor="NORMAL_USER"
-                            className="text-sm font-normal"
+                        {[
+                          { value: 'NORMAL_USER', label: 'Author' },
+                          { value: 'REVIEWER', label: 'Reviewer' },
+                          {
+                            value: 'ASSOCIATE_EDITOR',
+                            label: 'Associate Editor',
+                          },
+                          { value: 'STAFF_EDITOR', label: 'Staff Editor' },
+                          { value: 'CHIEF_EDITOR', label: 'Chief Editor' },
+                        ].map((role) => (
+                          <div
+                            className="flex items-center space-x-2"
+                            key={role.value}
                           >
-                            Author
-                          </FormLabel>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="REVIEWER" id="REVIEWER" />
-                          <FormLabel
-                            htmlFor="REVIEWER"
-                            className="text-sm font-normal"
-                          >
-                            Reviewer
-                          </FormLabel>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem
-                            value="ASSOCIATE_EDITOR"
-                            id="ASSOCIATE_EDITOR"
-                          />
-                          <FormLabel
-                            htmlFor="ASSOCIATE_EDITOR"
-                            className="text-sm font-normal"
-                          >
-                            Associate Editor
-                          </FormLabel>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem
-                            value="STAFF_EDITOR"
-                            id="STAFF_EDITOR"
-                          />
-                          <FormLabel
-                            htmlFor="STAFF_EDITOR"
-                            className="text-sm font-normal"
-                          >
-                            Staff Editor
-                          </FormLabel>
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem
-                            value="CHIEF_EDITOR"
-                            id="CHIEF_EDITOR"
-                          />
-                          <FormLabel
-                            htmlFor="CHIEF_EDITOR"
-                            className="text-sm font-normal"
-                          >
-                            Chief Editor
-                          </FormLabel>
-                        </div>
+                            <RadioGroupItem
+                              value={role.value}
+                              id={role.value}
+                            />
+                            <FormLabel
+                              htmlFor={role.value}
+                              className="text-sm font-normal"
+                            >
+                              {role.label}
+                            </FormLabel>
+                          </div>
+                        ))}
                       </RadioGroup>
                     </FormControl>
                     <FormMessage />

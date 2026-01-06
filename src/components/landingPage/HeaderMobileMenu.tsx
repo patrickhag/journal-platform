@@ -5,12 +5,7 @@ import Link from 'next/link';
 import HeaderDropdown from './headerDropdown';
 import { cn } from '@/lib/utils';
 
-export default function HeaderMobileMenu({
-  navItems,
-  pathname,
-  names,
-  session,
-}: any) {
+export default function HeaderMobileMenu({ navItems, pathname }: any) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -74,7 +69,7 @@ export default function HeaderMobileMenu({
             </Link>
           ))}
           <div className="mt-4 pt-4 border-t">
-            <HeaderDropdown names={names} session={session} />
+            <HeaderDropdown />
           </div>
         </nav>
       </div>

@@ -43,11 +43,11 @@ export const registerSchema = z
     firstName: z
       .string()
       .min(2, { message: 'first name are required' })
-      .max(50, { message: 'Your name are too long' }),
+      .max(100, { message: 'Your name are too long' }),
     lastName: z
       .string()
       .min(2, { message: 'last name should be at least 5 characters long' })
-      .max(10, { message: 'last name should not exceed 10 characters long' }),
+      .max(100, { message: 'last name should not exceed 10 characters long' }),
     email: z
       .string()
       .min(5, { message: 'Email is invalid' })

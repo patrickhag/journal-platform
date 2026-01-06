@@ -10,7 +10,7 @@ import {
   reviewers as reviewersTable,
   users,
 } from '@/db/schema';
-import { ilike, eq, and, like, sql } from 'drizzle-orm';
+import { ilike, eq, like } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import type formidable from 'formidable';
 import {
@@ -260,11 +260,17 @@ export const POST = withUpload(async ({ fields, files, upload }) => {
         ethicalReference: payload.finalSubmission.ethicalReference,
       });
 
+      return { articleId, manuscriptId: generatedManuscriptId };
+    });
+
+    // Only send emails after successful transaction completion
+    // Wrap in try-catch to prevent email failures from affecting the response
+    try {
       await notifyAdmin({
         article: payload.metadata.title,
         authorName,
         subject: 'New Article Submission',
-        articleId,
+        articleId: result.articleId,
         participant: 'AUTHOR',
       });
 
@@ -287,9 +293,10 @@ export const POST = withUpload(async ({ fields, files, upload }) => {
           });
         }
       }
-
-      return { articleId, manuscriptId: generatedManuscriptId };
-    });
+    } catch (emailError) {
+      // Log email errors but don't fail the submission
+      console.error('[api/manuscripts] email sending error', emailError);
+    }
 
     return NextResponse.json({
       message: 'Manuscript submitted successfully.',

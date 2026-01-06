@@ -4,6 +4,7 @@ import { format, parseISO } from 'date-fns';
 import { CorrectionStatus } from '@/types';
 import { toast } from 'sonner';
 import sanitizeHtml from 'sanitize-html';
+import { redirect } from 'next/navigation';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -165,11 +166,13 @@ export const redirectUserBasedOnRole = (role: string): string => {
 
   switch (role) {
     case 'NORMAL_USER':
-      linkUrl = '/submissions';
+      linkUrl = '/author/submissions';
       break;
     case 'REVIEWER':
-    case 'STAFF_EDITOR':
       linkUrl = '/reviewer/assignments';
+      break;
+    case 'STAFF_EDITOR':
+      linkUrl = '/staff-editor/assignments';
       break;
     case 'ASSOCIATE_EDITOR':
       linkUrl = '/associate-editor/assignments';
@@ -264,3 +267,22 @@ export function decodeResumptionToken(token: string) {
     return null;
   }
 }
+
+export const handleDashboardRedirect = (role: string) => {
+  switch (role) {
+    case 'NORMAL_USER':
+      redirect('/author/submissions');
+      break;
+    case 'ASSOCIATE_EDITOR':
+      redirect('/staff-editor/assigned');
+      break;
+    case 'CHIEF_EDITOR':
+      redirect('/editor/dashboard');
+      break;
+    case 'REVIEWER':
+      redirect('/reviewer/assignments');
+      break;
+    default:
+      redirect('/');
+  }
+};

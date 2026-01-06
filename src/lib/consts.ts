@@ -222,12 +222,20 @@ export const requirementsCheckboxGroup = [
 ];
 
 export const ARTICLE_TYPES = [
-  'Narative Review',
-  'Case study',
   'Case Report',
+  'Case Study',
   'Original Research',
   'Systematic Review',
-  'Meta Analysis',
+  'Metanalysis',
+  'Narrative Review',
+  'Study Protocol',
+  'Scoping Review',
+  'Editorial',
+  'Commentary',
+  'Perspective / Viewpoint',
+  'Letter to the Editor',
+  'Arising Matters',
+  'Implementation Research',
 ] as const;
 
 export const SALUTATION = ['Mr', 'Mrs', 'Ms', 'Dr', 'Prof', 'Rev'] as const;

@@ -16,8 +16,8 @@ export const useResetPassword = () => {
       );
       return response.data;
     },
-    onSuccess: ({ message, success }) => {
-      toast.success(message);
+    onSuccess: ({ message }) => {
+      toast.success(message, { position: 'top-center' });
     },
     onError: (error) => {
       const message = axios.isAxiosError(error)

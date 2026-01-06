@@ -111,7 +111,7 @@ export const ContributorsForm = () => {
                 </Label>
                 <Input
                   id={`contributors.${index}.name`}
-                  placeholder="Dr. John Smith (Include prefix if available)"
+                  placeholder="John Smith"
                   {...register(`contributors.${index}.name` as const)}
                 />
                 {contributorErrors?.name && (

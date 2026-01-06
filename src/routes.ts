@@ -32,6 +32,7 @@ export const apiAuthPrefix = [
   '/api/articles/published-articles',
   '/api/ads/home',
   '/api/oai',
+  '/api/verify-user',
 ];
 
 export const DEFAULT_LOGIN_REDIRECT = '/submissions';

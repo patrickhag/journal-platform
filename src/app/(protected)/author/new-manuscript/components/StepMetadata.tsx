@@ -166,7 +166,8 @@ export const StepMetadata = () => {
             SEO Keywords <span className="text-red-500">*</span>
           </h2>
           <p className="text-sm text-muted-foreground">
-            Add keywords separated by commas to help index your manuscript.
+            Add keywords to help index your manuscript. Type a keyword and press
+            Enter after each one to insert it.
           </p>
         </div>
         <div className="space-y-3">

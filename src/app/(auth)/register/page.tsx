@@ -37,6 +37,7 @@ import type { z } from 'zod';
 import { register } from '@/actions/register';
 import { EyeClosedIcon, EyeIcon } from 'lucide-react';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { toast } from 'sonner';
 
 export default function Register() {
   const [prevState, formAction, isPending] = useActionState(
@@ -63,6 +64,9 @@ export default function Register() {
 
   useEffect(() => {
     if (prevState?.message == 'Registration successful') {
+      toast.success('Registration successful! You can now log in.', {
+        duration: 6000,
+      });
       router.replace('/login');
     }
     if (prevState?.message == 'Email already in use.') {
@@ -72,11 +76,12 @@ export default function Register() {
       setVisible(null);
     }, 5000);
     return () => clearTimeout(timeout);
-  }, [prevState?.message]);
+  }, [prevState?.message, router]);
 
   const [passwordType, setPasswordType] = useState<'password' | 'text'>(
     'password'
   );
+
   return (
     <>
       <Card className="w-full max-w-2xl mx-auto border-gray-200 shadow-md p-2 my-24">

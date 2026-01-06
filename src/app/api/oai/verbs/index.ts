@@ -13,14 +13,16 @@ import { NextRequest } from 'next/server';
 
 const BASE_URL = process.env.NEXT_PUBLIC_URL!;
 
+const oaiDate = new Date().toISOString();
+
 export function identifyResponse() {
   return `<?xml version="1.0" encoding="UTF-8"?>
     <OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/">
-      <responseDate>${new Date().toISOString()}</responseDate>
-      <request verb="Identify">/oai</request>
+      <responseDate>${oaiDate}</responseDate>
+      <request verb="Identify">/api/oai</request>
       <Identify>
         <repositoryName>Journal of African Epidemiology and Public Health</repositoryName>
-        <baseURL>${new URL(BASE_URL).origin}/oai</baseURL>
+        <baseURL>${new URL(BASE_URL).origin}/api/oai</baseURL>
         <protocolVersion>2.0</protocolVersion>
         <adminEmail>patrickhag09@gmail.com</adminEmail>
         <earliestDatestamp>2025-01-01</earliestDatestamp>
@@ -31,19 +33,18 @@ export function identifyResponse() {
 }
 
 export function listMetadataFormats() {
-  return `<OAI-PMH>
-    <responseDate>2025-12-28T14:20:00Z</responseDate>
-  
-    <request verb="ListMetadataFormats">/api/oai</request>
-  
-    <ListMetadataFormats>
-      <metadataFormat>
-        <metadataPrefix>oai_dc</metadataPrefix>
-        <schema>http://www.openarchives.org/OAI/2.0/oai_dc.xsd</schema>
-        <metadataNamespace>http://www.openarchives.org/OAI/2.0/oai_dc/</metadataNamespace>
-      </metadataFormat>
-    </ListMetadataFormats>
-  </OAI-PMH>
+  return `<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/">
+  <responseDate>${oaiDate}</responseDate>
+  <request verb="ListMetadataFormats">/api/oai</request>
+  <ListMetadataFormats>
+    <metadataFormat>
+      <metadataPrefix>oai_dc</metadataPrefix>
+      <schema>http://www.openarchives.org/OAI/2.0/oai_dc.xsd</schema>
+      <metadataNamespace>http://www.openarchives.org/OAI/2.0/oai_dc/</metadataNamespace>
+    </metadataFormat>
+  </ListMetadataFormats>
+</OAI-PMH>
+
   `;
 }
 
@@ -103,7 +104,7 @@ export async function listIdentifiersResponse(req: NextRequest) {
 
   return `<?xml version="1.0" encoding="UTF-8"?>
     <OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/">
-      <responseDate>${new Date().toISOString()}</responseDate>
+      <responseDate>${oaiDate}</responseDate>
       <request verb="ListIdentifiers" metadataPrefix="oai_dc">
         ${url.pathname}
       </request>
@@ -465,4 +466,17 @@ export async function getRecordResponse(req: NextRequest) {
     console.error(err);
     return errorResponse('idDoesNotExist', 'Error fetching record');
   }
+}
+
+export function listSetsResponse() {
+  return `
+    <OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/">
+      <responseDate>${oaiDate}</responseDate>
+      <request verb="ListSets">/api/oai</request>
+
+      <error code="noSetHierarchy">
+        This repository does not support sets.
+      </error>
+    </OAI-PMH>
+  `;
 }

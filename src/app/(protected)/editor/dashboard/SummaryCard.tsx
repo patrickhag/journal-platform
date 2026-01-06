@@ -55,6 +55,11 @@ export default async function SummaryCard() {
       href: '/editor/manage-under-press',
     },
     {
+      title: 'Rejected',
+      value: data.rejected,
+      href: '/editor/rejected',
+    },
+    {
       title: 'Published',
       value: data.published,
       href: '/editor/manage-published',
@@ -62,7 +67,7 @@ export default async function SummaryCard() {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
       {cards.map((card) => (
         <Link
           key={card.title}

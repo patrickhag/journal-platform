@@ -5,6 +5,7 @@ import {
   listIdentifiersResponse,
   listMetadataFormats,
   listRecordsResponse,
+  listSetsResponse,
 } from './verbs';
 import { errorResponse } from '@/lib/utils';
 
@@ -29,6 +30,9 @@ export async function GET(req: NextRequest) {
       break;
     case 'GetRecord':
       xml = await getRecordResponse(req);
+      break;
+    case 'ListSets':
+      xml = listSetsResponse();
       break;
 
     default:

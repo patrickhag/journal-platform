@@ -12,24 +12,31 @@ export const GET = async (request: NextRequest) => {
   if (!token) {
     redirect('/login', RedirectType.replace);
   }
-  jwt.verify(token, process.env.NEXTAUTH_SECRET!, async (err, decoded) => {
-    if (err) {
-      redirect('/login', RedirectType.replace);
-    }
-    const user = decoded as { id: string; exp: number };
-    console.log(decoded, err, user);
 
-    const expirationTime = new Date(user.exp * 1000).getTime();
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.NEXTAUTH_SECRET!
+    ) as { id: string; exp: number };
+
+    const expirationTime = new Date(decoded.exp * 1000).getTime();
     if (expirationTime < Date.now() - RESET_PASSWORD_EXPIRATION_TIME) {
       redirect('/login', RedirectType.replace);
     }
 
     await db
       .update(users)
-      .set({ emailVerified: new Date() })
-      .where(eq(users.id, user.id))
+      .set({
+        emailVerified: new Date(),
+        isActive: true,
+      })
+      .where(eq(users.id, decoded.id))
       .execute();
+
+    // Redirect with success parameter to show thank you message
+    redirect('/login?verified=true', RedirectType.replace);
+  } catch (err) {
+    // Token verification failed
     redirect('/login', RedirectType.replace);
-  });
-  redirect('/login', RedirectType.replace);
+  }
 };

@@ -23,6 +23,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useSubmitManuscript } from '@/hooks/useSubmitManuscript';
 import { toast } from 'sonner';
 import { SubmissionNavigation } from '@/components/SubmissionNavigation';
+import { useSession } from 'next-auth/react';
 
 type StepConfig = {
   id: string;
@@ -110,6 +111,7 @@ export default function Page() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   const rawCurrentStepParam = searchParams.get('currentStep');
   const { stepIndexFromQuery, completedFromQuery } = useMemo(() => {
@@ -129,11 +131,16 @@ export default function Page() {
     };
   }, [searchParams]);
 
-  const [currentStep, setCurrentStep] = useState(stepIndexFromQuery);
-  const [completedStepIds, setCompletedStepIds] =
-    useState<string[]>(completedFromQuery);
+  // If URL has a step param on mount, start at step 0 instead
+  const initialStep =
+    rawCurrentStepParam !== null && stepIndexFromQuery !== 0
+      ? 0
+      : stepIndexFromQuery;
+  const [currentStep, setCurrentStep] = useState(initialStep);
+  const [completedStepIds, setCompletedStepIds] = useState<string[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const isInternalNavigation = useRef(false);
+  const hasValidatedOnMount = useRef(false);
 
   const formMethods = useForm<ManuscriptFormValues>({
     resolver: zodResolver(manuscriptFormSchema),
@@ -203,6 +210,17 @@ export default function Page() {
 
   useEffect(() => {
     const targetIndex = stepIndexFromQuery;
+
+    // If we're redirecting on refresh, don't sync with URL
+    if (
+      hasValidatedOnMount.current === false &&
+      rawCurrentStepParam !== null &&
+      targetIndex !== 0
+    ) {
+      setIsInitialized(true);
+      return;
+    }
+
     if (isInternalNavigation.current) {
       if (currentStep === targetIndex) {
         isInternalNavigation.current = false;
@@ -215,7 +233,19 @@ export default function Page() {
       setCurrentStep(targetIndex);
     }
     setIsInitialized(true);
-  }, [currentStep, stepIndexFromQuery]);
+  }, [currentStep, stepIndexFromQuery, rawCurrentStepParam]);
+
+  // Clear URL params on mount if there was a step param (page refresh)
+  useEffect(() => {
+    if (hasValidatedOnMount.current) return;
+
+    if (rawCurrentStepParam !== null && stepIndexFromQuery !== 0) {
+      hasValidatedOnMount.current = true;
+      router.replace(pathname, { scroll: false });
+    } else {
+      hasValidatedOnMount.current = true;
+    }
+  }, [pathname, router, rawCurrentStepParam, stepIndexFromQuery]);
 
   const goToNextStep = async () => {
     const fields = steps[currentStep].fields;

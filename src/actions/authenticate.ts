@@ -21,11 +21,55 @@ export async function authenticate(
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
-          return error.cause?.err?.message || 'Invalid credentials. Try again!';
+          // Get the error code from the custom error
+          // Check multiple possible locations for the error code
+          let errorCode: string | null = null;
+
+          // Check if error has a code property directly
+          if ('code' in error && typeof error.code === 'string') {
+            errorCode = error.code;
+          }
+          // Check error.cause for code
+          else if (
+            error.cause &&
+            typeof error.cause === 'object' &&
+            'code' in error.cause
+          ) {
+            errorCode = (error.cause as { code: string }).code;
+          }
+          // Check error message as fallback
+          else if (error.message) {
+            errorCode = error.message;
+          }
+
+          switch (errorCode) {
+            case 'EMAIL_NOT_VERIFIED':
+              return 'EMAIL_NOT_VERIFIED';
+            case 'USER_NOT_FOUND':
+              return 'USER_NOT_FOUND';
+            case 'INVALID_PASSWORD':
+              return 'INVALID_PASSWORD';
+            case 'INVALID_ROLE':
+              return 'INVALID_ROLE';
+            case 'PASSWORD_NOT_SET':
+              return 'PASSWORD_NOT_SET';
+            case 'MISSING_CREDENTIALS':
+              return 'MISSING_CREDENTIALS';
+            default:
+              // Log for debugging
+              console.error('CredentialsSignin error details:', {
+                type: error.type,
+                message: error.message,
+                cause: error.cause,
+                errorCode,
+              });
+              return 'Invalid credentials. Please check your email, password, and role.';
+          }
         default:
           return 'Something went wrong during sign-in.';
       }
     }
+
     return 'An unexpected error occurred. Please try again.';
   }
 

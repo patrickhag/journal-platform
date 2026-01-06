@@ -59,7 +59,7 @@ export const users = pgTable('user', {
   country: varchar('country', { length: 50 }),
   email: text('email').unique(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
-  isActive: boolean('is_active').default(true),
+  isActive: boolean('is_active').default(false),
   isPartOfEditorialBoard: boolean('isPartOfEditorialBoard').default(false),
   password: text('password'),
   avatar: text('avatar'),
@@ -68,6 +68,7 @@ export const users = pgTable('user', {
   expertise: text('expertise'),
   updatedAt: date('updatedAt'),
   prefix: varchar('prefix', { length: 50 }),
+
   createdAt: date('createdAt').defaultNow(),
 });
 
