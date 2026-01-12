@@ -385,6 +385,7 @@ export type TPublication = {
   pdfUrl: string;
   pageRange: string;
   slug: string;
+  references: string[];
   article: Article;
   issue: PublishedIssue;
 };

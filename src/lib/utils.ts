@@ -279,6 +279,9 @@ export const handleDashboardRedirect = (role: string) => {
     case 'CHIEF_EDITOR':
       redirect('/editor/dashboard');
       break;
+    case 'STAFF_EDITOR':
+      redirect('/staff-editor/assignments');
+      break;
     case 'REVIEWER':
       redirect('/reviewer/assignments');
       break;
@@ -286,3 +289,24 @@ export const handleDashboardRedirect = (role: string) => {
       redirect('/');
   }
 };
+
+export function buildGoogleScholarLink(reference: string) {
+  const query = encodeURIComponent(reference);
+  return `https://scholar.google.com/scholar?q=${query}`;
+}
+
+export function buildPubMedLink(reference: string) {
+  const query = encodeURIComponent(reference);
+  return `https://pubmed.ncbi.nlm.nih.gov/?term=${query}`;
+}
+
+export function extractDOI(reference: string): string | null {
+  const doiRegex = /\b10\.\d{4,9}\/[-._;()/:A-Z0-9]+\b/i;
+  const match = reference.match(doiRegex);
+  return match ? match[0] : null;
+}
+
+export function buildCrossRefLink(reference: string) {
+  const doi = extractDOI(reference);
+  return doi ? `https://doi.org/${doi}` : null;
+}

@@ -30,13 +30,18 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { reviewerSubmissionSchema, ReviewFormData } from '@/schemas/reviewer';
+import {
+  reviewerSubmissionSchema,
+  ReviewFormData,
+  ReviewSubmissionPayload,
+} from '@/schemas/reviewer';
 import { useCreateReview } from '@/hooks/useReviews';
 import Loader from '../Loader';
 import { useClearURL } from '../ClearURL';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Switch } from '../ui/switch';
 import { Input } from '../ui/input';
+import { useSession } from 'next-auth/react';
 
 type AssessmentField = Extract<
   keyof ReviewFormData,
@@ -115,6 +120,8 @@ export default function ReviewModal({
   articleId: string;
 }) {
   const searchParams = useSearchParams();
+  const { data: session } = useSession();
+  const reviwerNames = session?.user.name;
 
   const filesValidation = safeParse({
     schema: filesSchema,
@@ -133,8 +140,6 @@ export default function ReviewModal({
 
   const form = useForm<ReviewFormData>({
     resolver: zodResolver(reviewerSubmissionSchema),
-    mode: 'onChange',
-    reValidateMode: 'onChange',
     defaultValues: {
       message: '',
       status: undefined,
@@ -147,7 +152,7 @@ export default function ReviewModal({
       referencesFormatting: false,
       overallScientificQuality: false,
       confidentialComments: '',
-      reviewerSignature: '',
+      reviewerSignature: reviwerNames || '',
     },
   });
 
@@ -159,12 +164,14 @@ export default function ReviewModal({
     formState: { isValid },
   } = form;
 
-  const { mutate: createReviewMutation, isPending } = useCreateReview();
+  const { mutate: createReviewMutation, isPending } = useCreateReview(
+    assignmentId as string
+  );
 
   const clearURL = useClearURL();
 
   const onSubmit = (data: ReviewFormData) => {
-    const payloadData = {
+    const payloadData: ReviewSubmissionPayload = {
       ...data,
       articleId,
       fileIds,

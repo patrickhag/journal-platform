@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import withPermissions from '@/components/WithPermission';
 import { AssignReviewerModal } from './AssignReviewersModal';
+import ConditionalRender from '@/components/ConditionalRender';
 
 interface AssignedReviewersProps {
   articleId: string;
@@ -21,6 +22,11 @@ async function AssignedReviewers({ articleId }: AssignedReviewersProps) {
           firstName: true,
           lastName: true,
           email: true,
+        },
+      },
+      article: {
+        columns: {
+          articleStatus: true,
         },
       },
     },
@@ -39,7 +45,12 @@ async function AssignedReviewers({ articleId }: AssignedReviewersProps) {
             Assigned Reviewers
           </CardTitle>
         </CardHeader>
-        <AssignReviewerModal />
+        <ConditionalRender
+          status={assignedReviewers[0]?.article?.articleStatus as string}
+          hideOn={['PUBLISHED']}
+        >
+          <AssignReviewerModal />
+        </ConditionalRender>
       </div>
       <CardContent className="space-y-5">
         {assignedReviewers.map((assignment, index) => (
@@ -127,14 +138,12 @@ async function AssignedReviewers({ articleId }: AssignedReviewersProps) {
               )}
             </div>
 
-            {assignment.reviewer?.expertise && (
-              <div className="mt-4">
-                <h4 className="text-sm text-muted-foreground mb-2">
-                  Expertise
-                </h4>
-                <p className="text-base">{assignment.reviewer.expertise}</p>
-              </div>
-            )}
+            <div className="mt-4">
+              <h4 className="text-sm text-muted-foreground mb-2">Expertise</h4>
+              <p className="text-base">
+                {assignment?.reviewer?.expertise || 'Not provided'}
+              </p>
+            </div>
 
             {index !== assignedReviewers.length - 1 && (
               <Separator className="mt-5" />

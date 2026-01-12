@@ -238,6 +238,17 @@ export const ARTICLE_TYPES = [
   'Implementation Research',
 ] as const;
 
+export const USER_ROLES_INFO = [
+  { value: 'NORMAL_USER', label: 'Author' },
+  { value: 'REVIEWER', label: 'Reviewer' },
+  {
+    value: 'ASSOCIATE_EDITOR',
+    label: 'Associate Editor',
+  },
+  { value: 'STAFF_EDITOR', label: 'Staff Editor' },
+  { value: 'CHIEF_EDITOR', label: 'Chief Editor' },
+];
+
 export const SALUTATION = ['Mr', 'Mrs', 'Ms', 'Dr', 'Prof', 'Rev'] as const;
 export const fileFormats = ['.docx', '.pdf', '.doc'];
 

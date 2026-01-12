@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       .limit(1);
 
     if (!foundReviewer) {
-      return NextResponse.json({ message: 'Reviewer not found' });
+      return NextResponse.json({ message: 'Reviewer not found.' });
     }
 
     const { names, id: reviewerId, expertise, affiliation } = foundReviewer[0];
@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
 
     if (isReviewerAlreadyAssigned) {
       return NextResponse.json(
-        { message: 'Reviewer has already been assigned to this article' },
+        { message: 'Reviewer has already been invited to this article' },
         { status: 409 }
       );
     } else {
@@ -131,6 +131,14 @@ export async function POST(req: NextRequest) {
       where: eq(articleSubmissions.id, articleId),
     });
 
+    // SET ARTICLE TO UNDER REVIEW
+    await db
+      .update(articleSubmissions)
+      .set({
+        articleStatus: 'UNDER REVIEW',
+      })
+      .where(eq(articleSubmissions.id, articleId));
+
     // Send invitation
     await sendInvitation({
       reviewerNames: names,
@@ -146,7 +154,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       {
-        message: 'Reviewer invited and informed successfully',
+        message: 'Reviewer invited and informed successfully.',
       },
       { status: 201 }
     );

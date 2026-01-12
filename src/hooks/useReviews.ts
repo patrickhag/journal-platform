@@ -1,4 +1,4 @@
-import { ReviewFormData } from '@/schemas/reviewer';
+import { ReviewSubmissionPayload } from '@/schemas/reviewer';
 import {
   MessageResponse,
   PReview,
@@ -18,18 +18,22 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
-export const useCreateReview = () => {
+export const useCreateReview = (reviewAssignmentId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: ReviewFormData) => {
+    mutationFn: async (data: ReviewSubmissionPayload) => {
       return axios.post<MessageResponse>('/api/reviews', data);
     },
     onSuccess: ({ data }) => {
       if (data.message) {
         toast.success(data.message);
         queryClient.invalidateQueries({
-          queryKey: ['reviewerAssignments', 'particularAssignment'],
+          queryKey: [
+            'reviewerAssignments',
+            'particularAssignment',
+            reviewAssignmentId,
+          ],
         });
       }
     },

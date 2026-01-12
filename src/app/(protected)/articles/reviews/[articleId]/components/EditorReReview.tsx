@@ -59,15 +59,15 @@ const EditorReReviewModal = ({
 
   const searchParams = useSearchParams();
 
+  // HANDLE FILE UPLOADS
   const filesValidation = safeParse({
     schema: filesSchema,
     input: new URLSearchParams(searchParams.toString()),
   });
-
-  const clearURL = useClearURL();
-
   const files = filesValidation.data?.files || [];
   const fileIds = files.map((f) => f.publicId);
+
+  const clearURL = useClearURL();
 
   const { mutate, isPending } = useSendReRevision();
 

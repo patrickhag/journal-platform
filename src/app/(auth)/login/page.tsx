@@ -32,6 +32,7 @@ import Link from 'next/link';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { toast } from 'sonner';
 import { resendVerificationEmail } from '@/actions/resendVerificationEmail';
+import { USER_ROLES_INFO } from '@/lib/consts';
 
 export default function LoginComponent() {
   const [showPassword, setShowPassword] = useState(false);
@@ -39,7 +40,6 @@ export default function LoginComponent() {
     authenticate,
     undefined
   );
-  const lastShownErrorRef = useRef<string | null>(null);
   const [resendingEmail, setResendingEmail] = useState(false);
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -47,6 +47,7 @@ export default function LoginComponent() {
     defaultValues: {
       email: '',
       password: '',
+      role: 'NORMAL_USER',
     },
   });
 
@@ -63,9 +64,8 @@ export default function LoginComponent() {
       );
     }
 
-    // Handle different error messages (only show once per unique error)
-    if (errorMessage && errorMessage !== lastShownErrorRef.current) {
-      lastShownErrorRef.current = errorMessage;
+    // Show error message whenever it exists
+    if (errorMessage) {
       switch (errorMessage) {
         case 'EMAIL_NOT_VERIFIED': {
           const userEmail = form.getValues('email');
@@ -153,12 +153,10 @@ export default function LoginComponent() {
           });
       }
     }
-  }, [errorMessage, searchparams]);
+  }, [errorMessage, searchparams, form]);
 
   const onSubmit = useCallback(
     (data: z.infer<typeof loginSchema>) => {
-      // Reset the last shown error ref when submitting again to allow new errors to be shown
-      lastShownErrorRef.current = null;
       startTransition(async () => {
         await formAction({
           ...data,
@@ -261,16 +259,7 @@ export default function LoginComponent() {
                         value={field.value}
                         className="flex flex-wrap gap-4"
                       >
-                        {[
-                          { value: 'NORMAL_USER', label: 'Author' },
-                          { value: 'REVIEWER', label: 'Reviewer' },
-                          {
-                            value: 'ASSOCIATE_EDITOR',
-                            label: 'Associate Editor',
-                          },
-                          { value: 'STAFF_EDITOR', label: 'Staff Editor' },
-                          { value: 'CHIEF_EDITOR', label: 'Chief Editor' },
-                        ].map((role) => (
+                        {USER_ROLES_INFO.map((role) => (
                           <div
                             className="flex items-center space-x-2"
                             key={role.value}

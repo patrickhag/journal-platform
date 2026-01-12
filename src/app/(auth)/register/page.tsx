@@ -70,7 +70,12 @@ export default function Register() {
       router.replace('/login');
     }
     if (prevState?.message == 'Email already in use.') {
-      setVisible(prevState.message);
+      toast.error(
+        'This email address is already registered. Please use a different email or log in if you already have an account.',
+        {
+          duration: 6000,
+        }
+      );
     }
     const timeout = setTimeout(() => {
       setVisible(null);

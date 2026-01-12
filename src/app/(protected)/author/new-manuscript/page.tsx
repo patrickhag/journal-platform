@@ -111,7 +111,6 @@ export default function Page() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const { data: session } = useSession();
 
   const rawCurrentStepParam = searchParams.get('currentStep');
   const { stepIndexFromQuery, completedFromQuery } = useMemo(() => {

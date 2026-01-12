@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
 
     if (isReviewerAlreadyAssigned) {
       return NextResponse.json(
-        { message: 'Reviewer has already been assigned to this article' },
+        { message: 'Reviewer has already been invited to this article.' },
         { status: 409 }
       );
     }
@@ -86,6 +86,7 @@ export async function POST(req: NextRequest) {
       })
       .returning({ id: reviewAssignments.id });
 
+    // SET ARTICLE TO UNDER REVIEW
     await db
       .update(articleSubmissions)
       .set({

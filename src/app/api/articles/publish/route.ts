@@ -47,11 +47,16 @@ export async function POST(req: Request) {
     }
     const body = await req.json();
 
+    let isPublishedArticleInserted: {
+      id: string;
+    }[];
+
     const {
       articleId,
       issueId,
       doi,
       pageRange,
+      references,
       pdfUrl,
       title,
       issueNumber,
@@ -59,71 +64,84 @@ export async function POST(req: Request) {
     } = body;
 
     if (!pdfUrl) {
-      await db
+      isPublishedArticleInserted = await db
         .update(publishedArticles)
         .set({
           issueId,
           doi,
           pageRange,
+          references,
           slug: slugify(title),
           status: 'AWAITING DECISION',
         })
-        .where(eq(publishedArticles.articleId, articleId));
+        .where(eq(publishedArticles.articleId, articleId))
+        .returning({ id: publishedArticles.id });
     } else {
-      await db.insert(publishedArticles).values({
-        articleId,
-        issueId,
-        doi,
-        pageRange,
-        pdfUrl,
-        slug: slugify(title),
-        status: 'AWAITING DECISION',
-      });
+      isPublishedArticleInserted = await db
+        .insert(publishedArticles)
+        .values({
+          articleId,
+          issueId,
+          doi,
+          pageRange,
+          references,
+          pdfUrl,
+          slug: slugify(title),
+          status: 'AWAITING DECISION',
+        })
+        .returning();
     }
 
-    await db
-      .update(articleSubmissions)
-      .set({ articleStatus: 'AWAITING DECISION' })
-      .where(eq(articleSubmissions.id, articleId));
+    if (isPublishedArticleInserted.length !== 0) {
+      await db
+        .update(articleSubmissions)
+        .set({ articleStatus: 'AWAITING DECISION' })
+        .where(eq(articleSubmissions.id, articleId));
 
-    const article = await db.query.articleSubmissions.findFirst({
-      where: eq(articleSubmissions.id, articleId),
-      columns: {
-        id: true,
-      },
-      with: {
-        metadata: {
-          columns: {
-            title: true,
-            prefix: true,
+      const article = await db.query.articleSubmissions.findFirst({
+        where: eq(articleSubmissions.id, articleId),
+        columns: {
+          id: true,
+        },
+        with: {
+          metadata: {
+            columns: {
+              title: true,
+              prefix: true,
+            },
+          },
+          user: {
+            columns: {
+              firstName: true,
+              lastName: true,
+            },
           },
         },
-        user: {
-          columns: {
-            firstName: true,
-            lastName: true,
-          },
-        },
-      },
-    });
+      });
 
-    const authorNames = `${article?.metadata.prefix} ${article?.user.firstName} ${article?.user.lastName}`;
+      const authorNames = `${article?.metadata.prefix} ${article?.user.firstName} ${article?.user.lastName}`;
 
-    await informChiefEditorAboutOngoingPublication({
-      articleTitle: article?.metadata.title as string,
-      authorNames: authorNames,
-      issueNumber: issueNumber,
-      volumeYear: volumeYear,
-    });
-
-    return NextResponse.json({
-      message: "Article status changed, It's ready for chief-editor approval.",
-    });
+      await informChiefEditorAboutOngoingPublication({
+        articleTitle: article?.metadata.title as string,
+        authorNames: authorNames,
+        issueNumber: issueNumber,
+        volumeYear: volumeYear,
+      });
+      return NextResponse.json({
+        message:
+          "Article status changed, It's ready for chief-editor approval.",
+      });
+    }
   } catch (error) {
-    console.error('[PUBLISH_ARTICLE_POST_ERROR]', error);
-    return NextResponse.json(
-      { error: 'Failed to publish article', details: (error as Error).message },
-      { status: 500 }
-    );
+    if (error instanceof Error) {
+      console.error('[PUBLISH_ARTICLE_POST_ERROR]', error.message);
+      return NextResponse.json(
+        {
+          error: 'Failed to publish article',
+          details: (error as Error).message,
+        },
+        { status: 500 }
+      );
+    }
   }
 }

@@ -1,18 +1,9 @@
-import {
-  ARTICLE_STATUS,
-  ARTICLE_TYPES,
-  COUNTRIES,
-  REVIEW_ASSIGNMENTS_STATUS,
-  SALUTATION,
-} from '@/lib/consts';
-import { USER_ROLES } from '@/lib/roles';
 import { relations, sql } from 'drizzle-orm';
 import {
   boolean,
   date,
   integer,
   jsonb,
-  pgEnum,
   pgTable,
   primaryKey,
   text,
@@ -25,29 +16,6 @@ import postgres from 'postgres';
 const pool = postgres(process.env.DATABASE_URL!, { max: 1 });
 
 export const db = drizzle(pool);
-export const roleEnum = pgEnum('role', USER_ROLES);
-export const articleTypeEnum = pgEnum('article-type', ARTICLE_TYPES);
-export const salutationEnum = pgEnum('salutation', SALUTATION);
-export const countryEnum = pgEnum('countries', COUNTRIES);
-export const articleStatusEnum = pgEnum('article_status', ARTICLE_STATUS);
-export const notificationsEnum = pgEnum('notication_kind', [
-  'Warning',
-  'Info',
-  'Hint',
-  'Error',
-  'Confused',
-  'Ok',
-]);
-export const reviewAssignmentsStatusEnum = pgEnum(
-  'review_assignments_status',
-  REVIEW_ASSIGNMENTS_STATUS
-);
-export const volumeStatusEnum = pgEnum('volume_status', ['Active', 'Inactive']);
-export const issueStatusEnum = pgEnum('issue_status', [
-  'Draft',
-  'Published',
-  'Archived',
-]);
 
 export const users = pgTable('user', {
   id: text('id')
@@ -59,7 +27,7 @@ export const users = pgTable('user', {
   country: varchar('country', { length: 50 }),
   email: text('email').unique(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
-  isActive: boolean('is_active').default(false),
+  isActive: boolean('is_active').default(true),
   isPartOfEditorialBoard: boolean('isPartOfEditorialBoard').default(false),
   password: text('password'),
   avatar: text('avatar'),
@@ -677,6 +645,9 @@ export const publishedArticles = pgTable('published_articles', {
   slug: text('slug').unique(),
   doi: varchar('doi', { length: 100 }).unique(),
   status: varchar('status', { length: 20 }),
+  references: text('references')
+    .array()
+    .default(sql`ARRAY[]::text[]`),
   publishedAt: timestamp('published_at'),
   pageRange: varchar('page_range', { length: 20 }),
   pdfUrl: text('pdf_url'),

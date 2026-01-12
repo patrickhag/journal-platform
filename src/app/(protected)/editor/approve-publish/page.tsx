@@ -26,6 +26,8 @@ const ManagePublishedArticles = () => {
   const { data: awaitingArticles, isPending: awaitingPending } =
     useGetPublishedArticles('AWAITING DECISION');
 
+  console.log('awaitingArticles:', awaitingArticles);
+
   const [selectedPublishedArticle, setSelectedPublishedArticle] =
     useState<TPublishedArticle | null>(null);
   const [editSheetOpen, setEditSheetOpen] = useState(false);

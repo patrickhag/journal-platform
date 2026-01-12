@@ -69,6 +69,7 @@ type TPublishArticle = {
   doi?: string;
   issueId: string;
   pageRange: string;
+  references: string[];
   issueNumber: number;
   volumeYear: number;
 };

@@ -90,6 +90,7 @@ export async function POST(req: Request) {
       return reviewRecord;
     });
 
+    // Update review assignment status if accepted
     if (status === 'Accepted') {
       await db
         .update(reviewAssignments)
@@ -104,7 +105,31 @@ export async function POST(req: Request) {
         );
     }
 
-    if (status === 'Major Correction' || status === 'Minor Correction') {
+    // Check all reviews for this article to determine article status
+    const allReviews = await dbWithQuery.query.reviews.findMany({
+      where: eq(reviews.articleId, articleId),
+      columns: {
+        status: true,
+      },
+    });
+
+    const hasAccepted = allReviews.some(
+      (review) => review.status === 'Accepted'
+    );
+    const hasCorrection = allReviews.some(
+      (review) =>
+        review.status === 'Major Correction' ||
+        review.status === 'Minor Correction'
+    );
+
+    // If there's both an accepted review and a correction review, keep article in CORRECTION status
+    if (hasAccepted && hasCorrection) {
+      await db
+        .update(articleSubmissions)
+        .set({ articleStatus: 'CORRECTION' })
+        .where(eq(articleSubmissions.id, articleId));
+    } else if (status === 'Major Correction' || status === 'Minor Correction') {
+      // Only set to CORRECTION if there's no accepted review
       await db
         .update(articleSubmissions)
         .set({ articleStatus: 'CORRECTION' })

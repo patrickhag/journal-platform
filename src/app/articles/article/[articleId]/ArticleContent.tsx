@@ -51,6 +51,7 @@ import {
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
 import { copyToClipboard } from '@/lib/utils';
+import { ReferencesList } from '../../components/References';
 
 export default function ArticleContent() {
   const { articleId } = useParams();
@@ -458,6 +459,7 @@ export default function ArticleContent() {
                 ))}
               </div>
             </div>
+            <ReferencesList references={article.references} />
 
             {/* Citation Modal */}
             <Dialog open={showCiteModal} onOpenChange={setShowCiteModal}>

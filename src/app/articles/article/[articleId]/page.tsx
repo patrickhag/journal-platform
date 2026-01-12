@@ -126,25 +126,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function PublicArticleView({
-  params,
-}: {
-  params: Promise<{ articleId: string }>;
-}) {
-  const { articleId } = await params;
-
-  // Verify article exists
-  const article = await db.query.publishedArticles.findFirst({
-    where: eq(publishedArticles.slug, articleId),
-    columns: {
-      id: true,
-    },
-  });
-
-  if (!article) {
-    notFound();
-  }
-
+export default async function PublicArticleView() {
   return (
     <div className="px-2.5 md:px-8 py-2.5 md:py-6">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">

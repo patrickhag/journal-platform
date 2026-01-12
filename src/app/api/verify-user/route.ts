@@ -14,10 +14,10 @@ export const GET = async (request: NextRequest) => {
   }
 
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.NEXTAUTH_SECRET!
-    ) as { id: string; exp: number };
+    const decoded = jwt.verify(token, process.env.NEXTAUTH_SECRET!) as {
+      id: string;
+      exp: number;
+    };
 
     const expirationTime = new Date(decoded.exp * 1000).getTime();
     if (expirationTime < Date.now() - RESET_PASSWORD_EXPIRATION_TIME) {

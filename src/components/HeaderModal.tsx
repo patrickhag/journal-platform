@@ -11,8 +11,15 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { handleDashboardRedirect } from '@/lib/utils';
 
-export default function HeaderModal({ name }: { name: string }) {
+export default function HeaderModal({
+  name,
+  role,
+}: {
+  name: string;
+  role: string;
+}) {
   const router = useRouter();
 
   return (
@@ -25,7 +32,7 @@ export default function HeaderModal({ name }: { name: string }) {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.replace('/submissions')}>
+        <DropdownMenuItem onClick={() => handleDashboardRedirect(role)}>
           My Dashboard
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => router.replace('/profile')}>

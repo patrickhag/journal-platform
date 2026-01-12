@@ -39,7 +39,7 @@ export const HeaderElement = async () => {
       <div className="flex items-center gap-2 md:gap-4">
         <NotificationsModal />
 
-        <HeaderModal name={name} />
+        <HeaderModal name={name} role={role} />
       </div>
     </>
   );

@@ -28,7 +28,7 @@ import { NotifyStaffEditorAboutAssociateEditorCorrection } from '@/components/em
 import { SubscriberEmail } from '@/components/emails/sendSubscriberEmail';
 import { RemindReviewer } from '@/components/emails/remind-reviewer';
 import { RemindEditor } from '@/components/emails/remind-editor';
-import { resend, transporter } from './emailConfig';
+import { resend } from './emailConfig';
 import { NotifyStaffEditorAboutReviewerAcceptance } from '@/components/emails/notify-staff-editor-about-review-acceptance';
 import { StaffEditorEmailTemplate } from '@/components/emails/inform-associate-editor';
 import { NotifyReviewerAboutFinalizedAssignment } from '@/components/emails/notify-reviewer-about-finalised-status';
@@ -52,19 +52,22 @@ export const sendPasswordResetEmail = async ({
     const emailHtml = await render(
       <EmailPasswordReset url={url} name={name} />
     );
-    const options = {
-      from: process.env.EMAIL_USER,
+    // Use resend to send the email
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
       to: toEmail,
       subject,
       html: emailHtml,
-    };
+    });
 
-    const result = await transporter.sendMail(options);
+    // Check for any error thrown or error in the result object
+    if (result.error) {
+      throw result.error;
+    }
 
     return {
       success: true,
-      messageId: result.messageId,
-      accepted: result.accepted,
+      accepted: [toEmail],
     };
   } catch (error) {
     console.error('Error sending password reset email:', {
@@ -93,25 +96,30 @@ export const notifyContibutor = async ({
   article: string;
   contributor: string;
 }) => {
-  const emailHtml = await render(
-    <NotifiyContributor
-      contributor={contributor}
-      originalAuthor={originalAuthor}
-      article={article}
-    />
-  );
+  try {
+    const emailHtml = await render(
+      <NotifiyContributor
+        contributor={contributor}
+        originalAuthor={originalAuthor}
+        article={article}
+      />
+    );
 
-  const options = {
-    from: process.env.EMAIL_USER,
-    to: toEmail,
-    subject,
-    html: emailHtml,
-  };
-  const result = await transporter.sendMail(options);
-  if (result.accepted.length === 0) {
-    return false;
-  } else {
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      to: toEmail,
+      subject,
+      html: emailHtml,
+    });
+
+    if (result.error) {
+      throw result.error;
+    }
+
     return true;
+  } catch (error) {
+    console.error('Error sending contributor notification:', error);
+    return false;
   }
 };
 
@@ -126,25 +134,30 @@ export const remindReviewerAboutRevision = async ({
   reviewerName: string;
   dueDate: string;
 }) => {
-  const emailHtml = await render(
-    <RemindReviewer
-      articleTitle={articleTitle}
-      reviewerName={reviewerName}
-      dueDate={dueDate}
-    />
-  );
+  try {
+    const emailHtml = await render(
+      <RemindReviewer
+        articleTitle={articleTitle}
+        reviewerName={reviewerName}
+        dueDate={dueDate}
+      />
+    );
 
-  const options = {
-    from: process.env.EMAIL_USER,
-    to: toEmail,
-    subject: 'Reminder: Please review your assigned manuscript',
-    html: emailHtml,
-  };
-  const result = await transporter.sendMail(options);
-  if (result.accepted.length === 0) {
-    return false;
-  } else {
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      to: toEmail,
+      subject: 'Reminder: Please review your assigned manuscript',
+      html: emailHtml,
+    });
+
+    if (result.error) {
+      throw result.error;
+    }
+
     return true;
+  } catch (error) {
+    console.error('Error sending reviewer reminder:', error);
+    return false;
   }
 };
 
@@ -159,25 +172,30 @@ export const remindAssociateEditorAboutAssignment = async ({
   editorName: string;
   dueDate: string;
 }) => {
-  const emailHtml = await render(
-    <RemindEditor
-      articleTitle={articleTitle}
-      editorName={editorName}
-      dueDate={dueDate}
-    />
-  );
+  try {
+    const emailHtml = await render(
+      <RemindEditor
+        articleTitle={articleTitle}
+        editorName={editorName}
+        dueDate={dueDate}
+      />
+    );
 
-  const options = {
-    from: process.env.EMAIL_USER,
-    to: toEmail,
-    subject: 'Reminder: Please complete your assigned manuscript formatting',
-    html: emailHtml,
-  };
-  const result = await transporter.sendMail(options);
-  if (result.accepted.length === 0) {
-    return false;
-  } else {
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      to: toEmail,
+      subject: 'Reminder: Please complete your assigned manuscript formatting',
+      html: emailHtml,
+    });
+
+    if (result.error) {
+      throw result.error;
+    }
+
     return true;
+  } catch (error) {
+    console.error('Error sending editor reminder:', error);
+    return false;
   }
 };
 
@@ -202,25 +220,33 @@ export const sendInvitation = async ({
   abstract: string;
   reviewAssignmentId: string;
 }) => {
-  const emailHtml = await render(
-    <SendInvitation
-      abstract={abstract}
-      reviewerName={reviewerNames}
-      articleTitle={articleTitle}
-      isAlreadyUser={isAlreadyUser}
-      articleId={articleId}
-      dueDate={dueDate}
-      password={password as string}
-      reviewAssignmentId={reviewAssignmentId}
-    />
-  );
-  const options = {
-    from: process.env.EMAIL_USER,
-    to: toEmail,
-    subject: 'You have been invited to review a manuscript.',
-    html: emailHtml,
-  };
-  await transporter.sendMail(options);
+  try {
+    const emailHtml = await render(
+      <SendInvitation
+        abstract={abstract}
+        reviewerName={reviewerNames}
+        articleTitle={articleTitle}
+        isAlreadyUser={isAlreadyUser}
+        articleId={articleId}
+        dueDate={dueDate}
+        password={password as string}
+        reviewAssignmentId={reviewAssignmentId}
+      />
+    );
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      to: toEmail,
+      subject: 'You have been invited to review a manuscript.',
+      html: emailHtml,
+    });
+
+    if (result.error) {
+      throw result.error;
+    }
+  } catch (error) {
+    console.error('Error sending invitation:', error);
+    throw error;
+  }
 };
 
 export const sendAssociateEditorInvitation = async ({
@@ -236,21 +262,29 @@ export const sendAssociateEditorInvitation = async ({
   articleId: string;
   editorEmail: string;
 }) => {
-  const emailHtml = await render(
-    <SendAssociateEditorInvitation
-      editorName={editorName}
-      articleTitle={articleTitle}
-      articleId={articleId}
-      dueDate={dueDate}
-    />
-  );
-  const options = {
-    from: process.env.EMAIL_USER,
-    to: editorEmail,
-    subject: 'You have been invited to format a manuscript.',
-    html: emailHtml,
-  };
-  await transporter.sendMail(options);
+  try {
+    const emailHtml = await render(
+      <SendAssociateEditorInvitation
+        editorName={editorName}
+        articleTitle={articleTitle}
+        articleId={articleId}
+        dueDate={dueDate}
+      />
+    );
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      to: editorEmail,
+      subject: 'You have been invited to format a manuscript.',
+      html: emailHtml,
+    });
+
+    if (result.error) {
+      throw result.error;
+    }
+  } catch (error) {
+    console.error('Error sending associate editor invitation:', error);
+    throw error;
+  }
 };
 
 export const sendVerifyToken = async ({
@@ -262,20 +296,27 @@ export const sendVerifyToken = async ({
   token: string;
   name?: string;
 }) => {
-  const emailHtml = await render(
-    <SendVerifyEmail
-      link={`${process.env.NEXT_PUBLIC_URL}/api/verify-user?id=${token}`}
-      name={name}
-    />
-  );
-  const options = {
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: 'Please verify your account',
-    html: emailHtml,
-  };
+  try {
+    const emailHtml = await render(
+      <SendVerifyEmail
+        link={`${process.env.NEXT_PUBLIC_URL}/api/verify-user?id=${token}`}
+        name={name}
+      />
+    );
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      to: email,
+      subject: 'Please verify your account',
+      html: emailHtml,
+    });
 
-  await transporter.sendMail(options);
+    if (result.error) {
+      throw result.error;
+    }
+  } catch (error) {
+    console.error('Error sending verification email:', error);
+    throw error;
+  }
 };
 
 export const rejectManuscriptEmail = async ({
@@ -287,16 +328,24 @@ export const rejectManuscriptEmail = async ({
   authorEmails: string[];
   names: string;
 }) => {
-  const emailHtml = await render(
-    <RejectManuscript article={article} names={names} />
-  );
-  const options = {
-    from: process.env.EMAIL_USER,
-    to: authorEmails.map((email) => email),
-    subject: 'Your manuscript has been rejected',
-    html: emailHtml,
-  };
-  await transporter.sendMail(options);
+  try {
+    const emailHtml = await render(
+      <RejectManuscript article={article} names={names} />
+    );
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      to: authorEmails,
+      subject: 'Your manuscript has been rejected',
+      html: emailHtml,
+    });
+
+    if (result.error) {
+      throw result.error;
+    }
+  } catch (error) {
+    console.error('Error sending rejection email:', error);
+    throw error;
+  }
 };
 
 export const acceptManuscriptEmail = async ({
@@ -308,16 +357,24 @@ export const acceptManuscriptEmail = async ({
   authorEmail: string;
   names: string;
 }) => {
-  const emailHtml = await render(
-    <AcceptManuscriptEmailTemplate article={nameOfArticle} names={names} />
-  );
-  const options = {
-    from: process.env.EMAIL_USER,
-    to: authorEmail,
-    subject: 'Your manuscript has been accepted',
-    html: emailHtml,
-  };
-  await transporter.sendMail(options);
+  try {
+    const emailHtml = await render(
+      <AcceptManuscriptEmailTemplate article={nameOfArticle} names={names} />
+    );
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      to: authorEmail,
+      subject: 'Your manuscript has been accepted',
+      html: emailHtml,
+    });
+
+    if (result.error) {
+      throw result.error;
+    }
+  } catch (error) {
+    console.error('Error sending acceptance email:', error);
+    throw error;
+  }
 };
 
 export const informStaffEditorAboutCorrection = async ({
@@ -331,20 +388,28 @@ export const informStaffEditorAboutCorrection = async ({
   articleTitle: string;
   staffEditorName: string;
 }) => {
-  const emailHtml = await render(
-    <NotifyStaffEditorAboutAssociateEditorCorrection
-      articleTitle={articleTitle}
-      associateEditorName={associateEditorName}
-      staffEditorName={staffEditorName}
-    />
-  );
-  const options = {
-    from: process.env.EMAIL_USER,
-    to: staffEditorEmail,
-    subject: 'Associate Editor has edited the manuscript',
-    html: emailHtml,
-  };
-  await transporter.sendMail(options);
+  try {
+    const emailHtml = await render(
+      <NotifyStaffEditorAboutAssociateEditorCorrection
+        articleTitle={articleTitle}
+        associateEditorName={associateEditorName}
+        staffEditorName={staffEditorName}
+      />
+    );
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      to: staffEditorEmail,
+      subject: 'Associate Editor has edited the manuscript',
+      html: emailHtml,
+    });
+
+    if (result.error) {
+      throw result.error;
+    }
+  } catch (error) {
+    console.error('Error sending staff editor correction notification:', error);
+    throw error;
+  }
 };
 
 export const notifyAdmin = async ({
@@ -373,12 +438,21 @@ export const notifyAdmin = async ({
       />
     );
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: staffEditorEmail,
+    if (!staffEditorEmail) {
+      throw new Error('Staff editor email is required');
+    }
+
+    const recipientEmail: string = staffEditorEmail;
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      to: recipientEmail,
       subject: subject,
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -407,12 +481,16 @@ export const notifyStaffEditor = async ({
       />
     );
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
       to: staffEditorEmail,
       subject: 'You have been assigned as Staff Editor to an article',
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -446,12 +524,16 @@ export const notifyUser = async ({
       />
     );
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
       to: authorEmail,
       subject: subject,
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -475,12 +557,16 @@ export const notifyAdminAboutProof = async ({
       />
     );
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.ADMIN_EMAIL,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      to: process.env.ADMIN_EMAIL!,
       subject: 'Author Submitted Updated Proof for Review',
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -543,12 +629,16 @@ export const notifyUserAboutEditorDecision = async ({
         throw new Error('Invalid decision type');
     }
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
       to: authorEmail,
       subject,
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -576,8 +666,8 @@ export const notifyEditorAboutRevision = async ({
   reviewerEmail?: string;
   associateEditorEmail?: string;
 }) => {
-  let subject;
-  let emailHtml;
+  let subject: string;
+  let emailHtml: string;
   switch (type) {
     case 'AUTHOR':
       subject = 'Revised Manuscript Ready for Re-evaluation';
@@ -598,17 +688,35 @@ export const notifyEditorAboutRevision = async ({
           reviewerName={reviewerName as string}
         />
       );
-    default:
       break;
+    default:
+      throw new Error(`Invalid type: ${type}`);
   }
 
-  const options = {
-    from: process.env.EMAIL_USER,
-    to: type === 'REVIEWER' ? reviewerEmail : associateEditorEmail,
-    subject: 'Revised Manuscript Ready for Re-evaluation',
-    html: emailHtml,
-  };
-  await transporter.sendMail(options);
+  try {
+    const recipientEmail =
+      type === 'REVIEWER' ? reviewerEmail : associateEditorEmail;
+    if (!recipientEmail) {
+      throw new Error(
+        `${type === 'REVIEWER' ? 'Reviewer' : 'Associate editor'} email is required`
+      );
+    }
+
+    const validRecipientEmail: string = recipientEmail;
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      to: validRecipientEmail,
+      subject: 'Revised Manuscript Ready for Re-evaluation',
+      html: emailHtml,
+    });
+
+    if (result.error) {
+      throw result.error;
+    }
+  } catch (error) {
+    console.error('Error sending revision notification:', error);
+    throw error;
+  }
 };
 
 export const notifyStaffEditorAboutReviewStatus = async ({
@@ -645,12 +753,16 @@ export const notifyStaffEditorAboutReviewStatus = async ({
       />
     );
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
       to: staffEditorEmail,
       subject: 'Reviewer decision',
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -676,12 +788,16 @@ export const notifyReviewerAboutReReview = async ({
       />
     );
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
       to: reviewerEmail,
       subject: 'Manuscript Revision Requested',
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -721,12 +837,16 @@ export const notifyAllReviewersAboutFinalStatus = async ({
       />
     );
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
       to: reviewerEmail,
       subject: 'Editorial decision',
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -755,12 +875,16 @@ export const associateNotifyReviewer = async ({
       />
     );
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
       to: reviewerEmail,
       subject: 'Invitation of reviewing a manuscript',
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -779,16 +903,25 @@ export const thankAuthorAboutSubmission = async ({
   authorEmail?: string;
 }) => {
   try {
+    if (!authorEmail) {
+      throw new Error('Author email is required');
+    }
+
+    const recipientEmail: string = authorEmail;
     const emailHtml = await render(
       <ThankAuthorEmailTemplate names={authorNames} article={articleTitle} />
     );
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: authorEmail,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      to: recipientEmail,
       subject: 'Thank you for submitting your article',
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -820,12 +953,16 @@ export const informChiefEditorAboutAcceptance = async ({
       />
     );
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.EDITOR_IN_CHIEF_EMAIL,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      to: process.env.EDITOR_IN_CHIEF_EMAIL!,
       subject: 'Associate editor has accepted the manuscript.',
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -858,8 +995,8 @@ export const informStaffEditorAboutReviewerInvitation = async ({
       />
     );
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
       to: associateEditorEmail,
       subject:
         status === 'accepted'
@@ -867,6 +1004,10 @@ export const informStaffEditorAboutReviewerInvitation = async ({
           : 'Reviwer has declined the invitation to review the manuscript.',
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -898,8 +1039,8 @@ export const informStaffEditorAboutAssociateInvitation = async ({
       />
     );
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
       to: staffEditorEmail,
       subject:
         status === 'accepted'
@@ -907,6 +1048,10 @@ export const informStaffEditorAboutAssociateInvitation = async ({
           : 'Associate editor has declined the invitation to edit the manuscript.',
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -936,12 +1081,16 @@ export const informingAuthorNReviewer = async ({
         userType={userType}
       />
     );
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
       to: participantEmail,
       subject,
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -976,12 +1125,16 @@ export const authorInformStaffEditor = async ({
       />
     );
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
       to: staffEditorEmail,
       subject: `Author reply received for "${articleTitle}"`,
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -1016,12 +1169,16 @@ export const authorInformReviewer = async ({
       />
     );
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
       to: reviewerEmail,
       subject: `Author reply received for "${articleTitle}"`,
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -1059,8 +1216,8 @@ export const notifyAssociateEditor = async ({
       />
     );
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
       to: associateEditorEmail,
       subject:
         status === 'APPROVED'
@@ -1068,6 +1225,10 @@ export const notifyAssociateEditor = async ({
           : `Further action required: "${articleTitle}"`,
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -1088,12 +1249,16 @@ export const sendEmailToSubscribers = async ({
   try {
     const emailHtml = await render(<SubscriberEmail email={message} />);
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
       to: subscriberEmail,
       subject: subject,
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {
@@ -1123,12 +1288,16 @@ export const informChiefEditorAboutOngoingPublication = async ({
       />
     );
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: process.env.EDITOR_IN_CHIEF_EMAIL,
+    const result = await resend.emails.send({
+      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      to: process.env.EDITOR_IN_CHIEF_EMAIL!,
       subject: 'Ongoing publication awaits your acceptance',
       html: emailHtml,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
 
     return { success: true };
   } catch (error) {

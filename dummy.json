@@ -1,23 +1,47 @@
 [
   {
     "section_type": "original study",
-    "comments_for_the_editor": "This study investigates new biomarkers in lung cancer diagnosis.",
-    "prefix": "Dr.",
-    "title": "Exploring Biomarkers for Early Lung Cancer Detection",
-    "subtitle": "A Prospective Clinical Investigation",
-    "abstract": "This original study examines potential biomarkers for early detection of lung cancer using patient samples and statistical modeling over 18 months.",
+    "comments_for_the_editor": "This research identifies novel genetic factors influencing breast cancer susceptibility.",
+    "prefix": "Prof.",
+    "title": "Genomic Risk Profiling in Early Breast Cancer",
+    "subtitle": "Results from a Multicenter Cohort Analysis",
+    "abstract": "We undertook a multicenter original study using next-generation sequencing to identify genetic variants associated with breast cancer risk in 1200 women.",
     "contributors": [
       {
-        "names_of_the_contributor": "Alice Morgan",
-        "email": "alice.morgan@example.com",
-        "salutation": "Dr.",
-        "country": "United States",
+        "names_of_the_contributor": "Jane Lee",
+        "email": "patpatix434@gmail.com",
+        "salutation": "Prof.",
+        "country": "United Kingdom",
         "userDetails": {
-          "ORCID_ID": "0000-0002-4567-8901",
-          "Homepage": "https://alice-morgan-research.org"
+          "ORCID_ID": "0000-0001-1122-3344",
+          "Homepage": "https://genome-janelee.co.uk"
         },
-        "affiliation": "Harvard Medical School",
-        "bio_statement": "Dr. Alice Morgan is a medical researcher focusing on oncology diagnostics."
+        "affiliation": "LifeGenomics Institute",
+        "bio_statement": "Prof. Jane Lee leads research on genetic epidemiology and personalized medicine in cancer."
+      },
+      {
+        "names_of_the_contributor": "Luis Esteban",
+        "email": "jaypaty35@gmail.com",
+        "salutation": "Dr.",
+        "country": "Spain",
+        "userDetails": {
+          "ORCID_ID": "0000-0002-5566-7788",
+          "Homepage": "https://luis-esteban-lab.es"
+        },
+        "affiliation": "Biomedical Sciences Department, Madrid",
+        "bio_statement": "Dr. Luis Esteban specializes in genomic data analysis and has contributed to several multinational cancer research projects."
+      },
+      {
+        "names_of_the_contributor": "Mei Zhang",
+        "email": "ahmedsubwarati@gmail.com",
+        "salutation": "Dr.",
+        "country": "China",
+        "userDetails": {
+          "ORCID_ID": "0000-0003-9999-8888",
+          "Homepage": "https://zhang-lab.cn"
+        },
+        "affiliation": "National Genomics Center, Beijing",
+        "bio_statement": "Dr. Mei Zhang focuses on genetic epidemiology and cross-population studies in cancer genomics."
       }
     ]
   },

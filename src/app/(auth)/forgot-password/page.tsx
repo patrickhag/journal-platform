@@ -63,13 +63,15 @@ export default function ResetPasswordPage() {
     <Card className="w-full max-w-lg mx-auto p-4 mt-32">
       <CardHeader className="space-y-1 text-center">
         <div className="flex justify-center mb-4">
-          <Image
-            src={'/logo.png'}
-            alt="logo"
-            width={40}
-            height={40}
-            className="mx-auto"
-          />
+          <Link href="/">
+            <Image
+              src={'/logo.png'}
+              alt="logo"
+              width={40}
+              height={40}
+              className="mx-auto"
+            />
+          </Link>
         </div>
         <h2 className="text-2xl font-semibold">Reset your password</h2>
         {showMessage && message && (
@@ -154,7 +156,7 @@ export default function ResetPasswordPage() {
               {isPending ? (
                 <Loader text="Resetting password..." />
               ) : (
-                'Send Reset Link'
+                'Reset Password'
               )}
             </Button>
           </form>

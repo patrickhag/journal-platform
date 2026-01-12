@@ -15,14 +15,7 @@ import { useSession } from 'next-auth/react';
 export default function ReviewerDashboard() {
   const { data, isPending } = useGetReviewerAssignments();
 
-  console.log('data:', data);
-
   const reviewerAssignments = data?.assignedArticles;
-
-  const { data: session } = useSession();
-  const reviewerId = session?.user.id;
-
-  console.log('reviewerId:', reviewerId);
 
   const [reviewModal, setReviewModal] = useState<{
     isOpen: boolean;

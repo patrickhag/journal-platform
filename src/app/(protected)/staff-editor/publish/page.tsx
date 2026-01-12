@@ -17,27 +17,26 @@ import Link from 'next/link';
 
 const PublishedArticles = () => {
   const [sheetOpen, setSheetOpen] = useState<{
-    open: boolean;
     articleId?: string;
     articleTitle?: string;
     pdfUrl?: string;
   }>({
-    open: false,
     articleId: '',
     articleTitle: '',
     pdfUrl: '',
   });
   const { data: acceptedManuscripts, isPending } = useGetAcceptedArticles();
+  const [openPublishManuscriptSheet, setOpenPublishManuscriptSheet] =
+    useState(false);
 
   const handlePublishManuscript = (
     articleId: string,
     articleTitle: string,
     pdfUrl: string
   ) => {
-    setSheetOpen({ open: true, articleId, articleTitle, pdfUrl });
+    setSheetOpen({ articleId, articleTitle, pdfUrl });
+    setOpenPublishManuscriptSheet(true);
   };
-
-  const onClose = () => setSheetOpen({ open: false });
 
   return (
     <>
@@ -119,11 +118,11 @@ const PublishedArticles = () => {
           </CardContent>
         </Card>
       </div>
-      {sheetOpen.open && (
+      {openPublishManuscriptSheet && (
         <PublishManuscriptSheet
           articleId={sheetOpen.articleId as string}
-          open={sheetOpen.open}
-          onOpenChange={onClose}
+          open={openPublishManuscriptSheet}
+          onOpenChange={setOpenPublishManuscriptSheet}
           title={sheetOpen.articleTitle as string}
           pdfUrl={sheetOpen.pdfUrl as string}
         />

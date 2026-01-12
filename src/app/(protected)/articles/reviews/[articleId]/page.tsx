@@ -4,6 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   CheckSquare,
   CheckCircle2,
@@ -34,6 +35,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 type ReviewAssessmentRecord = {
   scopeRelevanceOriginality: boolean;
@@ -190,6 +196,8 @@ export default function ReviewsPage() {
 
   const { data: reviewData, isPending } = useGetReviews(articleId as string);
 
+  console.log('reviewData:', reviewData);
+
   const [openEditor, setOpenEditor] = useState(false);
   const [openAssignEditorDialog, setopenAssignEditorDialog] = useState(false);
   const [openRereview, setOpenRereview] = useState(false);
@@ -236,35 +244,55 @@ export default function ReviewsPage() {
               <CardTitle>Article Information</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-3 gap-5">
-                <div>
-                  <h3 className="font-medium">Title</h3>
-                  <Link
-                    href={`${process.env.NEXT_PUBLIC_URL}/articles/${articleId}`}
-                  >
-                    <p className="text-sm text-muted-foreground hover:underline line-clamp-1">
-                      {reviewData?.metadata.title}
-                    </p>
-                  </Link>
-                </div>
-                <div>
-                  <h3 className="font-medium">Author</h3>
-                  <p>
-                    {reviewData?.user.firstName +
-                      ' ' +
-                      reviewData?.user.lastName}
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-medium">Total Reviews</h3>
-                  <div className="flex items-center gap-2 mt-2">
-                    <FileSearch2 className="h-4 w-4" />
-                    <span className="text-sm">
-                      {reviewData?.reviews.length} Submitted Review(s)
-                    </span>
+              {isPending || !reviewData ? (
+                <div className="grid grid-cols-3 gap-5">
+                  <div>
+                    <Skeleton className="h-5 w-12 mb-2" />
+                    <Skeleton className="h-4 w-full" />
+                  </div>
+                  <div>
+                    <Skeleton className="h-5 w-16 mb-2" />
+                    <Skeleton className="h-4 w-32" />
+                  </div>
+                  <div>
+                    <Skeleton className="h-5 w-24 mb-2" />
+                    <div className="flex items-center gap-2 mt-2">
+                      <Skeleton className="h-4 w-4" />
+                      <Skeleton className="h-4 w-32" />
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="grid grid-cols-3 gap-5">
+                  <div>
+                    <h3 className="font-medium">Title</h3>
+                    <Link
+                      href={`${process.env.NEXT_PUBLIC_URL}/articles/${articleId}`}
+                    >
+                      <p className="text-sm text-muted-foreground hover:underline line-clamp-1">
+                        {reviewData?.metadata.title}
+                      </p>
+                    </Link>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Author</h3>
+                    <p>
+                      {reviewData?.user.firstName +
+                        ' ' +
+                        reviewData?.user.lastName}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Total Reviews</h3>
+                    <div className="flex items-center gap-2 mt-2">
+                      <FileSearch2 className="h-4 w-4" />
+                      <span className="text-sm">
+                        {reviewData?.reviews.length} Submitted Review(s)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
           <Tabs defaultValue="reviews">
@@ -523,14 +551,37 @@ export default function ReviewsPage() {
                 Make Decision
               </Button>
 
-              <Button
-                className="bg-emerald-600 hover:bg-emerald-700"
-                onClick={() => setopenAssignEditorDialog(true)}
-                disabled={!canAssignAssociateEditor}
-              >
-                <UserCheck className="mr-2 h-4 w-4" />
-                Assign Associate Editor
-              </Button>
+              {!canAssignAssociateEditor ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>
+                      <Button
+                        className="bg-emerald-600 hover:bg-emerald-700 w-full"
+                        onClick={() => setopenAssignEditorDialog(true)}
+                        disabled
+                        tabIndex={-1}
+                      >
+                        <UserCheck className="mr-2 h-4 w-4" />
+                        Assign Associate Editor
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      There should be at-least two accepted reviews in order to
+                      assign an associate-editor
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <Button
+                  className="bg-emerald-600 hover:bg-emerald-700"
+                  onClick={() => setopenAssignEditorDialog(true)}
+                >
+                  <UserCheck className="mr-2 h-4 w-4" />
+                  Assign Associate Editor
+                </Button>
+              )}
             </div>
           )}
         </div>

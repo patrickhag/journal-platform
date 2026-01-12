@@ -48,16 +48,8 @@ export async function PUT(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const {
-      name,
-      salutation,
-      email,
-      country,
-      orcid,
-      affiliation,
-      bio,
-      role,
-    } = await req.json();
+    const { name, salutation, email, country, orcid, affiliation, bio, role } =
+      await req.json();
 
     const updatedContributor = await db
       .update(contributors)
@@ -118,10 +110,7 @@ export async function POST(
     });
 
     if (!article) {
-      return NextResponse.json(
-        { error: 'Article not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Article not found' }, { status: 404 });
     }
 
     // Check if user owns the article and article is not published
@@ -132,16 +121,8 @@ export async function POST(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const {
-      name,
-      salutation,
-      email,
-      country,
-      orcid,
-      affiliation,
-      bio,
-      role,
-    } = await req.json();
+    const { name, salutation, email, country, orcid, affiliation, bio, role } =
+      await req.json();
 
     const newContributor = await db
       .insert(contributors)
@@ -179,4 +160,3 @@ export async function POST(
     );
   }
 }
-

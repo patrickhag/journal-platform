@@ -188,3 +188,9 @@ export type TManuscripts = {
 };
 
 export type ReviewFormData = z.infer<typeof reviewerSubmissionSchema>;
+
+export type ReviewSubmissionPayload = ReviewFormData & {
+  articleId: string;
+  fileIds: string[];
+  reviewAssignmentId: string;
+};

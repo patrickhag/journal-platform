@@ -30,9 +30,6 @@ export default async function InvitationPage({
   const reviewAssignmentId = search.reviewAssignmentId as string;
   const inviteStatus = search.inviteStatus as string | undefined;
 
-  console.log('inviteStatus:', inviteStatus);
-  console.log('reviewAssignmentId:', reviewAssignmentId);
-
   // If no reviewAssignmentId or inviteStatus, redirect
   if (!reviewAssignmentId || inviteStatus === undefined) {
     redirect(`/reviewer/assignments`);

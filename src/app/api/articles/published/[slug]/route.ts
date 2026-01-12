@@ -21,6 +21,7 @@ export async function GET(
         pdfUrl: true,
         pageRange: true,
         slug: true,
+        references: true,
       },
       with: {
         article: {

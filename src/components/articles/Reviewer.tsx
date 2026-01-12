@@ -3,7 +3,6 @@
 import { ReachOut } from './ReachOut';
 import { Button } from '../ui/button';
 import { Send } from 'lucide-react';
-import { Badge } from '../ui/badge';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
@@ -26,7 +25,7 @@ export default function Reviewer({
 
   const [isDialogOpen, setDialogOpen] = useState(false);
 
-  const reviewerStatus = 'Sent';
+  // const reviewerStatus = 'Sent';
 
   const currentUserRole = data?.user?.role;
 
@@ -46,7 +45,7 @@ export default function Reviewer({
           </sup>{' '}
           proposed reviewer{' '}
         </h3>
-        {(currentUserRole === 'CHIEF_EDITOR' ||
+        {/* {(currentUserRole === 'CHIEF_EDITOR' ||
           currentUserRole === 'STAFF_EDITOR') && (
           <Badge
             variant={'outline'}
@@ -54,7 +53,7 @@ export default function Reviewer({
           >
             Invitation {reviewerStatus}
           </Badge>
-        )}
+        )} */}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

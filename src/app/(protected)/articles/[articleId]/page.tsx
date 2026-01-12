@@ -17,6 +17,7 @@ import { ChevronRight } from 'lucide-react';
 import withPermissions from '@/components/WithPermission';
 import { FinalSubmissionCardWithPermissions } from './components/AddsOnInformationExample';
 import { AssignedReviewersWithPermissions } from './components/AssignedReviewers';
+import ConditionalRender from '@/components/ConditionalRender';
 
 async function page({ params }: { params: Promise<{ articleId: string }> }) {
   const session = await auth();
@@ -190,7 +191,10 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
           requiredPermissions={['VIEW_ALL_FINAL_FINAL_QUESTIONS']}
           fallback=""
         />
-        {article?.articleStatus !== 'PUBLISHED' && (
+        <ConditionalRender
+          status={article?.articleStatus as string}
+          hideOn={['PUBLISHED']}
+        >
           <AssignOrRejectComponent
             role={
               (currentUserRole ?? 'ADMIN') as
@@ -203,7 +207,7 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
             fallback=""
             articleId={articleId}
           />
-        )}
+        </ConditionalRender>
       </div>
     </>
   );
