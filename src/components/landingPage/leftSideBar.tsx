@@ -175,7 +175,7 @@ const LeftSideBar = async () => {
         <SponsorsSection
           sponsors={
             manuals?.[0]?.sponsors as
-              | Array<{ id: string; link: string; logo: string }>
+              | Array<{ id: string; link: string; logo: string; name: string }>
               | undefined
           }
         />

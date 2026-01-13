@@ -9,7 +9,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import MetricsCardSkeleton from '../manage/components/MetricsCardSkeleton';
+import MetricsCardSkeleton from '../site-settings/components/MetricsCardSkeleton';
 
 interface StatCardProps {
   title: string;

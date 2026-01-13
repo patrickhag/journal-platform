@@ -2,6 +2,7 @@ type Sponsor = {
   id: string;
   link: string;
   logo: string;
+  name: string;
 };
 
 interface SponsorsSectionProps {
@@ -12,6 +13,7 @@ export function SponsorsSection({ sponsors }: SponsorsSectionProps) {
   if (!sponsors || sponsors.length === 0) {
     return null;
   }
+  const limitedSponsors = sponsors.slice(0, 5);
 
   return (
     <div className="w-full">
@@ -22,7 +24,7 @@ export function SponsorsSection({ sponsors }: SponsorsSectionProps) {
         Supported by
       </h2>
       <div className="flex flex-col space-y-4">
-        {sponsors.map((sponsor) => (
+        {limitedSponsors.map((sponsor) => (
           <a
             key={sponsor.id}
             href={sponsor.link}

@@ -35,6 +35,7 @@ const settingsSchema = z.object({
   submissionToFirstDecision: z
     .string()
     .min(1, 'Submission to first decision is required'),
+  marqueeText: z.string().optional(),
 });
 
 type SettingsForm = z.infer<typeof settingsSchema>;
@@ -49,6 +50,7 @@ export default function SiteSettings() {
       journalImpactFactor: '',
       downloads: '',
       submissionToFirstDecision: '',
+      marqueeText: '',
     },
   });
 
@@ -63,6 +65,7 @@ export default function SiteSettings() {
         journalImpactFactor?: string;
         downloads?: string;
         submissionToFirstDecision?: string;
+        marqueeText?: string;
       };
       form.setValue('journalName', settings.journalName || '');
       form.setValue('description', settings.description || '');
@@ -73,6 +76,7 @@ export default function SiteSettings() {
         'submissionToFirstDecision',
         settings.submissionToFirstDecision || ''
       );
+      form.setValue('marqueeText', settings.marqueeText || '');
     }
   }, [manualData, form]);
 
@@ -87,6 +91,7 @@ export default function SiteSettings() {
         journalImpactFactor: data.journalImpactFactor,
         downloads: data.downloads,
         submissionToFirstDecision: data.submissionToFirstDecision,
+        marqueeText: data.marqueeText,
       },
     });
   };
@@ -191,6 +196,22 @@ export default function SiteSettings() {
                     <FormLabel>Submission to First Decision</FormLabel>
                     <FormControl>
                       <Input placeholder="e.g., 7 days" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="marqueeText"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Marquee Text</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Call for Submissions..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

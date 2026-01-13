@@ -36,22 +36,27 @@ import { safeParse } from 'zod-urlsearchparams';
 import { filesSchema } from '@/schemas/reviewer';
 import { useClearURL } from '@/components/ClearURL';
 
-type Sponsor = {
+type Supporter = {
   id: string;
   link: string;
   logo: string;
+  name: string;
 };
 
-export default function Sponsors() {
+export default function Supporters() {
   const { data: manualData } = useGetManuals();
   const { mutate: createManualMutation, isPending } = useCreateManuals();
   const searchParams = useSearchParams();
   const clearURL = useClearURL();
 
-  const [sponsors, setSponsors] = useState<Sponsor[]>([]);
+  const [supporters, setSupporters] = useState<Supporter[]>([]);
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingSponsor, setEditingSponsor] = useState<Sponsor | null>(null);
-  const [sponsorLink, setSponsorLink] = useState('');
+  const [editingSupporter, setEditingSupporter] = useState<Supporter | null>(
+    null
+  );
+  const [supporterLink, setSupporterLink] = useState('');
+  const [supporterName, setSupporterName] = useState('');
   const [logoFileId, setLogoFileId] = useState<string>('');
 
   const filesValidation = safeParse({
@@ -63,12 +68,12 @@ export default function Sponsors() {
   const fileIds = files.map((f) => f.publicId);
   const currentLogoFileId = fileIds[0] || logoFileId;
 
-  // Load sponsors from manualData
+  // Load supporters from manualData
   useEffect(() => {
     if (manualData?.sponsors) {
-      setSponsors(manualData.sponsors as Sponsor[]);
+      setSupporters(manualData?.sponsors);
     }
-  }, [manualData]);
+  }, [manualData?.sponsors]);
 
   // Update logoFileId when file is uploaded
   useEffect(() => {
@@ -77,14 +82,16 @@ export default function Sponsors() {
     }
   }, [currentLogoFileId, logoFileId]);
 
-  const handleOpenDialog = (sponsor?: Sponsor) => {
-    if (sponsor) {
-      setEditingSponsor(sponsor);
-      setSponsorLink(sponsor.link);
-      setLogoFileId(sponsor.logo);
+  const handleOpenDialog = (supporter?: Supporter) => {
+    if (supporter) {
+      setEditingSupporter(supporter);
+      setSupporterLink(supporter.link);
+      setSupporterName(supporter.name);
+      setLogoFileId(supporter.logo);
     } else {
-      setEditingSponsor(null);
-      setSponsorLink('');
+      setEditingSupporter(null);
+      setSupporterLink('');
+      setSupporterName('');
       setLogoFileId('');
     }
     setIsDialogOpen(true);
@@ -92,81 +99,82 @@ export default function Sponsors() {
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
-    setEditingSponsor(null);
-    setSponsorLink('');
+    setEditingSupporter(null);
+    setSupporterLink('');
+    setSupporterName('');
     setLogoFileId('');
     clearURL();
   };
 
   const handleSave = () => {
     const logoToUse = currentLogoFileId || logoFileId;
-    if (!sponsorLink.trim() || !logoToUse) {
+    if (!supporterLink.trim() || !logoToUse) {
       return;
     }
 
-    let updatedSponsors: Sponsor[];
+    let updatedSupporters: Supporter[];
 
-    if (editingSponsor) {
-      // Update existing sponsor
-      updatedSponsors = sponsors.map((s) =>
-        s.id === editingSponsor.id
-          ? { ...s, link: sponsorLink.trim(), logo: logoToUse }
+    if (editingSupporter) {
+      // Update existing supporter
+      updatedSupporters = supporters.map((s) =>
+        s.id === editingSupporter.id
+          ? { ...s, link: supporterLink.trim(), logo: logoToUse }
           : s
       );
     } else {
-      // Add new sponsor
-      const newSponsor: Sponsor = {
+      // Add new supporter
+      const newSupporter: Supporter = {
         id: crypto.randomUUID(),
-        link: sponsorLink.trim(),
+        link: supporterLink.trim(),
         logo: logoToUse,
+        name: supporterName,
       };
-      updatedSponsors = [...sponsors, newSponsor];
+      updatedSupporters = [...supporters, newSupporter];
     }
-
     createManualMutation(
-      { sponsors: updatedSponsors },
+      { sponsors: updatedSupporters },
       {
         onSuccess: () => {
-          setSponsors(updatedSponsors);
+          setSupporters(updatedSupporters);
           handleCloseDialog();
         },
       }
     );
   };
 
-  const handleDelete = (sponsorId: string) => {
-    const updatedSponsors = sponsors.filter((s) => s.id !== sponsorId);
+  const handleDelete = (supporterId: string) => {
+    const updatedSupporters = supporters.filter((s) => s.id !== supporterId);
     createManualMutation(
-      { sponsors: updatedSponsors },
+      { sponsors: updatedSupporters },
       {
         onSuccess: () => {
-          setSponsors(updatedSponsors);
+          setSupporters(updatedSupporters);
         },
       }
     );
   };
 
   return (
-    <TabsContent value="sponsors" className="space-y-6">
+    <TabsContent value="supporters" className="space-y-6">
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
             <div>
               <CardTitle>Supporters</CardTitle>
               <CardDescription>
-                Manage journal sponsors and their logos
+                Manage journal supporters and their logos
               </CardDescription>
             </div>
             <Button onClick={() => handleOpenDialog()}>
               <Plus className="mr-2 h-4 w-4" />
-              Add Sponsor
+              Add Supporter
             </Button>
           </div>
         </CardHeader>
         <CardContent>
-          {sponsors.length === 0 ? (
+          {supporters.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              No sponsors added yet. Click &quot;Add Sponsor&quot; to get
+              No supporters added yet. Click &quot;Add Supporter&quot; to get
               started.
             </div>
           ) : (
@@ -174,43 +182,34 @@ export default function Sponsors() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Logo</TableHead>
-                  <TableHead>Link</TableHead>
+                  <TableHead>Name</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sponsors.map((sponsor) => (
-                  <TableRow key={sponsor.id}>
+                {supporters.map((supporter) => (
+                  <TableRow key={supporter.id}>
                     <TableCell>
                       <img
-                        src={sponsor.logo}
-                        alt="Sponsor logo"
+                        src={supporter.logo}
+                        alt="Supporter logo"
                         className="w-16 h-16 object-contain"
                       />
                     </TableCell>
-                    <TableCell>
-                      <a
-                        href={sponsor.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-medium text-blue-600 hover:text-blue-800 hover:underline truncate max-w-xs block"
-                      >
-                        {sponsor.link}
-                      </a>
-                    </TableCell>
+                    <TableCell>{supporter.name}</TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleOpenDialog(sponsor)}
+                          onClick={() => handleOpenDialog(supporter)}
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleDelete(sponsor.id)}
+                          onClick={() => handleDelete(supporter.id)}
                           className="text-red-600 hover:text-red-700"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -229,30 +228,37 @@ export default function Sponsors() {
         <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {editingSponsor ? 'Edit Sponsor' : 'Add New Sponsor'}
+              {editingSupporter ? 'Edit Supporter' : 'Add New Supporter'}
             </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
             <div>
-              <Label htmlFor="sponsorLink">Sponsor Link</Label>
+              <Label htmlFor="supporterName">Name of the supporter</Label>
               <Input
-                id="sponsorLink"
-                type="url"
-                placeholder="https://example.com"
-                value={sponsorLink}
-                onChange={(e) => setSponsorLink(e.target.value)}
+                id="supporterName"
+                type="text"
+                placeholder="Crossref"
+                value={supporterName}
+                onChange={(e) => setSupporterName(e.target.value)}
               />
-              <p className="text-sm text-gray-500 mt-1">
-                Enter the URL where the sponsor logo should link to
-              </p>
+            </div>
+            <div>
+              <Label htmlFor="supporterLink">Supporter Link</Label>
+              <Input
+                id="supporterLink"
+                type="url"
+                placeholder="https://crossref.org"
+                value={supporterLink}
+                onChange={(e) => setSupporterLink(e.target.value)}
+              />
             </div>
 
             <div>
               <Label htmlFor="logo">Logo</Label>
               <DragAndDropFileInput />
               <FileList isEditNeeded />
-              {editingSponsor && logoFileId && !fileIds[0] && (
+              {editingSupporter && logoFileId && !fileIds[0] && (
                 <div className="mt-2">
                   <p className="text-sm text-gray-600 mb-2">Current logo:</p>
                   <img
@@ -277,16 +283,16 @@ export default function Sponsors() {
                 onClick={handleSave}
                 disabled={
                   isPending ||
-                  !sponsorLink.trim() ||
+                  !supporterLink.trim() ||
                   (!currentLogoFileId && !logoFileId)
                 }
               >
                 {isPending ? (
                   <Loader text="Saving..." />
-                ) : editingSponsor ? (
-                  'Update Sponsor'
+                ) : editingSupporter ? (
+                  'Update Supporter'
                 ) : (
-                  'Add Sponsor'
+                  'Add Supporter'
                 )}
               </Button>
             </div>

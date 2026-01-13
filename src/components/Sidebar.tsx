@@ -113,7 +113,7 @@ const Sidebar = ({ userRole, onLinkClick }: SidebarProps) => {
             icon: MonitorSpeaker,
           },
           {
-            href: '/editor/manage',
+            href: '/editor/site-settings',
             label: 'Site Settings',
             icon: FileCog,
           },

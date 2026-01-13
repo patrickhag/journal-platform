@@ -350,6 +350,7 @@ export const manuals = pgTable('manuals', {
   sponsors: jsonb('sponsors').$type<
     Array<{
       id: string;
+      name: string;
       link: string;
       logo: string;
     }>

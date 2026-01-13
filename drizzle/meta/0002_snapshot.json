@@ -104,12 +104,8 @@
           "name": "article_revisions_articleId_article_submissions_id_fk",
           "tableFrom": "article_revisions",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -117,12 +113,8 @@
           "name": "article_revisions_submittedBy_user_id_fk",
           "tableFrom": "article_revisions",
           "tableTo": "user",
-          "columnsFrom": [
-            "submittedBy"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["submittedBy"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -219,12 +211,8 @@
           "name": "article_submissions_userId_user_id_fk",
           "tableFrom": "article_submissions",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -232,12 +220,8 @@
           "name": "article_submissions_issueId_issues_id_fk",
           "tableFrom": "article_submissions",
           "tableTo": "issues",
-          "columnsFrom": [
-            "issueId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["issueId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -314,12 +298,8 @@
           "name": "associate_editor_assignments_userId_user_id_fk",
           "tableFrom": "associate_editor_assignments",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -327,12 +307,8 @@
           "name": "associate_editor_assignments_articleId_article_submissions_id_fk",
           "tableFrom": "associate_editor_assignments",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -340,12 +316,8 @@
           "name": "associate_editor_assignments_staffEditorId_user_id_fk",
           "tableFrom": "associate_editor_assignments",
           "tableTo": "user",
-          "columnsFrom": [
-            "staffEditorId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["staffEditorId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -417,12 +389,8 @@
           "name": "associateEditorCorrections_articleId_article_submissions_id_fk",
           "tableFrom": "associateEditorCorrections",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -430,12 +398,8 @@
           "name": "associateEditorCorrections_userId_user_id_fk",
           "tableFrom": "associateEditorCorrections",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -505,12 +469,8 @@
           "name": "authenticator_userId_user_id_fk",
           "tableFrom": "authenticator",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -518,19 +478,14 @@
       "compositePrimaryKeys": {
         "authenticator_userId_credentialID_pk": {
           "name": "authenticator_userId_credentialID_pk",
-          "columns": [
-            "userId",
-            "credentialID"
-          ]
+          "columns": ["userId", "credentialID"]
         }
       },
       "uniqueConstraints": {
         "authenticator_credentialID_unique": {
           "name": "authenticator_credentialID_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "credentialID"
-          ]
+          "columns": ["credentialID"]
         }
       },
       "policies": {},
@@ -586,12 +541,8 @@
           "name": "author_revisions_articleId_article_submissions_id_fk",
           "tableFrom": "author_revisions",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -599,12 +550,8 @@
           "name": "author_revisions_authorId_user_id_fk",
           "tableFrom": "author_revisions",
           "tableTo": "user",
-          "columnsFrom": [
-            "authorId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["authorId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -680,12 +627,8 @@
           "name": "citations_metric_id_metrics_id_fk",
           "tableFrom": "citations",
           "tableTo": "metrics",
-          "columnsFrom": [
-            "metric_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["metric_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -695,9 +638,7 @@
         "citations_metric_id_unique": {
           "name": "citations_metric_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "metric_id"
-          ]
+          "columns": ["metric_id"]
         }
       },
       "policies": {},
@@ -727,12 +668,8 @@
           "name": "collection_articles_collectionId_collections_id_fk",
           "tableFrom": "collection_articles",
           "tableTo": "collections",
-          "columnsFrom": [
-            "collectionId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["collectionId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -740,12 +677,8 @@
           "name": "collection_articles_articleId_article_submissions_id_fk",
           "tableFrom": "collection_articles",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -792,12 +725,8 @@
           "name": "collection_users_collectionId_collections_id_fk",
           "tableFrom": "collection_users",
           "tableTo": "collections",
-          "columnsFrom": [
-            "collectionId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["collectionId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -805,12 +734,8 @@
           "name": "collection_users_userId_user_id_fk",
           "tableFrom": "collection_users",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -914,12 +839,8 @@
           "name": "collections_userId_user_id_fk",
           "tableFrom": "collections",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -929,9 +850,7 @@
         "collections_slug_unique": {
           "name": "collections_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -1071,12 +990,8 @@
           "name": "contributors_articleId_article_submissions_id_fk",
           "tableFrom": "contributors",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1135,12 +1050,8 @@
           "name": "editor_actions_articleId_article_submissions_id_fk",
           "tableFrom": "editor_actions",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1148,12 +1059,8 @@
           "name": "editor_actions_editorId_user_id_fk",
           "tableFrom": "editor_actions",
           "tableTo": "user",
-          "columnsFrom": [
-            "editorId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["editorId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1200,12 +1107,8 @@
           "name": "editor_assignment_userId_user_id_fk",
           "tableFrom": "editor_assignment",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1213,12 +1116,8 @@
           "name": "editor_assignment_articleId_article_submissions_id_fk",
           "tableFrom": "editor_assignment",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1338,12 +1237,8 @@
           "name": "files_userId_user_id_fk",
           "tableFrom": "files",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1351,12 +1246,8 @@
           "name": "files_articleId_article_submissions_id_fk",
           "tableFrom": "files",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1426,12 +1317,8 @@
           "name": "final_submissions_articleId_article_submissions_id_fk",
           "tableFrom": "final_submissions",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1510,12 +1397,8 @@
           "name": "issues_volume_id_volumes_id_fk",
           "tableFrom": "issues",
           "tableTo": "volumes",
-          "columnsFrom": [
-            "volume_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["volume_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1665,12 +1548,8 @@
           "name": "metadata_articleId_article_submissions_id_fk",
           "tableFrom": "metadata",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1680,9 +1559,7 @@
         "metadata_title_unique": {
           "name": "metadata_title_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "title"
-          ]
+          "columns": ["title"]
         }
       },
       "policies": {},
@@ -1740,12 +1617,8 @@
           "name": "metrics_slug_published_articles_slug_fk",
           "tableFrom": "metrics",
           "tableTo": "published_articles",
-          "columnsFrom": [
-            "slug"
-          ],
-          "columnsTo": [
-            "slug"
-          ],
+          "columnsFrom": ["slug"],
+          "columnsTo": ["slug"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1831,12 +1704,8 @@
           "name": "notifications_userId_user_id_fk",
           "tableFrom": "notifications",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1881,10 +1750,7 @@
       "compositePrimaryKeys": {
         "passwordResets_identifier_token_pk": {
           "name": "passwordResets_identifier_token_pk",
-          "columns": [
-            "identifier",
-            "token"
-          ]
+          "columns": ["identifier", "token"]
         }
       },
       "uniqueConstraints": {},
@@ -1995,12 +1861,8 @@
           "name": "published_articles_article_id_article_submissions_id_fk",
           "tableFrom": "published_articles",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "article_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["article_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2008,12 +1870,8 @@
           "name": "published_articles_issue_id_issues_id_fk",
           "tableFrom": "published_articles",
           "tableTo": "issues",
-          "columnsFrom": [
-            "issue_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["issue_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -2021,12 +1879,8 @@
           "name": "published_articles_user_id_user_id_fk",
           "tableFrom": "published_articles",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2036,23 +1890,17 @@
         "published_articles_article_id_unique": {
           "name": "published_articles_article_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "article_id"
-          ]
+          "columns": ["article_id"]
         },
         "published_articles_slug_unique": {
           "name": "published_articles_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         },
         "published_articles_doi_unique": {
           "name": "published_articles_doi_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "doi"
-          ]
+          "columns": ["doi"]
         }
       },
       "policies": {},
@@ -2142,12 +1990,8 @@
           "name": "review_assessment_review_id_reviews_id_fk",
           "tableFrom": "review_assessment",
           "tableTo": "reviews",
-          "columnsFrom": [
-            "review_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["review_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2225,12 +2069,8 @@
           "name": "review_assignments_articleId_article_submissions_id_fk",
           "tableFrom": "review_assignments",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2238,12 +2078,8 @@
           "name": "review_assignments_reviewerId_reviewers_id_fk",
           "tableFrom": "review_assignments",
           "tableTo": "reviewers",
-          "columnsFrom": [
-            "reviewerId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["reviewerId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2251,12 +2087,8 @@
           "name": "review_assignments_userId_user_id_fk",
           "tableFrom": "review_assignments",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2264,12 +2096,8 @@
           "name": "review_assignments_authorRevisionId_author_revisions_id_fk",
           "tableFrom": "review_assignments",
           "tableTo": "author_revisions",
-          "columnsFrom": [
-            "authorRevisionId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["authorRevisionId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -2323,12 +2151,8 @@
           "name": "review_revisions_reviewId_reviews_id_fk",
           "tableFrom": "review_revisions",
           "tableTo": "reviews",
-          "columnsFrom": [
-            "reviewId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["reviewId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2392,12 +2216,8 @@
           "name": "reviewers_articleId_article_submissions_id_fk",
           "tableFrom": "reviewers",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2470,12 +2290,8 @@
           "name": "reviews_userId_user_id_fk",
           "tableFrom": "reviews",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2483,12 +2299,8 @@
           "name": "reviews_articleId_article_submissions_id_fk",
           "tableFrom": "reviews",
           "tableTo": "article_submissions",
-          "columnsFrom": [
-            "articleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["articleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2496,12 +2308,8 @@
           "name": "reviews_reviewAssignmentId_review_assignments_id_fk",
           "tableFrom": "reviews",
           "tableTo": "review_assignments",
-          "columnsFrom": [
-            "reviewAssignmentId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["reviewAssignmentId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2541,12 +2349,8 @@
           "name": "user_roles_user_id_user_id_fk",
           "tableFrom": "user_roles",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2674,9 +2478,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -2711,10 +2513,7 @@
       "compositePrimaryKeys": {
         "verificationToken_identifier_token_pk": {
           "name": "verificationToken_identifier_token_pk",
-          "columns": [
-            "identifier",
-            "token"
-          ]
+          "columns": ["identifier", "token"]
         }
       },
       "uniqueConstraints": {},
@@ -3028,33 +2827,17 @@
     "public.issue_status": {
       "name": "issue_status",
       "schema": "public",
-      "values": [
-        "Draft",
-        "Published",
-        "Archived"
-      ]
+      "values": ["Draft", "Published", "Archived"]
     },
     "public.notication_kind": {
       "name": "notication_kind",
       "schema": "public",
-      "values": [
-        "Warning",
-        "Info",
-        "Hint",
-        "Error",
-        "Confused",
-        "Ok"
-      ]
+      "values": ["Warning", "Info", "Hint", "Error", "Confused", "Ok"]
     },
     "public.review_assignments_status": {
       "name": "review_assignments_status",
       "schema": "public",
-      "values": [
-        "Invited",
-        "Accepted",
-        "Declined",
-        "Completed"
-      ]
+      "values": ["Invited", "Accepted", "Declined", "Completed"]
     },
     "public.role": {
       "name": "role",
@@ -3070,22 +2853,12 @@
     "public.salutation": {
       "name": "salutation",
       "schema": "public",
-      "values": [
-        "Mr",
-        "Mrs",
-        "Ms",
-        "Dr",
-        "Prof",
-        "Rev"
-      ]
+      "values": ["Mr", "Mrs", "Ms", "Dr", "Prof", "Rev"]
     },
     "public.volume_status": {
       "name": "volume_status",
       "schema": "public",
-      "values": [
-        "Active",
-        "Inactive"
-      ]
+      "values": ["Active", "Inactive"]
     }
   },
   "schemas": {},
