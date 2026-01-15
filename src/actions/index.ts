@@ -28,6 +28,7 @@ export const getPublishedVolumes = async () => {
         },
       },
       orderBy: desc(volumes.year),
+      limit: 5,
     });
     return { data: result, error: null };
   } catch (error) {

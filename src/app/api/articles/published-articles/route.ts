@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
         id: true,
         publishedAt: true,
         slug: true,
+        updatedAt: true,
       },
       with: {
         article: {

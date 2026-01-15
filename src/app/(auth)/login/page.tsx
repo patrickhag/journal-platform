@@ -169,7 +169,7 @@ export default function LoginComponent() {
 
   return (
     <div>
-      <Card className="w-full max-w-2xl mx-auto p-4 mt-24">
+      <Card className="max-w-3xl mx-auto p-4 mt-28">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
             <Link href={'/'}>

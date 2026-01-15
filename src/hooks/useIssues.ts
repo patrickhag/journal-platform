@@ -30,7 +30,6 @@ export const useCreateIssue = (
       }
     },
     onError: (error: Error | AxiosError) => {
-      console.log('Mutation error:', error);
       const message = axios.isAxiosError(error)
         ? error.response?.data.message
         : error.message;

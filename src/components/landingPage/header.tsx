@@ -21,9 +21,9 @@ export default function Header() {
   const pathname = usePathname();
   const { data: manualData } = useGetManuals();
 
-  const marqueeText = (
-    manualData?.generalSettings as { marqueeText?: string } | null
-  )?.marqueeText;
+  const marqueeText =
+    (manualData?.generalSettings as { marqueeText?: string } | null)
+      ?.marqueeText || 'Free space for journal publication';
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -68,8 +68,8 @@ export default function Header() {
 
   return (
     <div className="sticky top-0 z-50">
-      <div className="text-white text-center py-2 bg-gradient-to-r from-[#B8BCE4] to-[#737373]">
-        <div className="text-yellow-200 text-sm font-semibold animate-marquee">
+      <div className="text-center py-2 bg-gradient-to-r from-[#B8BCE4] to-[#737373] overflow-hidden">
+        <div className="text-yellow-200 text-sm font-semibold animate-marquee whitespace-nowrap inline-block">
           {marqueeText}
         </div>
       </div>

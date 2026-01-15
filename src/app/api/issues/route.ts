@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
 
     if (!issueNumber || !volumeId || !publicationDate) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { message: 'Missing required fields' },
         { status: 400 }
       );
     }
@@ -110,7 +110,10 @@ export async function POST(req: NextRequest) {
 
     if (existingIssue) {
       return NextResponse.json(
-        { error: 'Issue number already exists for this volume' },
+        {
+          message:
+            'Issue number already exists for this volume. Please create a new one.',
+        },
         { status: 400 }
       );
     }

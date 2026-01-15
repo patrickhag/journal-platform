@@ -4,7 +4,6 @@ import { db } from '@/db/db';
 import { eq } from 'drizzle-orm';
 import { publishedArticles } from '@/db/schema';
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 import sanitizeHtml from 'sanitize-html';
 
 export async function generateMetadata({
@@ -41,6 +40,7 @@ export async function generateMetadata({
               title: true,
               subtitle: true,
               abstract: true,
+              topics: true,
             },
           },
         },
@@ -63,32 +63,27 @@ export async function generateMetadata({
   if (!publishedArticle) {
     return {
       title: 'Article Not Found',
+      description: 'The requested article was not found.',
     };
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_URL || '';
   const url = `${baseUrl}/articles/article/${publishedArticle.slug}`;
   const title = publishedArticle.article.metadata.title;
-  const subtitle = publishedArticle.article.metadata.subtitle
-    ? `: ${publishedArticle.article.metadata.subtitle}`
-    : '';
-  const fullTitle = `${title}${subtitle}`;
+  const fullTitle = `${title}`;
 
-  const description = publishedArticle.article.metadata.abstract
-    ? sanitizeHtml(publishedArticle.article.metadata.abstract, {
-        allowedTags: [],
-        allowedAttributes: {},
-      })
-    : `Published in Journal of African Epidemiology and Public Health, Volume ${publishedArticle.issue?.volume.year}, Issue ${publishedArticle.issue?.issueNumber}`;
+  const description = `${publishedArticle.article.metadata.title} by ${publishedArticle.article.user.firstName} ${publishedArticle.article.user.lastName} — Published in Journal of African Epidemiology and Public Health, Volume ${publishedArticle.issue?.volume.year}, Issue ${publishedArticle.issue?.issueNumber}`;
   const authorName = `${publishedArticle.article.user.firstName} ${publishedArticle.article.user.lastName}`;
   const imageUrl = `${baseUrl}/jaep-logo.png`;
+  const keywords = publishedArticle?.article.metadata.topics;
 
   return {
     title: fullTitle,
-    description: description.substring(0, 160), // Limit description length for SEO
+    description: description.substring(0, 160),
     alternates: {
       canonical: url,
     },
+    keywords: keywords,
     openGraph: {
       title: `${fullTitle} | Journal of African Epidemiology and Public Health`,
       description: description.substring(0, 200),

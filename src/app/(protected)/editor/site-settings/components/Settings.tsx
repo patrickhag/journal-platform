@@ -208,10 +208,7 @@ export default function SiteSettings() {
                   <FormItem>
                     <FormLabel>Marquee Text</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Call for Submissions..."
-                        {...field}
-                      />
+                      <Input placeholder="Call for Submissions..." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

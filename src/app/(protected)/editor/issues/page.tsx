@@ -55,13 +55,13 @@ export default function App() {
             </TabsList>
 
             <div className="flex gap-4">
-              <Button onClick={() => setVolumeOpen(true)}>
-                <PlusIcon className="w-4 h-4 mr-2" />
-                New Volume
-              </Button>
               <Button onClick={() => setIssueOpen(true)}>
                 <PlusIcon className="w-4 h-4 mr-2" />
                 New Issue
+              </Button>
+              <Button onClick={() => setVolumeOpen(true)}>
+                <PlusIcon className="w-4 h-4 mr-2" />
+                New Volume
               </Button>
             </div>
           </div>

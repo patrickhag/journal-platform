@@ -89,7 +89,7 @@ export default function Register() {
 
   return (
     <>
-      <Card className="w-full max-w-2xl mx-auto border-gray-200 shadow-md p-2 my-24">
+      <Card className="w-full max-w-3xl mx-auto border-gray-200 shadow-md p-2 my-24">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
             <Image

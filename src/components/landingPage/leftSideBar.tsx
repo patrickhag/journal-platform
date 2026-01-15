@@ -106,13 +106,16 @@ const LeftSideBar = async () => {
             <ul className="mt-2 space-y-2 text-sm text-gray-600">
               {Array.isArray(volumes) && volumes.length > 0 ? (
                 volumes.map((vol) => (
-                  <Link
-                    key={vol.id}
-                    href="/articles/issues"
-                    className="hover:text-blue-600"
-                  >
-                    Volume {vol.year} ({vol.issues.length})
-                  </Link>
+                  <>
+                    <Link
+                      key={vol.id}
+                      href="/articles/issues"
+                      className="hover:text-blue-600"
+                    >
+                      Volume {vol.year} ({vol.issues.length})
+                    </Link>
+                    <br />
+                  </>
                 ))
               ) : (
                 <p>No volumes found</p>

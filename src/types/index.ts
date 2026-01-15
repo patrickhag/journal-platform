@@ -913,6 +913,7 @@ export type TAuthorCorrection = {
 export type TPublishedArticles = {
   slug: string;
   publishedAt: Date;
+  updatedAt: Date;
   id: string;
   article: {
     id: string;

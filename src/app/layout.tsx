@@ -18,6 +18,9 @@ const geistMono = localFont({
   weight: '100 900',
 });
 
+const baseUrl = process.env.NEXT_PUBLIC_URL || '';
+const imageUrl = `${baseUrl}/jaep-logo.png`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_URL || ''),
   keywords: [
@@ -38,6 +41,15 @@ export const metadata: Metadata = {
   openGraph: {
     description:
       'Journal of African Epidemiology and Public Health is a leading journal in the field of epidemiology and public health in Africa.',
+    images: [
+      {
+        url: imageUrl,
+        width: 1200,
+        height: 630,
+        alt: 'Journal of African Epidemiology and Public Health',
+      },
+    ],
+    locale: 'en_US',
   },
   icons: {
     icon: 'public/jaep-logo.png',

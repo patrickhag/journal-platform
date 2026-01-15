@@ -9,6 +9,45 @@ import { userRoles, users } from '@/db/schema';
 import LeftSideBar from '@/components/landingPage/leftSideBar';
 import { roleMap } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import type { Metadata } from 'next';
+
+const baseUrl = process.env.NEXT_PUBLIC_URL || '';
+const imageUrl = `${baseUrl}/jaep-logo.png`;
+
+export const metadata: Metadata = {
+  title: 'Editorial Board',
+  description:
+    'Meet the editorial board of the Journal of African Epidemiology and Public Health, a team of leading experts guiding scientific quality and integrity.',
+  alternates: {
+    canonical: `${baseUrl}/editorial-board`,
+  },
+  openGraph: {
+    title:
+      'Editorial Board | Journal of African Epidemiology and Public Health',
+    description:
+      'Meet the editorial board of the Journal of African Epidemiology and Public Health, a team of leading experts guiding scientific quality and integrity.',
+    url: `${baseUrl}/editorial-board`,
+    siteName: 'Journal of African Epidemiology and Public Health',
+    images: [
+      {
+        url: imageUrl,
+        width: 1200,
+        height: 630,
+        alt: 'Journal of African Epidemiology and Public Health',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title:
+      'Editorial Board | Journal of African Epidemiology and Public Health',
+    description:
+      'Meet the editorial board of the Journal of African Epidemiology and Public Health, a team of leading experts guiding scientific quality and integrity.',
+    images: [imageUrl],
+  },
+};
 
 type EditorialBoardMember = {
   user: {

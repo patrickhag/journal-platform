@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
 import { volumes } from '@/db/schema';
 import { auth } from '@/auth';
-import { eq, or } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 
 export async function GET(_req: NextRequest) {
   try {
@@ -75,12 +75,16 @@ export async function POST(req: Request) {
     }
 
     const existingVolume = await db.query.volumes.findFirst({
-      where: or(eq(volumes.volumeNumber, volumeNumber), eq(volumes.year, year)),
+      where: and(
+        eq(volumes.volumeNumber, volumeNumber),
+        eq(volumes.year, year)
+      ),
     });
 
     if (existingVolume) {
+      console.log('damn ✋😤');
       return NextResponse.json(
-        { message: 'Volume with this number already exists' },
+        { message: 'Volume with this number already exists!' },
         { status: 409 }
       );
     }

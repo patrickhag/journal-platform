@@ -3,7 +3,7 @@ import { db } from '@/db/db';
 import { articleSubmissions, issues, publishedArticles } from '@/db/schema';
 import { informChiefEditorAboutOngoingPublication } from '@/lib/emailTransporter';
 import { slugify } from '@/lib/utils';
-import { eq } from 'drizzle-orm';
+import { asc, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
           },
         },
       },
+      orderBy: asc(issues.issueNumber),
     });
 
     return NextResponse.json(allIssues);

@@ -14,8 +14,8 @@ const SomeManuals = async ({ params }: { params: Promise<Params> }) => {
   return (
     <div className="px-4 md:px-8 py-6">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-9">
-        <div className="lg:col-span-3">
-          <div className="prose">
+        <div className="lg:col-span-3 w-full">
+          <div className="prose w-full max-w-none">
             <Markdown>{file}</Markdown>
           </div>
         </div>

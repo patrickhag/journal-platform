@@ -4,6 +4,7 @@ import { CollectionsList } from './components/CollectionsList';
 import { db } from '@/db/db';
 
 const baseUrl = process.env.NEXT_PUBLIC_URL || '';
+const imageUrl = `${baseUrl}/jaep-logo.png`;
 
 export const metadata: Metadata = {
   title: 'Collections',
@@ -18,6 +19,14 @@ export const metadata: Metadata = {
       'Discover curated collections of research papers grouped by theme, topic, or event. Each collection represents a focused exploration of important academic and scientific domains.',
     url: `${baseUrl}/collections`,
     siteName: 'Journal of African Epidemiology and Public Health',
+    images: [
+      {
+        url: imageUrl,
+        width: 1200,
+        height: 630,
+        alt: 'Journal of African Epidemiology and Public Health',
+      },
+    ],
     locale: 'en_US',
     type: 'website',
   },
@@ -26,6 +35,7 @@ export const metadata: Metadata = {
     title: 'Collections | Journal of African Epidemiology and Public Health',
     description:
       'Discover curated collections of research papers grouped by theme, topic, or event. Each collection represents a focused exploration of important academic and scientific domains.',
+    images: [imageUrl],
   },
 };
 

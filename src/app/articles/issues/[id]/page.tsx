@@ -41,7 +41,7 @@ function IssuePage() {
                   </Button>
 
                   <h1 className="text-xl font-bold text-blue-900">
-                    Volume {issue?.volume.volumeNumber}, Issue{' '}
+                    Volume {issue?.volume?.volumeNumber}, Issue{' '}
                     {issue?.issueNumber} •{' '}
                     {format(new Date(issue?.publicationDate ?? ''), 'yyyy')}
                   </h1>
@@ -102,7 +102,7 @@ function IssuePage() {
               ))
             ) : (
               <p className="text-center text-gray-500 p-6">
-                No articles available.
+                No articles in this issue available.
               </p>
             )}
           </div>

@@ -1,6 +1,6 @@
 import { db } from '@/db/db';
 import { issues, volumes } from '@/db/schema';
-import { desc, eq } from 'drizzle-orm';
+import { asc, desc, eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
@@ -20,7 +20,7 @@ export async function GET() {
             issueNumber: true,
           },
           where: eq(issues.status, 'Published'),
-          orderBy: desc(issues.publicationDate),
+          orderBy: asc(issues.issueNumber),
           with: {
             articles: {
               columns: {
