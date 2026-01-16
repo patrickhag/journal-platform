@@ -23,7 +23,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useSubmitManuscript } from '@/hooks/useSubmitManuscript';
 import { toast } from 'sonner';
 import { SubmissionNavigation } from '@/components/SubmissionNavigation';
-import { useSession } from 'next-auth/react';
 
 type StepConfig = {
   id: string;
@@ -113,7 +112,7 @@ export default function Page() {
   const pathname = usePathname();
 
   const rawCurrentStepParam = searchParams.get('currentStep');
-  const { stepIndexFromQuery, completedFromQuery } = useMemo(() => {
+  const { stepIndexFromQuery } = useMemo(() => {
     const queryIndex = rawCurrentStepParam
       ? steps.findIndex((step) => step.progressId === rawCurrentStepParam)
       : -1;
@@ -138,8 +137,10 @@ export default function Page() {
   const [currentStep, setCurrentStep] = useState(initialStep);
   const [completedStepIds, setCompletedStepIds] = useState<string[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const isInternalNavigation = useRef(false);
   const hasValidatedOnMount = useRef(false);
+  const submitLock = useRef(false);
 
   const formMethods = useForm<ManuscriptFormValues>({
     resolver: zodResolver(manuscriptFormSchema),
@@ -247,6 +248,10 @@ export default function Page() {
   }, [pathname, router, rawCurrentStepParam, stepIndexFromQuery]);
 
   const goToNextStep = async () => {
+    if (isLastStep && (isPending || submitLock.current)) {
+      return;
+    }
+
     const fields = steps[currentStep].fields;
     const isStepValid = await trigger(fields, { shouldFocus: true });
 
@@ -278,10 +283,20 @@ export default function Page() {
       return;
     }
 
+    if (submitLock.current) {
+      return;
+    }
+
+    submitLock.current = true;
+    setIsSubmitting(true);
+
     try {
       await submitManuscript(values);
     } catch (error) {
       console.error('Failed to submit manuscript', error);
+    } finally {
+      submitLock.current = false;
+      setIsSubmitting(false);
     }
   };
 
@@ -297,8 +312,8 @@ export default function Page() {
               onNext={goToNextStep}
               isBackDisabled={currentStep === 0}
               nextLabel={isLastStep ? 'Submit Manuscript' : 'Next'}
-              isNextDisabled={isLastStep && isPending}
-              isNextLoading={isLastStep && isPending}
+              isNextDisabled={isLastStep && (isPending || isSubmitting)}
+              isNextLoading={isLastStep && (isPending || isSubmitting)}
             />
 
             <p className="text-sm text-muted-foreground">

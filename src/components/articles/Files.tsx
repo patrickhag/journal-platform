@@ -22,6 +22,12 @@ async function Files({
     .from(files)
     .where(eq(files.articleId, articleId));
 
+  const docs = filesData.map((file) => {
+    return {
+      uri: file.publicId,
+    };
+  });
+
   return (
     <>
       <Card>

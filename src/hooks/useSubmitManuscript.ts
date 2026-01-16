@@ -45,13 +45,30 @@ export const useSubmitManuscript = () => {
         body: formData,
       });
 
-      const result = (await response.json()) as SubmitResponse & {
-        message?: string;
-        error?: string;
-      };
+      const contentType = response.headers.get('content-type') ?? '';
+      const isJson = contentType.includes('application/json');
+      const result = isJson
+        ? ((await response.json()) as SubmitResponse & {
+            message?: string;
+            error?: string;
+          })
+        : null;
 
       if (!response.ok) {
-        throw new Error(result.message ?? result.error ?? 'Submission failed.');
+        if (result) {
+          throw new Error(
+            result.message ?? result.error ?? 'Submission failed.'
+          );
+        }
+
+        const fallbackMessage =
+          (await response.text().catch(() => ''))?.trim() ||
+          'Submission failed.';
+        throw new Error(fallbackMessage);
+      }
+
+      if (!result) {
+        return {};
       }
 
       return result;

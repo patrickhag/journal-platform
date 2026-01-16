@@ -347,6 +347,7 @@ export const manuals = pgTable('manuals', {
   aboutUs: jsonb('aboutUs').$type<{ content: string }>(),
   aimsNscope: jsonb('aimsNscope').$type<{ content: string }>(),
   termsNconditions: jsonb('termsNconditions').$type<{ content: string }>(),
+  apcSummary: jsonb('apcSummary').$type<{ content: string }>(),
   sponsors: jsonb('sponsors').$type<
     Array<{
       id: string;

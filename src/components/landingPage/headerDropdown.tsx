@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { signOut, useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { handleDashboardRedirect } from '@/lib/utils';
+import Link from 'next/link';
 
 export default function HeaderDropdown() {
   const { data: session } = useSession();
@@ -23,9 +24,11 @@ export default function HeaderDropdown() {
 
   return (
     <div className="flex items-center gap-4">
-      <Badge className="text-white px-3 py-2 rounded bg-[#212c9e] hover:bg-[#212c9e]">
-        ISSN: 3020-987X
-      </Badge>
+      <Link href={'/author/new-manuscript'}>
+        <Badge className="text-white px-3 py-2 rounded bg-[#212c9e] hover:bg-[#212c9e] cursor-pointer">
+          Submit a research
+        </Badge>
+      </Link>
       {session?.user && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

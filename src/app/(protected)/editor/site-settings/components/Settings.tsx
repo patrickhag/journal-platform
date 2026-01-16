@@ -36,6 +36,9 @@ const settingsSchema = z.object({
     .string()
     .min(1, 'Submission to first decision is required'),
   marqueeText: z.string().optional(),
+  issn: z.string().optional(),
+  copyright: z.string().optional(),
+  whatsapp: z.string().optional(),
 });
 
 type SettingsForm = z.infer<typeof settingsSchema>;
@@ -51,6 +54,9 @@ export default function SiteSettings() {
       downloads: '',
       submissionToFirstDecision: '',
       marqueeText: '',
+      issn: '',
+      copyright: '',
+      whatsapp: '',
     },
   });
 
@@ -66,6 +72,9 @@ export default function SiteSettings() {
         downloads?: string;
         submissionToFirstDecision?: string;
         marqueeText?: string;
+        issn?: string;
+        copyright?: string;
+        whatsapp?: string;
       };
       form.setValue('journalName', settings.journalName || '');
       form.setValue('description', settings.description || '');
@@ -77,6 +86,9 @@ export default function SiteSettings() {
         settings.submissionToFirstDecision || ''
       );
       form.setValue('marqueeText', settings.marqueeText || '');
+      form.setValue('issn', settings.issn || '');
+      form.setValue('copyright', settings.copyright || '');
+      form.setValue('whatsapp', settings.whatsapp || '');
     }
   }, [manualData, form]);
 
@@ -92,6 +104,9 @@ export default function SiteSettings() {
         downloads: data.downloads,
         submissionToFirstDecision: data.submissionToFirstDecision,
         marqueeText: data.marqueeText,
+        issn: data.issn,
+        copyright: data.copyright,
+        whatsapp: data.whatsapp,
       },
     });
   };
@@ -209,6 +224,48 @@ export default function SiteSettings() {
                     <FormLabel>Marquee Text</FormLabel>
                     <FormControl>
                       <Input placeholder="Call for Submissions..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="whatsapp"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>WhatsApp</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., +250788589658" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="copyright"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Copyright</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="© 2025 JAEPH. All rights reserved."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="issn"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>ISSN</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., 1234-5678" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

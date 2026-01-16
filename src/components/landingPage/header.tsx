@@ -21,9 +21,11 @@ export default function Header() {
   const pathname = usePathname();
   const { data: manualData } = useGetManuals();
 
-  const marqueeText =
-    (manualData?.generalSettings as { marqueeText?: string } | null)
-      ?.marqueeText || 'Free space for journal publication';
+  const { marqueeText, issn } =
+    (manualData?.generalSettings as {
+      marqueeText?: string;
+      issn?: string;
+    } | null) || {};
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -70,7 +72,7 @@ export default function Header() {
     <div className="sticky top-0 z-50">
       <div className="text-center py-2 bg-gradient-to-r from-[#B8BCE4] to-[#737373] overflow-hidden">
         <div className="text-yellow-200 text-sm font-semibold animate-marquee whitespace-nowrap inline-block">
-          {marqueeText}
+          {marqueeText || 'Free space for journal publication'}
         </div>
       </div>
 
@@ -85,9 +87,14 @@ export default function Header() {
               className="rounded-full object-cover"
             />
             <span className="hidden sm:inline text-lg max-[1132px]:text-sm">
-              Journal of African Epidemiology and Public Health
+              JAEP Health Sciences
             </span>
-            <span className="sm:hidden">JAEPH</span>
+            <span className="sm:hidden">JAEP Health Sciences</span>
+            {issn ? (
+              <span className="hidden md:inline text-xs text-gray-500">
+                ISSN {issn}
+              </span>
+            ) : null}
           </Link>
         </div>
 

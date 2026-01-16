@@ -53,6 +53,7 @@ export const useCreateManuals = () => {
       policies,
       aimsNscope,
       termsNconditions,
+      apcSummary,
       sponsors,
       generalSettings,
       paperTemplate,
@@ -64,6 +65,7 @@ export const useCreateManuals = () => {
       policies?: unknown;
       aimsNscope?: unknown;
       termsNconditions?: unknown;
+      apcSummary?: unknown;
       sponsors?: unknown;
       generalSettings?: unknown;
       paperTemplate?: string;
@@ -76,6 +78,7 @@ export const useCreateManuals = () => {
         policies,
         aimsNscope,
         termsNconditions,
+        apcSummary,
         sponsors,
         generalSettings,
         paperTemplate,

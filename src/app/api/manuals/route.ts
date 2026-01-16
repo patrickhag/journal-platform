@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
     aboutUs,
     aimsNscope,
     termsNconditions,
+    apcSummary,
     sponsors,
     paperTemplate,
     copyrightTemplate,
@@ -44,6 +45,7 @@ export async function POST(req: NextRequest) {
         aimsNscope: aimsNscope ?? existingManual[0].aimsNscope,
         termsNconditions:
           termsNconditions ?? existingManual[0].termsNconditions,
+        apcSummary: apcSummary ?? existingManual[0].apcSummary,
         sponsors: sponsors ?? existingManual[0].sponsors,
         paperTemplate: paperTemplate ?? existingManual[0].paperTemplate,
         copyrightTemplate:
@@ -67,6 +69,7 @@ export async function POST(req: NextRequest) {
           aboutUs,
           aimsNscope,
           termsNconditions,
+          apcSummary,
           sponsors,
           paperTemplate,
           copyrightTemplate,
@@ -95,9 +98,15 @@ export async function GET(req: NextRequest) {
     if (existingManual.length > 0) {
       return NextResponse.json(existingManual[0], { status: 200 });
     } else {
-      return NextResponse.json({ message: 'No manual found' }, { status: 404 });
+      return NextResponse.json({ message: 'No manual found' }, { status: 204 });
     }
   } catch (error) {
+    if (error instanceof Error) {
+      console.error('[Manuals API][GET] Failed to fetch manual:', {
+        message: error.message,
+        stack: error.stack,
+      });
+    }
     return NextResponse.json(
       { error: 'Failed to fetch manual' },
       { status: 500 }

@@ -140,22 +140,30 @@ export const StepAttachFiles = () => {
                               <Button
                                 type="button"
                                 variant="outline"
-                                size="icon"
+                                size="sm"
+                                className="flex items-center gap-2"
+                                aria-label="Add or edit file type"
                               >
-                                <Pencil className="h-4 w-4" />
-                                <span className="sr-only">Edit file type</span>
+                                <Pencil
+                                  className="h-4 w-4"
+                                  aria-hidden="true"
+                                />
+                                <span className="text-xs font-medium">
+                                  Add File type
+                                </span>
                               </Button>
                             </FileTypeModal>
                             <Button
                               type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="text-destructive hover:text-destructive"
+                              variant="outline"
+                              size="sm"
+                              className="text-destructive hover:text-destructive flex items-center gap-2"
                               onClick={() => handleRemoveFile(index)}
+                              aria-label={`Remove ${file.name}`}
                             >
-                              <X className="h-4 w-4" />
-                              <span className="sr-only">
-                                Remove {file.name}
+                              <X className="h-4 w-4" aria-hidden="true" />
+                              <span className="text-xs font-medium">
+                                Remove
                               </span>
                             </Button>
                           </div>

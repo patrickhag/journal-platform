@@ -45,6 +45,27 @@ export const getManual = async () => {
   }
 };
 
+export const getFooterSettings = async () => {
+  try {
+    const manual = await db.select().from(manuals).limit(1);
+    const generalSettings = manual?.[0]?.generalSettings as {
+      copyright?: string;
+      whatsapp?: string;
+      contactEmail?: string;
+    } | null;
+    return {
+      data: {
+        copyright: generalSettings?.copyright ?? null,
+        whatsapp: generalSettings?.whatsapp ?? null,
+        contactEmail: generalSettings?.contactEmail ?? null,
+      },
+      error: null,
+    };
+  } catch (error) {
+    return { data: null, error: 'Failed to fetch footer settings.' };
+  }
+};
+
 export const getMostViewed = async () => {
   try {
     const currentData = await db.query.metrics.findMany({

@@ -9,6 +9,7 @@ import {
   ShieldAlert,
   Files,
   Globe,
+  Receipt,
 } from 'lucide-react';
 import EditorsPick from './components/EditorsPick';
 import Guidelines from './components/Guidelines';
@@ -16,6 +17,7 @@ import AboutUs from './components/AboutUs';
 import Policies from './components/Policies';
 import AimsNScope from './components/AimsNScope';
 import TermsAndConditions from './components/TermsNConditions';
+import ApcSummary from './components/APCSummary';
 import SiteSettings from './components/Settings';
 import Documents from './components/Documents';
 import Supporters from './components/Supporters';
@@ -63,6 +65,11 @@ function ManagePage() {
       icon: ShieldAlert,
     },
     {
+      value: 'apcSummary',
+      label: 'APC Summary',
+      icon: Receipt,
+    },
+    {
       value: 'settings',
       label: 'Settings',
       icon: Settings,
@@ -95,6 +102,7 @@ function ManagePage() {
           <AboutUs />
           <Policies />
           <TermsAndConditions />
+          <ApcSummary />
           <AimsNScope />
           <Documents />
           <Supporters />

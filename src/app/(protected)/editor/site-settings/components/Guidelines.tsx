@@ -58,6 +58,8 @@ export default function Guidelines() {
   const { data: manualData, isPending: isGettingManualsPending } =
     useGetManuals();
 
+  console.log('manualData:', manualData);
+
   useEffect(() => {
     if (manualData?.guidelines) {
       form.setValue('forAuthors', manualData.guidelines.forAuthors || '');

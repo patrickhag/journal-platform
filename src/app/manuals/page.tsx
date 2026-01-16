@@ -91,6 +91,20 @@ export default async function GuidelinesPage() {
               />
             </GuidelineSection>
           )}
+          {manuals?.apcSummary?.content && (
+            <GuidelineSection
+              id="apcSummary"
+              title="APC summary"
+              description="Article processing charges summary"
+            >
+              <div
+                className="prose max-w-none prose-sm"
+                dangerouslySetInnerHTML={{
+                  __html: manuals.apcSummary.content,
+                }}
+              />
+            </GuidelineSection>
+          )}
         </div>
         <div className="lg:w-1/4">
           <LeftSideBar />
