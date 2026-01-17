@@ -72,6 +72,10 @@ export default function ArticleContent() {
   const { data: metric } = useGetMetricInteraction(articleId as string);
 
   useEffect(() => {
+    if (!article) {
+      return;
+    }
+
     if (viewCount || downloadCount || citationFormat) {
       const slug = article?.slug || (articleId as string);
       mutate(
@@ -177,6 +181,10 @@ export default function ArticleContent() {
     <>
       {isPending ? (
         <PublishedArticleSkeleton />
+      ) : !article ? (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-100 italic p-6 text-center text-gray-600">
+          This article was not found.
+        </div>
       ) : (
         article && (
           <>

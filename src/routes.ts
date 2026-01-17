@@ -7,6 +7,7 @@ export const publicRoutes = [
   '/forgot-password',
   '/error',
   '/invitation/:articleId',
+  '/not-found',
 ];
 
 export const authRoutes = [
@@ -33,6 +34,7 @@ export const apiAuthPrefix = [
   '/api/ads/home',
   '/api/oai',
   '/api/verify-user',
+  '/api/issues/[id]',
 ];
 
 export const DEFAULT_LOGIN_REDIRECT = '/submissions';

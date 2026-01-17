@@ -30,6 +30,14 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
     },
   });
 
+  if (!article) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 text-center italic text-gray-600">
+        This article was not found.
+      </div>
+    );
+  }
+
   const currentUserRole = session?.user?.role;
 
   const reviewrs = await db
@@ -134,6 +142,14 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
           userId={session?.user.id}
           articleStatus={article?.articleStatus as string}
         />
+
+        {/* TODO: - [ ] add the support for reviewing files inside the platform */}
+        {/* <FilesClient
+          filesData={filesData}
+          userId={session?.user.id}
+          articleStatus={article?.articleStatus as string}
+          articleId={articleId}
+        /> */}
 
         {/* REVIEWERS */}
         {session?.user.role !== 'REVIEWER' && (

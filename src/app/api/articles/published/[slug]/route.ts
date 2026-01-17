@@ -76,6 +76,13 @@ export async function GET(
       },
     });
 
+    if (!publishedArticle) {
+      return NextResponse.json(
+        { error: 'Published article not found' },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json(publishedArticle);
   } catch (error) {
     return NextResponse.json(

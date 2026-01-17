@@ -26,6 +26,10 @@ function IssuePage() {
             ))}
           </div>
         </>
+      ) : !issue ? (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 text-center text-gray-600">
+          This issue was not found.
+        </div>
       ) : (
         <>
           <header className="bg-white border-b mb-3">
