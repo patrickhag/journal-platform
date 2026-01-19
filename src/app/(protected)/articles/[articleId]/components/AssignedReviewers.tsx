@@ -10,9 +10,13 @@ import ConditionalRender from '@/components/ConditionalRender';
 
 interface AssignedReviewersProps {
   articleId: string;
+  articleStatus: string;
 }
 
-async function AssignedReviewers({ articleId }: AssignedReviewersProps) {
+async function AssignedReviewers({
+  articleId,
+  articleStatus,
+}: AssignedReviewersProps) {
   const assignedReviewers = await db.query.reviewAssignments.findMany({
     where: eq(reviewAssignments.articleId, articleId),
     with: {
@@ -33,26 +37,26 @@ async function AssignedReviewers({ articleId }: AssignedReviewersProps) {
     orderBy: desc(reviewAssignments.assignedDate),
   });
 
-  if (assignedReviewers.length === 0) {
-    return null;
-  }
-
   return (
     <Card className="my-3">
-      <div className="flex justify-between items-center mb-3">
+      <div className="flex justify-between items-center">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold text-[#1a237e]">
+          <CardTitle className="text-lg text-[#1a237e]">
             Assigned Reviewers
           </CardTitle>
         </CardHeader>
-        <ConditionalRender
-          status={assignedReviewers[0]?.article?.articleStatus as string}
-          hideOn={['PUBLISHED']}
-        >
+        <ConditionalRender status={articleStatus} hideOn={['PUBLISHED']}>
           <AssignReviewerModal />
         </ConditionalRender>
       </div>
       <CardContent className="space-y-5">
+        {assignedReviewers.length === 0 && (
+          <div className="flex justify-between">
+            <p className="text-sm">
+              There are no assigned reviewers for this manuscript. Assign one.
+            </p>
+          </div>
+        )}
         {assignedReviewers.map((assignment, index) => (
           <div key={assignment.id}>
             <div className="flex justify-between items-center mb-4">

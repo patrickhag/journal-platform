@@ -76,7 +76,7 @@ export const AssignReviewerModal = () => {
     <>
       <Dialog open={open} onOpenChange={setOpen}>
         <Button
-          variant={'ghost'}
+          variant={'outline'}
           className="m-5"
           onClick={() => setOpen(true)}
           title="Assign Reviewer"

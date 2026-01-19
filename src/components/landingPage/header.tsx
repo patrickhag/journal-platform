@@ -70,9 +70,17 @@ export default function Header() {
 
   return (
     <div className="sticky top-0 z-50">
-      <div className="text-center py-2 bg-gradient-to-r from-[#B8BCE4] to-[#737373] overflow-hidden">
-        <div className="text-yellow-200 text-sm font-semibold animate-marquee whitespace-nowrap inline-block">
-          {marqueeText || 'Free space for journal publication'}
+      <div className="relative overflow-hidden border-b border-slate-200/60 bg-[#1a2440]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.35),transparent_55%)]" />
+        <div className="relative flex items-center gap-3 px-4 py-2 md:px-8">
+          <span className="shrink-0 rounded-full bg-white/12 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-sky-200">
+            Latest
+          </span>
+          <div className="flex-1 overflow-hidden">
+            <div className="text-sky-100 text-sm font-medium animate-marquee whitespace-nowrap inline-block">
+              {marqueeText || 'Free space for journal publication'}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -82,8 +90,8 @@ export default function Header() {
             <Image
               src="/jaep-logo.png"
               alt="JAEPH Logo"
-              width={32}
-              height={32}
+              width={40}
+              height={40}
               className="rounded-full object-cover"
             />
             <span className="hidden sm:inline text-lg max-[1132px]:text-sm">

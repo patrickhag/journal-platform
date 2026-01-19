@@ -18,8 +18,8 @@ export default function NotFound() {
 
               <p className="mt-4 text-gray-600">
                 Sorry, the page you’re looking for doesn’t exist or may have
-                been moved. Please return to the Journal of African
-                Epidemiology and Public Health homepage.
+                been moved. Please return to the Journal of African Epidemiology
+                and Public Health homepage.
               </p>
 
               <div className="mt-8 flex justify-center">

@@ -46,7 +46,7 @@ export default async function ArticlesPage() {
               </h2>
             </div>
             <CardDescription className="mb-6">
-              Manage manuscripts with corrections
+              Manage manuscripts with corrections status.
             </CardDescription>
           </CardHeader>
           <CardContent>

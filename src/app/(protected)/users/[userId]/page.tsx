@@ -30,7 +30,6 @@ import { useParams, useRouter } from 'next/navigation';
 import {
   useAddUserRole,
   useChangeUserRole,
-  useDeactivateUser,
   useGetUserInfo,
   useRemoveUserRole,
 } from '@/hooks/useUsers';
@@ -111,9 +110,6 @@ const UserDetail = () => {
       : 'bg-gray-100 text-gray-800';
   };
 
-  const { mutate, isPending: isDeactivateUserPending } = useDeactivateUser(
-    user.id as string
-  );
   const {
     mutate: changeUserRoleMutation,
     isPending: isChangingUserRolePending,
@@ -134,18 +130,6 @@ const UserDetail = () => {
 
   const handleStatusChange = () => {
     setShowStatusDialog(true);
-  };
-
-  const handleConfirmedStatusChange = () => {
-    const newStatus = !userInfo?.user.isActive;
-    const payload = {
-      isActive: newStatus,
-    };
-    mutate(payload, {
-      onSuccess: () => {
-        setShowStatusDialog(false);
-      },
-    });
   };
 
   if (isGetUserInfoPending) {
@@ -218,7 +202,6 @@ const UserDetail = () => {
             <DeactivateUserPermission
               handleStatusChange={handleStatusChange}
               isActive={userInfo?.user.isActive ?? true}
-              isPending={isDeactivateUserPending}
               requiredPermissions={['DEACTIVATE_USER']}
               role={
                 data?.user.role as
@@ -1101,8 +1084,7 @@ const UserDetail = () => {
           onOpenChange={setShowStatusDialog}
           username={user.name}
           currentStatus={userInfo?.user.isActive}
-          onConfirm={handleConfirmedStatusChange}
-          isPending={isDeactivateUserPending}
+          userId={userId as string}
         />
       )}
     </>

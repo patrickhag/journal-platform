@@ -40,6 +40,7 @@ export const useGetUserInfo = (userId: string) => {
       const { data } = await axios.get<TUserInfo>(`/api/users/user/${userId}`);
       return data;
     },
+    enabled: Boolean(userId),
   });
 };
 

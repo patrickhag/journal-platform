@@ -2,12 +2,7 @@
 
 import DocViewer, { DocViewerRenderers, PDFRenderer } from 'react-doc-viewer';
 import { pdfjs } from 'react-pdf';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
 export type ViewerDocument = {
   uri: string;
@@ -20,7 +15,7 @@ export default function FileViewerModal({
   open,
   onOpenChange,
   documents,
-  title,
+  title = 'Document Viewer',
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -31,19 +26,23 @@ export default function FileViewerModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogHeader>
+      <DialogContent
+        aria-label={title}
+        className="max-w-5xl w-[95vw] h-[85vh] p-0 bg-transparent border-none shadow-none [&>button]:hidden"
+      >
         <DialogTitle className="sr-only">{title}</DialogTitle>
-      </DialogHeader>
-      <DialogContent className="max-w-5xl w-[95vw] h-[85vh] p-4">
-        <div className="h-[calc(85vh-4.5rem)]">
+        <div className="h-full">
           {hasDocs ? (
             <DocViewer
               documents={documents}
-              style={{ height: '100%' }}
+              style={{
+                height: '100%',
+                borderRadius: '0.75rem',
+                overflow: 'hidden',
+              }}
               pluginRenderers={[PDFRenderer, ...DocViewerRenderers]}
               theme={{
                 primary: '#5296d8',
-                secondary: '#ffffff',
                 tertiary: '#5296d899',
                 text_primary: '#ffffff',
                 text_secondary: '#5296d8',

@@ -1,9 +1,8 @@
 import { auth } from '@/auth';
 
-import Files from '@/components/articles/Files';
 import Metadata from '@/components/articles/Metadata';
 import Reviewer from '@/components/articles/Reviewer';
-import { articleSubmissions, reviewers } from '@/db/schema';
+import { articleSubmissions, files, reviewers } from '@/db/schema';
 import { db } from '@/db/db';
 import { eq } from 'drizzle-orm';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,6 +17,7 @@ import withPermissions from '@/components/WithPermission';
 import { FinalSubmissionCardWithPermissions } from './components/AddsOnInformationExample';
 import { AssignedReviewersWithPermissions } from './components/AssignedReviewers';
 import ConditionalRender from '@/components/ConditionalRender';
+import FilesClient from '@/components/articles/FilesClient';
 
 async function page({ params }: { params: Promise<{ articleId: string }> }) {
   const session = await auth();
@@ -44,6 +44,11 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
     .select()
     .from(reviewers)
     .where(eq(reviewers.articleId, articleId));
+
+  const filesData = await db
+    .select()
+    .from(files)
+    .where(eq(files.articleId, articleId));
 
   return (
     <>
@@ -136,20 +141,20 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
         </Card>
 
         {/* FILES */}
-        <Files
+        {/* <Files
           articleId={articleId}
           role={currentUserRole!}
           userId={session?.user.id}
           articleStatus={article?.articleStatus as string}
-        />
+        /> */}
 
         {/* TODO: - [ ] add the support for reviewing files inside the platform */}
-        {/* <FilesClient
+        <FilesClient
           filesData={filesData}
           userId={session?.user.id}
           articleStatus={article?.articleStatus as string}
           articleId={articleId}
-        /> */}
+        />
 
         {/* REVIEWERS */}
         {session?.user.role !== 'REVIEWER' && (
@@ -186,6 +191,7 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
         {/* ASSIGNED REVIEWERS - Only visible to STAFF_EDITOR and CHIEF_EDITOR */}
         <AssignedReviewersWithPermissions
           articleId={articleId}
+          articleStatus={article.acceptedAt || 'SUBMITTED'}
           role={
             currentUserRole as
               | 'NORMAL_USER'

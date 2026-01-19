@@ -11,26 +11,40 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from '@/components/ui/alert-dialog';
+import { useDeactivateUser } from '@/hooks/useUsers';
 
 export const UserStatusDialog = ({
   open,
+  userId,
   onOpenChange,
   username,
   currentStatus,
-  onConfirm,
-  isPending,
 }: {
   open: boolean;
+  userId: string;
   onOpenChange: (open: boolean) => void;
   username: string;
-  onConfirm: () => void;
-  isPending: boolean;
   currentStatus: boolean | undefined;
 }) => {
   const action = currentStatus ? 'deactivate' : 'activate';
 
+  const { mutate, isPending: isDeactivateUserPending } =
+    useDeactivateUser(userId);
+
+  const handleConfirmedStatusChange = () => {
+    const newStatus = !currentStatus;
+    const payload = {
+      isActive: newStatus,
+    };
+    mutate(payload, {
+      onSuccess: () => {
+        onOpenChange(!open);
+      },
+    });
+  };
+
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
@@ -44,17 +58,19 @@ export const UserStatusDialog = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeactivateUserPending}>
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
-            disabled={isPending}
+            onClick={handleConfirmedStatusChange}
+            disabled={isDeactivateUserPending}
             className={
               currentStatus
                 ? 'bg-red-600 hover:bg-red-700'
                 : 'bg-green-600 hover:bg-green-700'
             }
           >
-            {isPending ? (
+            {isDeactivateUserPending ? (
               <Loader
                 text={`${currentStatus ? 'Deactivating' : 'Activating'}...`}
               />

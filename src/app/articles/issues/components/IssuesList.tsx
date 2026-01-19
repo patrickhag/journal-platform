@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { ChevronDown, ChevronRight } from 'lucide-react';
@@ -24,7 +24,27 @@ type IssuesList = {
 };
 
 export function IssuesList({ volume }: IssuesList) {
-  const [expandedVolume, setExpandedVolume] = useState<number | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [issuePage, setIssuePage] = useState(1);
+  const issuesPerPage = 5;
+  const totalPages = Math.max(
+    1,
+    Math.ceil(volume.issues.length / issuesPerPage)
+  );
+  const paginatedIssues = volume.issues.slice(
+    (issuePage - 1) * issuesPerPage,
+    issuePage * issuesPerPage
+  );
+
+  useEffect(() => {
+    setIssuePage(1);
+  }, [volume.id]);
+
+  useEffect(() => {
+    if (issuePage > totalPages) {
+      setIssuePage(totalPages);
+    }
+  }, [issuePage, totalPages]);
 
   return (
     <div className="space-y-4">
@@ -32,12 +52,13 @@ export function IssuesList({ volume }: IssuesList) {
         <button
           type="button"
           className="w-full flex items-center justify-between text-left p-2 hover:bg-gray-50 rounded"
-          aria-expanded={expandedVolume === volume.year}
-          onClick={() =>
-            setExpandedVolume((current) =>
-              current === volume.year ? null : volume.year
-            )
-          }
+          aria-expanded={isExpanded}
+          onClick={() => {
+            setIsExpanded((current) => !current);
+            if (!isExpanded) {
+              setIssuePage(1);
+            }
+          }}
         >
           <div>
             <h3 className="text-lg font-semibold text-gray-900">
@@ -50,7 +71,7 @@ export function IssuesList({ volume }: IssuesList) {
             </p>
           </div>
           <span className="ml-4 text-gray-400">
-            {expandedVolume === volume.year ? (
+            {isExpanded ? (
               <ChevronDown className="h-5 w-5" aria-hidden="true" />
             ) : (
               <ChevronRight className="h-5 w-5" aria-hidden="true" />
@@ -58,9 +79,9 @@ export function IssuesList({ volume }: IssuesList) {
           </span>
         </button>
 
-        {expandedVolume === volume.year && (
+        {isExpanded && (
           <div className="mt-2 space-y-2 pl-4">
-            {volume.issues.map((issue) => (
+            {paginatedIssues.map((issue) => (
               <Link
                 key={issue.id}
                 href={`/articles/issues/${issue.id}`}
@@ -79,6 +100,29 @@ export function IssuesList({ volume }: IssuesList) {
                 </div>
               </Link>
             ))}
+            {volume.issues.length > issuesPerPage && (
+              <div className="flex items-center justify-between pt-2">
+                <button
+                  type="button"
+                  className="px-3 py-1 text-sm font-medium text-gray-700 border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={() => setIssuePage((current) => current - 1)}
+                  disabled={issuePage === 1}
+                >
+                  Previous
+                </button>
+                <span className="text-sm text-gray-500">
+                  Page {issuePage} of {totalPages}
+                </span>
+                <button
+                  type="button"
+                  className="px-3 py-1 text-sm font-medium text-gray-700 border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={() => setIssuePage((current) => current + 1)}
+                  disabled={issuePage === totalPages}
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

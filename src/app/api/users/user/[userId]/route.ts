@@ -340,28 +340,41 @@ export async function PATCH(
     const { userId } = await params;
 
     const { isActive, role } = await req.json();
+    const shouldUpdateRole = typeof role !== 'undefined';
+    const shouldUpdateStatus = typeof isActive !== 'undefined';
 
-    await db
-      .update(userRoles)
-      .set({
-        role,
-      })
-      .where(eq(userRoles.userId, userId))
-      .returning();
+    if (!shouldUpdateRole && !shouldUpdateStatus) {
+      return NextResponse.json({ error: 'No values to set' }, { status: 400 });
+    }
 
-    await db
-      .update(users)
-      .set({
-        isActive,
-      })
-      .where(eq(users.id, userId))
-      .returning();
+    if (shouldUpdateRole) {
+      await db
+        .update(userRoles)
+        .set({
+          role,
+        })
+        .where(eq(userRoles.userId, userId))
+        .returning();
+    }
+
+    // Only update 'isActive' if it is not undefined
+    if (shouldUpdateStatus) {
+      await db
+        .update(users)
+        .set({
+          isActive,
+        })
+        .where(eq(users.id, userId))
+        .returning();
+    }
 
     return NextResponse.json({
       message: 'User info updated successfully!',
     });
   } catch (error) {
-    console.error('Error updating user:', error);
+    if (error instanceof Error) {
+      console.error('Error updating user:', error.message);
+    }
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

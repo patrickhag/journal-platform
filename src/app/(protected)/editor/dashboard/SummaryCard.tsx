@@ -57,7 +57,7 @@ export default async function SummaryCard() {
     {
       title: 'Rejected',
       value: data.rejected,
-      href: '/editor/rejected',
+      href: '/editor/manage-rejected',
     },
     {
       title: 'Published',

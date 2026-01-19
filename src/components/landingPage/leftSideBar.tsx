@@ -108,7 +108,7 @@ const LeftSideBar = async () => {
                 volumes.map((vol, index) => (
                   <>
                     <Link
-                      key={index}
+                      key={vol.id}
                       href="/articles/issues"
                       className="hover:text-blue-600"
                     >

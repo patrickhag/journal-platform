@@ -174,8 +174,8 @@ export default function LoginComponent() {
           <div className="flex justify-center mb-4">
             <Link href={'/'}>
               <Image
-                src={'/logo.png'}
-                alt="logo"
+                src={'/jaep-logo.png'}
+                alt="JAEP Health Science Logo"
                 width={40}
                 height={40}
                 className="mx-auto"
