@@ -1,12 +1,14 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { File, Download, FileSearch2 } from 'lucide-react';
+import { File, FileSearch2, Eye } from 'lucide-react';
 import { useGetAssociateEditorsCorrections } from '@/hooks/useReviews';
 import ForwardFileModal from '@/components/articles/ForwardFileDialog';
 import { AssociateEditorCorrectionStatusModal } from './RequestAssociateRecorrection';
 import { formatAssignmentCorrectionsStatus } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import FileViewerModal from '@/components/FileViewerModal';
+import { useState } from 'react';
 
 export const AssociateEditorCorrections = ({
   articleId,
@@ -15,6 +17,23 @@ export const AssociateEditorCorrections = ({
 }) => {
   const { data: corrections, isPending } =
     useGetAssociateEditorsCorrections(articleId);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerDoc, setViewerDoc] = useState<{
+    uri: string;
+    fileName?: string;
+  } | null>(null);
+
+  const handleViewFile = (uri: string, fileName: string) => {
+    setViewerDoc({ uri, fileName });
+    setViewerOpen(true);
+  };
+
+  const handleViewerOpenChange = (open: boolean) => {
+    setViewerOpen(open);
+    if (!open) {
+      setViewerDoc(null);
+    }
+  };
 
   return (
     <>
@@ -71,9 +90,17 @@ export const AssociateEditorCorrections = ({
                                 </div>
                                 <div className="flex justify-between">
                                   <Button variant="ghost" size="sm" asChild>
-                                    <a href={correction.fileId} download>
-                                      <Download className="h-4 w-4" />
-                                    </a>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        handleViewFile(
+                                          correction.fileId,
+                                          'Correction file'
+                                        )
+                                      }
+                                    >
+                                      <Eye className="h-4 w-4" />
+                                    </button>
                                   </Button>
                                   <ForwardFileModal
                                     fileName={correction.fileId}
@@ -108,6 +135,12 @@ export const AssociateEditorCorrections = ({
           )}
         </CardContent>
       </Card>
+      <FileViewerModal
+        open={viewerOpen}
+        onOpenChange={handleViewerOpenChange}
+        documents={viewerDoc ? [viewerDoc] : []}
+        title={viewerDoc?.fileName || 'Correction file'}
+      />
     </>
   );
 };

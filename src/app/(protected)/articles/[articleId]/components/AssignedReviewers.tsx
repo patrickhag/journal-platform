@@ -20,14 +20,7 @@ async function AssignedReviewers({
   const assignedReviewers = await db.query.reviewAssignments.findMany({
     where: eq(reviewAssignments.articleId, articleId),
     with: {
-      reviewer: true,
-      user: {
-        columns: {
-          firstName: true,
-          lastName: true,
-          email: true,
-        },
-      },
+      user: true,
       article: {
         columns: {
           articleStatus: true,
@@ -87,35 +80,24 @@ async function AssignedReviewers({
                   Fullnames
                 </h4>
                 <p className="font-medium">
-                  {assignment.reviewer?.names ||
-                    `${assignment.user?.firstName || ''} ${assignment.user?.lastName || ''}`.trim() ||
+                  {`${assignment.user?.firstName || ''} ${assignment.user?.lastName || ''}`.trim() ||
                     'Not provided'}
                 </p>
               </div>
               <div>
                 <h4 className="text-sm text-muted-foreground mb-2">Email</h4>
                 <p className="font-medium">
-                  {assignment.reviewer?.email ||
-                    assignment.user?.email ||
-                    'Not provided'}
+                  {assignment.user?.email}
                 </p>
               </div>
-              {assignment.reviewer && (
+              {assignment.user && (
                 <>
                   <div>
                     <h4 className="text-sm text-muted-foreground mb-2">
                       Affiliation
                     </h4>
                     <p className="font-medium">
-                      {assignment.reviewer.affiliation || 'Not provided'}
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm text-muted-foreground mb-2">
-                      Phone
-                    </h4>
-                    <p className="font-medium">
-                      {assignment.reviewer.phone || 'Not provided'}
+                      {assignment.user.affiliation || 'Not provided'}
                     </p>
                   </div>
                 </>
@@ -145,7 +127,7 @@ async function AssignedReviewers({
             <div className="mt-4">
               <h4 className="text-sm text-muted-foreground mb-2">Expertise</h4>
               <p className="text-base">
-                {assignment?.reviewer?.expertise || 'Not provided'}
+                {assignment?.user?.expertise || 'Not provided'}
               </p>
             </div>
 

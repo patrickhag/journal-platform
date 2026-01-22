@@ -2,12 +2,30 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { File, FileSearch2, Eye } from 'lucide-react';
-import Link from 'next/link';
 import { useGetAuthorCorrections } from '@/hooks/useArticles';
 import { TAuthorCorrection } from '@/types';
+import FileViewerModal from '@/components/FileViewerModal';
+import { useState } from 'react';
 
 export const AuthorCorrections = ({ articleId }: { articleId: string }) => {
   const { data: corrections, isPending } = useGetAuthorCorrections(articleId);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerDoc, setViewerDoc] = useState<{
+    uri: string;
+    fileName?: string;
+  } | null>(null);
+
+  const handleViewFile = (uri: string, fileName: string) => {
+    setViewerDoc({ uri, fileName });
+    setViewerOpen(true);
+  };
+
+  const handleViewerOpenChange = (open: boolean) => {
+    setViewerOpen(open);
+    if (!open) {
+      setViewerDoc(null);
+    }
+  };
 
   return (
     <>
@@ -26,14 +44,17 @@ export const AuthorCorrections = ({ articleId }: { articleId: string }) => {
                     return (
                       <Card key={correction.id}>
                         <CardContent className="mt-6">
-                          {correction.message && (
-                            <p className="text-sm">
-                              <span className="font-semibold">
-                                Author's comment:
-                              </span>{' '}
-                              {correction.message}
-                            </p>
-                          )}
+                        <h4 className="font-semibold mb-2 text-muted-foreground">
+                                    Author's Comments
+                                  </h4>
+                                  <div
+                                    className="prose max-w-none"
+                                    dangerouslySetInnerHTML={{
+                                      __html: correction.message
+                                        .replace(/<pre><code class="language-json">/g, '')
+                                        .replace(/<\/code><\/pre>/g, ''),
+                                    }}
+                                  />
                           {/* Annotated Files */}
                           {correction.fileIds &&
                             correction.fileIds.length > 0 && (
@@ -56,10 +77,18 @@ export const AuthorCorrections = ({ articleId }: { articleId: string }) => {
                                         </div>
                                       </div>
 
-                                      <Button variant="ghost" size="sm" asChild>
-                                        <Link href={fileUrl} target="_blank">
-                                          <Eye className="h-4 w-4" />
-                                        </Link>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        type="button"
+                                        onClick={() =>
+                                          handleViewFile(
+                                            fileUrl,
+                                            `Author file ${idx + 1}`
+                                          )
+                                        }
+                                      >
+                                        <Eye className="h-4 w-4" />
                                       </Button>
                                     </div>
                                   ))}
@@ -94,6 +123,12 @@ export const AuthorCorrections = ({ articleId }: { articleId: string }) => {
           )}
         </CardContent>
       </Card>
+      <FileViewerModal
+        open={viewerOpen}
+        onOpenChange={handleViewerOpenChange}
+        documents={viewerDoc ? [viewerDoc] : []}
+        title={viewerDoc?.fileName || 'Author file'}
+      />
     </>
   );
 };

@@ -18,6 +18,7 @@ import { FinalSubmissionCardWithPermissions } from './components/AddsOnInformati
 import { AssignedReviewersWithPermissions } from './components/AssignedReviewers';
 import ConditionalRender from '@/components/ConditionalRender';
 import FilesClient from '@/components/articles/FilesClient';
+import React from 'react';
 
 async function page({ params }: { params: Promise<{ articleId: string }> }) {
   const session = await auth();
@@ -174,15 +175,14 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
               </div>
               {/* PROPOSED REVIEWERS */}
               {reviewrs.map((r, index) => (
-                <>
+                <React.Fragment key={r.id}>
                   <Reviewer
                     reviewer={r}
                     index={index}
-                    key={r.id}
                     articleId={article?.id as string}
                   />
                   {index !== reviewrs.length - 1 && <Separator />}
-                </>
+                </React.Fragment>
               ))}
             </CardContent>
           </Card>

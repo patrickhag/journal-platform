@@ -1,15 +1,16 @@
 'use client';
 
-import DocViewer, { DocViewerRenderers, PDFRenderer } from 'react-doc-viewer';
+import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
 import { pdfjs } from 'react-pdf';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import "react-pdf/dist/esm/Page/TextLayer.css";
+import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 
 export type ViewerDocument = {
   uri: string;
-  fileName: string | null;
 };
 
-pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+// pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 export default function FileViewerModal({
   open,
@@ -28,26 +29,28 @@ export default function FileViewerModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         aria-label={title}
+        forceMount={true}
         className="max-w-5xl w-[95vw] h-[85vh] p-0 bg-transparent border-none shadow-none [&>button]:hidden"
       >
         <DialogTitle className="sr-only">{title}</DialogTitle>
-        <div className="h-full">
+        <DialogDescription className="sr-only">
+        Dialog Modal for viewing {title}
+        </DialogDescription>
+        <div className="h-full overflow-auto">
           {hasDocs ? (
             <DocViewer
               documents={documents}
               style={{
                 height: '100%',
                 borderRadius: '0.75rem',
-                overflow: 'hidden',
               }}
-              pluginRenderers={[PDFRenderer, ...DocViewerRenderers]}
+              pluginRenderers={[...DocViewerRenderers]}
               theme={{
                 primary: '#5296d8',
                 tertiary: '#5296d899',
                 text_primary: '#ffffff',
                 text_secondary: '#5296d8',
                 text_tertiary: '#00000099',
-                disableThemeScrollbar: false,
               }}
             />
           ) : (

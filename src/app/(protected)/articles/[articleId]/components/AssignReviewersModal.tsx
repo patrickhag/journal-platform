@@ -20,7 +20,7 @@ import {
 import { User, CheckCircle, CalendarIcon, UserRoundPlus } from 'lucide-react';
 import { useAssignReviewer, useGetReviewers } from '@/hooks/useUsers';
 import Loader from '@/components/Loader';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import {
@@ -29,7 +29,6 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import withPermissions from '@/components/WithPermission';
 import { DialogTrigger } from '@radix-ui/react-dialog';
 
 export const AssignReviewerModal = () => {
@@ -41,6 +40,7 @@ export const AssignReviewerModal = () => {
   const [warning, setWarning] = useState<string>('');
 
   const { articleId } = useParams();
+  const router = useRouter();
 
   const selectedReviewer = availableReviwers?.find(
     (Reviewer) => Reviewer.id === selectedReviewerId
@@ -61,6 +61,9 @@ export const AssignReviewerModal = () => {
         date,
       };
       mutate(data, {
+        onSuccess: () => {
+          router.refresh();
+        },
         onSettled: () => {
           setOpen(false);
           setSelectedReviewerId('');

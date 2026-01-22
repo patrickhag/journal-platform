@@ -85,7 +85,6 @@ export default function Header() {
       </div>
 
       <header className="flex flex-wrap items-center justify-between px-4 md:px-8 py-4 backdrop-blur-md shadow">
-        <div className="text-xl font-bold">
           <Link href="/" className="rounded-full flex items-center gap-2">
             <Image
               src="/jaep-logo.png"
@@ -104,7 +103,7 @@ export default function Header() {
               </span>
             ) : null}
           </Link>
-        </div>
+
 
         <button
           ref={buttonRef}

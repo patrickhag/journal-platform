@@ -36,7 +36,6 @@ export const users = pgTable('user', {
   expertise: text('expertise'),
   updatedAt: date('updatedAt'),
   prefix: varchar('prefix', { length: 50 }),
-
   createdAt: date('createdAt').defaultNow(),
 });
 

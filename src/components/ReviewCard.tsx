@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { File, Eye, Repeat } from 'lucide-react';
-import Link from 'next/link';
+import { useState } from 'react';
+import FileViewerModal from '@/components/FileViewerModal';
 
 interface Review {
   id: string;
@@ -38,6 +39,11 @@ export const ReviewCard = ({
   reviewerDisplayName,
   className = '',
 }: ReviewCardProps) => {
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerDoc, setViewerDoc] = useState<{
+    uri: string;
+  } | null>(null);
+
   const reviewerName =
     reviewerDisplayName ||
     `${review.user.prefix ?? ''} ${review.user.firstName} ${review.user.lastName}`.trim();
@@ -64,6 +70,18 @@ export const ReviewCard = ({
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
+  const handleViewFile = (uri: string) => {
+    setViewerDoc({ uri });
+    setViewerOpen(true);
+  };
+
+  const handleViewerOpenChange = (open: boolean) => {
+    setViewerOpen(open);
+    if (!open) {
+      setViewerDoc(null);
+    }
+  };
+
   return (
     <Card className={className}>
       <CardHeader>
@@ -75,13 +93,17 @@ export const ReviewCard = ({
         </div>
       </CardHeader>
       <CardContent>
-        {review.message && (
-          <p className="text-sm mb-4">
-            <span className="font-semibold">Reviewer's comment:</span>{' '}
-            {review.message}
+      <p className="text-sm font-semibold text-muted-foreground">
+        Comments
           </p>
-        )}
-
+        <div
+          className="prose max-w-none"
+          dangerouslySetInnerHTML={{
+            __html: review.message
+              .replace(/<pre><code class="language-json">/g, '')
+              .replace(/<\/code><\/pre>/g, ''),
+          }}
+        />
         {/* Annotated Files */}
         {review.fileIds && review.fileIds.length > 0 && (
           <div className="mt-4">
@@ -100,10 +122,15 @@ export const ReviewCard = ({
                   </div>
 
                   {showViewButton && (
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link href={fileUrl} target="_blank">
-                        <Eye className="h-4 w-4" />
-                      </Link>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      type="button"
+                      onClick={() =>
+                        handleViewFile(fileUrl)
+                      }
+                    >
+                      <Eye className="h-4 w-4" />
                     </Button>
                   )}
                 </div>
@@ -134,6 +161,11 @@ export const ReviewCard = ({
           </div>
         </div>
       </CardContent>
+      <FileViewerModal
+        open={viewerOpen}
+        onOpenChange={handleViewerOpenChange}
+        documents={viewerDoc ? [viewerDoc] : []}
+      />
     </Card>
   );
 };

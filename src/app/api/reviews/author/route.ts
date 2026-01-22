@@ -71,13 +71,14 @@ export async function POST(req: Request) {
 
     const session = await auth();
     const authorName = session?.user?.name;
+    const authorId = session?.user?.id;
 
     // Insert author revision and get the ID
     const [insertedAuthorRevision] = await db
       .insert(authorRevisions)
       .values({
         articleId,
-        authorId: '0004a9ae-add6-4bc8-bde9-4b783ef027ec',
+        authorId,
         message,
         fileIds,
       })

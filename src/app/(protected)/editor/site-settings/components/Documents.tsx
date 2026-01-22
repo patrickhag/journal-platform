@@ -19,7 +19,7 @@ import { useSearchParams } from 'next/navigation';
 import { safeParse } from 'zod-urlsearchparams';
 import { useClearURL } from '@/components/ClearURL';
 import { FileText, Eye } from 'lucide-react';
-import Link from 'next/link';
+import FileViewerModal from '@/components/FileViewerModal';
 
 export default function Documents() {
   const [paperTemplateFileId, setPaperTemplateFileId] = useState<string>('');
@@ -30,6 +30,11 @@ export default function Documents() {
   const [activeUploadSection, setActiveUploadSection] = useState<
     'paper' | 'copyright' | 'humanPartsConsent' | null
   >(null);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerDoc, setViewerDoc] = useState<{
+    uri: string;
+    fileName?: string;
+  } | null>(null);
   const previousFilesCountRef = useRef<number>(0);
   const processedFileIdsRef = useRef<Set<string>>(new Set());
 
@@ -136,6 +141,18 @@ export default function Documents() {
     );
   };
 
+  const handleViewFile = (uri: string) => {
+    setViewerDoc({ uri });
+    setViewerOpen(true);
+  };
+
+  const handleViewerOpenChange = (open: boolean) => {
+    setViewerOpen(open);
+    if (!open) {
+      setViewerDoc(null);
+    }
+  };
+
   return (
     <TabsContent value="documents" className="space-y-6">
       <Card>
@@ -160,16 +177,19 @@ export default function Documents() {
                     </div>
                   </div>
                   <div className="flex justify-between gap-3">
-                    <Button variant="secondary" size="sm">
-                      <Link
-                        href={paperTemplateFileId}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <span className="flex items-center">
-                          <Eye className="mr-2 text-gray-600" /> View
-                        </span>
-                      </Link>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      type="button"
+                      onClick={() =>
+                        handleViewFile(
+                          paperTemplateFileId,
+                        )
+                      }
+                    >
+                      <span className="flex items-center">
+                        <Eye className="mr-2 text-gray-600" /> View
+                      </span>
                     </Button>
                   </div>
                 </div>
@@ -197,16 +217,19 @@ export default function Documents() {
                     </div>
                   </div>
                   <div className="flex justify-between gap-3">
-                    <Button variant="secondary" size="sm">
-                      <Link
-                        href={copyrightTemplateFileId}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <span className="flex items-center">
-                          <Eye className="mr-2 text-gray-600" /> View
-                        </span>
-                      </Link>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      type="button"
+                      onClick={() =>
+                        handleViewFile(
+                          copyrightTemplateFileId,
+                        )
+                      }
+                    >
+                      <span className="flex items-center">
+                        <Eye className="mr-2 text-gray-600" /> View
+                      </span>
                     </Button>
                   </div>
                 </div>
@@ -235,16 +258,19 @@ export default function Documents() {
                     </div>
                   </div>
                   <div className="flex justify-between gap-3">
-                    <Button variant="secondary" size="sm">
-                      <Link
-                        href={humanPartsConsentFileId}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <span className="flex items-center">
-                          <Eye className="mr-2 text-gray-600" /> View
-                        </span>
-                      </Link>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      type="button"
+                      onClick={() =>
+                        handleViewFile(
+                          humanPartsConsentFileId,
+                        )
+                      }
+                    >
+                      <span className="flex items-center">
+                        <Eye className="mr-2 text-gray-600" /> View
+                      </span>
                     </Button>
                   </div>
                 </div>
@@ -272,6 +298,12 @@ export default function Documents() {
           </CardContent>
         )}
       </Card>
+      <FileViewerModal
+        open={viewerOpen}
+        onOpenChange={handleViewerOpenChange}
+        documents={viewerDoc ? [viewerDoc] : []}
+        title={viewerDoc?.fileName || 'Document'}
+      />
     </TabsContent>
   );
 }

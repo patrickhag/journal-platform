@@ -9,6 +9,7 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
+  SheetDescription,
 } from '@/components/ui/sheet';
 import { FileList } from '../upload/FileList';
 import { useParams, useSearchParams } from 'next/navigation';
@@ -42,6 +43,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Switch } from '../ui/switch';
 import { Input } from '../ui/input';
 import { useSession } from 'next-auth/react';
+import { RichTextEditor } from '../RichTextEditor';
 
 type AssessmentField = Extract<
   keyof ReviewFormData,
@@ -193,6 +195,9 @@ export default function ReviewModal({
           <SheetTitle className="text-2xl font-semibold text-[#1a237e]">
             Write a review
           </SheetTitle>
+          <SheetDescription className="sr-only">
+            Fill out the following review form to provide feedback, recommendation, and checklist items for this article submission.
+          </SheetDescription>
         </SheetHeader>
         <div className="text-sm">Annotate file(s)</div>
         <DragAndDropFileInput />
@@ -220,11 +225,13 @@ export default function ReviewModal({
                         Feedback <span className="text-red-700">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Textarea
-                          placeholder="General feedback on this manuscript?"
-                          className="min-h-[120px] resize-none p-4 bg-white rounded-lg"
-                          {...field}
-                        />
+                      <RichTextEditor
+                      description={form.getValues().message}
+                      onChange={(d) => {
+                        form.setValue('message', d);
+                      }}
+                      placeholder="General feedback on this manuscript?"
+                    />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

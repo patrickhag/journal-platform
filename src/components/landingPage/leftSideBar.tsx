@@ -3,6 +3,7 @@ import { getPublishedVolumes, getManual, getMostViewed } from '@/actions';
 import AdsSection from './AdsSection';
 import { MetricsSection } from './MetricsSection';
 import { SponsorsSection } from './SponsorsSection';
+import React from 'react';
 
 const LeftSideBar = async () => {
   const { data: volumes, error: volumesError } = await getPublishedVolumes();
@@ -106,16 +107,15 @@ const LeftSideBar = async () => {
             <ul className="mt-2 space-y-2 text-sm text-gray-600">
               {Array.isArray(volumes) && volumes.length > 0 ? (
                 volumes.map((vol, index) => (
-                  <>
+                  <React.Fragment key={vol.id}>
                     <Link
-                      key={vol.id}
                       href="/articles/issues"
                       className="hover:text-blue-600"
                     >
                       Volume {vol.year} ({vol.issues.length})
                     </Link>
                     {index < volumes.length - 1 && <br />}
-                  </>
+                  </React.Fragment>
                 ))
               ) : (
                 <p>No volumes found</p>

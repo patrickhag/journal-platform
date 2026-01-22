@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { useAuthorReplyStaffEditor } from '@/hooks/useReviews';
 import Loader from '@/components/Loader';
 import { DragAndDropFileInput } from '@/components/upload/FileInput';
@@ -19,6 +18,7 @@ import { filesSchema } from '@/schemas/reviewer';
 import { safeParse } from 'zod-urlsearchparams';
 import { useSearchParams } from 'next/navigation';
 import { useClearURL } from '@/components/ClearURL';
+import { RichTextEditor } from '@/components/RichTextEditor';
 
 const AuthorReplyModal: React.FC<{
   articleId: string;
@@ -83,13 +83,10 @@ const AuthorReplyModal: React.FC<{
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="reply">Message</Label>
-            <Textarea
-              id="reply"
-              value={reply}
-              onChange={(e) => setReply(e.target.value)}
-              placeholder="Enter your response to the reviewer's comments (Optional)"
-              rows={4}
-              className="resize-none"
+            <RichTextEditor
+              description={reply}
+              onChange={(value) => setReply(value)}
+              placeholder="Enter your response to the reviewer's comments"
             />
           </div>
         </div>

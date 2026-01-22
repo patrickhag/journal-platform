@@ -15,10 +15,16 @@ import {
 import { useState } from 'react';
 import UploadCorrection from '../../components/UploadCorrection';
 import ConditionalRender from '@/components/ConditionalRender';
+import FileViewerModal from '@/components/FileViewerModal';
 
 const ParticularAssociateAssignment = () => {
   const { assignmentId } = useParams();
   const [open, setOpen] = useState(false);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerDoc, setViewerDoc] = useState<{
+    uri: string;
+    fileName?: string;
+  } | null>(null);
   const router = useRouter();
 
   const { data: particularAssignment, isPending } =
@@ -29,6 +35,18 @@ const ParticularAssociateAssignment = () => {
   }
 
   const authorName = `${particularAssignment?.articleSubmissions.metadata.prefix}. ${particularAssignment?.articleSubmissions.user.firstName} ${particularAssignment?.articleSubmissions.user.lastName}`;
+
+  const handleViewFile = (uri: string, fileName: string) => {
+    setViewerDoc({ uri, fileName });
+    setViewerOpen(true);
+  };
+
+  const handleViewerOpenChange = (open: boolean) => {
+    setViewerOpen(open);
+    if (!open) {
+      setViewerDoc(null);
+    }
+  };
 
   return (
     <>
@@ -129,10 +147,18 @@ const ParticularAssociateAssignment = () => {
                           </div>
                         </div>
 
-                        <Button variant="ghost" size="sm" asChild>
-                          <Link href={correction.fileId} target="_blank">
-                            <Eye className="h-4 w-4" />
-                          </Link>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          type="button"
+                          onClick={() =>
+                            handleViewFile(
+                              correction.fileId,
+                              'Correction file'
+                            )
+                          }
+                        >
+                          <Eye className="h-4 w-4" />
                         </Button>
                       </div>
                       <div className="flex justify-between">
@@ -165,6 +191,12 @@ const ParticularAssociateAssignment = () => {
           selectedAssignment={particularAssignment}
         />
       )}
+      <FileViewerModal
+        open={viewerOpen}
+        onOpenChange={handleViewerOpenChange}
+        documents={viewerDoc ? [viewerDoc] : []}
+        title={viewerDoc?.fileName || 'Correction file'}
+      />
     </>
   );
 };

@@ -1,6 +1,7 @@
 import { TParticipants, TReviewers, TSUser, TUser, TUserInfo } from '@/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
+import { redirect } from 'next/navigation';
 import { toast } from 'sonner';
 
 export const useGetUsers = () => {

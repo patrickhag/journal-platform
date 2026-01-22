@@ -20,7 +20,7 @@ import ReviewModal from '@/components/articles/Review';
 import ReviewerAssignmentSkeleton from '@/components/ReviewerAssignmentSkeleton';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
+import FileViewerModal from '@/components/FileViewerModal';
 
 const ReviewAssignment = () => {
   const { assignmentId } = useParams();
@@ -29,12 +29,6 @@ const ReviewAssignment = () => {
     assignmentId as string
   );
 
-  const { data } = useSession();
-
-  console.log('user-id:', data?.user.id);
-
-  console.log('particularAssignment:', particularAssignment);
-
   const [reviewModal, setReviewModal] = useState<{
     isOpen: boolean;
     articleId?: string;
@@ -42,6 +36,11 @@ const ReviewAssignment = () => {
     isOpen: false,
     articleId: '',
   });
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerDoc, setViewerDoc] = useState<{
+    uri: string;
+    fileName?: string;
+  } | null>(null);
 
   const handleSubmitReview = (articleId: string) => {
     setReviewModal({ isOpen: true, articleId });
@@ -51,9 +50,29 @@ const ReviewAssignment = () => {
     setReviewModal({ isOpen: false });
   };
 
+  const handleViewFile = (uri: string, fileName: string) => {
+    setViewerDoc({ uri, fileName });
+    setViewerOpen(true);
+  };
+
+  const handleViewerOpenChange = (open: boolean) => {
+    setViewerOpen(open);
+    if (!open) {
+      setViewerDoc(null);
+    }
+  };
+
   // Show skeleton while loading
   if (isPending) {
     return <ReviewerAssignmentSkeleton isNotAssociate={true} />;
+  }
+
+  if (!particularAssignment) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 text-center italic text-gray-600">
+        This assignment was not found.
+      </div>
+    );
   }
 
   const authorName = `${particularAssignment?.article.metadata.prefix} ${particularAssignment?.article.user.firstName} ${particularAssignment?.article.user.lastName}`;
@@ -168,12 +187,20 @@ const ReviewAssignment = () => {
                                     Revised file {idx + 1}
                                   </span>
                                 </div>
-                                <Link href={fileUrl} target="_blank">
-                                  <Button size="sm" variant="outline">
-                                    <Eye className="mr-2 h-4 w-4" />
-                                    View
-                                  </Button>
-                                </Link>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  type="button"
+                                  onClick={() =>
+                                    handleViewFile(
+                                      fileUrl,
+                                      `Revised file ${idx + 1}`
+                                    )
+                                  }
+                                >
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  View
+                                </Button>
                               </div>
                             )
                           )}
@@ -202,12 +229,17 @@ const ReviewAssignment = () => {
                   <FileText className="mr-2 h-4 w-4 text-blue-600" />
                   <span>{file.originalName}</span>
                 </div>
-                <Link href={file.publicId}>
-                  <Button size="sm" variant="outline">
-                    <Eye className="mr-2 h-4 w-4" />
-                    View
-                  </Button>
-                </Link>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  type="button"
+                  onClick={() =>
+                    handleViewFile(file.publicId, file.originalName)
+                  }
+                >
+                  <Eye className="mr-2 h-4 w-4" />
+                  View
+                </Button>
               </div>
             ))}
           </CardContent>
@@ -240,11 +272,17 @@ const ReviewAssignment = () => {
                   </div>
 
                   {/* Reviewer comments */}
-                  <p className="text-sm text-muted-foreground">
-                    <span className="font-semibold">Comments: </span>
-                    <span>{review.message || 'No comments provided'}</span>
+                  <p className="text-sm font-semibold text-muted-foreground">
+                    Comments
                   </p>
-
+                  <div
+                    className="prose max-w-none"
+                    dangerouslySetInnerHTML={{
+                      __html: review.message
+                        .replace(/<pre><code class="language-json">/g, '')
+                        .replace(/<\/code><\/pre>/g, ''),
+                    }}
+                  />
                   {/* Annotated Files */}
                   {review.fileIds.length > 0 && (
                     <div className="my-3">
@@ -263,12 +301,20 @@ const ReviewAssignment = () => {
                                 Reviewed file {index + 1}
                               </span>
                             </div>
-                            <Link href={fileId} target="_blank">
-                              <Button size="sm" variant="outline">
-                                <Eye className="mr-2 h-4 w-4" />
-                                View
-                              </Button>
-                            </Link>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              type="button"
+                              onClick={() =>
+                                handleViewFile(
+                                  fileId,
+                                  `Reviewed file ${index + 1}`
+                                )
+                              }
+                            >
+                              <Eye className="mr-2 h-4 w-4" />
+                              View
+                            </Button>
                           </div>
                         ))}
                       </div>
@@ -331,14 +377,15 @@ const ReviewAssignment = () => {
                                           <Button
                                             variant="ghost"
                                             size="icon"
-                                            asChild
+                                            type="button"
+                                            onClick={() =>
+                                              handleViewFile(
+                                                fileUrl,
+                                                `Author file ${idx + 1}`
+                                              )
+                                            }
                                           >
-                                            <Link
-                                              href={fileUrl}
-                                              target="_blank"
-                                            >
-                                              <Eye className="h-4 w-4" />
-                                            </Link>
+                                            <Eye className="h-4 w-4" />
                                           </Button>
                                         </div>
                                       )
@@ -408,11 +455,15 @@ const ReviewAssignment = () => {
                                       <Button
                                         variant="ghost"
                                         size="icon"
-                                        asChild
+                                        type="button"
+                                        onClick={() =>
+                                          handleViewFile(
+                                            fileUrl,
+                                            `Revision file ${idx + 1}`
+                                          )
+                                        }
                                       >
-                                        <Link href={fileUrl} target="_blank">
-                                          <Eye className="h-4 w-4" />
-                                        </Link>
+                                        <Eye className="h-4 w-4" />
                                       </Button>
                                     </div>
                                   ))}
@@ -439,6 +490,12 @@ const ReviewAssignment = () => {
           articleId={reviewModal.articleId as string}
         />
       )}
+      <FileViewerModal
+        open={viewerOpen}
+        onOpenChange={handleViewerOpenChange}
+        documents={viewerDoc ? [viewerDoc] : []}
+        title={viewerDoc?.fileName || 'Manuscript file'}
+      />
     </div>
   );
 };

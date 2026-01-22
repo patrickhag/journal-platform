@@ -23,6 +23,7 @@ import { useState } from 'react';
 import EditorDecisionModal from './components/EditorDecisionModal';
 import EditorReReviewModal from './components/EditorReReview';
 import Link from 'next/link';
+import FileViewerModal from '@/components/FileViewerModal';
 import InviteAssociateEditorModal from './components/AssignAssociateEditor';
 import { AssociateEditorCorrections } from './components/AssociateEditorCorrections';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -203,6 +204,11 @@ export default function ReviewsPage() {
   const [reviewerName, setReviewerName] = useState('');
   const [revieweEmail, setReviewerEMail] = useState('');
   const [articleTitle, setArticleTitle] = useState('');
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerDoc, setViewerDoc] = useState<{
+    uri: string;
+    fileName?: string;
+  } | null>(null);
 
   const router = useRouter();
   const onCloseRereview = () => setOpenRereview(false);
@@ -224,6 +230,18 @@ export default function ReviewsPage() {
     setReviewerName(reviewerName);
     setReviewerEMail(formReviwerEmail);
     setArticleTitle(reviewData?.metadata.title as string);
+  };
+
+  const handleViewFile = (uri: string, fileName: string) => {
+    setViewerDoc({ uri, fileName });
+    setViewerOpen(true);
+  };
+
+  const handleViewerOpenChange = (open: boolean) => {
+    setViewerOpen(open);
+    if (!open) {
+      setViewerDoc(null);
+    }
   };
 
   return (
@@ -368,15 +386,22 @@ export default function ReviewsPage() {
                                 </CardHeader>
 
                                 <CardContent className="space-y-3 pb-4">
-                                  <p className="text-muted-foreground">
-                                    {review.message}
-                                  </p>
-
+                                  <h4 className="font-semibold mb-2 text-muted-foreground">
+                                    Comments
+                                  </h4>
+                                  <div
+                                    className="prose max-w-none"
+                                    dangerouslySetInnerHTML={{
+                                      __html: review.message
+                                        .replace(/<pre><code class="language-json">/g, '')
+                                        .replace(/<\/code><\/pre>/g, ''),
+                                    }}
+                                  />
                                   {/* Annotated Files */}
                                   {review.fileIds &&
                                     review.fileIds.length > 0 && (
                                       <div>
-                                        <h4 className="text-xs font-medium mb-2">
+                                        <h4 className="font-semibold mb-2 text-muted-foreground">
                                           Annotated Files
                                         </h4>
                                         <div className="space-y-2">
@@ -396,14 +421,15 @@ export default function ReviewsPage() {
                                                 <Button
                                                   variant="ghost"
                                                   size="icon"
-                                                  asChild
+                                                  type="button"
+                                                  onClick={() =>
+                                                    handleViewFile(
+                                                      fileUrl,
+                                                      `Reviewer file ${idx + 1}`
+                                                    )
+                                                  }
                                                 >
-                                                  <Link
-                                                    href={fileUrl}
-                                                    target="_blank"
-                                                  >
-                                                    <Eye className="h-4 w-4" />
-                                                  </Link>
+                                                  <Eye className="h-4 w-4" />
                                                 </Button>
                                               </div>
                                             )
@@ -488,14 +514,15 @@ export default function ReviewsPage() {
                                                           <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            asChild
+                                                            type="button"
+                                                            onClick={() =>
+                                                              handleViewFile(
+                                                                fileUrl,
+                                                                `Revision file ${idx + 1}`
+                                                              )
+                                                            }
                                                           >
-                                                            <Link
-                                                              href={fileUrl}
-                                                              target="_blank"
-                                                            >
-                                                              <Eye className="h-4 w-4" />
-                                                            </Link>
+                                                            <Eye className="h-4 w-4" />
                                                           </Button>
                                                         </div>
                                                       )
@@ -610,6 +637,12 @@ export default function ReviewsPage() {
           setOpen={setopenAssignEditorDialog}
         />
       )}
+      <FileViewerModal
+        open={viewerOpen}
+        onOpenChange={handleViewerOpenChange}
+        documents={viewerDoc ? [viewerDoc] : []}
+        title={viewerDoc?.fileName || 'Reviewer file'}
+      />
     </>
   );
 }

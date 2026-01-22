@@ -2,8 +2,7 @@ import { auth } from '@/auth';
 import { db } from '@/db/db';
 import { articleSubmissions, reviewAssignments, userRoles } from '@/db/schema';
 import { sendInvitation } from '@/lib/emailTransporter';
-import { format } from 'date-fns';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -18,25 +17,36 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const reviewers = await db.query.userRoles.findMany({
-      where: eq(userRoles.role, 'REVIEWER'),
-      with: {
-        user: {
-          columns: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-            affiliation: true,
-            expertise: true,
-            prefix: true,
-            bio: true,
+    const [reviewers, editorRoles] = await Promise.all([
+      db.query.userRoles.findMany({
+        where: eq(userRoles.role, 'REVIEWER'),
+        with: {
+          user: {
+            columns: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+              affiliation: true,
+              expertise: true,
+              prefix: true,
+              bio: true,
+            },
           },
         },
-      },
-    });
+      }),
+      db.query.userRoles.findMany({
+        columns: { userId: true },
+        where: inArray(userRoles.role, ['STAFF_EDITOR', 'CHIEF_EDITOR']),
+      }),
+    ]);
 
-    return NextResponse.json(reviewers);
+    const editorUserIds = new Set(editorRoles.map((role) => role.userId));
+    const eligibleReviewers = reviewers.filter(
+      (reviewer) => !editorUserIds.has(reviewer.userId)
+    );
+
+    return NextResponse.json(eligibleReviewers);
   } catch (error) {
     console.error('Error creating volume:', error);
     return NextResponse.json(
@@ -62,13 +72,43 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    const isReviewerAlreadyAssigned =
-      await db.query.reviewAssignments.findFirst({
-        where: and(
-          eq(reviewAssignments.userId, userId),
-          eq(reviewAssignments.articleId, articleId)
-        ),
-      });
+    const [reviewerRole, isReviewerAlreadyAssigned, isEditorRole] =
+      await Promise.all([
+        db.query.userRoles.findFirst({
+          columns: { id: true },
+          where: and(
+            eq(userRoles.userId, userId),
+            eq(userRoles.role, 'REVIEWER')
+          ),
+        }),
+        db.query.reviewAssignments.findFirst({
+          where: and(
+            eq(reviewAssignments.userId, userId),
+            eq(reviewAssignments.articleId, articleId)
+          ),
+        }),
+        db.query.userRoles.findFirst({
+          columns: { id: true },
+          where: and(
+            eq(userRoles.userId, userId),
+            inArray(userRoles.role, ['STAFF_EDITOR', 'CHIEF_EDITOR'])
+          ),
+        }),
+      ]);
+
+    if (!reviewerRole) {
+      return NextResponse.json(
+        { message: 'User is not a reviewer.' },
+        { status: 400 }
+      );
+    }
+
+    if (isEditorRole) {
+      return NextResponse.json(
+        { message: 'Editors cannot be assigned as reviewers.' },
+        { status: 400 }
+      );
+    }
 
     if (isReviewerAlreadyAssigned) {
       return NextResponse.json(

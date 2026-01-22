@@ -40,7 +40,7 @@ const ReviewsReceived = () => {
       .includes(searchQuery.toLowerCase());
   });
 
-  const isNotAllowedToReply = (selectedManuscript?.reviews?.length ?? 0) <= 1;
+  // const isNotAllowedToReply = (selectedManuscript?.reviews?.length ?? 0) <= 1;
 
   return (
     <div className="space-y-6">
@@ -149,13 +149,11 @@ const ReviewsReceived = () => {
                       You can't reply yet
                     </div>
                     <div>
-                      You can only reply to reviews when there are at least{' '}
-                      <span className="font-semibold">two</span> reviews. Please
-                      wait until all required reviews have been submitted.
+                      Please Wait for the second reviewer comment to be able to submit the correction
                     </div>
                   </div>
                 ) : (
-                  <>Review details and reviewer feedback</>
+                  <>You can now submit your corrected paper with consideration of all reviewers comment</>
                 )}
               </SheetDescription>
             </SheetHeader>
@@ -177,7 +175,7 @@ const ReviewsReceived = () => {
           <SheetFooter className="sticky bottom-0 bg-white mt-4 py-4 flex justify-end gap-2">
             <AuthorReplyModal
               articleId={selectedManuscript?.id || ''}
-              isNotAllowedToReply={isNotAllowedToReply}
+              isNotAllowedToReply={false}
             />
           </SheetFooter>
         </SheetContent>

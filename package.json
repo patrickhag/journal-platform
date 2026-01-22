@@ -140,5 +140,11 @@
     "os": false,
     "net": false,
     "tls": false
+  },
+  "pnpm": {
+    "overrides": {
+      "react-doc-viewer>react-pdf": "9.2.1",
+      "react-doc-viewer>pdfjs-dist": "4.3.136"
+    }
   }
 }
