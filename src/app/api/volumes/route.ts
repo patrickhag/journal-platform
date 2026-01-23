@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db/db';
 import { volumes } from '@/db/schema';
 import { auth } from '@/auth';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, desc } from 'drizzle-orm';
 
 export async function GET(_req: NextRequest) {
   try {
@@ -42,6 +42,7 @@ export async function GET(_req: NextRequest) {
           },
         },
       },
+      orderBy: desc(volumes.year)
     });
 
     return NextResponse.json(allVolumes);

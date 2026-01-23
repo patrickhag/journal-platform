@@ -29,6 +29,7 @@ export async function GET(req: NextRequest) {
           columns: {
             id: true,
             volumeNumber: true,
+            year: true,
           },
         },
         articles: {

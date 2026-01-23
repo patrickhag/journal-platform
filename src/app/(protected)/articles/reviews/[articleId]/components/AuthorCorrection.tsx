@@ -44,17 +44,20 @@ export const AuthorCorrections = ({ articleId }: { articleId: string }) => {
                     return (
                       <Card key={correction.id}>
                         <CardContent className="mt-6">
-                        <h4 className="font-semibold mb-2 text-muted-foreground">
-                                    Author's Comments
-                                  </h4>
-                                  <div
-                                    className="prose max-w-none"
-                                    dangerouslySetInnerHTML={{
-                                      __html: correction.message
-                                        .replace(/<pre><code class="language-json">/g, '')
-                                        .replace(/<\/code><\/pre>/g, ''),
-                                    }}
-                                  />
+                          <h4 className="font-semibold mb-2 text-muted-foreground">
+                            Author's Comments
+                          </h4>
+                          <div
+                            className="prose max-w-none"
+                            dangerouslySetInnerHTML={{
+                              __html: correction.message
+                                .replace(
+                                  /<pre><code class="language-json">/g,
+                                  ''
+                                )
+                                .replace(/<\/code><\/pre>/g, ''),
+                            }}
+                          />
                           {/* Annotated Files */}
                           {correction.fileIds &&
                             correction.fileIds.length > 0 && (

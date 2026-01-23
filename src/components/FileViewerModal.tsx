@@ -2,9 +2,14 @@
 
 import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
 import { pdfjs } from 'react-pdf';
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import "react-pdf/dist/esm/Page/TextLayer.css";
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import 'react-pdf/dist/esm/Page/TextLayer.css';
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 
 export type ViewerDocument = {
   uri: string;
@@ -34,7 +39,7 @@ export default function FileViewerModal({
       >
         <DialogTitle className="sr-only">{title}</DialogTitle>
         <DialogDescription className="sr-only">
-        Dialog Modal for viewing {title}
+          Dialog Modal for viewing {title}
         </DialogDescription>
         <div className="h-full overflow-auto">
           {hasDocs ? (

@@ -1,6 +1,6 @@
 import { db } from '@/db/db';
 import { issues, manuals, volumes } from '@/db/schema';
-import { desc, eq } from 'drizzle-orm';
+import { asc, desc, eq } from 'drizzle-orm';
 
 export const getPublishedVolumes = async () => {
   try {

@@ -5,12 +5,12 @@ import { asc, desc, eq } from 'drizzle-orm';
 export const getPublishedVolumesOnly = async () => {
   try {
     const foundIssuesNVolumes = await db.query.volumes.findMany({
+      where: eq(volumes.status, 'Active'),
       columns: {
         id: true,
         volumeNumber: true,
         year: true,
       },
-      where: eq(volumes.status, 'Active'),
       with: {
         issues: {
           columns: {
@@ -19,7 +19,7 @@ export const getPublishedVolumesOnly = async () => {
             issueNumber: true,
           },
           where: eq(issues.status, 'Published'),
-          orderBy: asc(issues.issueNumber),
+          orderBy: desc(issues.issueNumber),
           with: {
             articles: {
               columns: {

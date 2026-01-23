@@ -19,10 +19,10 @@ export const HeaderElement = async () => {
         <div className="flex items-center gap-2 md:gap-4">
           <Link href="/" className="block">
             <Image
-              src="/jaep-logo.png"
+              src="/jaep-logo.svg"
               alt="Logo"
-              width={32}
-              height={32}
+              width={35}
+              height={35}
               className="rounded-full object-cover"
             />
           </Link>

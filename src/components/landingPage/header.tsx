@@ -85,25 +85,24 @@ export default function Header() {
       </div>
 
       <header className="flex flex-wrap items-center justify-between px-4 md:px-8 py-4 backdrop-blur-md shadow">
-          <Link href="/" className="rounded-full flex items-center gap-2">
-            <Image
-              src="/jaep-logo.png"
-              alt="JAEPH Logo"
-              width={40}
-              height={40}
-              className="rounded-full object-cover"
-            />
-            <span className="hidden sm:inline text-lg max-[1132px]:text-sm">
-              JAEP Health Sciences
+        <Link href="/" className="rounded-full flex items-center gap-2">
+          <Image
+            src="/jaep-logo.svg"
+            alt="JAEPH Logo"
+            width={35}
+            height={35}
+            className="rounded-full object-cover"
+          />
+          <span className="hidden sm:inline text-lg max-[1132px]:text-sm">
+            JAEP Health Sciences
+          </span>
+          <span className="sm:hidden">JAEP Health Sciences</span>
+          {issn ? (
+            <span className="hidden md:inline text-xs text-gray-500">
+              ISSN {issn}
             </span>
-            <span className="sm:hidden">JAEP Health Sciences</span>
-            {issn ? (
-              <span className="hidden md:inline text-xs text-gray-500">
-                ISSN {issn}
-              </span>
-            ) : null}
-          </Link>
-
+          ) : null}
+        </Link>
 
         <button
           ref={buttonRef}

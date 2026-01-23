@@ -7,7 +7,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 
 import { useSearchParams } from 'next/navigation';
@@ -21,6 +20,7 @@ import { DragAndDropFileInput } from '@/components/upload/FileInput';
 import { FileList } from '@/components/upload/FileList';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { TAssociateAssignment } from '@/types';
+import { RichTextEditor } from '@/components/RichTextEditor';
 
 export default function UploadCorrection({
   open,
@@ -90,13 +90,10 @@ export default function UploadCorrection({
 
           <div className="space-y-2">
             <Label htmlFor="message">Message (Optional)</Label>
-            <Textarea
-              id="message"
-              placeholder="Add any additional notes or comments about this correction..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              rows={4}
-              className="resize-none"
+            <RichTextEditor
+              description={message}
+              onChange={(value) => setMessage(value)}
+              placeholder="Add a note or message to the Associate Editor"
             />
           </div>
 

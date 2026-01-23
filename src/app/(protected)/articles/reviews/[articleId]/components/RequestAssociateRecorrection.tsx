@@ -11,11 +11,11 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useRequestRecorrection } from '@/hooks/useReviews';
 import Loader from '@/components/Loader';
+import { RichTextEditor } from '@/components/RichTextEditor';
 
 interface Props {
   correctionId: string;
@@ -50,7 +50,7 @@ export const AssociateEditorCorrectionStatusModal: React.FC<Props> = ({
           Approve/Revision
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Update Associate Editor Correction Status</DialogTitle>
           <DialogDescription>
@@ -80,10 +80,10 @@ export const AssociateEditorCorrectionStatusModal: React.FC<Props> = ({
 
           <div className="flex flex-col space-y-2 mt-5">
             <Label>Message (optional)</Label>
-            <Textarea
-              placeholder="Add a note or message to the Associate Editor (optional)"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
+            <RichTextEditor
+              description={note}
+              onChange={(value) => setNote(value)}
+              placeholder="Add a note or message to the Associate Editor"
             />
           </div>
         </div>

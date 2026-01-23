@@ -1,10 +1,18 @@
+import Link from 'next/link';
 import { BookOpenCheck, BookText } from 'lucide-react';
+import { getPublishedVolumesOnly } from '@/actions/fetchIssuesNVolumes';
 
-export default function Layout({
+export default async function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { data: volumes } = await getPublishedVolumesOnly();
+  const firstIssueId = volumes?.[0]?.issues?.[0]?.id;
+  const issueHref = firstIssueId
+    ? `/articles/issues/${firstIssueId}`
+    : '/articles/issues';
+
   return (
     <div className="min-h-screen">
       {/* Main Content */}
@@ -18,20 +26,20 @@ export default function Layout({
                 Browse Issues
               </h2>
               <nav className="space-y-2">
-                <a
-                  href="#"
+                <Link
+                  href={issueHref}
                   className="flex items-center text-blue-900 font-medium hover:text-blue-600 p-2 rounded"
                 >
                   <BookOpenCheck className="h-5 w-5 mr-2" />
                   Latest Articles
-                </a>
-                <a
-                  href="#"
+                </Link>
+                <Link
+                  href={issueHref}
                   className="flex items-center text-blue-900 font-medium hover:text-blue-600 p-2 rounded"
                 >
                   <BookText className="h-5 w-5 mr-2" />
                   Current Issue
-                </a>
+                </Link>
               </nav>
             </div>
           </div>

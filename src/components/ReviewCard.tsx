@@ -93,9 +93,7 @@ export const ReviewCard = ({
         </div>
       </CardHeader>
       <CardContent>
-      <p className="text-sm font-semibold text-muted-foreground">
-        Comments
-          </p>
+        <p className="text-sm font-semibold text-muted-foreground">Comments</p>
         <div
           className="prose max-w-none"
           dangerouslySetInnerHTML={{
@@ -126,9 +124,7 @@ export const ReviewCard = ({
                       variant="ghost"
                       size="sm"
                       type="button"
-                      onClick={() =>
-                        handleViewFile(fileUrl)
-                      }
+                      onClick={() => handleViewFile(fileUrl)}
                     >
                       <Eye className="h-4 w-4" />
                     </Button>

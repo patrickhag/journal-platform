@@ -4,6 +4,7 @@ import {
   articleSubmissions,
   notifications,
   reviewAssignments,
+  userRoles,
 } from '@/db/schema';
 import { informStaffEditorAboutReviewerInvitation } from '@/lib/emailTransporter';
 import { eq } from 'drizzle-orm';
@@ -30,9 +31,21 @@ export default async function InvitationPage({
   const reviewAssignmentId = search.reviewAssignmentId as string;
   const inviteStatus = search.inviteStatus as string | undefined;
 
-  // If no reviewAssignmentId or inviteStatus, redirect
+    // If no reviewAssignmentId or inviteStatus, redirect
   if (!reviewAssignmentId || inviteStatus === undefined) {
-    redirect(`/reviewer/assignments`);
+      redirect(`/`);
+  }
+  
+  // Check if user is a reviewer
+  const user = await db.query.userRoles.findFirst({
+    where: eq(userRoles.userId, userId as string),
+    columns: {
+      role: true,
+    },
+  })
+
+  if (!user || user.role !== 'REVIEWER') {
+    redirect('/');
   }
 
   // Fetch the review assignment to check current status

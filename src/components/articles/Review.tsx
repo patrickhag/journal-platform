@@ -196,7 +196,8 @@ export default function ReviewModal({
             Write a review
           </SheetTitle>
           <SheetDescription className="sr-only">
-            Fill out the following review form to provide feedback, recommendation, and checklist items for this article submission.
+            Fill out the following review form to provide feedback,
+            recommendation, and checklist items for this article submission.
           </SheetDescription>
         </SheetHeader>
         <div className="text-sm">Annotate file(s)</div>
@@ -225,13 +226,13 @@ export default function ReviewModal({
                         Feedback <span className="text-red-700">*</span>
                       </FormLabel>
                       <FormControl>
-                      <RichTextEditor
-                      description={form.getValues().message}
-                      onChange={(d) => {
-                        form.setValue('message', d);
-                      }}
-                      placeholder="General feedback on this manuscript?"
-                    />
+                        <RichTextEditor
+                          description={form.getValues().message}
+                          onChange={(d) => {
+                            form.setValue('message', d);
+                          }}
+                          placeholder="General feedback on this manuscript?"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

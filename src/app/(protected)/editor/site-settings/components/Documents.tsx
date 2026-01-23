@@ -181,11 +181,7 @@ export default function Documents() {
                       variant="secondary"
                       size="sm"
                       type="button"
-                      onClick={() =>
-                        handleViewFile(
-                          paperTemplateFileId,
-                        )
-                      }
+                      onClick={() => handleViewFile(paperTemplateFileId)}
                     >
                       <span className="flex items-center">
                         <Eye className="mr-2 text-gray-600" /> View
@@ -221,11 +217,7 @@ export default function Documents() {
                       variant="secondary"
                       size="sm"
                       type="button"
-                      onClick={() =>
-                        handleViewFile(
-                          copyrightTemplateFileId,
-                        )
-                      }
+                      onClick={() => handleViewFile(copyrightTemplateFileId)}
                     >
                       <span className="flex items-center">
                         <Eye className="mr-2 text-gray-600" /> View
@@ -262,11 +254,7 @@ export default function Documents() {
                       variant="secondary"
                       size="sm"
                       type="button"
-                      onClick={() =>
-                        handleViewFile(
-                          humanPartsConsentFileId,
-                        )
-                      }
+                      onClick={() => handleViewFile(humanPartsConsentFileId)}
                     >
                       <span className="flex items-center">
                         <Eye className="mr-2 text-gray-600" /> View

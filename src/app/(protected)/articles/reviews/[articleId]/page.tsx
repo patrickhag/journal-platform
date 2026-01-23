@@ -393,7 +393,10 @@ export default function ReviewsPage() {
                                     className="prose max-w-none"
                                     dangerouslySetInnerHTML={{
                                       __html: review.message
-                                        .replace(/<pre><code class="language-json">/g, '')
+                                        .replace(
+                                          /<pre><code class="language-json">/g,
+                                          ''
+                                        )
                                         .replace(/<\/code><\/pre>/g, ''),
                                     }}
                                   />

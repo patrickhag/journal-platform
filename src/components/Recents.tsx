@@ -1,6 +1,6 @@
 import { publishedArticles } from '@/db/schema';
 import { db } from '@/db/db';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { Separator } from './ui/separator';
 import Link from 'next/link';
 import { format } from 'date-fns';
@@ -36,6 +36,7 @@ export const Recents = async () => {
         },
       },
     },
+    orderBy: desc(publishedArticles.publishedAt),
     limit: 5,
   });
 

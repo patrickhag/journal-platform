@@ -149,11 +149,15 @@ const ReviewsReceived = () => {
                       You can't reply yet
                     </div>
                     <div>
-                      Please Wait for the second reviewer comment to be able to submit the correction
+                      Please Wait for the second reviewer comment to be able to
+                      submit the correction
                     </div>
                   </div>
                 ) : (
-                  <>You can now submit your corrected paper with consideration of all reviewers comment</>
+                  <>
+                    You can now submit your corrected paper with consideration
+                    of all reviewers comment
+                  </>
                 )}
               </SheetDescription>
             </SheetHeader>

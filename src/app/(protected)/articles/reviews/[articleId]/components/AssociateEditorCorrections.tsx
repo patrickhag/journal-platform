@@ -59,10 +59,22 @@ export const AssociateEditorCorrections = ({
                         </CardHeader>
                         <CardContent>
                           {correction.message && (
-                            <p className="text-sm text-muted-foreground mb-5">
-                              <span className="font-medium">Comments:</span>{' '}
-                              {correction.message}
-                            </p>
+                            <div className='my-3'>
+                              <h4 className="font-semibold mb-2 text-muted-foreground">
+                                Comments
+                              </h4>
+                              <div
+                                className="prose max-w-none"
+                                dangerouslySetInnerHTML={{
+                                  __html: correction.message
+                                    .replace(
+                                      /<pre><code class="language-json">/g,
+                                      ''
+                                    )
+                                    .replace(/<\/code><\/pre>/g, ''),
+                                }}
+                              />
+                          </div>
                           )}
                           {/* Annotated Files */}
                           <div>

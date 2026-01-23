@@ -31,6 +31,7 @@ export type Issue = {
   volume: {
     id: string;
     volumeNumber: number;
+    year: string;
   };
 
   articles: Array<{

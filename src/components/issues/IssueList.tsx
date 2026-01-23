@@ -44,6 +44,9 @@ export function IssueList() {
   const [issueToDelete, setIssueToDelete] = useState<string | null>(null);
   const [editingIssue, setEditingIssue] = useState<Issue | null>(null);
 
+
+  console.log("issues:", issues)
+
   const { mutate: deleteIssueMutation, isPending: isDeletingIssuePending } =
     useDeleteIssue(setOpenDeleteIssueDialog);
 
@@ -131,8 +134,7 @@ export function IssueList() {
                   <span>
                     Volume{' '}
                     {
-                      volumes?.find((v) => v.id === issue.volumeId)
-                        ?.volumeNumber
+                      issue.volume.volumeNumber + ' - ' + issue.volume.year
                     }
                   </span>
                 </div>

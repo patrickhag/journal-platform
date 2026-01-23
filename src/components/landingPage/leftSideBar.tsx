@@ -90,7 +90,7 @@ const LeftSideBar = async () => {
           )}
         </div>
 
-        {/* Advertisements Section (client component) */}
+        {/* Advertisements Section */}
         <AdsSection />
 
         {/* Volumes Section */}

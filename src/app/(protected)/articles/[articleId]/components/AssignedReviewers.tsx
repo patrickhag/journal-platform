@@ -86,9 +86,7 @@ async function AssignedReviewers({
               </div>
               <div>
                 <h4 className="text-sm text-muted-foreground mb-2">Email</h4>
-                <p className="font-medium">
-                  {assignment.user?.email}
-                </p>
+                <p className="font-medium">{assignment.user?.email}</p>
               </div>
               {assignment.user && (
                 <>

@@ -109,7 +109,7 @@ export function IssueModal({
                       <SelectContent>
                         {volumes?.map((volume) => (
                           <SelectItem key={volume.id} value={volume.id}>
-                            Volume {volume.volumeNumber}
+                            Volume {volume.volumeNumber} - {volume.year}
                           </SelectItem>
                         ))}
                       </SelectContent>

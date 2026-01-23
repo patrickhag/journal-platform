@@ -152,10 +152,7 @@ const ParticularAssociateAssignment = () => {
                           size="sm"
                           type="button"
                           onClick={() =>
-                            handleViewFile(
-                              correction.fileId,
-                              'Correction file'
-                            )
+                            handleViewFile(correction.fileId, 'Correction file')
                           }
                         >
                           <Eye className="h-4 w-4" />
