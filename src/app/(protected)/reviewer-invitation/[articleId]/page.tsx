@@ -31,18 +31,18 @@ export default async function InvitationPage({
   const reviewAssignmentId = search.reviewAssignmentId as string;
   const inviteStatus = search.inviteStatus as string | undefined;
 
-    // If no reviewAssignmentId or inviteStatus, redirect
+  // If no reviewAssignmentId or inviteStatus, redirect
   if (!reviewAssignmentId || inviteStatus === undefined) {
-      redirect(`/`);
+    redirect(`/`);
   }
-  
+
   // Check if user is a reviewer
   const user = await db.query.userRoles.findFirst({
     where: eq(userRoles.userId, userId as string),
     columns: {
       role: true,
     },
-  })
+  });
 
   if (!user || user.role !== 'REVIEWER') {
     redirect('/');

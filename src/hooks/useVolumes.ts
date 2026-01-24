@@ -78,3 +78,34 @@ export const useGetPublishedVolumes = () => {
     refetchOnWindowFocus: false,
   });
 };
+
+export const useEditVolume = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      volumeId,
+      data,
+    }: {
+      volumeId: string;
+      data: VolumeFormValues;
+    }) => {
+      const response = await axios.put<MessageResponse>(
+        `/api/volumes/${volumeId}`,
+        data
+      );
+      return response.data;
+    },
+    onSuccess: ({ message }) => {
+      queryClient.invalidateQueries({ queryKey: ['volumes'] });
+      toast.success(message);
+    },
+    onError: (error: Error | AxiosError) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data.message
+        : error.message;
+
+      toast.error(message || 'Failed to update volume');
+    },
+  });
+};

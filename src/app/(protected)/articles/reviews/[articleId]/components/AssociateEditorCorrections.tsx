@@ -59,7 +59,7 @@ export const AssociateEditorCorrections = ({
                         </CardHeader>
                         <CardContent>
                           {correction.message && (
-                            <div className='my-3'>
+                            <div className="my-3">
                               <h4 className="font-semibold mb-2 text-muted-foreground">
                                 Comments
                               </h4>
@@ -74,7 +74,7 @@ export const AssociateEditorCorrections = ({
                                     .replace(/<\/code><\/pre>/g, ''),
                                 }}
                               />
-                          </div>
+                            </div>
                           )}
                           {/* Annotated Files */}
                           <div>

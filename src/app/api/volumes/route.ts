@@ -42,7 +42,7 @@ export async function GET(_req: NextRequest) {
           },
         },
       },
-      orderBy: desc(volumes.year)
+      orderBy: desc(volumes.year),
     });
 
     return NextResponse.json(allVolumes);
@@ -59,8 +59,10 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { volumeNumber, title, description, year, status } = body;
+    const parsedVolumeNumber = Number(volumeNumber);
+    const parsedYear = Number(year);
 
-    if (!volumeNumber || !year) {
+    if (!Number.isFinite(parsedVolumeNumber) || !Number.isFinite(parsedYear)) {
       return NextResponse.json(
         { message: 'Volume number and year are required' },
         { status: 400 }
@@ -77,8 +79,8 @@ export async function POST(req: Request) {
 
     const existingVolume = await db.query.volumes.findFirst({
       where: and(
-        eq(volumes.volumeNumber, volumeNumber),
-        eq(volumes.year, year)
+        eq(volumes.volumeNumber, parsedVolumeNumber),
+        eq(volumes.year, parsedYear)
       ),
     });
 
@@ -90,14 +92,14 @@ export async function POST(req: Request) {
       );
     }
 
-    if (volumeNumber)
+    if (parsedVolumeNumber)
       await db
         .insert(volumes)
         .values({
-          volumeNumber,
+          volumeNumber: parsedVolumeNumber,
           title,
           description,
-          year,
+          year: parsedYear,
           status,
         })
         .returning();

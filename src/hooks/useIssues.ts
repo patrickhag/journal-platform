@@ -108,6 +108,7 @@ export const useDeleteIssue = (
     onSuccess: ({ message }) => {
       setOpenDeleteIssueDialog(false);
       queryClient.invalidateQueries({ queryKey: ['issues'] });
+      queryClient.invalidateQueries({ queryKey: ['volumes'] });
       toast.success(message || "Failed to modify article's issues");
     },
     onError: (error: Error | AxiosError) => {

@@ -44,9 +44,6 @@ export function IssueList() {
   const [issueToDelete, setIssueToDelete] = useState<string | null>(null);
   const [editingIssue, setEditingIssue] = useState<Issue | null>(null);
 
-
-  console.log("issues:", issues)
-
   const { mutate: deleteIssueMutation, isPending: isDeletingIssuePending } =
     useDeleteIssue(setOpenDeleteIssueDialog);
 
@@ -132,10 +129,7 @@ export function IssueList() {
                 <div className="flex items-center text-muted-foreground">
                   <BookOpenIcon className="w-4 h-4 mr-2" />
                   <span>
-                    Volume{' '}
-                    {
-                      issue.volume.volumeNumber + ' - ' + issue.volume.year
-                    }
+                    Volume{' '} {issue.volume.year}
                   </span>
                 </div>
                 <CardDescription className="text-base">

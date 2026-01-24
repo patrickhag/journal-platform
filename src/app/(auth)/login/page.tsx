@@ -19,7 +19,6 @@ import {
   useActionState,
   useCallback,
   useEffect,
-  useRef,
   useState,
 } from 'react';
 import Image from 'next/image';
@@ -174,7 +173,7 @@ export default function LoginComponent() {
           <div className="flex justify-center mb-4">
             <Link href={'/'}>
               <Image
-                src={'/jaep-logo.png'}
+                src={'/jaep-logo.svg'}
                 alt="JAEP Health Science Logo"
                 width={40}
                 height={40}
