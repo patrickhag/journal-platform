@@ -15,7 +15,7 @@ export type ViewerDocument = {
   uri: string;
 };
 
-// pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 export default function FileViewerModal({
   open,

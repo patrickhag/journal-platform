@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import FileViewerModal from '@/components/FileViewerModal';
 import {
   Download,
   Eye,
@@ -59,6 +60,11 @@ export default function ArticleContent() {
   const [showCiteModal, setShowCiteModal] = useState(false);
   const [viewCount, setViewCount] = useState(false);
   const [downloadCount, setDownloadCount] = useState(false);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerDoc, setViewerDoc] = useState<{
+    uri: string;
+    fileName?: string;
+  } | null>(null);
   const [citationFormat, setCitationFormat] = useState<
     CitationFormat | undefined
   >(undefined);
@@ -70,6 +76,25 @@ export default function ArticleContent() {
   const { mutate } = useIncrementMetrics();
 
   const { data: metric } = useGetMetricInteraction(articleId as string);
+
+  const handleViewArticle = () => {
+    if (!article?.pdfUrl) {
+      return;
+    }
+    setViewCount(true);
+    setViewerDoc({
+      uri: article.pdfUrl,
+      fileName: articleData?.metadata.title || 'Article PDF',
+    });
+    setViewerOpen(true);
+  };
+
+  const handleViewerOpenChange = (open: boolean) => {
+    setViewerOpen(open);
+    if (!open) {
+      setViewerDoc(null);
+    }
+  };
 
   useEffect(() => {
     if (!article) {
@@ -224,10 +249,7 @@ export default function ArticleContent() {
               <Button
                 variant="outline"
                 className="gap-2"
-                onClick={() => {
-                  setViewCount(true);
-                  window.open(article.pdfUrl);
-                }}
+                onClick={handleViewArticle}
               >
                 <Eye className="w-4 h-4" />
                 View this article
@@ -566,6 +588,12 @@ export default function ArticleContent() {
                 </div>
               </DialogContent>
             </Dialog>
+            <FileViewerModal
+              open={viewerOpen}
+              onOpenChange={handleViewerOpenChange}
+              documents={viewerDoc ? [viewerDoc] : []}
+              title={viewerDoc?.fileName || 'Article PDF'}
+            />
           </>
         )
       )}

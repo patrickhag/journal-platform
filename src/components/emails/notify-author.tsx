@@ -105,7 +105,7 @@ export const ArticleRevisionEmailTemplate = ({
           the button below:
         </Text>
         <Button
-          href={`${process.env.NEXT_PUBLIC_URL}/submissions`}
+          href={`${process.env.NEXT_PUBLIC_URL}/author/reviews`}
           className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md font-medium my-4"
         >
           View Review Details

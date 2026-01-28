@@ -16,9 +16,10 @@ import {
   UserCheck,
   CornerDownRight,
   XCircle,
+  Forward,
 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useGetReviews } from '@/hooks/useReviews';
+import { useForwardToAuthor, useGetReviews } from '@/hooks/useReviews';
 import { useState } from 'react';
 import EditorDecisionModal from './components/EditorDecisionModal';
 import EditorReReviewModal from './components/EditorReReview';
@@ -41,6 +42,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import ForwardToAuthorDialog from './components/ForwardToAuthorDialog';
 
 type ReviewAssessmentRecord = {
   scopeRelevanceOriginality: boolean;
@@ -196,6 +198,8 @@ export default function ReviewsPage() {
   const { articleId } = useParams();
 
   const { data: reviewData, isPending } = useGetReviews(articleId as string);
+  const { mutate: forwardToAuthor, isPending: isForwarding } =
+    useForwardToAuthor(articleId as string);
 
   const [openEditor, setOpenEditor] = useState(false);
   const [openAssignEditorDialog, setopenAssignEditorDialog] = useState(false);
@@ -209,6 +213,7 @@ export default function ReviewsPage() {
     uri: string;
     fileName?: string;
   } | null>(null);
+  const [openForwardDialog, setOpenForwardDialog] = useState(false);
 
   const router = useRouter();
   const onCloseRereview = () => setOpenRereview(false);
@@ -324,9 +329,22 @@ export default function ReviewsPage() {
 
             <TabsContent value="reviews">
               <Card>
+              <div className="flex justify-between items-center">
                 <CardHeader>
                   <h1>Submitted Reviews</h1>
                 </CardHeader>
+                <Button
+                  variant="outline"
+                  className="my-5 mx-[37px]"
+                  onClick={() => setOpenForwardDialog(true)}
+                  disabled={
+                    isForwarding || reviewData?.articleStatus === 'CORRECTION'
+                  }
+                >
+                  <Forward className="w-4 h-4 mr-2" />
+                  Forward to Author
+                </Button>
+                </div>
                 <CardContent className="p-6">
                   {isPending ? (
                     <p className="text-muted-foreground">Loading ...</p>
@@ -561,11 +579,11 @@ export default function ReviewsPage() {
                 </CardContent>
               </Card>
             </TabsContent>
-            <TabsContent value="associate-corrections">
-              <AssociateEditorCorrections articleId={articleId as string} />
-            </TabsContent>
             <TabsContent value="author-corrections">
               <AuthorCorrections articleId={articleId as string} />
+            </TabsContent>
+            <TabsContent value="associate-corrections">
+              <AssociateEditorCorrections articleId={articleId as string} />
             </TabsContent>
           </Tabs>
 
@@ -645,6 +663,15 @@ export default function ReviewsPage() {
         onOpenChange={handleViewerOpenChange}
         documents={viewerDoc ? [viewerDoc] : []}
         title={viewerDoc?.fileName || 'Reviewer file'}
+      />
+      <ForwardToAuthorDialog
+        open={openForwardDialog}
+        onOpenChange={setOpenForwardDialog}
+        isForwarding={isForwarding}
+        onConfirm={() => {
+          forwardToAuthor();
+          setOpenForwardDialog(false);
+        }}
       />
     </>
   );

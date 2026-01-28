@@ -192,6 +192,11 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
         <AssignedReviewersWithPermissions
           articleId={articleId}
           articleStatus={article.acceptedAt || 'SUBMITTED'}
+          userRole={currentUserRole as
+            | 'NORMAL_USER'
+            | 'CHIEF_EDITOR'
+            | 'REVIEWER'
+            | 'STAFF_EDITOR'}
           role={
             currentUserRole as
               | 'NORMAL_USER'

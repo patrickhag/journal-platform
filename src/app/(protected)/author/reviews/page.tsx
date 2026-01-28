@@ -143,22 +143,6 @@ const ReviewsReceived = () => {
                   : 'Reviews'}
               </SheetTitle>
               <SheetDescription>
-                {selectedManuscript && selectedManuscript.reviews.length < 2 ? (
-                  <div className="bg-yellow-100 border-l-4 border-yellow-400 text-yellow-700 p-4 rounded mb-4">
-                    <div className="font-semibold mb-1">
-                      You can't reply yet
-                    </div>
-                    <div>
-                      Please Wait for the second reviewer comment to be able to
-                      submit the correction
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    You can now submit your corrected paper with consideration
-                    of all reviewers comment
-                  </>
-                )}
               </SheetDescription>
             </SheetHeader>
 

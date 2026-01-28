@@ -135,24 +135,17 @@ const ReviewAssignment = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {particularAssignment.authorRevisions &&
+            {/* AUTHOR REPLIES TO REVIEWS */}
+            {particularAssignment.article.articleStatus !== 'CORRECTION' && particularAssignment.authorRevisions &&
               particularAssignment.authorRevisions.map(
                 (authorRevision, index) => (
                   <div
                     key={authorRevision.id || index}
                     className="border rounded-lg p-4 bg-muted/50 space-y-3"
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-semibold text-muted-foreground">
-                        Author Response
-                      </span>
-                      {authorRevision.submittedAt && (
-                        <span className="text-xs text-muted-foreground">
-                          {formatDate(authorRevision.submittedAt)}
-                        </span>
-                      )}
-                    </div>
-
+                  <div className="text-xs text-muted-foreground text-right">
+                    {formatDate(authorRevision.submittedAt)}
+                  </div>
                     {/* Author's Message */}
                     {authorRevision?.message && (
                       <div className="space-y-2">
@@ -357,7 +350,7 @@ const ReviewAssignment = () => {
                                 />
                               </div>
 
-                              {/* Author Revision Files */}
+                              {/* AUTHOR REVISION FILES */}
                               {revision.authorRevision?.fileIds &&
                                 revision.authorRevision.fileIds.length > 0 && (
                                   <div className="space-y-2 mt-2">
@@ -407,7 +400,7 @@ const ReviewAssignment = () => {
                     )}
 
                   {/* ============================== */}
-                  {/* Revision Info (staff editor)   */}
+                  {/* REVIEWER REVISION INFO (STAFF EDITOR)   */}
                   {/* ============================== */}
                   {review.reviewRevisions &&
                     review.reviewRevisions.length > 0 && (
@@ -436,7 +429,7 @@ const ReviewAssignment = () => {
                               />
                             </div>
 
-                            {/* Revision Files */}
+                            {/* REVIEWER REVISION FILES */}
                             {revision.fileIds &&
                               revision.fileIds.length > 0 && (
                                 <div className="space-y-2 mt-2">

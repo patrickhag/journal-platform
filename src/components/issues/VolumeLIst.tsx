@@ -9,13 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { VolumeType } from '@/types';
-import {
-  BookIcon,
-  Ellipsis,
-  Edit,
-  Trash,
-  Dot,
-} from 'lucide-react';
+import { BookIcon, Ellipsis, Edit, Trash, Dot } from 'lucide-react';
 import { Separator } from '../ui/separator';
 import { ScrollArea } from '../ui/scroll-area';
 import VolumeCardSkeleton from './VolumeCardSkeleton';
@@ -141,7 +135,9 @@ export function VolumeList({ volumes, isVolumesPending }: VolumeLIstProps) {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
-                  <CardDescription className='sr-only'>{volume.title}</CardDescription>
+                  <CardDescription className="sr-only">
+                    {volume.title}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">

@@ -3,7 +3,7 @@ import { db } from '@/db/db';
 import { authorRevisions, reviews, reviewAssignments } from '@/db/schema';
 import { auth } from '@/auth';
 import { articleSubmissions } from '@/db/schema';
-import { and, desc, eq, isNotNull } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import {
   authorInformStaffEditor,
   authorInformReviewer,
@@ -73,7 +73,7 @@ export async function POST(req: Request) {
     const authorName = session?.user?.name;
     const authorId = session?.user?.id;
 
-    // Insert author revision and get the ID
+    // INSERT AUTHOR REVISION AND GET THE ID
     const [insertedAuthorRevision] = await db
       .insert(authorRevisions)
       .values({
@@ -86,15 +86,7 @@ export async function POST(req: Request) {
 
     const authorRevisionId = insertedAuthorRevision.id;
 
-    // update article status to UNDER REVIEW
-    await db
-      .update(articleSubmissions)
-      .set({
-        articleStatus: 'UNDER REVIEW',
-      })
-      .where(eq(articleSubmissions.id, articleId));
-
-    // fetch article with reviews and editor info
+    // FETCH ARTICLE WITH REVIEWS AND EDITOR INFO
     const article = await db.query.articleSubmissions.findFirst({
       columns: {
         id: true,
@@ -142,33 +134,24 @@ export async function POST(req: Request) {
       ' ' +
       article?.editorAssignment.user.lastName;
 
-    // create review revisions for each submitted review and link to author revision
+    // CREATE REVIEW REVISIONS FOR EACH SUBMITTED REVIEW AND LINK TO AUTHOR REVISION
     const articleReviewAssignments = article?.reviewAssignments || [];
 
     for (const reviewAssignment of articleReviewAssignments) {
-      // send email notification to the reviewer
+      // SEND EMAIL NOTIFICATION TO THE REVIEWER
       const reviewerName =
         `${reviewAssignment?.user?.prefix || ''} ${reviewAssignment?.user?.firstName} ${reviewAssignment?.user?.lastName}`.trim();
 
-      // add author revision-id to review assignments
+      // ADD AUTHOR REVISION-ID TO REVIEW ASSIGNMENTS
       await db
         .update(reviewAssignments)
         .set({
           authorRevisionId,
         })
         .where(eq(reviewAssignments.id, reviewAssignment.id));
-
-      await authorInformReviewer({
-        reviewerName,
-        authorName: authorName as string,
-        articleTitle: article?.metadata.title as string,
-        articleLink: articleId,
-        message,
-        reviewerEmail: reviewAssignment?.user?.email as string,
-      });
     }
 
-    // send email to staff-editor about the author reply
+    // SEND EMAIL TO STAFF-EDITOR ABOUT THE AUTHOR REPLY
     await authorInformStaffEditor({
       staffEditorName: staffEditorName as string,
       articleTitle: article?.metadata.title as string,

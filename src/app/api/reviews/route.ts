@@ -11,7 +11,6 @@ import { auth } from '@/auth';
 import { articleSubmissions } from '@/db/schema';
 import { and, desc, eq } from 'drizzle-orm';
 import {
-  informingAuthorNReviewer,
   notifyStaffEditorAboutReviewStatus,
 } from '@/lib/emailTransporter';
 
@@ -46,14 +45,21 @@ export async function POST(req: Request) {
       },
     });
 
-    // CHECK IF THE REVIEW HAS BEEN ALREADY SUBMITTED AND ACCEPTED
+    // CHECK IF THE REVIEW HAS BEEN ALREADY SUBMITTED AND ACCEPTED OR REJECTED
     if (hasReviewStatus && hasReviewStatus.status === 'Accepted') {
       return NextResponse.json(
-        { message: "You've already submitted a review for this manuscript" },
+        { message: "You've already accepted this manuscript." },
+        { status: 400 }
+      );
+    }
+    else if (hasReviewStatus && hasReviewStatus.status === 'Rejected') {
+      return NextResponse.json(
+        { message: "You've already rejected this manuscript." },
         { status: 400 }
       );
     }
 
+    // INSERT REVIEW AND REVIEW ASSESSMENT RECORDS
     await db.transaction(async (tx) => {
       const [reviewRecord] = await tx
         .insert(reviews)
@@ -90,7 +96,7 @@ export async function POST(req: Request) {
       return reviewRecord;
     });
 
-    // Update review assignment status if accepted
+    // UPDATE REVIEW ASSIGNMENT STATUS IF ACCEPTED
     if (status === 'Accepted') {
       await db
         .update(reviewAssignments)
@@ -103,37 +109,6 @@ export async function POST(req: Request) {
             eq(reviewAssignments.articleId, articleId)
           )
         );
-    }
-
-    // Check all reviews for this article to determine article status
-    const allReviews = await dbWithQuery.query.reviews.findMany({
-      where: eq(reviews.articleId, articleId),
-      columns: {
-        status: true,
-      },
-    });
-
-    const hasAccepted = allReviews.some(
-      (review) => review.status === 'Accepted'
-    );
-    const hasCorrection = allReviews.some(
-      (review) =>
-        review.status === 'Major Correction' ||
-        review.status === 'Minor Correction'
-    );
-
-    // If there's both an accepted review and a correction review, keep article in CORRECTION status
-    if (hasAccepted && hasCorrection) {
-      await db
-        .update(articleSubmissions)
-        .set({ articleStatus: 'CORRECTION' })
-        .where(eq(articleSubmissions.id, articleId));
-    } else if (status === 'Major Correction' || status === 'Minor Correction') {
-      // Only set to CORRECTION if there's no accepted review
-      await db
-        .update(articleSubmissions)
-        .set({ articleStatus: 'CORRECTION' })
-        .where(eq(articleSubmissions.id, articleId));
     }
 
     const article = await dbWithQuery.query.articleSubmissions.findFirst({
@@ -158,6 +133,7 @@ export async function POST(req: Request) {
           with: {
             user: {
               columns: {
+                id: true,
                 email: true,
                 prefix: true,
               },
@@ -170,10 +146,10 @@ export async function POST(req: Request) {
 
     const articleTitle = article?.metadata.title;
     const authorName = article?.user.firstName + ' ' + article?.user.lastName;
-    const authorEmail = article?.user.email;
+    const staffEditorId = article?.editorAssignment.user.id;
     const staffEditorEmail = article?.editorAssignment.user.email;
 
-    // send email to staff-editor also
+    // SEND EMAIL TO STAFF-EDITOR ALSO
     await notifyStaffEditorAboutReviewStatus({
       articleTitle: articleTitle as string,
       authorNames: authorName,
@@ -182,19 +158,10 @@ export async function POST(req: Request) {
       status: status,
     });
 
-    // send email to author
-    await informingAuthorNReviewer({
-      articleTitle: articleTitle as string,
-      participantName: authorName,
-      participantEmail: authorEmail as string,
-      subject: 'Reviewer has reviewed your manuscript and provided a review',
-      userType: 'reviewer',
-    });
-
-    // SEND IN-APP NOTIFICATION TO THE AUTHOR
+    // SEND IN-APP NOTIFICATION TO THE STAFF-EDITOR
     await db.insert(notifications).values({
-      message: `New review submitted for your article named "${articleTitle}"`,
-      userId: article?.user.id,
+      message: `New review submitted for manuscript named "${articleTitle}"`,
+      userId: staffEditorId,
       kind: 'Info',
     });
 

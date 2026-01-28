@@ -128,9 +128,7 @@ export function IssueList() {
                 </div>
                 <div className="flex items-center text-muted-foreground">
                   <BookOpenIcon className="w-4 h-4 mr-2" />
-                  <span>
-                    Volume{' '} {issue.volume.year}
-                  </span>
+                  <span>Volume {issue.volume.year}</span>
                 </div>
                 <CardDescription className="text-base">
                   {issue.title}

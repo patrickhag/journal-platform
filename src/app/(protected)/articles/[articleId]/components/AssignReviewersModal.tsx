@@ -30,8 +30,9 @@ import {
 } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { DialogTrigger } from '@radix-ui/react-dialog';
+import withPermissions from '@/components/WithPermission';
 
-export const AssignReviewerModal = () => {
+const AssignReviewerModal = () => {
   const [selectedReviewerId, setSelectedReviewerId] = useState<string>('');
   const { data: availableReviwers } = useGetReviewers();
   const { mutate, isPending } = useAssignReviewer();
@@ -204,3 +205,6 @@ export const AssignReviewerModal = () => {
     </>
   );
 };
+
+export const AssignReviewersWithPermissions =
+  withPermissions(AssignReviewerModal);

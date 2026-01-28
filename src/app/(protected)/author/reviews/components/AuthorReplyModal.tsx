@@ -46,7 +46,7 @@ const AuthorReplyModal: React.FC<{
 
   const clearURL = useClearURL();
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const payloadData = {
       articleId,
       message: reply,

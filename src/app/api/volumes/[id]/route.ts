@@ -81,9 +81,7 @@ export async function PUT(
     }
 
     const existingVolume = await db.query.volumes.findFirst({
-      where: and(
-        eq(volumes.year, parsedYear),
-      ),
+      where: and(eq(volumes.year, parsedYear)),
     });
 
     if (existingVolume) {

@@ -5,17 +5,23 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import withPermissions from '@/components/WithPermission';
-import { AssignReviewerModal } from './AssignReviewersModal';
+import { AssignReviewersWithPermissions } from './AssignReviewersModal';
 import ConditionalRender from '@/components/ConditionalRender';
 
 interface AssignedReviewersProps {
   articleId: string;
   articleStatus: string;
+  userRole: 'NORMAL_USER'
+  | 'CHIEF_EDITOR'
+  | 'REVIEWER'
+  | 'STAFF_EDITOR'
+  | 'ASSOCIATE_EDITOR';
 }
 
 async function AssignedReviewers({
   articleId,
   articleStatus,
+  userRole,
 }: AssignedReviewersProps) {
   const assignedReviewers = await db.query.reviewAssignments.findMany({
     where: eq(reviewAssignments.articleId, articleId),
@@ -39,7 +45,10 @@ async function AssignedReviewers({
           </CardTitle>
         </CardHeader>
         <ConditionalRender status={articleStatus} hideOn={['PUBLISHED']}>
-          <AssignReviewerModal />
+          <AssignReviewersWithPermissions 
+          requiredPermissions={['ASSIGN_REVIEWERS']} 
+          role={userRole}
+          fallback="" />
         </ConditionalRender>
       </div>
       <CardContent className="space-y-5">

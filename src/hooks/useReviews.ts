@@ -176,6 +176,61 @@ export const useSendEditorDecision = (articleId: string) => {
   });
 };
 
+export const useForwardToAuthor = (articleId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      return axios.put<MessageResponse>(
+        `/api/editor/forward-to-author/${articleId}`
+      );
+    },
+    onSuccess: ({ data }) => {
+      if (data.message) {
+        toast.success(data.message);
+        queryClient.invalidateQueries({ queryKey: ['reviews'] });
+        queryClient.invalidateQueries({ queryKey: ['authorReviews'] });
+        queryClient.invalidateQueries({ queryKey: ['manuscripts'] });
+      }
+    },
+    onError: (error: Error | AxiosError) => {
+      console.error('Forward to author error:', error.message);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : error.message;
+
+      toast.error(message || 'Failed to forward article to author');
+    },
+  });
+};
+
+export const useForwardToReviewers = (articleId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      return axios.put<MessageResponse>(
+        `/api/editor/forward-to-reviewers/${articleId}`
+      );
+    },
+    onSuccess: ({ data }) => {
+      if (data.message) {
+        toast.success(data.message);
+        queryClient.invalidateQueries({ queryKey: ['authorCorrections'] });
+        queryClient.invalidateQueries({ queryKey: ['reviews'] });
+      }
+    },
+    onError: (error: Error | AxiosError) => {
+      console.error('Forward to reviewers error:', error.message);
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : error.message;
+
+      toast.error(message || 'Failed to forward corrections to reviewers');
+    },
+  });
+};
+
 type RevisionType = {
   note: string;
   fileIds: string[];

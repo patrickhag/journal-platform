@@ -129,10 +129,17 @@ const ParticularAssociateAssignment = () => {
                       {/* Message Section (if available) */}
                       <p className="text-sm text-muted-foreground mb-2">
                         <span className="font-medium">Comments:</span>{' '}
-                        {correction.message || (
-                          <span className="text-muted-foreground">
-                            No message available.
-                          </span>
+                        {correction.message ? (
+                          <div
+                            className="prose max-w-none"
+                            dangerouslySetInnerHTML={{
+                              __html: correction.message
+                                .replace(/<pre><code class="language-json">/g, '')
+                                .replace(/<\/code><\/pre>/g, ''),
+                            }}
+                          />
+                        ) : (
+                          <span className="italic text-muted-foreground">No correction comments available.</span>
                         )}
                       </p>
 

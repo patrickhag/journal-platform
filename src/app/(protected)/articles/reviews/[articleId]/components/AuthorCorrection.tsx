@@ -1,19 +1,24 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { File, FileSearch2, Eye } from 'lucide-react';
+import { File, FileSearch2, Eye, Forward } from 'lucide-react';
 import { useGetAuthorCorrections } from '@/hooks/useArticles';
 import { TAuthorCorrection } from '@/types';
 import FileViewerModal from '@/components/FileViewerModal';
 import { useState } from 'react';
+import { useForwardToReviewers } from '@/hooks/useReviews';
+import ForwardToReviewersDialog from './ForwardToReviewersDialog';
 
 export const AuthorCorrections = ({ articleId }: { articleId: string }) => {
   const { data: corrections, isPending } = useGetAuthorCorrections(articleId);
+  const { mutate: forwardToReviewers, isPending: isForwarding } =
+    useForwardToReviewers(articleId);
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewerDoc, setViewerDoc] = useState<{
     uri: string;
     fileName?: string;
   } | null>(null);
+  const [openForwardDialog, setOpenForwardDialog] = useState(false);
 
   const handleViewFile = (uri: string, fileName: string) => {
     setViewerDoc({ uri, fileName });
@@ -30,9 +35,20 @@ export const AuthorCorrections = ({ articleId }: { articleId: string }) => {
   return (
     <>
       <Card>
+      <div className="flex justify-between items-center">
         <CardHeader>
           <h1>Author's Corrections</h1>
         </CardHeader>
+        <Button
+          variant="outline"
+          className="my-5 mx-[37px]"
+          onClick={() => setOpenForwardDialog(true)}
+          disabled={isForwarding || !corrections || corrections.length === 0}
+        >
+          <Forward className="w-4 h-4 mr-2" />
+          Forward to Reviewers
+        </Button>
+        </div>
         <CardContent className="p-6">
           {isPending ? (
             <p className="text-muted-foreground">Loading ...</p>
@@ -131,6 +147,15 @@ export const AuthorCorrections = ({ articleId }: { articleId: string }) => {
         onOpenChange={handleViewerOpenChange}
         documents={viewerDoc ? [viewerDoc] : []}
         title={viewerDoc?.fileName || 'Author file'}
+      />
+      <ForwardToReviewersDialog
+        open={openForwardDialog}
+        onOpenChange={setOpenForwardDialog}
+        isForwarding={isForwarding}
+        onConfirm={() => {
+          forwardToReviewers();
+          setOpenForwardDialog(false);
+        }}
       />
     </>
   );
