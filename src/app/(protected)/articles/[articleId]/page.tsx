@@ -142,14 +142,6 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
         </Card>
 
         {/* FILES */}
-        {/* <Files
-          articleId={articleId}
-          role={currentUserRole!}
-          userId={session?.user.id}
-          articleStatus={article?.articleStatus as string}
-        /> */}
-
-        {/* TODO: - [ ] add the support for reviewing files inside the platform */}
         <FilesClient
           filesData={filesData}
           userId={session?.user.id}
@@ -192,11 +184,13 @@ async function page({ params }: { params: Promise<{ articleId: string }> }) {
         <AssignedReviewersWithPermissions
           articleId={articleId}
           articleStatus={article.acceptedAt || 'SUBMITTED'}
-          userRole={currentUserRole as
-            | 'NORMAL_USER'
-            | 'CHIEF_EDITOR'
-            | 'REVIEWER'
-            | 'STAFF_EDITOR'}
+          userRole={
+            currentUserRole as
+              | 'NORMAL_USER'
+              | 'CHIEF_EDITOR'
+              | 'REVIEWER'
+              | 'STAFF_EDITOR'
+          }
           role={
             currentUserRole as
               | 'NORMAL_USER'

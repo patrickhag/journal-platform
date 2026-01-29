@@ -31,7 +31,8 @@ export default function ForwardToReviewersDialog({
           <AlertDialogTitle>Forward to Reviewers?</AlertDialogTitle>
           <AlertDialogDescription>
             This will notify reviewers who requested corrections and move the
-            manuscript back to <span className="font-semibold">UNDER REVIEW</span>.
+            manuscript back to{' '}
+            <span className="font-semibold">UNDER REVIEW</span>.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -142,8 +142,7 @@ const ReviewsReceived = () => {
                   ? `Reviews for: ${selectedManuscript.metadata.title}`
                   : 'Reviews'}
               </SheetTitle>
-              <SheetDescription>
-              </SheetDescription>
+              <SheetDescription></SheetDescription>
             </SheetHeader>
 
             {selectedManuscript && (

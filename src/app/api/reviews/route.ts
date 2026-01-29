@@ -10,9 +10,7 @@ import {
 import { auth } from '@/auth';
 import { articleSubmissions } from '@/db/schema';
 import { and, desc, eq } from 'drizzle-orm';
-import {
-  notifyStaffEditorAboutReviewStatus,
-} from '@/lib/emailTransporter';
+import { notifyStaffEditorAboutReviewStatus } from '@/lib/emailTransporter';
 
 export async function POST(req: Request) {
   try {
@@ -51,8 +49,7 @@ export async function POST(req: Request) {
         { message: "You've already accepted this manuscript." },
         { status: 400 }
       );
-    }
-    else if (hasReviewStatus && hasReviewStatus.status === 'Rejected') {
+    } else if (hasReviewStatus && hasReviewStatus.status === 'Rejected') {
       return NextResponse.json(
         { message: "You've already rejected this manuscript." },
         { status: 400 }

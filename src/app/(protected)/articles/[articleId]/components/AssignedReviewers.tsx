@@ -11,11 +11,12 @@ import ConditionalRender from '@/components/ConditionalRender';
 interface AssignedReviewersProps {
   articleId: string;
   articleStatus: string;
-  userRole: 'NORMAL_USER'
-  | 'CHIEF_EDITOR'
-  | 'REVIEWER'
-  | 'STAFF_EDITOR'
-  | 'ASSOCIATE_EDITOR';
+  userRole:
+    | 'NORMAL_USER'
+    | 'CHIEF_EDITOR'
+    | 'REVIEWER'
+    | 'STAFF_EDITOR'
+    | 'ASSOCIATE_EDITOR';
 }
 
 async function AssignedReviewers({
@@ -45,10 +46,11 @@ async function AssignedReviewers({
           </CardTitle>
         </CardHeader>
         <ConditionalRender status={articleStatus} hideOn={['PUBLISHED']}>
-          <AssignReviewersWithPermissions 
-          requiredPermissions={['ASSIGN_REVIEWERS']} 
-          role={userRole}
-          fallback="" />
+          <AssignReviewersWithPermissions
+            requiredPermissions={['ASSIGN_REVIEWERS']}
+            role={userRole}
+            fallback=""
+          />
         </ConditionalRender>
       </div>
       <CardContent className="space-y-5">

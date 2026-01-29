@@ -112,7 +112,11 @@ const LeftSideBar = async () => {
                       href="/articles/issues"
                       className="hover:text-blue-600"
                     >
-                      Volume {vol.year} ({vol.issues.length > 0 ? `${vol.issues.length} Issue${vol.issues.length > 1 ? 's' : ''}` : 'No Issues'})
+                      Volume {vol.year} (
+                      {vol.issues.length > 0
+                        ? `${vol.issues.length} Issue${vol.issues.length > 1 ? 's' : ''}`
+                        : 'No Issues'}
+                      )
                     </Link>
                     {index < volumes.length - 1 && <br />}
                   </React.Fragment>

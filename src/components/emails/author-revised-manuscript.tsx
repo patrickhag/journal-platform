@@ -52,7 +52,8 @@ export const AuthorRevisedManuscriptEmailTemplate = ({
       {/* Footer */}
       <Section className="bg-gray-100 text-center py-4 text-sm font-semibold text-gray-600">
         <Text>
-          © {new Date().getFullYear()} JAEP Health Sciences. All rights reserved.
+          © {new Date().getFullYear()} JAEP Health Sciences. All rights
+          reserved.
         </Text>
       </Section>
     </Container>
@@ -106,7 +107,8 @@ export const ReviewerReReviewEmailTemplate = ({
       {/* Footer */}
       <Section className="bg-gray-100 text-center py-4 text-sm font-semibold text-gray-600">
         <Text>
-          © {new Date().getFullYear()} JAEP Health Sciences. All rights reserved.
+          © {new Date().getFullYear()} JAEP Health Sciences. All rights
+          reserved.
         </Text>
       </Section>
     </Container>

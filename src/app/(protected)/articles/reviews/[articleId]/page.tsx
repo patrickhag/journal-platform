@@ -329,21 +329,21 @@ export default function ReviewsPage() {
 
             <TabsContent value="reviews">
               <Card>
-              <div className="flex justify-between items-center">
-                <CardHeader>
-                  <h1>Submitted Reviews</h1>
-                </CardHeader>
-                <Button
-                  variant="outline"
-                  className="my-5 mx-[37px]"
-                  onClick={() => setOpenForwardDialog(true)}
-                  disabled={
-                    isForwarding || reviewData?.articleStatus === 'CORRECTION'
-                  }
-                >
-                  <Forward className="w-4 h-4 mr-2" />
-                  Forward to Author
-                </Button>
+                <div className="flex justify-between items-center">
+                  <CardHeader>
+                    <h1>Submitted Reviews</h1>
+                  </CardHeader>
+                  <Button
+                    variant="outline"
+                    className="my-5 mx-[37px]"
+                    onClick={() => setOpenForwardDialog(true)}
+                    disabled={
+                      isForwarding || reviewData?.articleStatus === 'CORRECTION'
+                    }
+                  >
+                    <Forward className="w-4 h-4 mr-2" />
+                    Forward to Author
+                  </Button>
                 </div>
                 <CardContent className="p-6">
                   {isPending ? (

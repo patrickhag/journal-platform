@@ -35,19 +35,19 @@ export const AuthorCorrections = ({ articleId }: { articleId: string }) => {
   return (
     <>
       <Card>
-      <div className="flex justify-between items-center">
-        <CardHeader>
-          <h1>Author's Corrections</h1>
-        </CardHeader>
-        <Button
-          variant="outline"
-          className="my-5 mx-[37px]"
-          onClick={() => setOpenForwardDialog(true)}
-          disabled={isForwarding || !corrections || corrections.length === 0}
-        >
-          <Forward className="w-4 h-4 mr-2" />
-          Forward to Reviewers
-        </Button>
+        <div className="flex justify-between items-center">
+          <CardHeader>
+            <h1>Author's Corrections</h1>
+          </CardHeader>
+          <Button
+            variant="outline"
+            className="my-5 mx-[37px]"
+            onClick={() => setOpenForwardDialog(true)}
+            disabled={isForwarding || !corrections || corrections.length === 0}
+          >
+            <Forward className="w-4 h-4 mr-2" />
+            Forward to Reviewers
+          </Button>
         </div>
         <CardContent className="p-6">
           {isPending ? (

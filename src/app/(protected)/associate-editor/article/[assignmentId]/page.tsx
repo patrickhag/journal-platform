@@ -2,7 +2,16 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, User, Calendar, SquarePen, File, Eye } from 'lucide-react';
+import {
+  ArrowLeft,
+  User,
+  Calendar,
+  SquarePen,
+  File,
+  Eye,
+  CornerDownRight,
+  FileText,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useGetAssociateEditorParticularAssignment } from '@/hooks/useReviews';
 import { useParams, useRouter } from 'next/navigation';
@@ -12,6 +21,7 @@ import {
   formatAssignmentCorrectionsStatus,
   formatDateToYMD,
 } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
 import { useState } from 'react';
 import UploadCorrection from '../../components/UploadCorrection';
 import ConditionalRender from '@/components/ConditionalRender';
@@ -29,6 +39,8 @@ const ParticularAssociateAssignment = () => {
 
   const { data: particularAssignment, isPending } =
     useGetAssociateEditorParticularAssignment(assignmentId as string);
+
+  console.log('particularAssignment:', particularAssignment);
 
   if (isPending) {
     return <ReviewerAssignmentSkeleton />;
@@ -99,7 +111,58 @@ const ParticularAssociateAssignment = () => {
           </CardHeader>
         </Card>
 
+        {/* ============================== */}
+        {/* Author Corrections */}
+        {/* ============================== */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <FileText className="mr-2 h-5 w-5" />
+              Author Corrections
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="ml-6 p-4 rounded-lg border bg-muted/20">
+              {/* AUTHOR REVISION FILES */}
+              <div className="space-y-2 mt-2">
+                {particularAssignment?.articleSubmissions.authorRevisions?.map(
+                  (revision, revisionIdx) =>
+                    revision.fileIds?.map((fileId: string, fileIdx: number) => (
+                      <div
+                        key={`rev-${revisionIdx}-file-${fileIdx}`}
+                        className="flex items-center justify-between p-2 rounded-md border bg-muted/30 hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <FileText className="h-4 w-4 text-blue-500" />
+                          <span className="text-xs font-medium">
+                            Revision {revisionIdx + 1} &ndash; File{' '}
+                            {fileIdx + 1}
+                          </span>
+                        </div>
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          type="button"
+                          onClick={() =>
+                            handleViewFile(
+                              fileId,
+                              `Author revision ${revisionIdx + 1} file ${fileIdx + 1}`
+                            )
+                          }
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        {/* ============================== */}
         {/* Associate Editor Corrections */}
+        {/* ============================== */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -134,12 +197,17 @@ const ParticularAssociateAssignment = () => {
                             className="prose max-w-none"
                             dangerouslySetInnerHTML={{
                               __html: correction.message
-                                .replace(/<pre><code class="language-json">/g, '')
+                                .replace(
+                                  /<pre><code class="language-json">/g,
+                                  ''
+                                )
                                 .replace(/<\/code><\/pre>/g, ''),
                             }}
                           />
                         ) : (
-                          <span className="italic text-muted-foreground">No correction comments available.</span>
+                          <span className="italic text-muted-foreground">
+                            No correction comments available.
+                          </span>
                         )}
                       </p>
 

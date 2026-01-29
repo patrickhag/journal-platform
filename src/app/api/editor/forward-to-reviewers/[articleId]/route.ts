@@ -47,10 +47,7 @@ export async function PUT(
     });
 
     if (!article) {
-      return NextResponse.json(
-        { error: 'Article not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Article not found' }, { status: 404 });
     }
 
     const correctionReviews = await db.query.reviews.findMany({
@@ -88,9 +85,7 @@ export async function PUT(
     ]);
 
     const blockedReviewerIds = new Set(
-      [...finalDecisionReviews].map(
-        (record) => record.userId
-      )
+      [...finalDecisionReviews].map((record) => record.userId)
     );
 
     const eligibleCorrectionReviews = correctionReviews.filter(
@@ -107,7 +102,8 @@ export async function PUT(
         .filter((review) => review.user?.email)
         .map((review) =>
           notifyReviewerAboutReReview({
-            reviewerName: `${review.user?.prefix ? `${review.user.prefix}.` : ''} ${review.user?.firstName ?? ''} ${review.user?.lastName ?? ''}`.trim(),
+            reviewerName:
+              `${review.user?.prefix ? `${review.user.prefix}.` : ''} ${review.user?.firstName ?? ''} ${review.user?.lastName ?? ''}`.trim(),
             reviewerEmail: review.user?.email as string,
             articleTitle: article.metadata.title as string,
           })
@@ -115,8 +111,7 @@ export async function PUT(
     );
 
     return NextResponse.json({
-      message:
-        'Reviewers notified and article status updated to UNDER REVIEW.',
+      message: 'Reviewers notified and article status updated to UNDER REVIEW.',
     });
   } catch (error) {
     console.error('Error forwarding corrections to reviewers:', error);

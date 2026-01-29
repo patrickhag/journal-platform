@@ -56,6 +56,8 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    console.log("body👉:", body)
     const {
       articleId,
       editorName,

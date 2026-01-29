@@ -136,16 +136,17 @@ const ReviewAssignment = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             {/* AUTHOR REPLIES TO REVIEWS */}
-            {particularAssignment.article.articleStatus !== 'CORRECTION' && particularAssignment.authorRevisions &&
+            {particularAssignment.article.articleStatus !== 'CORRECTION' &&
+              particularAssignment.authorRevisions &&
               particularAssignment.authorRevisions.map(
                 (authorRevision, index) => (
                   <div
                     key={authorRevision.id || index}
                     className="border rounded-lg p-4 bg-muted/50 space-y-3"
                   >
-                  <div className="text-xs text-muted-foreground text-right">
-                    {formatDate(authorRevision.submittedAt)}
-                  </div>
+                    <div className="text-xs text-muted-foreground text-right">
+                      {formatDate(authorRevision.submittedAt)}
+                    </div>
                     {/* Author's Message */}
                     {authorRevision?.message && (
                       <div className="space-y-2">

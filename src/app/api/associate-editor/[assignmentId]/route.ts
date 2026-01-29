@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 import { db } from '@/db/db';
-import { associateEditorAssignments } from '@/db/schema';
+import { associateEditorAssignments, authorRevisions } from '@/db/schema';
 import { and, desc, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -61,6 +61,14 @@ export async function GET(
                   prefix: true,
                   title: true,
                 },
+              },
+              authorRevisions: {
+                columns: {
+                  id: true,
+                  fileIds: true,
+                },
+                orderBy: desc(authorRevisions.submittedAt),
+                limit: 1,
               },
             },
           },

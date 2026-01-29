@@ -95,7 +95,10 @@ const AuthorReplyModal: React.FC<{
           <Button variant="outline" onClick={handleClose}>
             Cancel
           </Button>
-          <Button disabled={isPending || !reply.trim()} onClick={handleSubmit}>
+          <Button
+            disabled={isPending || fileIds.length === 0}
+            onClick={handleSubmit}
+          >
             {isPending ? <Loader text="Replying..." /> : 'Send Reply'}
           </Button>
         </DialogFooter>

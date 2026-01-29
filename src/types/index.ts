@@ -95,10 +95,10 @@ export type IArticle = {
   articleStatus: string;
   acceptedAt: string;
   proofStatus:
-    | 'AwaitingProof'
-    | 'ProofUploaded'
-    | 'AuthorResponded'
-    | 'Finalized';
+  | 'AwaitingProof'
+  | 'ProofUploaded'
+  | 'AuthorResponded'
+  | 'Finalized';
   proofNote?: string;
   proofFileUrl?: string[];
   user: {
@@ -242,11 +242,11 @@ export type TReviewerAssignment = {
   article: {
     id: string;
     articleStatus:
-      | 'SUBMITTED'
-      | 'UNDER REVIEW'
-      | 'ACCEPTED'
-      | 'PUBLISHED'
-      | string;
+    | 'SUBMITTED'
+    | 'UNDER REVIEW'
+    | 'ACCEPTED'
+    | 'PUBLISHED'
+    | string;
     metadata: {
       title: string;
       prefix: string;
@@ -406,13 +406,13 @@ export type TMetric = {
 
 export type FormState =
   | {
-      errors?: {
-        name?: string[];
-        email?: string[];
-        password?: string[];
-      };
-      message?: string;
-    }
+    errors?: {
+      name?: string[];
+      email?: string[];
+      password?: string[];
+    };
+    message?: string;
+  }
   | undefined;
 
 export type TMostViewed = {
@@ -818,6 +818,10 @@ export type TAssociateAssignment = {
       status: CorrectionStatus;
       message?: string;
     }[];
+    authorRevisions: {
+      id: string,
+      fileIds: string[],
+    }[],
     user: {
       firstName: string;
       lastName: string;

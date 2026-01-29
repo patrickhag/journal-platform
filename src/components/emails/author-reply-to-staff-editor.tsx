@@ -45,13 +45,13 @@ export const AuthorReplyToStaffEditorEmail: React.FC<{
               </Text>
               <Section className="bg-gray-50 border border-gray-200 p-4 rounded-md my-4">
                 <div
-                    className="prose max-w-none"
-                    dangerouslySetInnerHTML={{
-                      __html: message
-                        .replace(/<pre><code class="language-json">/g, '')
-                        .replace(/<\/code><\/pre>/g, ''),
-                    }}
-                  />
+                  className="prose max-w-none"
+                  dangerouslySetInnerHTML={{
+                    __html: message
+                      .replace(/<pre><code class="language-json">/g, '')
+                      .replace(/<\/code><\/pre>/g, ''),
+                  }}
+                />
               </Section>
             </>
           )}

@@ -14,7 +14,8 @@ import {
   CardTitle,
 } from './ui/card';
 import { auth } from '@/auth';
-import { db, notifications } from '@/db/schema';
+import { db } from '@/db/db';
+import { notifications } from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
 import { markAllAsRead } from '@/actions/markAllAsRead';
 import { headers } from 'next/headers';
@@ -22,15 +23,13 @@ import { SubmitButton } from './MarkAsReadButton';
 
 export default async function NotificationsModal() {
   const session = await auth();
-  const notificationsData = await db
-    .select()
-    .from(notifications)
-    .where(
-      and(
-        eq(notifications.userId, session?.user?.id || ''),
-        eq(notifications.isRead, false)
-      )
-    );
+  const notificationsData = await db.query.notifications.findMany({
+    where: and(
+      eq(notifications.userId, session?.user?.id || ''),
+      eq(notifications.isRead, false)
+    ),
+    limit: 9,
+  });
 
   const hdrs = await headers();
   const currentPath = hdrs.get('x-pathname');
@@ -42,7 +41,7 @@ export default async function NotificationsModal() {
           <Bell className="h-7 w-7" height={36} width={36} />
           {Array.isArray(notificationsData) && notificationsData.length > 0 && (
             <span className="bg-amber-600/40 p-3 rounded-full w-3 h-3 flex justify-center items-center absolute -right-1 -top-1">
-              {notificationsData.length}
+              {notificationsData.length > 9 ? '9+' : notificationsData.length}
             </span>
           )}
         </Button>

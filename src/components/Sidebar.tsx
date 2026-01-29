@@ -50,7 +50,11 @@ const Sidebar = ({ userRole, onLinkClick }: SidebarProps) => {
             label: 'Under Review',
             icon: Hourglass,
           },
-          { href: '/author/reviews', label: 'Correction', icon: MessageSquare },
+          {
+            href: '/author/reviews',
+            label: 'Corrections',
+            icon: MessageSquare,
+          },
           {
             href: '/author/under-press',
             label: 'Under Press',

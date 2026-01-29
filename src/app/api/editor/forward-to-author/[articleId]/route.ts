@@ -54,10 +54,7 @@ export async function PUT(
     });
 
     if (!article) {
-      return NextResponse.json(
-        { error: 'Article not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Article not found' }, { status: 404 });
     }
 
     await db
