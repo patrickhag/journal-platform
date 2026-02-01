@@ -67,7 +67,7 @@ export const formatAssignmentCorrectionsStatus: Record<
   string
 > = {
   SUBMITTED: 'Submitted',
-  RE_CORRECTION_REQUESTED: 'Revision',
+  REVISION: 'Revision',
   APPROVED: 'Approved',
 };
 

@@ -9,7 +9,6 @@ import {
   SquarePen,
   File,
   Eye,
-  CornerDownRight,
   FileText,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -21,7 +20,6 @@ import {
   formatAssignmentCorrectionsStatus,
   formatDateToYMD,
 } from '@/lib/utils';
-import { formatDate } from '@/lib/utils';
 import { useState } from 'react';
 import UploadCorrection from '../../components/UploadCorrection';
 import ConditionalRender from '@/components/ConditionalRender';
@@ -40,8 +38,6 @@ const ParticularAssociateAssignment = () => {
   const { data: particularAssignment, isPending } =
     useGetAssociateEditorParticularAssignment(assignmentId as string);
 
-  console.log('particularAssignment:', particularAssignment);
-
   if (isPending) {
     return <ReviewerAssignmentSkeleton />;
   }
@@ -52,6 +48,14 @@ const ParticularAssociateAssignment = () => {
     setViewerDoc({ uri, fileName });
     setViewerOpen(true);
   };
+
+  if (!particularAssignment) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 text-center italic text-gray-600">
+        This assignment was not found.
+      </div>
+    );
+  }
 
   const handleViewerOpenChange = (open: boolean) => {
     setViewerOpen(open);
@@ -71,8 +75,11 @@ const ParticularAssociateAssignment = () => {
           </Button>
 
           <ConditionalRender
-            status={particularAssignment?.articleSubmissions.articleStatus}
-            hideOn={['PUBLISHED', 'AWAITING DECISION', 'ACCEPTED']}
+            status={
+              particularAssignment?.articleSubmissions.articleStatus &&
+              particularAssignment?.status
+            }
+            hideOn={['PUBLISHED', 'AWAITING DECISION', 'FINALIZED']}
           >
             <Button
               type="submit"
@@ -122,40 +129,73 @@ const ParticularAssociateAssignment = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="ml-6 p-4 rounded-lg border bg-muted/20">
+            <div>
               {/* AUTHOR REVISION FILES */}
               <div className="space-y-2 mt-2">
-                {particularAssignment?.articleSubmissions.authorRevisions?.map(
-                  (revision, revisionIdx) =>
-                    revision.fileIds?.map((fileId: string, fileIdx: number) => (
-                      <div
-                        key={`rev-${revisionIdx}-file-${fileIdx}`}
-                        className="flex items-center justify-between p-2 rounded-md border bg-muted/30 hover:bg-muted/50 transition-colors"
-                      >
-                        <div className="flex items-center gap-3">
-                          <FileText className="h-4 w-4 text-blue-500" />
-                          <span className="text-xs font-medium">
-                            Revision {revisionIdx + 1} &ndash; File{' '}
-                            {fileIdx + 1}
-                          </span>
-                        </div>
+                {particularAssignment?.articleSubmissions.authorRevisions &&
+                particularAssignment.articleSubmissions.authorRevisions.length >
+                  0
+                  ? particularAssignment.articleSubmissions.authorRevisions.map(
+                      (revision, revisionIdx) =>
+                        revision.fileIds?.map(
+                          (fileId: string, fileIdx: number) => (
+                            <div
+                              key={`rev-${revisionIdx}-file-${fileIdx}`}
+                              className="flex items-center justify-between p-2 rounded-md border bg-muted/30 hover:bg-muted/50 transition-colors"
+                            >
+                              <div className="flex items-center gap-3">
+                                <FileText className="h-4 w-4 text-blue-500" />
+                                <span className="text-xs font-medium">
+                                  Manuscript file {fileIdx + 1}
+                                </span>
+                              </div>
 
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          type="button"
-                          onClick={() =>
-                            handleViewFile(
-                              fileId,
-                              `Author revision ${revisionIdx + 1} file ${fileIdx + 1}`
-                            )
-                          }
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                type="button"
+                                onClick={() =>
+                                  handleViewFile(
+                                    fileId,
+                                    `Author revision ${revisionIdx + 1} file ${fileIdx + 1}`
+                                  )
+                                }
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )
+                        )
+                    )
+                  : particularAssignment?.articleSubmissions?.files?.map(
+                      (file, fileIdx) => (
+                        <div
+                          key={`file-${fileIdx}`}
+                          className="flex items-center justify-between p-2 rounded-md border bg-muted/30 hover:bg-muted/50 transition-colors"
                         >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))
-                )}
+                          <div className="flex items-center gap-3">
+                            <FileText className="h-4 w-4 text-blue-500" />
+                            <span className="text-xs font-medium">
+                              Manuscript file {fileIdx + 1}
+                            </span>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            type="button"
+                            onClick={() =>
+                              handleViewFile(
+                                file.publicId,
+                                file.originalName ||
+                                  `Manuscript file ${fileIdx + 1}`
+                              )
+                            }
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )
+                    )}
               </div>
             </div>
           </CardContent>

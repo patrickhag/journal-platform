@@ -338,7 +338,9 @@ export default function ReviewsPage() {
                     className="my-5 mx-[37px]"
                     onClick={() => setOpenForwardDialog(true)}
                     disabled={
-                      isForwarding || reviewData?.articleStatus === 'CORRECTION'
+                      !canAssignAssociateEditor ||
+                      isForwarding ||
+                      reviewData?.articleStatus === 'CORRECTION'
                     }
                   >
                     <Forward className="w-4 h-4 mr-2" />

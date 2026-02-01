@@ -75,18 +75,21 @@ const LeftSideBar = async () => {
           {mostViewedError ? (
             <p className="text-sm text-red-600">{mostViewedError}</p>
           ) : (
-            <ul className="mt-2 space-y-4">
+            <div className="mt-2 space-y-4">
               {mostViewed?.map((item) => (
-                <li key={item.id} className="text-sm text-gray-600">
+                <div
+                  key={item.id}
+                  className="text-sm text-gray-600 line-clamp-2"
+                >
                   <Link
                     href={`/articles/article/${item.publishedArticle.slug as string}`}
-                    className="block hover:text-blue-600"
+                    className="hover:text-blue-600"
                   >
-                    {item.publishedArticle.article.metadata.title}
+                    <span>{item.publishedArticle.article.metadata.title}</span>
                   </Link>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           )}
         </div>
 

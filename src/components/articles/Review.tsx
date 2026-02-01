@@ -44,6 +44,7 @@ import { Switch } from '../ui/switch';
 import { Input } from '../ui/input';
 import { useSession } from 'next-auth/react';
 import { RichTextEditor } from '../RichTextEditor';
+import { useEffect } from 'react';
 
 type AssessmentField = Extract<
   keyof ReviewFormData,
@@ -123,22 +124,6 @@ export default function ReviewModal({
 }) {
   const searchParams = useSearchParams();
   const { data: session } = useSession();
-  const reviwerNames = session?.user.name;
-
-  const filesValidation = safeParse({
-    schema: filesSchema,
-    input: new URLSearchParams(searchParams.toString()),
-  });
-
-  const files = filesValidation.data?.files || [];
-  const fileIds = files.map((f) => f.publicId);
-
-  const reviewStatus = [
-    'Minor Correction',
-    'Major Correction',
-    'Accepted',
-    'Rejected',
-  ];
 
   const form = useForm<ReviewFormData>({
     resolver: zodResolver(reviewerSubmissionSchema),
@@ -154,9 +139,30 @@ export default function ReviewModal({
       referencesFormatting: false,
       overallScientificQuality: false,
       confidentialComments: '',
-      reviewerSignature: reviwerNames || '',
+      reviewerSignature: '',
     },
   });
+
+  useEffect(() => {
+    if (session?.user?.name) {
+      form.setValue('reviewerSignature', session.user.name);
+    }
+  }, [session?.user?.name, form]);
+
+  const filesValidation = safeParse({
+    schema: filesSchema,
+    input: new URLSearchParams(searchParams.toString()),
+  });
+
+  const files = filesValidation.data?.files || [];
+  const fileIds = files.map((f) => f.publicId);
+
+  const reviewStatus = [
+    'Minor Correction',
+    'Major Correction',
+    'Accepted',
+    'Rejected',
+  ];
 
   const { assignmentId } = useParams();
 

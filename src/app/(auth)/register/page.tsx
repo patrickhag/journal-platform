@@ -93,7 +93,7 @@ export default function Register() {
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
             <Image
-              src={'/jaep-logo.png'}
+              src={'/jaep-logo.svg'}
               alt="JAEP Health Science Logo"
               width={40}
               height={40}

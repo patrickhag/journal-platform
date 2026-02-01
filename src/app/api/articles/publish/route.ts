@@ -64,6 +64,24 @@ export async function POST(req: Request) {
       volumeYear,
     } = body;
 
+    // Check if DOI is provided and if it is already used by another article
+    if (doi) {
+      const existing = await db.query.publishedArticles.findFirst({
+        where: (fields, { and, eq, ne }) =>
+          and(
+            eq(fields.doi, doi),
+            // Only consider a DOI collision if it's used for a different article, or, prevent duplicate for same article as well
+            ne(fields.articleId, articleId)
+          ),
+      });
+      if (existing) {
+        return NextResponse.json(
+          { message: 'DOI already in use by another article.' },
+          { status: 400 }
+        );
+      }
+    }
+
     if (!pdfUrl) {
       isPublishedArticleInserted = await db
         .update(publishedArticles)

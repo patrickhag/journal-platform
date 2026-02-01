@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
           firstName,
           lastName,
           email: reviewerEmail,
-          password: await bcrypt.hash(`@JAEPH${password}`, 10),
+          password: await bcrypt.hash(password, 10),
           expertise,
           affiliation,
         })

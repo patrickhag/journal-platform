@@ -37,6 +37,8 @@ async function AssignedReviewers({
     orderBy: desc(reviewAssignments.assignedDate),
   });
 
+  console.log('assignedReviewers:', assignedReviewers);
+
   return (
     <Card className="my-3">
       <div className="flex justify-between items-center">

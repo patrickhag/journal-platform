@@ -25,8 +25,6 @@ export default function Reviewer({
 
   const [isDialogOpen, setDialogOpen] = useState(false);
 
-  // const reviewerStatus = 'Sent';
-
   const currentUserRole = data?.user?.role;
 
   return (
@@ -45,15 +43,6 @@ export default function Reviewer({
           </sup>{' '}
           proposed reviewer{' '}
         </h3>
-        {/* {(currentUserRole === 'CHIEF_EDITOR' ||
-          currentUserRole === 'STAFF_EDITOR') && (
-          <Badge
-            variant={'outline'}
-            className="text-center px-2 py-1 rounded-md"
-          >
-            Invitation {reviewerStatus}
-          </Badge>
-        )} */}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

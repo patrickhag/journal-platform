@@ -26,6 +26,7 @@ export async function GET(
           id: true,
           dueDate: true,
           message: true,
+          status: true,
         },
         orderBy: desc(associateEditorAssignments.assignedAt),
         with: {
@@ -60,6 +61,13 @@ export async function GET(
                 columns: {
                   prefix: true,
                   title: true,
+                },
+              },
+              files: {
+                columns: {
+                  publicId: true,
+                  originalName: true,
+                  fileType: true,
                 },
               },
               authorRevisions: {

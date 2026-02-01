@@ -47,7 +47,10 @@ export const NotifyReviewerAboutFinalizedAssignment: React.FC<{
 
         {/* Footer */}
         <Section className="bg-gray-100 text-center py-4 text-sm text-gray-600">
-          <Text>© 2025 JAEPH. Thank you for supporting peer review.</Text>
+          <Text>
+            © {new Date().getFullYear()} JAEP Health Sciences. All rights
+            reserved.
+          </Text>
         </Section>
       </Container>
     </Tailwind>

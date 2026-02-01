@@ -54,7 +54,7 @@ export const sendPasswordResetEmail = async ({
     );
     // Use resend to send the email
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: toEmail,
       subject,
       html: emailHtml,
@@ -106,7 +106,7 @@ export const notifyContibutor = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: toEmail,
       subject,
       html: emailHtml,
@@ -144,7 +144,7 @@ export const remindReviewerAboutRevision = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: toEmail,
       subject: 'Reminder: Please review your assigned manuscript',
       html: emailHtml,
@@ -182,7 +182,7 @@ export const remindAssociateEditorAboutAssignment = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: toEmail,
       subject: 'Reminder: Please complete your assigned manuscript formatting',
       html: emailHtml,
@@ -234,7 +234,7 @@ export const sendInvitation = async ({
       />
     );
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: toEmail,
       subject: 'You have been invited to review a manuscript.',
       html: emailHtml,
@@ -272,7 +272,7 @@ export const sendAssociateEditorInvitation = async ({
       />
     );
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: editorEmail,
       subject: 'You have been invited to format a manuscript.',
       html: emailHtml,
@@ -304,7 +304,7 @@ export const sendVerifyToken = async ({
       />
     );
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: email,
       subject: 'Please verify your account',
       html: emailHtml,
@@ -333,7 +333,7 @@ export const rejectManuscriptEmail = async ({
       <RejectManuscript article={article} names={names} />
     );
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: authorEmails,
       subject: 'Your manuscript has been rejected',
       html: emailHtml,
@@ -362,7 +362,7 @@ export const acceptManuscriptEmail = async ({
       <AcceptManuscriptEmailTemplate article={nameOfArticle} names={names} />
     );
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: authorEmail,
       subject: 'Your manuscript has been accepted',
       html: emailHtml,
@@ -397,7 +397,7 @@ export const informStaffEditorAboutCorrection = async ({
       />
     );
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: staffEditorEmail,
       subject: 'Associate Editor has edited the manuscript',
       html: emailHtml,
@@ -444,7 +444,7 @@ export const notifyAdmin = async ({
 
     const recipientEmail: string = staffEditorEmail;
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: recipientEmail,
       subject: subject,
       html: emailHtml,
@@ -482,7 +482,7 @@ export const notifyStaffEditor = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: staffEditorEmail,
       subject: 'You have been assigned as Staff Editor to an article',
       html: emailHtml,
@@ -525,7 +525,7 @@ export const notifyUser = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: authorEmail,
       subject: subject,
       html: emailHtml,
@@ -558,7 +558,7 @@ export const notifyAdminAboutProof = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: process.env.ADMIN_EMAIL!,
       subject: 'Author Submitted Updated Proof for Review',
       html: emailHtml,
@@ -630,7 +630,7 @@ export const notifyUserAboutEditorDecision = async ({
     }
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: authorEmail,
       subject,
       html: emailHtml,
@@ -704,7 +704,7 @@ export const notifyEditorAboutRevision = async ({
 
     const validRecipientEmail: string = recipientEmail;
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: validRecipientEmail,
       subject: 'Revised Manuscript Ready for Re-evaluation',
       html: emailHtml,
@@ -754,7 +754,7 @@ export const notifyStaffEditorAboutReviewStatus = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: staffEditorEmail,
       subject: 'Reviewer decision',
       html: emailHtml,
@@ -789,7 +789,7 @@ export const notifyReviewerAboutReReview = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: reviewerEmail,
       subject: 'Manuscript Revision Requested',
       html: emailHtml,
@@ -838,7 +838,7 @@ export const notifyAllReviewersAboutFinalStatus = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: reviewerEmail,
       subject: 'Editorial decision',
       html: emailHtml,
@@ -859,12 +859,10 @@ export const associateNotifyReviewer = async ({
   articleTitle,
   reviewerNames,
   reviewerEmail,
-  authorNames,
 }: {
   articleTitle: string;
   reviewerNames: string;
   reviewerEmail: string;
-  authorNames: string;
 }) => {
   try {
     const emailHtml = await render(
@@ -876,7 +874,7 @@ export const associateNotifyReviewer = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: reviewerEmail,
       subject: 'Invitation of reviewing a manuscript',
       html: emailHtml,
@@ -913,7 +911,7 @@ export const thankAuthorAboutSubmission = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: recipientEmail,
       subject: 'Thank you for submitting your article',
       html: emailHtml,
@@ -954,7 +952,7 @@ export const informChiefEditorAboutAcceptance = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: process.env.EDITOR_IN_CHIEF_EMAIL!,
       subject: 'Associate editor has accepted the manuscript.',
       html: emailHtml,
@@ -996,7 +994,7 @@ export const informStaffEditorAboutReviewerInvitation = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: associateEditorEmail,
       subject:
         status === 'accepted'
@@ -1040,7 +1038,7 @@ export const informStaffEditorAboutAssociateInvitation = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: staffEditorEmail,
       subject:
         status === 'accepted'
@@ -1082,7 +1080,7 @@ export const informingAuthorNReviewer = async ({
       />
     );
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: participantEmail,
       subject,
       html: emailHtml,
@@ -1126,7 +1124,7 @@ export const authorInformStaffEditor = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: staffEditorEmail,
       subject: `Author reply received for "${articleTitle}"`,
       html: emailHtml,
@@ -1170,7 +1168,7 @@ export const authorInformReviewer = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: reviewerEmail,
       subject: `Author reply received for "${articleTitle}"`,
       html: emailHtml,
@@ -1217,7 +1215,7 @@ export const notifyAssociateEditor = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: associateEditorEmail,
       subject:
         status === 'APPROVED'
@@ -1250,7 +1248,7 @@ export const sendEmailToSubscribers = async ({
     const emailHtml = await render(<SubscriberEmail email={message} />);
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: subscriberEmail,
       subject: subject,
       html: emailHtml,
@@ -1289,7 +1287,7 @@ export const informChiefEditorAboutOngoingPublication = async ({
     );
 
     const result = await resend.emails.send({
-      from: `JAEPH <${process.env.RESEND_SENDER!}>`,
+      from: `JAEP Health Sciences <${process.env.RESEND_SENDER!}>`,
       to: process.env.EDITOR_IN_CHIEF_EMAIL!,
       subject: 'Ongoing publication awaits your acceptance',
       html: emailHtml,

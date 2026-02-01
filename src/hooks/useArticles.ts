@@ -87,7 +87,10 @@ export const usePublishArticle = () => {
     },
     onSuccess: ({ message }) => {
       queryClient.invalidateQueries({
-        queryKey: ['toBePublishedArticles', 'publishedArticles'],
+        queryKey: [
+          'toBePublishedArticles',
+          'publishedArticles' + 'AWAITING DECISION',
+        ],
       });
       toast.success(message);
     },

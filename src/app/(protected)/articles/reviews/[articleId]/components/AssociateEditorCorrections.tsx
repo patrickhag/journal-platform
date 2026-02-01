@@ -3,18 +3,19 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { File, FileSearch2, Eye } from 'lucide-react';
 import { useGetAssociateEditorsCorrections } from '@/hooks/useReviews';
-import ForwardFileModal from '@/components/articles/ForwardFileDialog';
 import { AssociateEditorCorrectionStatusModal } from './RequestAssociateRecorrection';
 import { formatAssignmentCorrectionsStatus } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import FileViewerModal from '@/components/FileViewerModal';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-export const AssociateEditorCorrections = ({
-  articleId,
-}: {
+interface AssociateEditorCorrectionsProps {
   articleId: string;
-}) => {
+}
+
+export const AssociateEditorCorrections: React.FC<
+  AssociateEditorCorrectionsProps
+> = ({ articleId }) => {
   const { data: corrections, isPending } =
     useGetAssociateEditorsCorrections(articleId);
   const [viewerOpen, setViewerOpen] = useState(false);
@@ -100,7 +101,7 @@ export const AssociateEditorCorrections = ({
                                     </h5>
                                   </div>
                                 </div>
-                                <div className="flex justify-between">
+                                <div>
                                   <Button variant="ghost" size="sm" asChild>
                                     <button
                                       type="button"
@@ -114,10 +115,6 @@ export const AssociateEditorCorrections = ({
                                       <Eye className="h-4 w-4" />
                                     </button>
                                   </Button>
-                                  <ForwardFileModal
-                                    fileName={correction.fileId}
-                                    articleId={articleId}
-                                  />
                                 </div>
                               </div>
                             </div>

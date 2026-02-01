@@ -28,7 +28,7 @@ export default async function NotificationsModal() {
       eq(notifications.userId, session?.user?.id || ''),
       eq(notifications.isRead, false)
     ),
-    limit: 9,
+    limit: 7,
   });
 
   const hdrs = await headers();
@@ -41,7 +41,7 @@ export default async function NotificationsModal() {
           <Bell className="h-7 w-7" height={36} width={36} />
           {Array.isArray(notificationsData) && notificationsData.length > 0 && (
             <span className="bg-amber-600/40 p-3 rounded-full w-3 h-3 flex justify-center items-center absolute -right-1 -top-1">
-              {notificationsData.length > 9 ? '9+' : notificationsData.length}
+              {notificationsData.length > 7 ? '7+' : notificationsData.length}
             </span>
           )}
         </Button>

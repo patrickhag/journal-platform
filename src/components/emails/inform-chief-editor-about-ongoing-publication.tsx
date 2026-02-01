@@ -46,7 +46,10 @@ export const InformChiefEditorAboutOngoingPublication: React.FC<
           <Text>Thank you for your attention.</Text>
         </Section>
         <Section className="bg-gray-100 text-center py-4 text-sm font-semibold text-gray-600">
-          <Text>© 2025 JAEPH. All rights reserved.</Text>
+          <Text>
+            © {new Date().getFullYear()} JAEP Health Sciences. All rights
+            reserved.
+          </Text>
         </Section>
       </Container>
     </Tailwind>

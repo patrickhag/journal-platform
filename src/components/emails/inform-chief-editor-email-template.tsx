@@ -1,11 +1,5 @@
 import type * as React from 'react';
-import {
-  Tailwind,
-  Text,
-  Container,
-  Section,
-  Button,
-} from '@react-email/components';
+import { Tailwind, Text, Container, Section } from '@react-email/components';
 
 export const ArticleReadyForEICApprovalEmailTemplate = ({
   editorInChiefName,
@@ -42,12 +36,6 @@ export const ArticleReadyForEICApprovalEmailTemplate = ({
         <Text className="text-gray-700 my-4">
           It is now awaiting your final approval as Editor-in-Chief.
         </Text>
-        {/* <Button
-          href={`${process.env.NEXT_PUBLIC_URL}/editor-in-chief/articles/${articleLink}`}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md font-medium my-4"
-        >
-          Review Final Submission
-        </Button> */}
         <Text className="text-gray-700 mt-6">
           Thank you for your leadership and time.
         </Text>
@@ -55,7 +43,10 @@ export const ArticleReadyForEICApprovalEmailTemplate = ({
 
       {/* Footer */}
       <Section className="bg-gray-100 text-center py-4 text-sm font-semibold text-gray-600">
-        <Text>© 2025 JAEPH. All rights reserved.</Text>
+        <Text>
+          © {new Date().getFullYear()} JAEP Health Sciences. All rights
+          reserved.
+        </Text>
       </Section>
     </Container>
   </Tailwind>

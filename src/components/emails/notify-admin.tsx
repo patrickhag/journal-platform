@@ -56,7 +56,10 @@ export const NotifyAdminEmail = ({
             </Text>
           </Section>
           <Hr style={hr} />
-          <Text style={footer}>JAEP Admin Notification</Text>
+          <Text>
+            © {new Date().getFullYear()} JAEP Health Sciences. All rights
+            reserved.
+          </Text>
         </Container>
       </Body>
     </Html>
