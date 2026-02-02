@@ -98,3 +98,39 @@ export const useUploadReviewerFiles = () => {
     },
   });
 };
+
+export const useUploadFiles = ({
+  onSuccess,
+}: {
+  onSuccess?: (blob: PutBlobResult[]) => void;
+} = {}) => {
+  return useMutation({
+    mutationFn: async (files: File[]) => {
+      const formData = new FormData();
+      files.forEach((file) => {
+        formData.append('files', file);
+      });
+
+      const response = await axios.post<PutBlobResult[]>(
+        '/api/files',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      return response.data;
+    },
+    onSuccess: (blob: PutBlobResult[]) => {
+      onSuccess?.(blob);
+    },
+    onError: (error: Error | AxiosError) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data.message
+        : error.message;
+
+      toast.error(message || 'Failed to upload file');
+    },
+  });
+};

@@ -18,7 +18,7 @@ export default async function Layout({ children }: LayoutProps) {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen bg-gray-50">
         <div className="fixed top-0 left-0 right-0 z-50">
           <Header />
         </div>

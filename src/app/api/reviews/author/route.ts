@@ -6,7 +6,6 @@ import { articleSubmissions } from '@/db/schema';
 import { and, desc, eq } from 'drizzle-orm';
 import {
   authorInformStaffEditor,
-  authorInformReviewer,
 } from '@/lib/emailTransporter';
 
 export async function GET(req: NextRequest) {

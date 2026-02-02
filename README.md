@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Journal Platform
 
-## Getting Started
+A Next.js 15 app for running a scholarly journal workflow: public site, submissions, peer review, editorial roles, and publishing. The codebase includes protected areas for authors, reviewers, editors, and staff editors, plus automation for email notifications and content distribution.
 
-First, run the development server:
+## Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Next.js App Router, React 18, TypeScript
+- Drizzle ORM + Postgres (Neon serverless driver)
+- NextAuth (credentials provider)
+- Tailwind CSS + Radix UI components
+- Email: Resend + Nodemailer (Gmail transport)
+- File uploads: Cloudinary
+
+## Local Setup
+
+1. Install dependencies:
+   - `pnpm install` (preferred if you follow `pnpm-lock.yaml`)
+   - or `npm install`
+2. Create a `.env` file (see Environment Variables below).
+3. Start the dev server:
+   - `pnpm dev` or `npm run dev`
+
+App runs at `http://localhost:3000`.
+
+## Environment Variables
+
+Required values referenced in the codebase:
+
+```
+DATABASE_URL=
+NEXT_PUBLIC_URL=
+NEXTAUTH_SECRET='
+NEXTAUTH_URL=
+AUTH_SECRET=
+SECRET=
+AUTH_TRUST_HOST=
+AUTH_URL=
+ADMIN_EMAIL=
+BLOB_READ_WRITE_TOKEN=
+
+EMAIL_USER=
+EMAIL_PASS=
+
+EDITOR_IN_CHIEF_NAME=
+EDITOR_IN_CHIEF_EMAIL=
+EDITOR_IN_CHIEF_ID=
+CHIEF_EDITOR_EMAIL=
+RESEND_API_KEY=
+RESEND_SENDER=
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Notes:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `NEXT_PUBLIC_URL` is used to build canonical links, sitemap, emails, and OAI-PMH responses.
+- `EMAIL_USER` / `EMAIL_PASS` are used by Nodemailer for Gmail-based sending.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+- `dev`: Next.js dev server (`next dev --turbo`)
+- `build`: Production build
+- `start`: Serve production build
+- `lint`: Next.js lint
+- `format`: Prettier
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure (high level)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `src/app`: App Router pages and route handlers
+  - Public pages: `articles`, `collections`, `editorial-board`, `manuals`, `search-articles`
+  - Protected areas: `src/app/(protected)` with role-specific sections (`author`, `reviewer`, `editor`, etc.)
+  - API routes: `src/app/api`
+- `src/db`: Drizzle schema + database client
+- `src/components`: UI components and React Email templates
+- `src/actions`: Server actions
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Notable Functionality
 
-## Deploy on Vercel
+- Role-based access flows for authors, reviewers, associate editors, staff editors, and chief-editors
+- Email notifications for invitations, reviews, revisions, and status changes
+- OAI-PMH endpoint at `/api/oai` for metadata harvesting
+- Public sitemap generation via `sitemap.ts`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Database
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Drizzle config: `drizzle.config.ts`
+- Schema: `src/db/schema.ts`
+- Client: `src/db/db.ts`
+
+## Email
+
+- Resend API and Gmail SMTP (Nodemailer) are both configured.
+- Email templates live under `src/components/emails` and `src/lib/emailTransporter.tsx`.
+
+## Deployment
+
+Standard Next.js deployment. Ensure all env vars are set and database connectivity is available.

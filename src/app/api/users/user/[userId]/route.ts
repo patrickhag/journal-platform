@@ -18,16 +18,17 @@ export async function GET(
 ) {
   try {
     const session = await auth();
-    if (
-      !(
-        session?.user.role === 'CHIEF_EDITOR' ||
-        session?.user.role === 'STAFF_EDITOR'
-      )
-    ) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
     const { userId } = await params;
+    const sessionUserId = session?.user?.id;
+    const canAccess =
+      sessionUserId === userId ||
+      session?.user.role === 'CHIEF_EDITOR' ||
+      session?.user.role === 'STAFF_EDITOR';
+
+    if (!canAccess) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     // Fetch all roles for the user
     const allUserRoles = await db.query.userRoles.findMany({
@@ -135,6 +136,7 @@ export async function GET(
         country: true,
         bio: true,
         avatar: true,
+        prefix: true,
       },
       with: withClause,
     });
@@ -330,16 +332,56 @@ export async function PATCH(
 ) {
   try {
     const session = await auth();
+    const sessionUserId = session?.user?.id;
 
-    if (
-      !(session?.user.role === 'CHIEF_EDITOR' || session?.user.role === 'ADMIN')
-    ) {
+    if (!sessionUserId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { userId } = await params;
+    const isSelf = sessionUserId === userId;
+    const isAdmin =
+      session?.user.role === 'CHIEF_EDITOR' || session?.user.role === 'ADMIN';
 
-    const { isActive, role } = await req.json();
+    const body = await req.json();
+
+    if (isSelf && !isAdmin) {
+      const updateData: Record<string, string | null | undefined> = {
+        prefix: body.prefix,
+        firstName: body.firstName,
+        lastName: body.lastName,
+        affiliation: body.affiliation,
+        country: body.country,
+        orcid: body.orcid,
+        bio: body.bio,
+        expertise: body.expertise,
+        avatar: body.avatar,
+      };
+
+      const sanitizedUpdates = Object.fromEntries(
+        Object.entries(updateData).filter(
+          ([, value]) => typeof value !== 'undefined'
+        )
+      );
+
+      const hasUpdates = Object.keys(sanitizedUpdates).length > 0;
+
+      if (!hasUpdates) {
+        return NextResponse.json({ error: 'No values to set' }, { status: 400 });
+      }
+
+      await db.update(users).set(sanitizedUpdates).where(eq(users.id, userId));
+
+      return NextResponse.json({
+        message: 'Profile updated successfully!',
+      });
+    }
+
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { isActive, role } = body;
     const shouldUpdateRole = typeof role !== 'undefined';
     const shouldUpdateStatus = typeof isActive !== 'undefined';
 

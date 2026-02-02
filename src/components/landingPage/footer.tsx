@@ -14,11 +14,8 @@ const Footer = async () => {
   const whatsappRaw = footerSettings?.whatsapp || '+250788589658';
   const contactEmail = footerSettings?.contactEmail || 'info@airpd.org';
   const whatsappDigits = whatsappRaw.replace(/[^\d]/g, '');
-  const whatsappHref = whatsappDigits
-    ? `https://wa.me/${whatsappDigits}`
-    : 'https://wa.me/+250788589658';
-  const copyrightText =
-    footerSettings?.copyright || '© 2025 JAEPH. All rights reserved.';
+  const whatsappHref = `https://wa.me/${whatsappDigits}`;
+  const copyrightText = footerSettings?.copyright;
 
   return (
     <footer className="text-gray-700 px-4 md:px-8 py-4 md:py-6">

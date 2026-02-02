@@ -39,7 +39,11 @@ export const HeaderElement = async () => {
       <div className="flex items-center gap-2 md:gap-4">
         <NotificationsModal />
 
-        <HeaderModal name={name} role={role} />
+        <HeaderModal
+          name={name}
+          role={role}
+          userId={session?.user.id as string}
+        />
       </div>
     </>
   );

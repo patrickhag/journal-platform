@@ -11,16 +11,25 @@ import {
 import { LogInIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { signOut, useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { handleDashboardRedirect } from '@/lib/utils';
 import Link from 'next/link';
+import { useGetUserInfo } from '@/hooks/useUsers';
 
 export default function HeaderDropdown() {
   const { data: session } = useSession();
-  const names = session?.user?.name?.split(' ')?.[1]?.substring(0, 1);
   const role = session?.user.role;
+  const userId = session?.user?.id || '';
+  const { data: userInfo } = useGetUserInfo(userId);
+  const avatarUrl = userInfo?.user?.avatar || '';
+  const firstInitial = userInfo?.user?.firstName?.[0] || '';
+  const lastInitial = userInfo?.user?.lastName?.[0] || '';
+  const sessionInitial =
+    session?.user?.name?.split(' ')?.[0]?.substring(0, 1) || '';
+  const fallback =
+    `${firstInitial}${lastInitial}`.trim() || sessionInitial || '?';
 
   return (
     <div className="flex items-center gap-4">
@@ -33,9 +42,8 @@ export default function HeaderDropdown() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="cursor-pointer">
-              <AvatarFallback className="lowercase">
-                {names as string}
-              </AvatarFallback>
+              <AvatarImage src={avatarUrl} alt="User profile" />
+              <AvatarFallback className="lowercase">{fallback}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

@@ -1,138 +1,438 @@
-import { auth } from '@/auth';
-import { db, reviewers, users } from '@/db/schema';
-import { eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User2 } from 'lucide-react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { ArrowLeft, Save, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
-import { createUpload } from '@/actions/createUpload';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { COUNTRIES, SALUTATION } from '@/lib/consts';
+import { useSession } from 'next-auth/react';
+import { useGetUserInfo, useUpdateUserProfile } from '@/hooks/useUsers';
+import { DragAndDropFileInput } from '@/components/upload/FileInput';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { PutBlobResult } from '@vercel/blob';
+import { profileSchema } from '@/lib/schemas';
+import Loader from '@/components/Loader';
+import { useRouter } from 'next/navigation';
 
-const page = async () => {
-  const session = await auth();
-  if (!session?.user?.id) return null;
-  const user = await db
-    .select()
-    .from(users)
-    .where(eq(users.id, session?.user?.id))
-    .limit(1);
-  if (user.length === 0) return null;
+export default function ProfileSettings() {
+  const form = useForm<z.infer<typeof profileSchema>>({
+    resolver: zodResolver(profileSchema),
+  });
 
-  const reviewerUser = await db
-    .select()
-    .from(reviewers)
-    .where(eq(reviewers.email, user[0].email!))
-    .limit(1);
+  const router = useRouter();
+
+  const { data: session } = useSession();
+  const userId = session?.user?.id || '';
+  const { data: userInfo, isLoading: isUserLoading } = useGetUserInfo(userId);
+  const updateProfile = useUpdateUserProfile(userId);
+  const [isAvatarDialogOpen, setIsAvatarDialogOpen] = useState(false);
+
+  const isLoading = form.formState.isSubmitting || updateProfile.isPending;
+  const firstName = form.watch('firstName') || '';
+  const lastName = form.watch('lastName') || '';
+  const avatar = form.watch('avatar') || '';
+
+  useEffect(() => {
+    if (!userInfo?.user) return;
+
+    form.reset({
+      prefix: userInfo.user.prefix || SALUTATION[0],
+      firstName: userInfo.user.firstName || '',
+      lastName: userInfo.user.lastName || '',
+      email: userInfo.user.email || '',
+      affiliation: userInfo.user.affiliation || '',
+      country: userInfo.user.country || '',
+      orcid: userInfo.user.orcid || '',
+      bio: userInfo.user.bio || '',
+      expertise: userInfo.user.expertise || '',
+      avatar: userInfo.user.avatar || '',
+    });
+  }, [form, userInfo]);
+
+  const handleSubmit = async (values: z.infer<typeof profileSchema>) => {
+    if (!userId) return;
+    await updateProfile.mutateAsync({
+      prefix: values.prefix,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      affiliation: values.affiliation,
+      country: values.country,
+      orcid: values.orcid,
+      bio: values.bio,
+      expertise: values.expertise,
+      avatar: values.avatar,
+    });
+  };
+
+  const handleAvatarUpload = () => {
+    setIsAvatarDialogOpen(true);
+  };
+
+  const handleAvatarUploaded = async (blobs: PutBlobResult[]) => {
+    const uploadedUrl = blobs[0]?.url;
+    if (!uploadedUrl || !userId) return;
+
+    form.setValue('avatar', uploadedUrl, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+
+    const values = form.getValues();
+    await updateProfile.mutateAsync({
+      prefix: values.prefix,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      affiliation: values.affiliation,
+      country: values.country,
+      orcid: values.orcid,
+      bio: values.bio,
+      expertise: values.expertise,
+      avatar: uploadedUrl,
+    });
+
+    setIsAvatarDialogOpen(false);
+  };
 
   return (
-    <Card className="max-w-5xl mx-auto">
-      <div>
-        <form
-          className="p-5"
-          action={async (form) => {
-            'use server';
-            if (session?.user?.id) {
-              if ((form.get('files') as File)?.size > 0) {
-                const { data } = await createUpload(undefined, form);
-                await db
-                  .update(users)
-                  .set({ avatar: data?.url })
-                  .where(eq(users.id, session?.user?.id));
-              }
-              const formData = Object.fromEntries(form.entries());
+    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div className="mb-6">
+        <Button variant="outline" className="mb-3">
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back
+        </Button>
+        <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
+        <p className="text-gray-600 mt-1">
+          Manage your personal information and preferences
+        </p>
+      </div>
 
-              await db
-                .update(users)
-                .set({
-                  affiliation: formData.affiliation.toString(),
-                  firstName: formData.firstName.toString(),
-                  lastName: formData.lastName.toString(),
-                })
-                .where(eq(users.id, session?.user?.id));
-              if (formData.expertise.toString())
-                await db
-                  .update(reviewers)
-                  .set({
-                    expertise: formData.expertise.toString(),
-                  })
-                  .where(eq(reviewers.email, user[0].email!));
-              revalidatePath('/profile');
-            }
-          }}
-        >
-          <h3 className="text-2xl font-semibold">Update Your profile</h3>
-          <div className="my-3">
-            <div>
-              <Label htmlFor="firstName" className="text-gray-500">
-                First Name
-              </Label>
-              <Input
-                name="firstName"
-                defaultValue={user[0].firstName || undefined}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          {/* Avatar Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Profile Photo</CardTitle>
+              <CardDescription>Update your profile picture</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-6">
+                <Avatar className="h-24 w-24">
+                  <AvatarImage src={avatar} />
+                  <AvatarFallback className="text-2xl bg-primary/10 text-primary">
+                    {firstName[0] || '?'}
+                    {lastName[0] || ''}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="space-y-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleAvatarUpload}
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Update Your Photo
+                  </Button>
+                  <p className="text-sm text-muted-foreground">
+                    JPG, PNG or GIF. Max size 2MB.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Dialog
+            open={isAvatarDialogOpen}
+            onOpenChange={setIsAvatarDialogOpen}
+          >
+            <DialogContent className="sm:max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Upload profile photo</DialogTitle>
+                <DialogDescription>
+                  Choose a clear, square image (JPG/PNG/GIF). Max size 2MB.
+                </DialogDescription>
+              </DialogHeader>
+              <DragAndDropFileInput
+                onUploadComplete={handleAvatarUploaded}
+                dropzoneOptions={{
+                  maxFiles: 1,
+                  maxSize: 1024 * 1024 * 2,
+                  multiple: false,
+                  accept: {
+                    'image/*': ['.jpg', '.jpeg', '.png', '.gif'],
+                  },
+                }}
               />
-            </div>
-            <div className="my-3">
-              <Label htmlFor="lastName" className="text-gray-500">
-                Last Name
-              </Label>
-              <Input
-                name="lastName"
-                defaultValue={user[0].lastName || undefined}
+            </DialogContent>
+          </Dialog>
+
+          {/* Personal Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Personal Information</CardTitle>
+              <CardDescription>Your basic profile details</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <FormField
+                  control={form.control}
+                  name="prefix"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Prefix</FormLabel>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select prefix" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {SALUTATION.map((prefix) => (
+                            <SelectItem key={prefix} value={prefix}>
+                              {prefix}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-1">
+                      <FormLabel>First Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter first name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel>Last Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter last name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email Address</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        disabled
+                        className="bg-muted"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Email cannot be changed. Contact support if you need to
+                      update it.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-          </div>
-          <div className="my-3">
-            <Label htmlFor="email" className="text-gray-500">
-              Email
-            </Label>
-            <Input
-              name="email"
-              defaultValue={user[0].email || undefined}
-              readOnly
-            />
-          </div>
-          {reviewerUser[0]?.expertise && (
-            <div className="my-3">
-              <Label htmlFor="expertise" className="text-gray-500">
-                Expertise
-              </Label>
-              <Input
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="affiliation"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Affiliation / Institution</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter your institution"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="country"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Country</FormLabel>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select country" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="max-h-64">
+                          {COUNTRIES.map((country) => (
+                            <SelectItem key={country} value={country}>
+                              {country}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Professional Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Professional Information</CardTitle>
+              <CardDescription>
+                Your academic and research details
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <FormField
+                control={form.control}
+                name="orcid"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>ORCID ID</FormLabel>
+                    <FormControl>
+                      <Input placeholder="0000-0000-0000-0000" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Your ORCID iD uniquely identifies you as a researcher.{' '}
+                      <a
+                        href="https://orcid.org"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        Get an ORCID
+                      </a>
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="expertise"
-                defaultValue={reviewerUser[0]?.expertise || undefined}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Areas of Expertise</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g., Machine Learning, Data Science, Neural Networks"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Separate multiple areas with commas
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-          )}
-          <div className="my-3">
-            <Label htmlFor="affiliation" className="text-gray-500">
-              Affiliation
-            </Label>
-            <Input
-              name="affiliation"
-              defaultValue={user[0].affiliation || undefined}
-            />
-          </div>
-          <div className="flex gap-3 items-center my-3">
-            <Avatar className="h-16 w-16">
-              <AvatarImage src={user[0].avatar || undefined} />
 
-              <AvatarFallback>
-                <User2 className="h-8 w-8" />
-              </AvatarFallback>
-            </Avatar>
+              <FormField
+                control={form.control}
+                name="bio"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Biography</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Tell us about yourself and your research interests..."
+                        rows={5}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      A brief description of your background and research
+                      interests
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
 
-            <Button type="button" variant="outline">
-              <label htmlFor="files">Choose an image</label>
+          {/* Save Button */}
+          <div className="flex justify-end gap-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.back()}
+              disabled={isUserLoading}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isLoading || isUserLoading}>
+              {isLoading ? (
+                <Loader text="Saving..." />
+              ) : (
+                <>
+                  <Save className="h-4 w-4 mr-2" />
+                  Save Changes
+                </>
+              )}
             </Button>
           </div>
-
-          <input type="file" name="files" id="files" className="hidden" />
-          <Button>Update profie</Button>
         </form>
-      </div>
-    </Card>
+      </Form>
+    </div>
   );
-};
-
-export default page;
+}

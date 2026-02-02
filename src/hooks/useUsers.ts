@@ -45,6 +45,45 @@ export const useGetUserInfo = (userId: string) => {
   });
 };
 
+type UpdateUserProfilePayload = {
+  prefix: string;
+  firstName: string;
+  lastName: string;
+  affiliation: string;
+  country: string;
+  orcid?: string;
+  bio?: string;
+  expertise?: string;
+  avatar?: string;
+};
+
+export const useUpdateUserProfile = (userId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: UpdateUserProfilePayload) => {
+      const response = await axios.patch<{ message: string }>(
+        `/api/users/user/${userId}`,
+        data
+      );
+      return response;
+    },
+    onSuccess: ({ data }) => {
+      if (data) {
+        queryClient.invalidateQueries({ queryKey: ['user', userId] });
+        toast.success(data.message || 'Profile updated successfully');
+      }
+    },
+    onError: (error: Error | AxiosError) => {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data.message
+        : error.message;
+
+      toast.error(message || 'Failed to update profile');
+    },
+  });
+};
+
 export const useGetStaffEditors = () => {
   return useQuery({
     queryKey: ['users'],

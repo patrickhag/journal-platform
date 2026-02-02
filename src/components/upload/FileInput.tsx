@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,21 +12,42 @@ import {
 } from '@/components/ui/form';
 import { CloudUpload } from 'lucide-react';
 import { FileInput, FileUploader } from '@/components/ui/file-upload';
-import { useUploadArticleFiles } from '@/hooks/useUploadFiles';
+import { useUploadArticleFiles, useUploadFiles } from '@/hooks/useUploadFiles';
 import Loader from '../Loader';
+import { PutBlobResult } from '@vercel/blob';
+import type { DropzoneOptions } from 'react-dropzone';
 
-export function DragAndDropFileInput() {
+type DragAndDropFileInputProps = {
+  onUploadComplete?: (blob: PutBlobResult[]) => void;
+  dropzoneOptions?: DropzoneOptions;
+};
+
+export function DragAndDropFileInput({
+  onUploadComplete,
+  dropzoneOptions,
+}: DragAndDropFileInputProps) {
   const [files, setFiles] = useState<File[] | null>(null);
 
-  const dropZoneConfig = {
-    maxFiles: 5,
-    maxSize: 1024 * 1024 * 4,
-    multiple: true,
-  };
+  const dropZoneConfig = useMemo(
+    () => ({
+      maxFiles: 5,
+      maxSize: 1024 * 1024 * 4,
+      multiple: true,
+      ...dropzoneOptions,
+    }),
+    [dropzoneOptions]
+  );
 
   const form = useForm();
 
-  const { mutate, isPending } = useUploadArticleFiles(setFiles);
+  const { mutate, isPending } = onUploadComplete
+    ? useUploadFiles({
+        onSuccess: (blob) => {
+          setFiles(null);
+          onUploadComplete?.(blob);
+        },
+      })
+    : useUploadArticleFiles(setFiles);
 
   function onSubmit() {
     mutate(files!);

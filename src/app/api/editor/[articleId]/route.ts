@@ -131,56 +131,6 @@ export async function POST(
       });
     }
 
-    // switch (decision) {
-    //   case decision === 'ACCEPT':
-    //     await db.insert(notifications).values({
-    //       message:
-    //         '🎉 Congratulations, your manuscript has been accepted by Associate editor.',
-    //       userId: article?.user.id,
-    //     });
-    //     await db
-    //       .update(articleSubmissions)
-    //       .set({
-    //         articleStatus: 'UNDER PRESS',
-    //         acceptedAt: new Date().toISOString().split('T')[0],
-    //       })
-    //       .where(eq(articleSubmissions.id, articleId));
-
-    //     break;
-    //   case decision === 'REQUEST_REVISION':
-    //     await db.insert(notifications).values({
-    //       message:
-    //         'Associate-editor has requested a revision of your manuscript.',
-    //       userId: article?.user.id,
-    //     });
-    //   case decision === 'REJECT':
-    //     await db.insert(notifications).values({
-    //       message:
-    //         'The Peer-review team has rejected your manuscript. Check your email for more info.',
-    //       userId: article?.user.id,
-    //     });
-    //     break;
-    //   default:
-    //     break;
-    // }
-
-    // const associateEditorName =
-    //   article?.editor?.user.firstName + ' ' + article?.editor?.user.lastName;
-
-    // if (decision === 'ACCEPT') {
-    //   await informChiefEditorAboutAcceptance({
-    //     articleLink: article?.id as string,
-    //     articleTitle: article?.metadata.title as string,
-    //     associateEditorName: associateEditorName,
-    //     authorNames: authorNames,
-    //     authorEmail: article?.user.email as string,
-    //   });
-    //   await db.insert(notifications).values({
-    //     message: `Manuscript by the name of ${article?.metadata.title} has been accepted by associate-editor and it's ready for proof-reading.`,
-    //     userId: process.env.EDITOR_IN_CHIEF_ID,
-    //   });
-    //
-
     return NextResponse.json({
       message: 'Decision updated and author notified successfully!',
     });

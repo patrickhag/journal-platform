@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import { COUNTRIES, SALUTATION } from './consts';
 
 export const volumeSchema = z.object({
   volumeNumber: z.number().min(1, 'Volume number must be greater than 0'),
@@ -94,3 +95,43 @@ export const inviteSchema = z.object({
 });
 
 export type InviteFormData = z.infer<typeof inviteSchema>;
+
+export const profileSchema = z.object({
+  prefix: z.string().trim(),
+  firstName: z
+    .string()
+    .trim()
+    .min(1, 'First name is required.')
+    .max(50, 'First name is too long.'),
+  lastName: z
+    .string()
+    .trim()
+    .min(1, 'Last name is required.')
+    .max(50, 'Last name is too long.'),
+  email: z.string().trim().email('Enter a valid email address.'),
+  affiliation: z
+    .string()
+    .trim()
+    .min(1, 'Affiliation is required.')
+    .max(120, 'Affiliation is too long.'),
+  country: z.string().trim(),
+  orcid: z
+    .string()
+    .trim()
+    .optional()
+    .refine(
+      (value) => !value || /^\d{4}-\d{4}-\d{4}-\d{4}$/.test(value),
+      'Use the format 0000-0000-0000-0000.'
+    ),
+  bio: z
+    .string()
+    .trim()
+    .max(1000, 'Biography should be 1000 characters or fewer.')
+    .optional(),
+  expertise: z
+    .string()
+    .trim()
+    .max(250, 'Expertise should be 250 characters or fewer.')
+    .optional(),
+  avatar: z.string().trim().optional(),
+});
